@@ -94,7 +94,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {FORWARD_DELETE_WORD,"\033|\177"},
    {BACKWARD_DELETE_WORD,"\033|^H"},
    {DELETE_TO_EOL,"\013"},
-   {DELETE_TO_EOL,"$keol"},
+   {DELETE_TO_EOL,"$kel"},
    {DELETE_LINE,"$kdl"},
    {DELETE_LINE,"\031"},
    {UNDELETE,"^U"},
