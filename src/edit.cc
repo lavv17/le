@@ -39,6 +39,7 @@
 #include "block.h"
 #include "screen.h"
 #include "options.h"
+#include "about.h"
 #ifdef WITH_MOUSE
 # include "mouse.h"
 #endif
@@ -632,6 +633,7 @@ int     main(int argc,char **argv)
 	 exit(0);
       case(PRINT_VERSION):
 	 printf("%s - %s\n",Program,version_string);
+	 puts(copyright);
 	 exit(0);
       case(USE_MMAP):
 	 opt_use_mmap=1;

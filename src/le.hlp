@@ -283,3 +283,28 @@ arguments, and the block contents is fed to
 stdin of the command. If the command writes
 something to stderr, it will be displayed
 in a window.
+
+[SearchHelp]
+   Enter a string for the search. You can
+use regular expressions, if they are enabled
+in options (default). Also there are search
+options entered as:
+
+   $options string
+
+where options are:
+   w  - search for whole words only
+   i  - ignore case
+   x  - interpret string as list of hex codes
+   n  - interpret string as list of numbers
+
+[ReplaceHelp]
+   Enter a string for replace. It can contain
+the following backslashed sequences:
+   \0 or \&  - insert whole matched string
+   \1 - \9   - insert subexpression 1-9.
+   \\        - insert backslash
+
+E.g. if you search for \([a-z]*\)\([0-9]*\),
+you can swap the word and the number by
+replacing it with \2\1.

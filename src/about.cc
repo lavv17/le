@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include "edit.h"
+#include "about.h"
 
 WIN   *about_window;
 

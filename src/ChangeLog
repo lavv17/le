@@ -1,3 +1,11 @@
+1999-11-06  lav
+
+	* about.cc, about.h: export copyright string.
+	* edit.cc, edit.h: print copyright on --version.
+	* mainmenu.cc, user.cc: include about.h.
+	* search.cc: specify help for search and replace.
+	* le.hlp: help for search and replace.
+
 1999-11-05  lav
 
 	* search.cc: (ReplaceFound) fixed replace to \\. (reported by

@@ -683,7 +683,7 @@ void  ContSearch()
 void  StartSearch()
 {
    if(getstring("Search forwards: ",(char*)pattern,sizeof(pattern)-1,
-                                  &SearchHistory,&patlen,NULL)<1)
+                                  &SearchHistory,&patlen,"SearchHelp"," Search Help ")<1)
      return;
    LastDir=FORWARD;
    LastOp=SEARCH;
@@ -694,7 +694,7 @@ void  StartSearch()
 void  StartSearchBackward()
 {
    if(getstring("Search backwards: ",(char*)pattern,sizeof(pattern)-1,
-                                  &SearchHistory,&patlen,NULL)<1)
+                                  &SearchHistory,&patlen,"SearchHelp"," Search Help ")<1)
      return;
    LastDir=BACKWARD;
    LastOp=SEARCH;
@@ -717,9 +717,9 @@ void  StartReplace()
 {
    if(View)
       return;
-   if(getstring("Search: ",(char*)pattern,sizeof(pattern)-1,&SearchHistory,&patlen,NULL)<1)
+   if(getstring("Search: ",(char*)pattern,sizeof(pattern)-1,&SearchHistory,&patlen,"SearchHelp"," Search Help ")<1)
       return;
-   if(getstring("Replace: ",(char*)replace,sizeof(replace)-1,&SearchHistory,&replen,NULL)<0)
+   if(getstring("Replace: ",(char*)replace,sizeof(replace)-1,&SearchHistory,&replen,"ReplaceHelp"," Replace Help ")<0)
       return;
    LastOp=REPLACE;
    if(!CompilePattern())

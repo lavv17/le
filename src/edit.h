@@ -60,7 +60,6 @@ typedef long            num;
 #include "history.h"
 #include "search.h"
 #include "file.h"
-#include "about.h"
 
 extern  int inputmode,editmode,noreg;
 #define BACKUP_SUFFIX_LEN 16

@@ -34,6 +34,7 @@
 #include "clipbrd.h"
 #include "getch.h"
 #include "format.h"
+#include "about.h"
 
 void  UserDeleteToEol()
 {

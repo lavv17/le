@@ -24,6 +24,7 @@
 #include "clipbrd.h"
 #include "format.h"
 #include "colormnu.h"
+#include "about.h"
 
 static bool RW() { return !View; }
 static bool BLK() { return !hide; }
