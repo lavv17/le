@@ -34,6 +34,7 @@ extern "C" {
    #include <regex.h>
 #else
    #include <rx.h>
+   #define RE_TRANSLATE_TYPE unsigned char *
 #endif
 }
 
@@ -57,7 +58,6 @@ num   fndlen=0;
 static struct re_registers regs;
 static struct re_pattern_buffer rexp;
 static bool rexp_compiled=false;
-static char fastmap[256];
 static bool word_bounds;
 static bool numeric_search;
 static bool hex_search;
@@ -111,8 +111,17 @@ static bool CompilePattern()
    if(noreg)
       return true;
 
-//    if(rexp_compiled)
-//       regfree(&rexp);
+   if(rexp_compiled)
+   {
+      regfree(&rexp);
+      rexp_compiled=false;
+      memset(&rexp,0,sizeof(rexp));
+      if(regs.start)
+	 free(regs.start);
+      if(regs.end)
+	 free(regs.end);
+      memset(&regs,0,sizeof(regs));
+   }
 
    re_syntax_options=RE_BK_PLUS_QM|RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS|
 		     RE_UNMATCHED_RIGHT_PAREN_ORD;
@@ -132,7 +141,8 @@ static bool CompilePattern()
 	 {
 	    case('i'): // ignore case
 	       map_to_lower_init();
-	       rexp.translate=map_to_lower;
+	       rexp.translate=(RE_TRANSLATE_TYPE)malloc(256);
+	       memcpy(rexp.translate,map_to_lower,256);
 	       break;
 	    case('w'):
 	       word_bounds=true;
@@ -184,7 +194,8 @@ static bool CompilePattern()
       return false;
    }
    rexp_compiled=true;
-   rexp.fastmap=fastmap;
+   rexp.fastmap=(char*)malloc(256);
+   re_compile_fastmap(&rexp);
    return true;
 }
 
@@ -345,6 +356,11 @@ search_again:
    }
    if(res==-1)
       return FALSE;
+   if(res==-2)
+   {
+      ErrMsg("re_search_2 failed");
+      return FALSE;
+   }
 
    fndind=res;
    if(noreg)

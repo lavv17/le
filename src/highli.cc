@@ -50,6 +50,7 @@ syntax_hl::syntax_hl(int color,int mask)
    this->color=color;
    this->mask=mask;
    memset(&rexp_c,0,sizeof(rexp_c));
+   memset(&regs,0,sizeof(regs));
 }
 
 syntax_hl::~syntax_hl()
@@ -83,6 +84,11 @@ const char *syntax_hl::set_rexp(const char *nr,bool ignore_case)
       regfree(&rexp_c);
       memset(&rexp_c,0,sizeof(rexp_c));
       rexp=0;
+      if(regs.start)
+	 free(regs.start);
+      if(regs.end)
+	 free(regs.end);
+      memset(&regs,0,sizeof(regs));
    }
    rexp=strdup(nr);
    if(rexp==0)
@@ -90,7 +96,8 @@ const char *syntax_hl::set_rexp(const char *nr,bool ignore_case)
    if(ignore_case)
    {
       map_to_lower_init();
-      rexp_c.translate=map_to_lower;
+      rexp_c.translate=(RE_TRANSLATE_TYPE)malloc(256);
+      memcpy(rexp_c.translate,map_to_lower,256);
    }
    re_syntax_options=RE_NO_BK_VBAR|RE_NO_BK_PARENS|RE_INTERVALS|
 		     RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS;
@@ -416,7 +423,9 @@ void syntax_hl::attrib_line(const char *buf1,int len1,
       {
 	 pos=re_search_2(&scan->rexp_c,buf1,len1,buf2,len2,
 			 pos,ll-pos,&scan->regs,ll);
-	 if(pos==-1)
+	 if(pos==-1) // not found
+	    break;
+	 if(pos==-2) // error ?
 	    break;
 	 unsigned r;
 	 unsigned m;

@@ -26,6 +26,7 @@ extern "C" {
    #include <regex.h>
 #else
    #include <rx.h>
+   #define RE_TRANSLATE_TYPE unsigned char *
 #endif
 }
 

@@ -1,3 +1,8 @@
+2000-02-18  lav
+
+	* highli.cc, highli.h, search.cc: fix few memory alloc/free problems
+	  with regex usage; handle errors from re_search_2.
+
 2000-02-17  lav
 
 	* edit.cc, edit.h, highli.cc, highli.h, keymapfn.cc, mainmenu.cc,
