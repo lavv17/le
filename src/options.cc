@@ -24,6 +24,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "edit.h"
 #include "rus.h"
 #include "keymap.h"
@@ -307,12 +309,24 @@ void  fskip(FILE *f)
    while((i=getc(f))!=EOF && i!='\n');
 }
 
-void  ReadConfFromOpenFile(FILE *f,const struct init *init)
+void  ReadConfFromOpenFile(FILE *f,const struct init *init,bool mine)
 {
    const struct init *ptr;
    int    i;
    char  str[256];
    char  *s;
+
+   if(mine)
+   {
+#ifndef __MSDOS__
+      struct stat st;
+      if(fstat(fileno(f),&st)==0)
+      {
+	 if(st.st_uid!=getuid()) // don't read conf from other's files.
+	    return;
+      }
+#endif
+   }
 
    for(;;)
    {
@@ -368,14 +382,31 @@ void  ReadConfFromOpenFile(FILE *f,const struct init *init)
    }
 }
 
-void  ReadConfFromFile(const char *ini,const struct init *init)
+void  ReadConfFromFile(const char *ini,const struct init *init,bool mine)
 {
    FILE  *f;
    f=fopen(ini,"r");
    if(f==NULL)
       return;
-   ReadConfFromOpenFile(f,init);
+   ReadConfFromOpenFile(f,init,mine);
    fclose(f);
+}
+
+static bool ConfOK(const char *f,bool mine)
+{
+   if(mine)
+   {
+#ifndef __MSDOS__
+      struct stat st;
+      if(stat(f,&st)==-1)
+	 return false;
+      if(st.st_uid!=getuid())
+	 return false; // don't use other's config
+#endif
+   }
+   if(access(f,R_OK)==-1)
+      return false;
+   return true;
 }
 
 void  ReadConf()
@@ -383,58 +414,60 @@ void  ReadConf()
    char  t[256];
 
 #ifndef __MSDOS__
+   bool mine;
+
    sprintf(t,"%s/.le/term-%s",HOME,TERM);
-   if(access(t,R_OK)==-1)
+   if(ConfOK(t,false))
    {
       sprintf(t,"%s/term-%s",PKGDATADIR,TERM);
-      if(access(t,R_OK)==-1)
+      if(!ConfOK(t,false))
       {
 	 sprintf(t,"%s/.le/term",HOME);
-	 if(access(t,R_OK)==-1)
+	 if(!ConfOK(t,false))
             sprintf(t,"%s/term",PKGDATADIR);
       }
    }
-   ReadConfFromFile(t,term);
+   ReadConfFromFile(t,term,false);
 
    if(chset[0]=='7') // workaround for older version
       init_chset();
 
    sprintf(t,"%s/.le/colors-%s",HOME,TERM);
-   if(access(t,R_OK)==-1)
+   if(!ConfOK(t,false))
    {
       sprintf(t,"%s/colors-%s",PKGDATADIR,TERM);
-      if(access(t,R_OK)==-1)
+      if(!ConfOK(t,false))
       {
 	 sprintf(t,"%s/.le/colors",HOME);
-	 if(access(t,R_OK)==-1)
+	 if(!ConfOK(t,false))
 	    sprintf(t,"%s/colors",PKGDATADIR);
       }
    }
-   ReadConfFromFile(t,colors);
+   ReadConfFromFile(t,colors,false);
    ParseColors();
 
    strcpy(InitName,".le.ini");
-   if(access(InitName,R_OK)==-1)
+   if(!ConfOK(InitName,mine=true))
    {
       sprintf(InitName,"%s/.le/le.ini",HOME);
-      if(access(InitName,R_OK)==-1)
+      if(!ConfOK(InitName,mine=false)==-1)
       {
 	 sprintf(t,"%s/le.ini",PKGDATADIR);
-	 ReadConfFromFile(t,init);
+	 ReadConfFromFile(t,init,false);
+	 goto ini_done;
       }
-      else
-	 ReadConfFromFile(InitName,init);
    }
-   else
-      ReadConfFromFile(InitName,init);
+   ReadConfFromFile(InitName,init,mine);
+
+ini_done:
 
 #else
    sprintf(t,"%s/le-%s",HOME,TERM);
-   ReadConfFromFile(t,term);
+   ReadConfFromFile(t,term,false);
    strcpy(InitName,"le.ini");
    if(access(InitName,R_OK)==-1)
      sprintf(InitName,"%s/le.ini",HOME);
-   ReadConfFromFile(InitName,init);
+   ReadConfFromFile(InitName,init,false);
 #endif
 
    CorrectParameters();
