@@ -1,3 +1,7 @@
+2004-09-20  lav
+
+	* getstr.cc: choose wide char in mb_mode.
+
 2004-08-19  lav
 
 	* search.cc: prevent original pattern being corrupted by strtok.

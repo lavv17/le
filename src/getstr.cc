@@ -190,11 +190,23 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
 	       mb_char_right(buf,&pos,&col,*len);
             break;
          case(CHOOSE_CHAR):
-            ch=choose_ch();
-            if(ch==-1)
-               break;
-	    StringTyped[0]=ch;
-	    StringTypedLen=1;
+	    if(mb_mode)
+	    {
+	       ch=choose_wch();
+	       if(ch==-1)
+		  break;
+	       StringTypedLen=wctomb((char*)StringTyped,ch);
+	       if(StringTypedLen<1)
+		  break;
+	    }
+	    else
+	    {
+	       ch=choose_ch();
+	       if(ch==-1)
+		  break;
+	       StringTyped[0]=ch;
+	       StringTypedLen=1;
+	    }
             goto ins;
          case(ENTER_CHAR_CODE):
             ch=getcode_char();
