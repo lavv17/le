@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 /* edit.c : main editor loop */
 
 #include <config.h>
@@ -393,10 +395,6 @@ void  InitCurses()
 
    idlok(stdscr,useidl);
    scrollok(stdscr,FALSE);
-
-#ifdef WITH_MOUSE
-   mousemask(ALL_MOUSE_EVENTS,0);
-#endif
 }
 void  TermCurses()
 {
