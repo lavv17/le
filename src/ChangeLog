@@ -1,3 +1,8 @@
+2001-04-28  lav
+
+	* keymap.cc: (ActionCodePrettyPrint) print 8-bit chars and ^@ correctly.
+	* history.cc: check device number too.
+
 2001-04-13  lav
 
 	* highli.cc: stop highlighting when it takes too long.

@@ -196,7 +196,7 @@ InodeInfo::InodeInfo(struct stat *st,num l,num c,num o)
 int   InodeInfo::SameFile(const InodeInfo& file) const
 {
 #ifndef BROKEN_INODES
-   return(/*device==file.device &&*/ inode==file.inode);
+   return(device==file.device && inode==file.inode);
 #else
    return(time==file.time && size==file.size);
 #endif

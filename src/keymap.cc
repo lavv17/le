@@ -343,7 +343,7 @@ const char *ActionCodePrettyPrint(const char *c)
       int   bracket;
       int   fk;
       int   shift;
-      char  code_ch=*c;
+      unsigned char code_ch=*c;
       switch(code_ch)
       {
       case('$'):
@@ -408,6 +408,11 @@ const char *ActionCodePrettyPrint(const char *c)
 	 {
 	    *store++='^';
 	    *store++=code_ch+'@';
+	 }
+	 else if(code_ch==128)
+	 {
+	    *store++='^';
+	    *store++='@';
 	 }
 	 else
 	    *store++=code_ch;
