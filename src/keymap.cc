@@ -823,7 +823,7 @@ int   GetNextAction()
 	       break;
 	 if(!scan)
 	 {
-	    if(StringTypedLen>1) {
+	    if(StringTypedLen>1 && kt->action==NO_ACTION) {
 	    // We've got an unknown sequence.
 	    // It is likely that it is a bit longer that we've already got,
 	    // so try to flush it.

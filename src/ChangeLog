@@ -1,3 +1,11 @@
+2000-12-18  lav
+
+	* block.cc: (DoUnindent) break loop if no next line found (fixes
+	  spinning in case of missing EOL on last line of block).
+	* keymap.cc: flush input only if no action matched.
+	* keymap.h: add MARK_ALL action.
+	* keymapdf.cc, keymapfn.cc: bind MARK_ALL.
+
 2000-09-15  lav
 
 	* edit.cc: call LoadMainMenu.

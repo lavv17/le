@@ -196,6 +196,8 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {YANK_BLOCK,"${kf4}y"},
    {START_DRAG_MARK,"${kf4}V"},
    {START_DRAG_MARK,"${kf4}v"},
+   {MARK_ALL,"${kf4}A"},
+   {MARK_ALL,"${kf4}a"},
 
 // Search
    {SEARCH_FORWARD,"$kf7"},

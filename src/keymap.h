@@ -102,6 +102,7 @@ enum  Action
    BLOCK_FUNC_BAR,
    MARK_LINE,
    MARK_TO_EOL,
+   MARK_ALL,
    START_DRAG_MARK,
    YANK_BLOCK,
 

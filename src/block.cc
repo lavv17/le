@@ -651,8 +651,11 @@ void    DoUnindent(int i)
             InsertChar('\t');
       for(; j>0; j--)
          InsertChar(' ');
+      offs prev=CurrentPos;
       MoveDown();
       ToLineBegin();
+      if(prev>=CurrentPos)
+	 break;	  // break if no eol was found on the line.
    }
    while(CurrentPos<BlockEnd);
    BlockEnd=CurrentPos;
