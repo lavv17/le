@@ -1,11 +1,13 @@
 dnl Locate ncurses or curses library
-AC_DEFUN(LE_PATH_CURSES_DIRECT,
+AC_DEFUN([LE_PATH_CURSES_DIRECT],
 [
   ncurses_h=no
   for ac_dir in               \
-    /usr/include/ncurses      \
+    /usr/local/include/ncursesw\
     /usr/local/include/ncurses\
     /usr/local/include	      \
+    /usr/include/ncursesw     \
+    /usr/include/ncurses      \
     /usr/include	      \
     ; \
   do
@@ -49,6 +51,11 @@ for ac_dir in `echo "$ac_curses_includes" | sed -e 's:include:lib:' -e 's:/ncurs
     ; \
 do
   for ac_extension in a so sl; do
+    if test -r $ac_dir/lib${curses_direct_test_library}w.$ac_extension; then
+      use_libcursesw=yes
+      no_curses= ac_curses_libraries=$ac_dir
+      break 2
+    fi
     if test -r $ac_dir/lib${curses_direct_test_library}.$ac_extension; then
       no_curses= ac_curses_libraries=$ac_dir
       break 2
@@ -57,7 +64,7 @@ do
 done
 ])
 
-AC_DEFUN(LE_PATH_CURSES,
+AC_DEFUN([LE_PATH_CURSES],
 [AC_REQUIRE_CPP()dnl
 
 curses_includes=NONE
@@ -84,7 +91,7 @@ LE_PATH_CURSES_DIRECT
 if test "$no_curses" = yes; then
   ac_cv_path_curses="no_curses=yes"
 else
-  ac_cv_path_curses="no_curses= ac_curses_includes=$ac_curses_includes ac_curses_libraries=$ac_curses_libraries ac_with_ncurses=$ac_with_ncurses ncurses_h=$ncurses_h"
+  ac_cv_path_curses="no_curses= ac_curses_includes=$ac_curses_includes ac_curses_libraries=$ac_curses_libraries ac_with_ncurses=$ac_with_ncurses ncurses_h=$ncurses_h use_libcursesw=$use_libcursesw"
 fi])dnl
   fi
   eval "$ac_cv_path_curses"
@@ -104,13 +111,13 @@ else
     AC_MSG_RESULT([libraries $curses_libraries, headers $curses_includes])
   fi
   if test x$ncurses_h = xyes; then
-    AC_DEFINE(USE_NCURSES_H)
+    AC_DEFINE([USE_NCURSES_H], 1, [define if ncurses.h instead of curses.h should be used])
   fi
 fi
 ])
 
 # check if mytinfo is required for ncurses usage
-AC_DEFUN(LE_MYTINFO_CHECK,
+AC_DEFUN([LE_MYTINFO_CHECK],
 [
    AC_CACHE_CHECK(whether mytinfo is required, ac_cv_need_mytinfo,
    [
@@ -142,7 +149,7 @@ AC_DEFUN(LE_MYTINFO_CHECK,
    fi
 ])
 
-AC_DEFUN(LE_CURSES_MOUSE,
+AC_DEFUN([LE_CURSES_MOUSE],
 [
    AC_LANG_SAVE
    AC_LANG_CPLUSPLUS
@@ -173,12 +180,12 @@ AC_DEFUN(LE_CURSES_MOUSE,
    ])
    AC_MSG_RESULT($ac_cv_curses_mouse)
    if test x$ac_cv_curses_mouse = xyes; then
-      AC_DEFINE(WITH_MOUSE)
+      AC_DEFINE([WITH_MOUSE], 1, [define if curses provides mouse interface])
    fi
    AC_LANG_RESTORE
 ])
 
-AC_DEFUN(LE_NCURSES_BUGS,
+AC_DEFUN([LE_NCURSES_BUGS],
 [
    if test x$ac_with_ncurses = xyes; then
       AC_LANG_SAVE
@@ -220,7 +227,7 @@ AC_DEFUN(LE_NCURSES_BUGS,
 ])
 
 dnl determine curses' bool actual type
-AC_DEFUN(LE_CURSES_BOOL,
+AC_DEFUN([LE_CURSES_BOOL],
 [
    AC_MSG_CHECKING(whether curses defines bool type in C++)
    AC_CACHE_VAL(ac_cv_curses_bool_defined,
@@ -291,13 +298,41 @@ AC_DEFUN(LE_CURSES_BOOL,
    ])
    AC_MSG_RESULT($ac_cv_curses_bool)
    if test "x$ac_cv_curses_bool" != xunknown; then
-      AC_DEFINE_UNQUOTED(LE_CURSES_BOOL_TYPE,$ac_cv_curses_bool)
+      AC_DEFINE_UNQUOTED([LE_CURSES_BOOL_TYPE],$ac_cv_curses_bool,[define to the type used as curses internal bool type])
    fi
   fi
 ])
 
+AC_DEFUN([LE_CURSES_WIDECHAR],
+[
+   AC_MSG_CHECKING(whether curses supports cchar_t)
+   AC_CACHE_VAL(ac_cv_curses_widechar,
+   [
+      old_CFLAGS="$CFLAGS"
+      old_LIBS="$LIBS"
+      CFLAGS="$CFLAGS $CURSES_INCLUDES"
+      LIBS="$LIBS $CURSES_LIBS"
+      AC_TRY_LINK([
+	 #define _XOPEN_SOURCE_EXTENDED
+	 #ifdef USE_NCURSES_H
+	 # include <ncurses.h>
+	 #else
+	 # include <curses.h>
+	 #endif],
+	 [cchar_t c;mvadd_wchnstr(0,0,&c,1);],
+	 [ac_cv_curses_widechar=yes],
+	 [ac_cv_curses_widechar=no])
+      CFLAGS="$old_CFLAGS"
+      LIBS="$old_LIBS"
+   ])
+   AC_MSG_RESULT($ac_cv_curses_widechar)
+   if test x$ac_cv_curses_widechar = xyes; then
+      AC_DEFINE([USE_MULTIBYTE_CHARS], 1, [Define to enable multibyte support])
+   fi
+])
+
 dnl check if c++ compiler can use dynamic initializers for static variables
-AC_DEFUN(CXX_DYNAMIC_INITIALIZERS,
+AC_DEFUN([CXX_DYNAMIC_INITIALIZERS],
 [
    AC_LANG_SAVE
    AC_LANG_CPLUSPLUS
@@ -321,22 +356,7 @@ AC_DEFUN(CXX_DYNAMIC_INITIALIZERS,
    AC_LANG_RESTORE
 ])
 
-AC_DEFUN(LFTP_PROG_CXXLINK,
-[
-   AC_MSG_CHECKING(how to link simple c++ programs)
-   if test "$GCC" = yes -a "$GXX" = yes; then
-      old_CXX="$CXX"
-      CXX="$CC"
-      AC_LANG_SAVE
-      AC_LANG_CPLUSPLUS
-      AC_TRY_LINK([],[char *a=new char[10];delete[] a;],
-	 [],[CXX="$old_CXX";])
-      AC_LANG_RESTORE
-   fi
-   AC_MSG_RESULT(using $CXX)
-])
-
-AC_DEFUN(LFTP_NOIMPLEMENTINLINE,
+AC_DEFUN([LFTP_NOIMPLEMENTINLINE],
 [
    AC_MSG_CHECKING(if -fno-implement-inlines implements virtual functions)
    flags="-fno-implement-inlines -Winline"
@@ -444,7 +464,7 @@ AC_ARG_WITH(regex,
             [am_with_regex=1])
 if test -n "$am_with_regex"; then
   AC_MSG_RESULT(regex)
-  AC_DEFINE(WITH_REGEX, 1, [Define if using GNU regex])
+  AC_DEFINE([WITH_REGEX], 1, [Define if using GNU regex])
   AC_CACHE_CHECK([for GNU regex in libc], am_cv_gnu_regex,
     [AC_TRY_LINK([],
                  [extern int re_max_failures; re_max_failures = 1],
