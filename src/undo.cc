@@ -50,6 +50,7 @@ void Undo::Clear()
    current_group=0;
    group_open=0;
    delete group_head;
+   group_head=0;
 }
 Undo::~Undo()
 {
@@ -120,26 +121,39 @@ void Undo::EndUndoGroup()
 
 Undo::Change::Change(type_t t,const char *l,num ls,const char *r,num rs)
 {
-   left=(char*)malloc(ls);
-   if(!left)
-      return;
-   right=(char*)malloc(rs);
-   if(!right)
-   {
-      free(left);
-      left=0;
-      return;
-   }
-   type=t;
-   left_size=ls;
-   right_size=rs;
-   memcpy(left,l,ls);
-   memcpy(right,r,rs);
+   left=0;
+   left_size=0;
+   right=0;
+   right_size=0;
 
+   type=t;
    pos=CurrentPos;
    old_modified=modified;
 
    next=prev=0;
+
+   if(ls>0)
+   {
+      left=(char*)malloc(ls);
+      if(!left)
+	 return;
+   }
+   if(rs>0)
+   {
+      right=(char*)malloc(rs);
+      if(!right)
+      {
+	 free(left);
+	 left=0;
+	 return;
+      }
+   }
+   left_size=ls;
+   right_size=rs;
+   if(ls>0)
+      memcpy(left,l,ls);
+   if(rs>0)
+      memcpy(right,r,rs);
 }
 
 void Undo::UndoGroup()
@@ -248,6 +262,8 @@ void Undo::Change::Redo()
 }
 static bool mappend(char **buf,num *size,const char *add,num add_size)
 {
+   if(add_size<=0)
+      return true;
    char *newbuf=(char*)realloc(*buf,*size+add_size);
    if(!newbuf)
       return false;
@@ -258,6 +274,8 @@ static bool mappend(char **buf,num *size,const char *add,num add_size)
 }
 static bool mprepend(char **buf,num *size,const char *add,num add_size)
 {
+   if(add_size<=0)
+      return true;
    char *newbuf=(char*)realloc(*buf,*size+add_size);
    if(!newbuf)
       return false;
