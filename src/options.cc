@@ -549,11 +549,11 @@ int GetDist(struct opt *to,int action)
    return(d);
 }
 
-void  Dialogue(struct opt *opt,int WinWidth,int WinHeight,char *WinTitle,
+
+void  W_Dialogue(struct opt *opt,
              char **SetupHelp[],char *SetupTitle,
              int (*EatKey)(int),int (*HandleButton)(char *))
 {
-   WIN *optw;
    int newitem=0;
    int first=1;
    char  s[512];
@@ -562,7 +562,7 @@ void  Dialogue(struct opt *opt,int WinWidth,int WinHeight,char *WinTitle,
    int size;
    int   action;
    int   OldShowStatusLine=ShowStatusLine;
-   attr  *a;
+   attr  *a=Upper->a;
 
    OldTabSize=TabSize;
 
@@ -597,9 +597,6 @@ void  Dialogue(struct opt *opt,int WinWidth,int WinHeight,char *WinTitle,
          *(int*)(p->old) = *(int*)(p->var);
       }
    }
-
-   optw=CreateWin(MIDDLE,MIDDLE,WinWidth,WinHeight,a=DIALOGUE_WIN_ATTR,WinTitle,0);
-   DisplayWin(optw);
 
    for(p=opt; p->name; p++)
    {
@@ -906,12 +903,24 @@ esc:  for(p=opt; p->name; p++)
             goto esc;
       }
    }
-   CloseWin();
-   DestroyWin(optw);
    free(opt->old);
    CorrectParameters();
    curs_set(0);
    idlok(stdscr,useidl);
+}
+
+void  Dialogue(struct opt *opt,int WinWidth,int WinHeight,char *WinTitle,
+             char **SetupHelp[],char *SetupTitle,
+             int (*EatKey)(int),int (*HandleButton)(char *))
+{
+   WIN *optw;
+   optw=CreateWin(MIDDLE,MIDDLE,WinWidth,WinHeight,DIALOGUE_WIN_ATTR,WinTitle,0);
+   DisplayWin(optw);
+
+   W_Dialogue(opt,SetupHelp,SetupTitle,EatKey,HandleButton);
+
+   CloseWin();
+   DestroyWin(optw);
 }
 
 int    OptEatKey(int k)
@@ -943,7 +952,7 @@ void  Options()
 
 void  SaveOpt()
 {
-#ifndef MSDOS
+#ifndef __MSDOS__
    SaveConf(".le.ini");
 #else
    SaveConf("le.ini");
@@ -974,4 +983,160 @@ void  FormatOptions(void)
 void  AppearOpt(void)
 {
    Dialogue(AppearOptTbl,26,11," Appearence Options ",NULL,NULL,TOEatKey,TOHandleBut);
+}
+
+static bg,fg,c_bold,c_rev,c_ul,c_dim,b_bold,b_rev,b_ul,b_dim;
+
+void  EditColor(color *cp,color *bp)
+{
+   struct opt color_opt[]=
+   {
+      {"Black",	  MANY,&fg,4,3},
+      {"Green",	  MANY,&fg,4,4},
+      {"Red",	  MANY,&fg,4,5},
+      {"Yellow",  MANY,&fg,4,6},
+      {"Blue",	  MANY,&fg,4,7},
+      {"Cyan",	  MANY,&fg,4,8},
+      {"Magenta", MANY,&fg,4,9},
+      {"White",	  MANY,&fg,4,10},
+
+      {"Black",	  MANY,&bg,19,3},
+      {"Green",	  MANY,&bg,19,4},
+      {"Red",	  MANY,&bg,19,5},
+      {"Yellow",  MANY,&bg,19,6},
+      {"Blue",	  MANY,&bg,19,7},
+      {"Cyan",	  MANY,&bg,19,8},
+      {"Magenta", MANY,&bg,19,9},
+      {"White",	  MANY,&bg,19,10},
+
+      {"Bold",	  ONE,&c_bold,	 34,3},
+      {"Reverse", ONE,&c_rev, 	 34,4},
+      {"Underline",ONE,&c_ul,	 34,5},
+      {"Dim",	  ONE,&c_dim,	 34,6},
+
+      {"Bold",	  ONE,&b_bold,	 49,3},
+      {"Reverse", ONE,&b_rev, 	 49,4},
+      {"Underline",ONE,&b_ul,	 49,5},
+      {"Dim",	  ONE,&b_dim,	 49,6},
+
+      {NULL}
+   };
+
+   static int color_xlat[]={COLOR_BLACK,COLOR_GREEN,COLOR_RED,COLOR_YELLOW,
+			    COLOR_BLUE,COLOR_CYAN,COLOR_MAGENTA,COLOR_WHITE};
+
+   for(bg=0; bg<8 && bg!=color_xlat[cp->bg]; bg++);
+   for(fg=0; fg<8 && fg!=color_xlat[cp->fg]; fg++);
+
+   c_bold=!!(cp->attr&A_BOLD);
+   c_rev =!!(cp->attr&A_REVERSE);
+   c_ul  =!!(cp->attr&A_UNDERLINE);
+   c_dim =!!(cp->attr&A_DIM);
+   b_bold=!!(bp->attr&A_BOLD);
+   b_rev =!!(bp->attr&A_REVERSE);
+   b_ul  =!!(bp->attr&A_UNDERLINE);
+   b_dim =!!(bp->attr&A_DIM);
+
+   WIN *w=CreateWin(MIDDLE,MIDDLE+5,66,13,DIALOGUE_WIN_ATTR," Edit color ");
+   DisplayWin(w);
+   PutStr(3,2, "Foreground");
+   PutStr(18,2,"Background");
+   PutStr(33,2,"Color options");
+   PutStr(48,2,"B/W attributes");
+
+   W_Dialogue(color_opt,NULL,NULL,TOEatKey,TOHandleBut);
+
+   CloseWin();
+   DestroyWin(w);
+
+   cp->fg=color_xlat[fg];
+   cp->bg=color_xlat[bg];
+   cp->attr=(c_bold?A_BOLD:0)|(c_rev?A_REVERSE:0)|(c_ul?A_UNDERLINE:0)|(c_dim?A_DIM:0);
+   bp->attr=(b_bold?A_BOLD:0)|(b_rev?A_REVERSE:0)|(b_ul?A_UNDERLINE:0)|(b_dim?A_DIM:0);
+}
+
+void  ColorsOpt()
+{
+   color new_color_pal[MAX_COLOR_NO+1];
+   color new_bw_pal[MAX_COLOR_NO+1];
+
+   memcpy(new_color_pal,color_pal,sizeof(new_color_pal));
+   memcpy(new_bw_pal,bw_pal,sizeof(new_bw_pal));
+
+   WIN *color_win=CreateWin(MIDDLE,MIDDLE,40,22,MENU_ATTR," Select color to tune ");
+   DisplayWin(color_win);
+
+   static struct menu m[]=
+   {
+      {"Normal text                         ",2,1},
+      {"Block text                          ",2,2},
+      {"Status line                         ",2,3},
+      {"Scroll bar                          ",2,4},
+      {"Error window                        ",2,5},
+      {"Verify window                       ",2,6},
+      {"Help window                         ",2,7},
+      {"Dialogue window                     ",2,8},
+      {"Menu                                ",2,9},
+      {"Current button                      ",2,10},
+      {"Disabled button                     ",2,11},
+      {"Shadow                              ",2,12},
+      {"Syntax 1                            ",2,13},
+      {"Syntax 2                            ",2,14},
+      {"Syntax 3                            ",2,15},
+      {"---",2,FDOWN-5},
+      {"&Save colors                         ",2,FDOWN-4},
+      {"Save as &terminal specific           ",2,FDOWN-3},
+      {"&Use colors for this session         ",2,FDOWN-2},
+      {"&Cancel                            ^X",2,FDOWN-1},
+      {0}
+   };
+
+   bool applied=false;
+   int curr=0;
+   for(;;)
+   {
+      int res=ReadMenu(m,VERT,MENU_ATTR,CURR_BUTTON_ATTR,curr);
+      if(res<0)
+      {
+	 curr=-res-1;
+	 static int color_xlat[]={
+	    NORMAL_TEXT,BLOCK_TEXT,STATUS_LINE,SCROLL_BAR,ERROR_WIN,VERIFY_WIN,
+	    HELP_WIN,DIALOGUE_WIN,MENU_WIN,CURR_BUTTON,DISABLED_ITEM,SHADOWED,
+	    SYNTAX1,SYNTAX2,SYNTAX3};
+	 assert(unsigned(curr)<sizeof(color_xlat)/sizeof(color_xlat[0]));
+	 int color_no=color_xlat[curr];
+	 EditColor(FindColor(new_color_pal,color_no),
+		   FindColor(new_bw_pal,color_no));
+	 continue;
+      }
+      if(res=='S' || res=='U' || res=='T')
+      {
+	 memcpy(color_pal,new_color_pal,sizeof(new_color_pal));
+	 memcpy(bw_pal,new_bw_pal,sizeof(new_bw_pal));
+	 init_attrs();
+      	 applied=true;
+      }
+      if(res=='S' || res=='T')
+      {
+	 DescribeColors(bw_pal,color_pal);
+	 const char *const n="/.le/colors";
+	 char *f=(char*)alloca(strlen(HOME)+strlen(n)+1+strlen(TERM)+1);
+	 if(res=='S')
+	    sprintf(f,"%s%s",HOME,n);
+	 else
+	    sprintf(f,"%s%s-%s",HOME,n,TERM);
+	 SaveConfToFile(f,colors);
+      }
+      break;
+   }
+
+   CloseWin();
+   DestroyWin(color_win);
+   if(applied)
+   {
+      clearok(stdscr,1);
+      flag=REDISPLAY_ALL;
+      RedisplayAll();
+      StatusLine();
+   }
 }
