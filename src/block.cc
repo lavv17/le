@@ -18,6 +18,7 @@
  */
 
 /* block.cc : block operations */
+/* $Id$ */
 
 #include <config.h>
 #include <assert.h>
