@@ -1,20 +1,20 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330, 
- * Boston, MA 02111-1307, USA. 
+ * the Free Software Foundation, 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 /* Search & replace for the editor */
@@ -25,41 +25,44 @@
 #include <string.h>
 #include "edit.h"
 #include "keymap.h"
+extern "C" {
+#include <regex.h>
+}
 
 #define SEARCH  1
 #define REPLACE 2
 
-#define FORWARD    1
+#define FORWARD   1
 #define BACKWARD  2
-
-#define  BITS_PER_WORD  (sizeof(unsigned)*8)
 
 History  SearchHistory;
 
 byte  pattern[256];
 int   patlen=0;
-struct srch_char
-{
-   int	 repeat;
-   unsigned cmap[256/BITS_PER_WORD];
-}
-      compiled_pattern[256],
-      *compiled_patlen;
-
-char  first_char[256];
 
 byte  replace[256];
 int   replen=0;
-byte  found[256];
-int   fndlen=0;
+
+offs  fndind=0;
+num   fndlen=0;
+
+struct re_registers regs;
+struct re_pattern_buffer rexp;
 
 int   LastOp=0;
 int   LastDir=FORWARD;
 
-offs  offslim;
-num   linelim;
-
 TextPoint   back_tp;
+
+
+char *my_memrchr(const char *mem,char ch,int len)
+{
+   const char *ptr=mem+len;
+   while(ptr>mem)
+      if(*--ptr==ch)
+	 return (char*)ptr;
+   return 0;
+}
 
 void  NotFound()
 {
@@ -70,224 +73,160 @@ void  NotFound()
    WaitForKey();
 }
 
-void  CompilePattern()
+int   CompilePattern()
 {
-   int	 j=0,k,lim1,lim2,i;
-   int   NOT,start;
-
-   for(i=0; i<patlen; i++)
+   re_syntax_options=RE_SYNTAX_EMACS;
+   const char *err=re_compile_pattern((char*)pattern,patlen,&rexp);
+   if(err)
    {
-      compiled_pattern[j].repeat=0;
-      memset(&(compiled_pattern[j].cmap),0,32);
+      ErrMsg(err);
+      return 0;
+   }
+   rexp.newline_anchor=1;
+   return 1;
+}
 
-      if(noreg)
-         goto _default;
+int   no_re_search_2(const char *str,const int slen,
+		     const char *buf1,const int len1,
+		     const char *buf2,const int len2,
+		     const int start,const int range)
+{
+   const char *pos;
+   char c0=str[0];
 
-      switch(pattern[i])
+   if(range>0)
+   {
+      pos=buf1+start;
+      while(pos<buf1+len1)
       {
-      case('.'):
-         memset(&(compiled_pattern[j].cmap),255,32);
-         j++;
-         break;
-      case('*'):
-         if(j<1)
-            goto _default;
-         compiled_pattern[j-1].repeat=-1;
-         break;
-      case('\\'):
-         i++;
-         goto _default;
-      case('['):
-	 for(k=i+1; k<patlen; k++)
+	 if(pos>=buf1+start+range)
+	    return -1;
+	 pos=(char*)memchr(pos,c0,len1-(pos-buf1));
+	 if(pos)
 	 {
-	    if(pattern[k]=='\\')
-	       k++;
-	    else if(pattern[k]==']')
-	       break;
-	 }
-	 if(k>=patlen)
-            goto _default;
-	 i++;
-	 if(pattern[i]=='^')
-	    NOT=TRUE,i++;
-	 else
-	    NOT=FALSE;
-	 start=i;
-	 i=k;
-	 for(k=start; pattern[k]!=']'; k++)
-	 {
-	    if(pattern[k]=='-' && k>start && pattern[k+1]!=']')
+	    if(pos<=buf1+len1-slen)
 	    {
-	       lim1=pattern[k-1];
-	       k++;
-	       if(pattern[k]=='\\')
-		  k++;
-	       lim2=pattern[k];
-               while(lim1<=lim2)
-               {
-                  compiled_pattern[j].cmap[lim1/BITS_PER_WORD]|=(1<<(lim1%BITS_PER_WORD));
-                  lim1++;
-               }
+	       if(!memcmp(pos,str,slen))
+		  return pos-buf1;
+	       pos++;
+	    }
+	    else if(pos<=buf1+len1+len2-slen)
+	    {
+	       if(!memcmp(pos,str,len1-(pos-buf1))
+	       && !memcmp(buf2,str+len1-(pos-buf1),slen-(len1-(pos-buf1))))
+		  return pos-buf1;
+	       pos++;
 	    }
 	    else
+	       pos=buf1+len1;
+	 }
+	 else
+	    pos=buf1+len1;
+      }
+      pos=pos-buf1+buf2-len1;
+      while(pos<buf2+len2)
+      {
+	 if(pos>=buf2+start-len1+range)
+	    return -1;
+	 pos=(char*)memchr(pos,c0,len2-(pos-buf2));
+	 if(pos)
+	 {
+	    if(pos>=buf2+start-len1+range)
+	       return -1;
+	    if(pos<=buf2+len2-slen)
 	    {
-	       if(pattern[k]=='\\')
-		  k++;
-	       if(pattern[k+1]!='-' || pattern[k+2]==']')
-                  compiled_pattern[j].cmap[pattern[k]/BITS_PER_WORD]|=(1<<(pattern[k]%BITS_PER_WORD));
+	       if(!memcmp(pos,str,slen))
+		  return pos-buf2+len1;
+	       pos++;
 	    }
-         }
-         if(NOT)
-         {
-            for(unsigned q=0; q<256/BITS_PER_WORD; q++)
-               compiled_pattern[j].cmap[q]^=(unsigned)-1;
-         }
-         j++;
-         break;
-      default:
-      _default:
-	 compiled_pattern[j].cmap[pattern[i]/BITS_PER_WORD]|=(1<<(pattern[i]%BITS_PER_WORD));
-         j++;
-         break;
+	    else
+	       break;
+	 }
+	 else
+	    break;
       }
    }
-   compiled_patlen=compiled_pattern+j;
-
-   for(k=0; k<256; k++)
-      first_char[k]=(compiled_pattern[0].cmap[k/BITS_PER_WORD]>>(k%BITS_PER_WORD))&1;
-   for(i=1; i<j && compiled_pattern[i-1].repeat; i++)
-      for(k=0; k<256; k++)
-         first_char[k]|=(compiled_pattern[i].cmap[k/BITS_PER_WORD]>>(k%BITS_PER_WORD))&1;
-}
-
-static inline
-int   CharMatch(register struct srch_char *pch,register byte tch)
-{
-   return(pch->cmap[tch/BITS_PER_WORD]&(1<<(tch%BITS_PER_WORD)));
-}
-
-inline
-offs  FindCharForward(register char *sch,register offs start,offs lim)
-{
-   while(start<lim)
+   else	/* range<=0 */
    {
-      if(sch[CharAt_NoCheck(start)])
-         return(start);
-      start++;
-   }
-   return(-1);
-}
-inline
-offs  FindCharBackward(register char *sch,register offs start,offs lim)
-{
-   while(start>=lim)
-   {
-      if(sch[CharAt_NoCheck(start)])
-         return(start);
-      start--;
-   }
-   return(-1);
-}
-
-static inline
-int    Match(register offs ptr,register struct srch_char *pch)
-{
-   register int  ch;
-
-   for(;;)
-   {
-      if(!pch->repeat)
+      pos=buf2+start-len1;
+      if(pos>buf2+len2-slen)
+	 pos=buf2+len2-slen;
+      while(pos>=buf2)
       {
-	 if(EofAt(ptr))
-	    return(FALSE);
-	 ch=CharAt_NoCheck(ptr++);
-	 if(CharMatch(pch,ch) && fndlen<256)
-         {
-   	    found[fndlen++]=ch;
-   	    if(++pch<compiled_patlen)
-	       continue;
-            return(TRUE);
-         }
-         return(FALSE);
+	 if(pos<buf2+start-len1+range)
+	    return -1;
+	 pos=my_memrchr(buf2,c0,pos-buf2+1);
+	 if(pos)
+	 {
+	    if(!memcmp(pos,str,slen))
+	       return pos-buf2+len1;
+	    pos--;
+	 }
+	 else
+	    pos=buf2-1;
       }
-      else
+      pos=buf1+len1-(buf2-pos);
+      while(pos>=buf1)
       {
-	 int oldfndlen=fndlen;
-	 if(fndlen>0 && (pch+1>=compiled_patlen || Match(ptr,pch+1)))
-	    return(TRUE);
-	 fndlen=oldfndlen;
-
-	 if(EofAt(ptr))
-	    return(FALSE);
-	 ch=CharAt_NoCheck(ptr++);
-	 if(CharMatch(pch,ch) && fndlen<256)
-         {
-   	    found[fndlen++]=ch;
-            continue;
-         }
-         return(FALSE);
+	 if(pos<buf1+start+range)
+	    return -1;
+	 pos=my_memrchr(buf1,c0,pos-buf1+1);
+	 if(pos)
+	 {
+	    if(pos<=buf1+len1-slen)
+	    {
+	       if(!memcmp(pos,str,slen))
+		  return pos-buf1;
+	       pos--;
+	    }
+	    else //if(pos<=buf1+len1+len2-slen)
+	    {
+	       if(!memcmp(pos,str,len1-(pos-buf1))
+	       && !memcmp(buf2,str+len1-(pos-buf1),slen-(len1-(pos-buf1))))
+		  return pos-buf1;
+	       pos--;
+	    }
+	 }
+	 else
+	    break;
       }
    }
+   return -1;
 }
 
-int    Search(int dir)
+int    Search(int dir,offs offslim)
 {
    Message(dir==FORWARD?"Searching forwards...":"Searching backwards...");
 
-   register offs srchpos=CurrentPos;
+   offs srchpos=CurrentPos;
 
-   if(dir==FORWARD)
-   {
-      if(rblock)
-	 offslim=TextPoint(linelim+1,0);
-      if(offslim>Size())
-         offslim=Size();
+   if(dir==FORWARD && srchpos>=offslim
+   || dir==BACKWARD && srchpos<=offslim)
+      return FALSE;
 
-      for(;;)
-      {
-	 srchpos=FindCharForward(first_char,srchpos,offslim);
-         if(srchpos==-1)
-            break;
-	 fndlen=0;
-         if(Match(srchpos,compiled_pattern))
-         {
-            CurrentPos=srchpos;
-            stdcol=GetCol();
-            return(TRUE);
-         }
-         else
-            srchpos++;
-      }
-   }
+   int res;
+   if(noreg)
+      res=no_re_search_2((char*)pattern,patlen,buffer,ptr1,
+			 buffer+ptr2,BufferSize-ptr2,srchpos,offslim-srchpos);
    else
-   {
-      if(rblock)
-	 offslim=TextPoint(linelim,0);
-      if(offslim<0)
-         offslim=0;
+      res=re_search_2(&rexp,buffer,ptr1,buffer+ptr2,BufferSize-ptr2,
+		      srchpos,offslim-srchpos,&regs,offslim-srchpos);
+   if(res==-1)
+      return FALSE;
 
-      for(;;)
-      {
-         srchpos=FindCharBackward(first_char,srchpos,offslim);
-         if(srchpos==-1)
-            break;
-	 fndlen=0;
-         if(Match(srchpos,compiled_pattern))
-         {
-            CurrentPos=srchpos;
-            stdcol=GetCol();
-            return(TRUE);
-         }
-         else
-            srchpos--;
-      }
-   }
-   return(FALSE);
+   fndind=res;
+   if(noreg)
+      fndlen=patlen;
+   else
+      fndlen=regs.end[0]-res;
+   CurrentPos=fndind;
+   return(TRUE);
 }
 
 void  ReplaceFound()
 {
    register int  i;
+   offs	 o=0;
 
    if(!noreg)
    {
@@ -296,13 +235,31 @@ void  ReplaceFound()
          switch(replace[i])
          {
          case('\\'):
-            if(i < (replen-1))
-               i++;
+	    if(i < (replen-1))
+            {
+	       i++;
+	       char ch=replace[i];
+	       if(ch=='&')
+		  ch='0';
+	       if(ch>='0' && ch<='9')
+	       {
+		  unsigned n=ch-'0';
+		  if(n<regs.num_regs)
+		  {
+		     CopyBlock(regs.start[n]+o,regs.end[n]-regs.start[n]);
+		     o+=regs.end[n]-regs.start[n];
+		  }
+		  break;
+	       }
+	    }
          default:
             InsertChar(replace[i]);
-            break;
+            o++;
+	    break;
          case('&'):
-            InsertBlock((char*)found,fndlen);
+            CopyBlock(fndind+o,fndlen);
+	    o+=fndlen;
+	    break;
          }
       }
    }
@@ -329,17 +286,7 @@ void  Replace()
 
    do
    {
-      if(key!='#')
-      {
-         linelim=TextEnd.Line();
-         offslim=TextEnd.Offset();
-      }
-      else
-      {
-         linelim=BlockEnd.Line();
-         offslim=BlockEnd.Offset();
-      }
-      if(!Search(FORWARD))
+      if(!Search(FORWARD,(key!='#'?TextEnd:BlockEnd)))
       {
          if(first)
             NotFound();
@@ -481,15 +428,13 @@ void  ContSearch()
          StartSearch();
          return;
       }
-      offslim=Size();
-      linelim=TextEnd.Line();
       if(Eof())
       {
          NotFound();
          return;
       }
       MoveRight();
-      if(!Search(FORWARD))
+      if(!Search(FORWARD,TextEnd))
       {
          MoveLeft();
          GetCol();
@@ -505,15 +450,13 @@ void  ContSearch()
          StartSearchBackward();
          return;
       }
-      offslim=0;
-      linelim=0;
       if(Bof())
       {
          NotFound();
          return;
       }
       MoveLeft();
-      if(!Search(BACKWARD))
+      if(!Search(BACKWARD,0))
       {
          MoveRight();
          GetCol();
@@ -532,7 +475,8 @@ void  StartSearch()
      return;
    LastDir=FORWARD;
    LastOp=SEARCH;
-   CompilePattern();
+   if(!CompilePattern())
+      return;
    ContSearch();
 }
 void  StartSearchBackward()
@@ -542,7 +486,8 @@ void  StartSearchBackward()
      return;
    LastDir=BACKWARD;
    LastOp=SEARCH;
-   CompilePattern();
+   if(!CompilePattern())
+      return;
    ContSearch();
 }
 
@@ -563,7 +508,8 @@ void  StartReplace()
    if(getstring("Replace: ",(char*)replace,sizeof(replace)-1,&SearchHistory,&replen,NULL)<0)
       return;
    LastOp=REPLACE;
-   CompilePattern();
+   if(!CompilePattern())
+      return;
    ContReplace();
 }
 
