@@ -28,6 +28,7 @@
 #include "keymap.h"
 #include "getch.h"
 #include "search.h"
+#include "xalloca.h"
 
 extern "C" {
 #ifdef WITH_REGEX

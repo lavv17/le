@@ -1,3 +1,10 @@
+2001-03-16  lav
+
+	* edit.cc, edit.h, kern.cc: (SeekStdCol) new function, use it.
+	* user.cc: fix UserLineDown in case when EOL is missing on last line;
+	  call SeekStdCol in UserMark* functions.
+	* search.cc, highli.cc: include xalloca.h.
+
 2001-02-01  lav
 
 	* about.cc: correct copyright string.

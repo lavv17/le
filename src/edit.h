@@ -226,6 +226,8 @@ void    GoToOffset(void);
 void    GoToLineNumber(void);
 void    GoToLineNum(num);
 
+void  SeekStdCol();
+
 void  CheckWindowResize();
 
 extern  void    Quit(void),

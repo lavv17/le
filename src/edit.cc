@@ -129,21 +129,13 @@ void ProcessDragMark()
 void    Edit()
 {
    int      key;
-   num      std;
    int      action;
    ActionProc proc;
    num	 old_num_of_lines=-1;
 
    while(1)
    {
-      std=stdcol;
-      if(!hex)
-      {
-         while(GetCol()>std)
-           MoveLeft();
-         while(GetCol()<std && !Eol())
-           MoveRight();
-      }
+      SeekStdCol();
       if(hex)
          flag|=REDISPLAY_LINE;
 

@@ -20,13 +20,14 @@
 
 #include <config.h>
 
+#include <fnmatch.h>
+#include <string.h>
+#include <stdlib.h>
 #include "highli.h"
 #include "edit.h"
 #include "screen.h"
 #include "search.h"
-#include <fnmatch.h>
-#include <string.h>
-#include <stdlib.h>
+#include "xalloca.h"
 
 int hl_option=1;
 int hl_active=0;

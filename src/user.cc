@@ -72,7 +72,19 @@ void  UserLineDown()
    }
    else
    {
+      num line=GetLine();
       MoveDown();
+      if(line>=GetLine())
+      {
+	 if(Text)
+	 {
+	    num old_stdcol=stdcol;
+	    InsertChar('\n');
+	    stdcol=old_stdcol;
+	 }
+	 else
+	    stdcol=GetCol();
+      }
    }
 }
 
@@ -1507,6 +1519,7 @@ static void post_mark_move()
       pre_mark_move();	   \
       hide=1;		   \
       User##move();	   \
+      SeekStdCol();	   \
       post_mark_move();	   \
    }
 MarkMove(CharLeft);

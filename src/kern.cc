@@ -1051,3 +1051,15 @@ void  ConvertFromUnixToDos(offs start,num size)
       start++;
    }
 }
+
+void  SeekStdCol()
+{
+   num std=stdcol;
+   if(!hex)
+   {
+      while(GetCol()>std)
+	MoveLeft();
+      while(GetCol()<std && !Eol())
+	MoveRight();
+   }
+}

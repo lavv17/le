@@ -15,8 +15,7 @@ le_LDADD = $(top_builddir)/lib/liblib.a $(CURSES_LIBS)
 INCLUDES = -I$(top_builddir)/include -I$(top_srcdir)/include $(CURSES_INCLUDES)
 CPPFLAGS = -DPKGDATADIR=\"$(pkgdatadir)\"
 
-EXTRA_DIST = le.1 le.hlp
-man_MANS = le.1
+EXTRA_DIST = le.hlp
 pkgdata_DATA = le.hlp
 
 OMIT_DEPENDENCIES = fnmatch.h poll.h
