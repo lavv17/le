@@ -397,9 +397,6 @@ static void MoveBackup(char *bp,char *filename,char *bak,int n)
 
 static int CreateBak(char *name)
 {
-   if(bak[0]==0)
-      return OK;
-
    char  *buf2;
    num   buf2size;
    num   bytesread;
