@@ -148,8 +148,8 @@ RANGE|ROOT|SOUND|SPACER|SQRT|TEXT|WBR|XMP\
 # extension .lout
 # Most standard tags for Lout 3.13
 /*.lout
-## comments
-c3,1=#.*$
+## comments and literals
+c3,1=(#.*$)|(".*")
 ## other special characters
 c2,1=(&|/|@|\^|{|}|\||~|"|\\\|``|'')
 ## tags
