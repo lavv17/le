@@ -218,7 +218,7 @@ int    Search(int dir,offs offslim)
 			 buffer+ptr2,BufferSize-ptr2,srchpos,offslim-srchpos);
    else
       res=re_search_2(&rexp,buffer,ptr1,buffer+ptr2,BufferSize-ptr2,
-		      srchpos,offslim-srchpos,&regs,offslim-srchpos);
+		      srchpos,offslim-srchpos,&regs,offslim);
    if(res==-1)
       return FALSE;
 

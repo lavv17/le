@@ -256,7 +256,7 @@ int   LoadFile(char *name)
    PositionHistory+=FileInfo;
    LoadHistory+=HistoryLine(name);
 
-   InitHighlight(name);
+   InitHighlight();
 
    ScrShift=0;
    CenterView();
