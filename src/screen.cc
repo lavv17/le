@@ -704,6 +704,12 @@ void  Redisplay(num line,offs ptr,num limit)
 		     {
 			clwp->attr=ca->n_attr;
 			clwp->chars[0]=ch;
+			if(MBCharSize==1 && ch<32)
+			{
+			   chtype v=visualize(ca,CharAt(ptr)|ca->n_attr);
+			   clwp->chars[0]=v&A_CHARTEXT;
+			   clwp->attr=v&~A_CHARTEXT;
+			}
 			clwp++;
 		     }
 		  }

@@ -28,6 +28,7 @@
 # define bool LE_CURSES_BOOL_TYPE
 # define bool_redefined 1
 #endif
+#define _XOPEN_SOURCE_EXTENDED
 #ifdef USE_NCURSES_H
 # include <ncurses.h>
 #else
@@ -146,16 +147,17 @@ extern   int   TabsInMargin;
 void  MoveLeftOverEOL();
 void  MoveRightOverEOL();
 
-void    MoveLineCol(num,num);
-void    HideDisplay(void);
-char    CharAtLC(num,num);
-void    NewLine(void);
-void    HardMove(num,num);
-void    ExpandTab(void);
+void  MoveLineCol(num,num);
+void  HideDisplay(void);
+char  CharAtLC(num,num);
+void  NewLine(void);
+void  HardMove(num,num);
+void  ExpandTab(void);
+bool  IsAlNumAt(offs);
 
-int     getcode();
-int     AskToSave();
-void    Quit(void);
+int   getcode();
+int   AskToSave();
+void  Quit(void);
 
 void  InstallSignalHandlers(void);
 void  ReleaseSignalHandlers(void);

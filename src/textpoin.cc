@@ -318,7 +318,10 @@ void  TextPoint::FindLineCol()
 	 o++;
       }
       else if(CharAt(o)=='\t')
+      {
          c=Tabulate(c);
+	 o++;
+      }
       else
       {
 	 MBCheckAt(o);

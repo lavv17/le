@@ -25,8 +25,8 @@
 #include <mbswidth.h>
 #include "mb.h"
 
-bool  mb_mode=true;
 #ifdef USE_MULTIBYTE_CHARS
+bool  mb_mode=true;
 int   MBCharSize=1;
 int   MBCharWidth=1;
 

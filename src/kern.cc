@@ -1019,17 +1019,24 @@ void  EmptyText()
    EolStr="\n";
 }
 
+bool IsAlNumAt(num o)
+{
+   if(mb_mode)
+      return iswalnum(WCharAt(o));
+   return isalnum(CharAt(o)) || isrussian(CharAt(o));
+}
+
 char  *GetWord()
 {
    static   char  word[256];
    num         shift=(-1);
    int         i;
 
-   while(isalnum(CharRel(shift)) || CharRel(shift)=='.' || CharRel(shift)=='_')
+   while(IsAlNumRel(shift) || CharRel(shift)=='.' || CharRel(shift)=='_')
      shift--;
    shift++;
    i=0;
-   while(i<255 && (isalnum(CharRel(shift)) || CharRel(shift)=='.' || CharRel(shift)=='_'))
+   while(i<255 && (IsAlNumRel(shift) || CharRel(shift)=='.' || CharRel(shift)=='_'))
      word[i++]=CharRel(shift++);
    word[i]=0;
    return(word);

@@ -273,8 +273,7 @@ void  UserBackwardDeleteWord()
 {
    if(View || hex)
       return;
-   if(!isalnum(CharRel(-1)) && !isrussian(CharRel(-1))
-   && CharRel(-1)!=' ' && CharRel(-1)!='\t')
+   if(!IsAlNumLeft() && CharRel(-1)!=' ' && CharRel(-1)!='\t')
    {
       UserBackSpace();
    }
@@ -284,12 +283,12 @@ void  UserBackwardDeleteWord()
       if(!Bol() && (CharRel(-1)==' ' || CharRel(-1)=='\t'))
       {
 	 while(!Bol() && (CharRel(-1)==' ' || CharRel(-1)=='\t'))
-	    BackSpace();
+	    DeleteBlock(1,0);
       }
       else
       {
-	 while(!Bol() && (isalnum(CharRel(-1)) || isrussian(CharRel(-1))))
-            BackSpace();
+	 while(!Bol() && IsAlNumLeft())
+	    DeleteBlock(MBCharSize,0);
       }
    }
    stdcol=GetCol();
@@ -300,8 +299,7 @@ void  UserForwardDeleteWord()
 {
    if(View || hex)
       return;
-   if(!isalnum(Char()) && !isrussian(Char())
-   && Char()!=' ' && Char()!='\t')
+   if(!IsAlNumRel(0) && Char()!=' ' && Char()!='\t')
       UserDeleteChar();
    else
    {
@@ -309,12 +307,12 @@ void  UserForwardDeleteWord()
       if(!Eol() && (Char()==' ' || Char()=='\t'))
       {
 	 while(!Eol() && (Char()==' ' || Char()=='\t'))
-	    DeleteChar();
+	    DeleteBlock(0,1);
       }
       else
       {
-	 while(!Eol() && (isalnum(Char()) || isrussian(Char())))
-            DeleteChar();
+	 while(!Eol() && IsAlNumRel(0))
+            DeleteBlock(0,MBCharSize);
       }
    }
    stdcol=GetCol();
@@ -325,15 +323,15 @@ void  UserDeleteWord()
 {
    if(View || hex)
       return;
-   if(!isalnum(Char()) && !isrussian(Char()))
+   if(!IsAlNumRel(0))
       UserForwardDeleteWord();
    else
    {
       PreUserEdit();
-      while(!Eol() && (isalnum(Char()) || isrussian(Char())))
-         DeleteChar();
-      while(!Bol() && (isalnum(CharRel(-1)) || isrussian(CharRel(-1))))
-         BackSpace();
+      while(!Eol() && IsAlNumRel(0))
+         DeleteBlock(0,MBCharSize);
+      while(!Bol() && IsAlNumLeft())
+	 DeleteBlock(MBCharSize,0);
    }
    stdcol=GetCol();
    flag|=REDISPLAY_LINE;
@@ -346,12 +344,18 @@ void  UserMarkWord()
 
    offs word_begin=CurrentPos;
    offs word_end=CurrentPos;
-   while(!BofAt(word_begin) && isalnum(CharAt(word_begin-1)))
-      word_begin--;
-   while(!EofAt(word_end) && isalnum(CharAt(word_end)))
-      word_end++;
+   while(!BofAt(word_begin))
+   {
+      MBCheckLeftAt(word_begin);
+      if(IsAlNumAt(word_begin-MBCharSize))
+	 word_begin--;
+      else
+	 break;
+   }
+   while(!EofAt(word_end) && IsAlNumAt(word_end))
+      word_end+=MBCharSize;
    if(word_end==word_begin)
-      word_end++;
+      word_end+=MBCharSize;
    BlockBegin=word_begin;
    BlockEnd=word_end;
    hide=FALSE;
@@ -522,10 +526,10 @@ void  UserWordLeft()
       MoveLeft();
    else
    {
-      while(!Bof() && !isalnum(CharRel(-1)) && !isrussian(CharRel(-1)))
-         MoveLeft();
-      while(!Bof() && (isalnum(CharRel(-1)) || isrussian(CharRel(-1))))
-         MoveLeft();
+      while(!Bof() && !IsAlNumLeft())
+         CurrentPos-=MBCharSize;
+      while(!Bof() && IsAlNumLeft())
+         CurrentPos-=MBCharSize;
    }
    stdcol=GetCol();
 }
@@ -535,10 +539,10 @@ void  UserWordRight()
       MoveRight();
    else
    {
-      while(!Eof() && !isalnum(Char()) && !isrussian(Char()))
-         MoveRight();
-      while(!Eof() && (isalnum(Char()) || isrussian(Char())))
-         MoveRight();
+      while(!Eof() && !IsAlNumRel(0))
+         CurrentPos+=MBCharSize;
+      while(!Eof() && IsAlNumRel(0))
+         CurrentPos+=MBCharSize;
    }
    stdcol=GetCol();
 }

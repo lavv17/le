@@ -18,12 +18,13 @@
 
 /* $Id$ */
 
-extern bool mb_mode;
+#ifndef MB_H
+#define MB_H
 
 #ifdef USE_MULTIBYTE_CHARS
-
 #include <wchar.h>
 
+extern bool mb_mode;
 extern int  MBCharSize;
 extern int  MBCharWidth;
 
@@ -39,6 +40,7 @@ static inline int CharSize()  { return CharSizeAt(Offset()); }
 static inline int CharWidth() { return CharWidthAt(Offset()); }
 
 #else
+# define mb_mode false
 # define MBCheckLeft()	(false)
 # define MBCheckLeftAt(o) (false)
 # define MBCheckAt(o)	(false)
@@ -50,3 +52,5 @@ static inline int CharWidth() { return CharWidthAt(Offset()); }
 # define CharWidth()	(1)
 # define CharSize()	(1)
 #endif
+
+#endif//MB_H

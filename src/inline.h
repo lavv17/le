@@ -17,7 +17,7 @@
  */
 
 static inline
-byte  CharAt(register offs offset)
+byte  CharAt(offs offset)
 {
    if(offset>=ptr1)
       offset+=GapSize;
@@ -27,7 +27,7 @@ byte  CharAt(register offs offset)
 }
 // same as above, but without bound check
 static inline
-byte  CharAt_NoCheck(register offs offset)
+byte  CharAt_NoCheck(offs offset)
 {
    if(offset>=ptr1)
       offset+=GapSize;
@@ -79,6 +79,20 @@ byte    CharRel_NoCheck(offs sh)
    return(CharAt_NoCheck(Offset()+sh));
 }
 static inline
+bool  IsAlNumRel(offs sh)
+{
+   return IsAlNumAt(Offset()+sh);
+}
+
+#include "mb.h"
+
+static inline
+bool  IsAlNumLeft()
+{
+   MBCheckLeft();
+   return IsAlNumAt(Offset()-MBCharSize);
+}
+static inline
 void    MoveRight()
 {
    CurrentPos+=1;
@@ -103,12 +117,14 @@ num     GetLine()
 static inline
 void    DeleteChar()
 {
-   DeleteBlock(0,1);
+   MBCheckRight();
+   DeleteBlock(0,MBCharSize);
 }
 static inline
 void    BackSpace()
 {
-   DeleteBlock(1,0);
+   MBCheckLeft();
+   DeleteBlock(MBCharSize,0);
 }
 static inline
 int EolAt(offs o)
