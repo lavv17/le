@@ -1566,3 +1566,8 @@ void UserOptimizeText()
    stdcol=GetCol();
    flag=REDISPLAY_ALL;
 }
+
+void UserRememberBlock()
+{
+   MainClipBoard.Copy();
+}

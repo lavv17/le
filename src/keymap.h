@@ -105,6 +105,7 @@ enum  Action
    MARK_ALL,
    START_DRAG_MARK,
    YANK_BLOCK,
+   REMEMBER_BLOCK,
 
 // Search
    SEARCH_FORWARD,

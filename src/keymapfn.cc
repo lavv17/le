@@ -112,6 +112,7 @@ ActionProcRec  EditorActionProcTable[]=
    {MARK_ALL,UserMarkAll},
    {START_DRAG_MARK,UserStartDragMark},
    {YANK_BLOCK,UserYankBlock},
+   {REMEMBER_BLOCK,UserRememberBlock},
 
 // Search
    {SEARCH_FORWARD,StartSearch},

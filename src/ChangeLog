@@ -1,5 +1,13 @@
 2001-03-16  lav
 
+	* getch.cc: (linux_process_key) new function.
+	* keymap.cc, keymap.h, keymapfn.cc, keymapdf.cc: new action
+	  remember-block to save block to clipboard; bind delete-block
+	  to xterm's shift-del and yank-block to xterm's shift-ins.
+	* user.cc, user.h: (UserRememberBlock) new function.
+
+2001-03-16  lav
+
 	* edit.cc, edit.h, kern.cc: (SeekStdCol) new function, use it.
 	* user.cc: fix UserLineDown in case when EOL is missing on last line;
 	  call SeekStdCol in UserMark* functions.

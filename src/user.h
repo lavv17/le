@@ -124,6 +124,7 @@ void  UserBlockPrefixIndent();
 void  UserShellCommand();
 
 void  UserYankBlock();
+void  UserRememberBlock();
 
 void  UserStartDragMark();
 void  UserStopDragMark();

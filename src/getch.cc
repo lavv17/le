@@ -28,6 +28,8 @@
 #include <signal.h>
 #include <errno.h>
 #include <setjmp.h>
+#include <sys/types.h>
+#include <sys/ioctl.h>
 #ifdef HAVE_SYS_POLL_H
 #include <sys/poll.h>
 #else
@@ -35,6 +37,12 @@
 #endif
 #include "edit.h"
 #include "getch.h"
+
+#ifdef __linux__
+#  include <linux/keyboard.h>
+   static int linux_process_key(int);
+   static int ungetstr(const char *str);
+#endif
 
 sigjmp_buf getch_return;
 bool  getch_return_set=false;
@@ -126,6 +134,11 @@ int   GetKey(int delay)
       BlockSignals();
       getch_return_set=false;
 
+      /* on linux try to interpret shift state */
+#ifdef __linux__
+      key=linux_process_key(key);
+#endif
+
       return key;
    }
    else
@@ -134,3 +147,117 @@ int   GetKey(int delay)
       return ERR;
    }
 }
+
+#ifdef __linux__
+/* I hate it, it does not work over telnet */
+/* Oh why linux cannot just return different codes for different keys? */
+int linux_process_key(int key)
+{
+   /* BEWARE OF UNWANTED RECURSION! */
+#ifdef TIOCLINUX
+   char shift_state=6;	// magic number (see kernel source)
+   if(ioctl(0,TIOCLINUX,&shift_state)<0)
+      return key;
+
+   bool shift=(shift_state & (1<<KG_SHIFT));
+   bool ctrl =(shift_state & (1<<KG_CTRL));
+   bool alt  =(shift_state & (1<<KG_ALT));
+
+   if(!shift && !ctrl && !alt)
+      return key;
+
+   // improve function keys a bit...
+   {
+      int add=12;
+      if(ctrl)
+	 add=24;
+      if(alt || (shift && ctrl))
+	 add=36;
+      if(shift && key>=KEY_F(11) && key<=KEY_F(20))
+	 return key+add-10;	// ~F11 and ~F12 lose
+      else if(key>=KEY_F(1)  && key<=KEY_F(12))
+	 return key+add;
+   }
+   // some xterm key sequences are used below.
+   int xterm_shift=0;
+   if(shift)	     xterm_shift=2;
+   if(ctrl)	     xterm_shift=5;
+   if(shift && ctrl) xterm_shift=6;
+   int code=0;
+   char str[16];
+   switch(key)
+   {
+   case KEY_LEFT:
+      code='D';
+      if(ctrl && !shift && !alt)
+	 return KEY_SLEFT;
+      break;
+   case KEY_RIGHT:
+      code='C';
+      if(ctrl && !shift && !alt)
+	 return KEY_SRIGHT;
+      break;
+   case KEY_UP:
+      code='A';
+      break;
+   case KEY_DOWN:
+      code='B';
+      break;
+   case KEY_HOME:
+      if(ctrl && !shift && !alt)
+	 return KEY_SHOME;
+      code='H';
+      break;
+   case KEY_END:
+      if(ctrl && !shift && !alt)
+	 return KEY_SEND;
+      code='F';
+      break;
+   }
+   if(code)
+   {
+      sprintf(str,"\033O%d%c",xterm_shift,code);
+      return ungetstr(str);
+   }
+   code=0;
+   switch(key)
+   {
+   case KEY_IC:
+      if(ctrl && !shift && !alt)
+	 return KEY_SIC;
+      code=2;
+      break;
+   case KEY_DC:
+      if(ctrl && !shift && !alt)
+	 return KEY_SDC;
+      code=3;
+      break;
+   case KEY_PPAGE:
+      code=5;
+      break;
+   case KEY_NPAGE:
+      code=6;
+      break;
+   }
+   if(code)
+   {
+      sprintf(str,"\033[%d;%d~",code,xterm_shift);
+      return ungetstr(str);
+   }
+
+#endif // TIOCLINUX
+   return key;
+}
+
+static int ungetstr(const char *str)
+{
+   int len=strlen(str);
+   if(len==0)
+      return ERR;
+   const char *scan=str+len-1;
+   while(scan>str)
+      ungetch(*scan--);
+   return *scan;
+}
+
+#endif

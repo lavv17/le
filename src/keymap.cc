@@ -123,6 +123,7 @@ ActionNameRec  ActionNameTable[]=
    {MARK_ALL,"mark-all"},
    {START_DRAG_MARK,"start-drag-mark"},
    {YANK_BLOCK,"yank-block"},
+   {REMEMBER_BLOCK,"remember-block"},
 
 // Search
    {SEARCH_FORWARD,"search-forward"},
