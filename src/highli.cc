@@ -140,12 +140,12 @@ void InitHighlight()
       return;
 
    const char base_fn[]="syntax";
-   char *fn1=(char*)alloca(strlen(PKGLIBDIR)+1+strlen(base_fn)+1);
+   char *fn1=(char*)alloca(strlen(PKGDATADIR)+1+strlen(base_fn)+1);
    char *fn2=(char*)alloca(strlen(HOME)+1+3+1+ strlen(base_fn)+1);
    char *fn3=(char*)alloca(4+strlen(base_fn)+1);
    char *fn;
 
-   sprintf(fn1,"%s/%s",PKGLIBDIR,base_fn);
+   sprintf(fn1,"%s/%s",PKGDATADIR,base_fn);
    sprintf(fn2,"%s/.le/%s",HOME,base_fn);
    sprintf(fn3,".le.%s",base_fn);
 
