@@ -368,3 +368,20 @@ AC_DEFUN(LFTP_NOIMPLEMENTINLINE,
       CXXFLAGS="$CXXFLAGS $flags"
    fi
 ])
+
+AC_DEFUN([LE_CHECK_REGEX_BUGS],[
+   AC_CACHE_CHECK([for good GNU regex in libc], le_cv_good_gnu_regex,
+      AC_TRY_RUN([
+	 #include <stdio.h>
+	 #include <regex.h>
+	 int main()
+	 {
+	    static struct re_pattern_buffer rexp;
+	    re_compile_pattern("b",1,&rexp);
+	    return(re_search_2(&rexp,"123abc",6,"",0,0,10,0,10)!=4);
+	 }
+      ], le_cv_good_gnu_regex=yes, le_cv_good_gnu_regex=no, le_cv_good_gnu_regex=yes))
+   if test $le_cv_good_gnu_regex = no; then
+      am_cv_gnu_regex=no
+   fi
+])

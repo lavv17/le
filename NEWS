@@ -1,3 +1,7 @@
+Version 1.8.2  2001-05-11
+
+* added a configure test for broken re_search_2 in libc (it helps redhat-7.1).
+
 Version 1.8.1  2001-04-28
 
 * update menu key hints after keymap loading.
