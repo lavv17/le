@@ -1,3 +1,11 @@
+2002-10-03  lav
+
+	* options.cc: save hl_option in le.ini.
+
+2002-10-25  lav
+
+	* keymap.cc: (GetActionCodeText) fix char<0 handling.
+
 2002-02-04  LaMont Jones <lamont@smallone.fc.hp.com>
 
 	* highli.cc: use CLOCKS_PER_SEC instead of CLK_TCK.

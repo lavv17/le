@@ -202,6 +202,7 @@ const struct init init[]=
    { "backupnum",    NUM,  &MaxBackup		      },
    { "preferpagetop",NUM,  &PreferPageTop	      },
    { "wordwrap",     NUM,  &wordwrap		      },
+   { "syntaxhl",     NUM,  &hl_option		      },
 #ifdef WITH_MOUSE
    { "usemouse",     NUM,  &UseMouse		      },
 #endif

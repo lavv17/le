@@ -275,19 +275,19 @@ const char *GetActionCodeText(const char *code)
 
    while(*code)
    {
-      if(iscntrl(*code))
+      unsigned char the_code=*code++;
+      if(iscntrl(the_code))
       {
-         if(*code=='\033')
+         if(the_code=='\033')
             sprintf(store,"\\e");
-         else if(*code>=0 && *code<32)
-            sprintf(store,"^%c",*code+'@');
+         else if(the_code<32)
+            sprintf(store,"^%c",the_code+'@');
          else
-            sprintf(store,"\\%03o",*code);
+            sprintf(store,"\\%03o",the_code);
          store+=strlen(store);
       }
       else
-         *(store++)=*code;
-      code++;
+         *(store++)=the_code;
    }
    *store=0;
    return(code_text);
