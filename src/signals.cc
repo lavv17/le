@@ -329,7 +329,7 @@ void    InstallSignalHandlers()
    sigaction(SIGWINCH,&resize_action,NULL);
 #endif
 #ifdef SIGCHLD
-   sigaction(SIGCHLD,&ign_action,NULL);
+//    sigaction(SIGCHLD,&ign_action,NULL);
 #endif
 #ifdef SIGTTIN
    sigaction(SIGTTIN,&suspend_action,NULL);
