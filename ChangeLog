@@ -1,3 +1,9 @@
+1999-10-06  lav
+
+	* acinclude.m4: LE_CURSES_BOOL test for curses' bool type.
+	* acconfig.h: CURSES_BOOL definition.
+	* configure.in: call LE_CURSES_BOOL.
+
 1999-08-26  lav
 
 	* configure.in, acinclude.m4: test if gcc can be used to link simple

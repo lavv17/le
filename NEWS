@@ -1,6 +1,10 @@
+Version 1.5.4  1999-10-06
+
 * add start-drag-mark action to keymap and menu.
 * handle set-block-begin and set-block-end well in case drag-mark is active.
+* option --config to specify alternative config file.
 * fix start-drag-mark in text mode when cursor is past eol.
+* workaround problem with curses bool != c++ bool.
 
 Version 1.5.3  1999-08-18
 
