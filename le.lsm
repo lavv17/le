@@ -5,7 +5,7 @@ Entered-date:	2001-07-05
 Description:	LE has many block operations with stream and
 		rectangular blocks, can edit both unix and dos
 		style files (LF/CRLF), is binary clean, has hex
-		mode, can edit files and mmap'pable devices in
+		mode, can edit files and mmap'able devices in
 		mmap shared mode (only replace), has tunable syntax
 		highlighting, tunable color scheme (can use default
 		colors), tunable key map, tunable menu. It is slightly
