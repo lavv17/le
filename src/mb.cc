@@ -30,6 +30,8 @@ bool  mb_mode=true;
 int   MBCharSize=1;
 int   MBCharWidth=1;
 
+#define REPLACEMENT_CHARACTER 0xFFFD
+
 // static int mb_flags=MBSW_ACCEPT_UNPRINTABLE|MBSW_ACCEPT_INVALID;
 static const char *mb_ptr;
 static int mb_len;
@@ -69,7 +71,8 @@ bool MBCheckLeftAt(offs o)
       mbtowc(0,0,0);
       wchar_t wc=-1;
       MBCharSize=mbtowc(&wc,mb_ptr+i,mb_len-i);
-
+      if(MBCharSize<=0)
+	 MBCharSize=1;
       if(MBCharSize==left_offset-i)
       {
 	 MBCharWidth=wcwidth(wc);
@@ -100,7 +103,7 @@ bool MBCheckAt(offs o)
    if(MBCharSize<1)
    {
       MBCharSize=1;
-      MBCharWidth=0;
+      MBCharWidth=1;
       return false;
    }
    MBCharWidth=wcwidth(wc);
@@ -113,7 +116,8 @@ wchar_t WCharAt(offs o)
    if(!MBCheckAt(o))
       return CharAt(o);
    wchar_t wc=-1;
-   mbtowc(&wc,mb_ptr,MBCharSize);
+   if(mbtowc(&wc,mb_ptr,MBCharSize)==-1)
+      return REPLACEMENT_CHARACTER;
    return wc;
 }
 
@@ -128,7 +132,7 @@ void mb_get_col(const char *buf,int pos,int *col,int len)
    for(int i=0; i<pos; )
    {
       mbtowc(0,0,0);
-      wchar_t wc;
+      wchar_t wc=REPLACEMENT_CHARACTER;
       int ch_len=mbtowc(&wc,buf+i,len-i);
       if(ch_len<1)
 	 ch_len=1;
@@ -148,7 +152,7 @@ void mb_char_left(const char *buf,int *pos,int *col,int len)
    for(int i=0; i<*pos; )
    {
       mbtowc(0,0,0);
-      wchar_t wc;
+      wchar_t wc=REPLACEMENT_CHARACTER;
       int ch_len=mbtowc(&wc,buf+i,len-i);
       if(ch_len<1)
 	 ch_len=1;
@@ -169,7 +173,7 @@ void mb_char_right(const char *buf,int *pos,int *col,int len)
       *col=++*pos;
       return;
    }
-   wchar_t wc;
+   wchar_t wc=REPLACEMENT_CHARACTER;
    mbtowc(0,0,0);
    int ch_len=mbtowc(&wc,buf+*pos,len-*pos);
    if(ch_len<1)

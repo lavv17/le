@@ -1,3 +1,7 @@
+2004-04-02  lav
+
+	* mb.cc: use 0xfffd as replacement character for invalid mb sequences.
+
 2004-04-01  lav
 
 	* getstr.cc, mb.cc, mb.h: move mb_* functions to mb.cc;
