@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #ifndef MOUSE_H
 #define MOUSE_H
 
@@ -24,5 +26,9 @@ bool InScrollBar(int line,int col);
 void MoveToScreenLC(int line,int col);
 void MouseInTextWin(MEVENT &mev);
 void MouseInScrollBar(MEVENT &mev);
+
+extern int UseMouse;
+
+void SetupMouse();
 
 #endif // MOUSE_H
