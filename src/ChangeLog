@@ -2,7 +2,14 @@
 
 	* keymap.cc: correct error handling in keymap file reading;
 	  flushinp when we get an unknown sequence.
-	* keymapdf.cc: more binding to terminfo keys; correct kHOM.
+	* keymapdf.cc: more binding to terminfo keys; correct kHOM; bind new
+	  actions.
+	* keymap.h: more actions - yank-block and move-mark set.
+	* keymapfn.c: more actions.
+	* search.cc: use a TextPoint for block limit; this fixes replace
+	  in the block.
+	* textpoin.cc, textpoin.h: (ForcedLineCol) new method.
+	* user.cc: move-mark functions.
 
 1999-10-06  lav
 

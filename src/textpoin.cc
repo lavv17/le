@@ -370,3 +370,14 @@ void  TextPoint::OrFlags(int mask)
    for(TextPoint *scan=TextPoint::base; scan; scan=scan->next)
       scan->flags|=mask;
 }
+
+TextPoint TextPoint::ForcedLineCol(num l,num c)
+{
+   num old_stdcol=stdcol;
+   TextPoint old_pos=CurrentPos;
+   HardMove(l,c);
+   TextPoint res=CurrentPos;
+   CurrentPos=old_pos;
+   stdcol=old_stdcol;
+   return res;
+}

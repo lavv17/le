@@ -48,6 +48,21 @@ void  UserWordRight();
 void  UserLineBegin();
 void  UserLineEnd();
 
+void  UserMarkCharLeft();
+void  UserMarkCharRight();
+void  UserMarkWordLeft();
+void  UserMarkWordRight();
+void  UserMarkLineBegin();
+void  UserMarkLineEnd();
+void  UserMarkFileBegin();
+void  UserMarkFileEnd();
+void  UserMarkPageDown();
+void  UserMarkPageUp();
+void  UserMarkPageTop();
+void  UserMarkPageBottom();
+void  UserMarkLineUp();
+void  UserMarkLineDown();
+
 void  UserMenu();
 
 void  UserCommentLine();

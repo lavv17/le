@@ -97,6 +97,8 @@ public:
       return(offset);
    }
 
+   static TextPoint ForcedLineCol(num l,num c);
+
    static   void  ResetTextPoints();
    static   void  OrFlags(int mask);
 

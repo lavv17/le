@@ -1411,3 +1411,114 @@ void  UserStopDragMark()
    delete DragMark;
    DragMark=0;
 }
+
+static TextPoint *mark_move_point;
+static bool mark_move_top,mark_move_left;
+static void pre_mark_move()
+{
+   if(hide)
+   {
+   was_hidden:
+      flag=REDISPLAY_ALL;
+      BlockEnd=BlockBegin=CurrentPos;
+      mark_move_point=&BlockEnd;
+      mark_move_top=mark_move_left=false;
+      return;
+   }
+   if(rblock)
+   {
+      mark_move_top=(CurrentPos.Line()==BlockBegin.Line());
+      if(!mark_move_top && CurrentPos.Line()!=BlockEnd.Line())
+	 goto was_hidden;
+      mark_move_left=(CurrentPos.Col()==BlockBegin.Col());
+      if(!mark_move_left && CurrentPos.Col()!=BlockEnd.Col())
+	 goto was_hidden;
+   }
+   else
+   {
+      if(CurrentPos==BlockBegin)
+	 mark_move_point=&BlockBegin;
+      else if(CurrentPos==BlockEnd)
+	 mark_move_point=&BlockEnd;
+      else
+	 goto was_hidden;  // just do the same.
+   }
+}
+static void post_mark_move()
+{
+   hide=false;
+   PreUserEdit();
+   if(rblock)
+   {
+      if(mark_move_left)
+      {
+	 if(mark_move_top)
+	    BlockBegin=CurrentPos;
+	 else
+	 {
+	    BlockBegin=TextPoint::ForcedLineCol(BlockBegin.Line(),CurrentPos.Col());
+	    BlockEnd  =TextPoint::ForcedLineCol(CurrentPos.Line(),BlockEnd.Col());
+	 }
+      }
+      else
+      {
+	 if(mark_move_top)
+	 {
+	    BlockBegin=TextPoint::ForcedLineCol(CurrentPos.Line(),BlockBegin.Col());
+	    BlockEnd  =TextPoint::ForcedLineCol(BlockEnd.Line(),CurrentPos.Col());
+	 }
+	 else
+	    BlockEnd=CurrentPos;
+      }
+      // swap the points if needed.
+      if(BlockBegin.Col()>BlockEnd.Col() && BlockBegin.Line()>=BlockEnd.Line())
+	 goto swap_marks;
+      if(BlockBegin.Col()>BlockEnd.Col())
+      {
+	 TextPoint tmp=BlockBegin;
+	 BlockBegin=TextPoint::ForcedLineCol(BlockBegin.Line(),BlockEnd.Col());
+	 BlockEnd  =TextPoint::ForcedLineCol(BlockEnd.Line(),tmp.Col());
+      }
+      else if(BlockBegin.Line()>BlockEnd.Line())
+      {
+	 TextPoint tmp=BlockBegin;
+	 BlockBegin=TextPoint::ForcedLineCol(BlockEnd.Line(),BlockBegin.Col());
+	 BlockEnd  =TextPoint::ForcedLineCol(tmp.Line(),BlockEnd.Col());
+      }
+   }
+   else
+   {
+      if(*mark_move_point!=CurrentPos)
+	 flag=REDISPLAY_ALL;
+      *mark_move_point=CurrentPos;
+      if(BlockBegin>BlockEnd)
+      {
+      swap_marks:
+	 TextPoint tmp=BlockBegin;
+	 BlockBegin=BlockEnd;
+	 BlockEnd=tmp;
+      }
+   }
+}
+
+#define MarkMove(move)	   \
+   void UserMark##move()   \
+   {			   \
+      pre_mark_move();	   \
+      User##move();	   \
+      post_mark_move();	   \
+   }
+MarkMove(CharLeft);
+MarkMove(CharRight);
+MarkMove(WordLeft);
+MarkMove(WordRight);
+MarkMove(LineBegin);
+MarkMove(LineEnd);
+MarkMove(FileBegin);
+MarkMove(FileEnd);
+MarkMove(PageDown);
+MarkMove(PageUp);
+MarkMove(PageTop);
+MarkMove(PageBottom);
+MarkMove(LineUp);
+MarkMove(LineDown);

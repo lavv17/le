@@ -58,6 +58,22 @@ ActionNameRec  ActionNameTable[]=
    {LINE_UP,"previous-line"},
    {LINE_DOWN,"next-line"},
 
+// Movement with block marking
+   {MARK_CHAR_LEFT,"mark-backward-char"},
+   {MARK_CHAR_RIGHT,"mark-forward-char"},
+   {MARK_WORD_LEFT,"mark-backward-word"},
+   {MARK_WORD_RIGHT,"mark-forward-word"},
+   {MARK_LINE_BEGIN,"mark-beginning-of-line"},
+   {MARK_LINE_END,"mark-end-of-line"},
+   {MARK_TEXT_BEGIN,"mark-beginning-of-file"},
+   {MARK_TEXT_END,"mark-end-of-file"},
+   {MARK_NEXT_PAGE,"mark-next-page"},
+   {MARK_PREV_PAGE,"mark-previous-page"},
+   {MARK_PAGE_TOP,"mark-page-top"},
+   {MARK_PAGE_BOTTOM,"mark-page-bottom"},
+   {MARK_LINE_UP,"mark-previous-line"},
+   {MARK_LINE_DOWN,"mark-next-line"},
+
 // Delete actions
    {DELETE_CHAR,"delete-char"},
    {BACKSPACE_CHAR,"backward-delete-char"},
@@ -103,6 +119,7 @@ ActionNameRec  ActionNameTable[]=
    {MARK_LINE,"mark-line"},
    {MARK_TO_EOL,"mark-to-eol"},
    {START_DRAG_MARK,"start-drag-mark"},
+   {YANK_BLOCK,"yank-block"},
 
 // Search
    {SEARCH_FORWARD,"search-forward"},

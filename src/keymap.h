@@ -40,6 +40,22 @@ enum  Action
    LINE_UP,
    LINE_DOWN,
 
+// Movement with block marking
+   MARK_CHAR_LEFT,
+   MARK_CHAR_RIGHT,
+   MARK_WORD_LEFT,
+   MARK_WORD_RIGHT,
+   MARK_LINE_BEGIN,
+   MARK_LINE_END,
+   MARK_TEXT_BEGIN,
+   MARK_TEXT_END,
+   MARK_NEXT_PAGE,
+   MARK_PREV_PAGE,
+   MARK_PAGE_TOP,
+   MARK_PAGE_BOTTOM,
+   MARK_LINE_UP,
+   MARK_LINE_DOWN,
+
 // Delete actions
    DELETE_CHAR,
    BACKSPACE_CHAR,
@@ -86,6 +102,7 @@ enum  Action
    MARK_LINE,
    MARK_TO_EOL,
    START_DRAG_MARK,
+   YANK_BLOCK,
 
 // Search
    SEARCH_FORWARD,

@@ -457,9 +457,9 @@ void  Replace()
 
    back_tp=CurrentPos;
 
-   offs block_end=rblock
+   TextPoint block_end=(rblock
       ?(BlockEnd.Col()==BlockBegin.Col()?NextLine(BlockEnd):BlockEnd.Offset())
-      :BlockEnd.Offset();
+      :BlockEnd.Offset());
 
    do
    {
@@ -468,7 +468,7 @@ void  Replace()
 	 StatusLine();
 	 SyncTextWin(); // before possible long search
       }
-      if(!Search(FORWARD,(key!='#'?TextEnd.Offset():block_end)))
+      if(!Search(FORWARD,(key!='#'?TextEnd:block_end)))
       {
          if(first)
             NotFound();

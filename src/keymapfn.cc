@@ -27,6 +27,7 @@
 
 ActionProcRec  EditorActionProcTable[]=
 {
+// Movement
    {CHAR_LEFT,UserCharLeft},
    {CHAR_RIGHT,UserCharRight},
    {WORD_LEFT,UserWordLeft},
@@ -44,6 +45,22 @@ ActionProcRec  EditorActionProcTable[]=
    {TO_PREVIOUS_LOC,UserPreviousEdit},
    {LINE_UP,UserLineUp},
    {LINE_DOWN,UserLineDown},
+
+// Movement with block marking
+   {MARK_CHAR_LEFT,UserMarkCharLeft},
+   {MARK_CHAR_RIGHT,UserMarkCharRight},
+   {MARK_WORD_LEFT,UserMarkWordLeft},
+   {MARK_WORD_RIGHT,UserMarkWordRight},
+   {MARK_LINE_BEGIN,UserMarkLineBegin},
+   {MARK_LINE_END,UserMarkLineEnd},
+   {MARK_TEXT_BEGIN,UserMarkFileBegin},
+   {MARK_TEXT_END,UserMarkFileEnd},
+   {MARK_NEXT_PAGE,UserMarkPageDown},
+   {MARK_PREV_PAGE,UserMarkPageUp},
+   {MARK_PAGE_TOP,UserMarkPageTop},
+   {MARK_PAGE_BOTTOM,UserMarkPageBottom},
+   {MARK_LINE_UP,UserMarkLineUp},
+   {MARK_LINE_DOWN,UserMarkLineDown},
 
 // Delete actions
    {DELETE_CHAR,UserDeleteChar},
@@ -90,6 +107,7 @@ ActionProcRec  EditorActionProcTable[]=
    {MARK_LINE,UserMarkLine},
    {MARK_TO_EOL,UserMarkToEol},
    {START_DRAG_MARK,UserStartDragMark},
+   {YANK_BLOCK,UserYankBlock},
 
 // Search
    {SEARCH_FORWARD,StartSearch},
@@ -193,14 +211,3 @@ void  EditorReadKeymap()
 
    fclose(f);
 }
-
-
-/*   char  filename[1024];
-
-   errno=0;
-   sprintf(filename,"%s/.le/keymap-%s",HOME,TERM);
-   f=fopen(filename,"w");
-   if(f==NULL)
-      return;
-
-   fclose(f);*/
