@@ -127,10 +127,6 @@ extern  int     flag;
 
 extern  num     ScrShift;
 
-extern  int     page;
-
-extern  WIN     *Upper;
-
 extern  byte    chset[];
 
 extern   int   EolSize;
@@ -218,13 +214,9 @@ int         LockFile(int fd);
 int         CheckMode(mode_t);
 int	    file_check(char *);	 /* checks existence or ability to create */
 
-void    CenterLine();
 void    DeleteToEOL();
 void    DrawFrames();
 void    ExpandAllTabs();
-void    FormatAll();
-void    FormatFunc();
-void    FormatPara();
 void    Options();
 void    ReadConf();
 void    editcalc();
@@ -234,11 +226,6 @@ void  InitCurses();
 void  TermCurses();
 
 void    InitTables();
-void    _addch(chtype c);
-void    _addstr(char *s);
-void    mv_addch(int l,int c,chtype ct);
-void    mv_addstr(int l,int c,char *s);
-int   _getch();
 
 void    _clrtoeol(void);
 
