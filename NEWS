@@ -1,4 +1,4 @@
-* search/replace is supported in mmap-rw mode.
+* search/replace is now supported in mmap-rw mode.
 * search/replace sped up.
 * added search for binary strings given as codes:
    for hex: `$x 5A F4 EC'
