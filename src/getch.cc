@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -68,7 +68,7 @@ int   GetRawKey()
    return(key);
 }
 
-int   WaitForKey(int delay)
+int   WaitForKey_norefresh(int delay)
 {
    int   res;
 
@@ -84,15 +84,39 @@ int   WaitForKey(int delay)
    struct pollfd  pfd;
    pfd.fd=0;
    pfd.events=POLLIN;
-   res=(poll(&pfd,1,0)!=1 || !(pfd.revents&POLLIN))?ERR:OK;
+
+   res=poll(&pfd,1,delay);
+
+   res=(res!=1 || !(pfd.revents&POLLIN))?ERR:OK;
+
+   BlockSignals();
+
+   return(res);
+}
+
+int   WaitForKey(int delay)
+{
+   int   res;
+
+#ifdef __MSDOS__
+   if(DosMultiByteKey>0)
+      return(OK);
+#endif
+
+   errno=0;
+
+   struct pollfd  pfd;
+   pfd.fd=0;
+   pfd.events=POLLIN;
+
+   res=poll(&pfd,1,0);
+
+   res=(res!=1 || !(pfd.revents&POLLIN))?ERR:OK;
    if(res==ERR && errno!=EINTR)
    {
       refresh();
-      fflush(stdout);
-      res=(poll(&pfd,1,delay)!=1 || !(pfd.revents&POLLIN))?ERR:OK;
+      res=WaitForKey_norefresh(delay);
    }
-
-   BlockSignals();
 
    return(res);
 }

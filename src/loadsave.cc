@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -142,7 +142,7 @@ int   LoadFile(char *name)
    View&=~2;      /* clear the 'temporarily read-only' bit */
 
    if(!name[0])
-     return(OK);
+      return(OK);
 
    sprintf(msg,"Loading the file \"%.60s\"...",name);
    Message(msg);
@@ -176,7 +176,7 @@ int   LoadFile(char *name)
      if(S_ISDIR(FileMode))
        View|=2;
    }
-   file=open(name,(View?O_RDONLY:O_RDWR|O_CREAT)|O_NDELAY,0666);
+   file=open(name,(View?O_RDONLY:O_RDWR|O_CREAT)|O_NDELAY,0644);
    if(file==-1)
    {
      View|=2;

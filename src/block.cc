@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -121,10 +121,12 @@ void   ExpandTab()
 void    RCopy()
 {
    ClipBoard cb;
+   TextPoint tp=CurrentPos;
 
    if(!cb.Copy())
       return;
 
+   CurrentPos=tp;
    cb.PasteAndMark();
    CurrentPos=BlockBegin;
    stdcol=GetCol();
@@ -414,6 +416,7 @@ int OptionallyConvertBlockNewLines(const char *bname)
 
    if(DosEol && dos_nl*2<unix_nl)
    {
+//       SyncTextWin();
       sprintf(msg,"The %s block looks like it is in UNIX format,\n"
 		  "whereas the current text is in DOS format\n"
 		  "Do you wish to convert the block?",bname);
@@ -425,11 +428,13 @@ int OptionallyConvertBlockNewLines(const char *bname)
 	 break;
       case('Y'):
 	 ConvertFromUnixToDos(BlockBegin,block_size);
+	 flag=REDISPLAY_ALL;
 	 break;
       }
    }
    else if(!DosEol && dos_nl*2>unix_nl)
    {
+//       SyncTextWin();
       sprintf(msg,"The %s block looks like it is in DOS format,\n"
 		  "whereas the current text is in UNIX format\n"
 		  "Do you wish to convert the block?",bname);
@@ -441,10 +446,12 @@ int OptionallyConvertBlockNewLines(const char *bname)
 	 break;
       case('Y'):
 	 ConvertFromDosToUnix(BlockBegin,block_size);
+	 flag=REDISPLAY_ALL;
 	 break;
       }
    }
    CurrentPos=old;
+   stdcol=GetCol();
    return 1;
 }
 
