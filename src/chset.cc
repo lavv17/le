@@ -20,8 +20,10 @@
 #include <ctype.h>
 #include <wctype.h>
 #include <string.h>
+#include <stdlib.h>
 #include "edit.h"
 #include "keymap.h"
+#include "mb.h"
 
 byte  chset[CHSET_SIZE+1];
 
@@ -224,6 +226,103 @@ done:
    DestroyWin(w);
    return(res);
 }
+wchar_t choose_wch()
+{
+   WIN *w;
+   int i,j;
+   static wchar_t curr=0;
+   wchar_t res=-1;
+   char  s[256];
+   char  chstr[MB_CUR_MAX+2];
+   int   action;
+
+   w=CreateWin(MIDDLE,MIDDLE,3*16+4,16+6,DIALOGUE_WIN_ATTR," Character Set ",0);
+   DisplayWin(w);
+
+   for(;;)
+   {
+      SetAttr(DIALOGUE_WIN_ATTR);
+      Clear();
+
+      if(curr/256)
+	 PutStr(FRIGHT-3,FDOWN," PgUp/PgDn ");
+      else if(mb_mode)
+	 PutStr(FRIGHT-6,FDOWN," PgDn ");
+
+      if(curr<32)
+         sprintf(chstr,"^%c",curr+'@');
+      else
+      {
+	 int w=wcwidth(curr);
+	 if(w==0)
+	    chstr[0]=' ';  // to show accents nicely.
+	 int ch_len=wctomb(chstr+(w==0),curr);
+	 if(ch_len<0)
+	    ch_len=0;
+	 chstr[ch_len+(w==0)]=0;
+      }
+      sprintf(s,"The current character is '%s', 0x%04X",chstr,curr);
+
+      PutStr(2,2,s);
+      for(i=0; i<16; i++)
+	 for(j=0; j<16; j++)
+         {
+            SetAttr((i<<4)+j==curr%256?CURR_BUTTON_ATTR:DIALOGUE_WIN_ATTR);
+            PutCh(i*3+2,j+4,' ');
+            PutWCh(i*3+3,j+4,(i<<4)+j+(curr&~255));
+            PutCh(i*3+4,j+4,' ');
+         }
+
+      action=GetNextAction();
+      switch(action)
+      {
+      case(NEWLINE):
+         res=curr;
+         goto done;
+      case(CANCEL):
+         res=-1;
+         goto done;
+      case(LINE_UP):
+         if((curr&15)==0)
+            curr|=15;
+         else
+            curr--;
+         break;
+      case(LINE_DOWN):
+         if((curr&15)==15)
+            curr&=~15;
+         else
+            curr++;
+         break;
+      case(CHAR_LEFT):
+         if((curr&0xF0)==0)
+            curr|=0xF0;
+         else
+            curr-=16;
+         break;
+      case(CHAR_RIGHT):
+         if((curr&0xF0)==0xF0)
+            curr&=~0xF0;
+         else
+            curr+=16;
+         break;
+      case(NEXT_PAGE):
+	 curr+=256;
+	 break;
+      case(PREV_PAGE):
+	 if(curr<256)
+	    break;
+	 curr-=256;
+	 break;
+      }
+   }
+done:
+   CloseWin();
+   DestroyWin(w);
+   return(res);
+}
+
+
 void  addch_visual(chtype ch)
 {
    attrset(curr_attr->n_attr);

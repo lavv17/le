@@ -129,6 +129,7 @@ enum  Action
    TABS_EXPAND,
    TEXT_OPTIMIZE,
    CHOOSE_CHAR,
+   CHOOSE_WCHAR,
    UNIX_DOS_TRANSFORM,
 
 // Options

@@ -1251,6 +1251,14 @@ void  UserInsertString(const char *s,int len)
    while(len-->0)
       UserInsertControlChar(*s++);
 }
+void UserInsertWChar(wchar_t ch)
+{
+   char buf[MB_CUR_MAX+1];
+   int len=wctomb(buf,ch);
+   if(len<=0)
+      return;
+   UserInsertString(buf,len);
+}
 
 void  UserEnterControlChar()
 {
@@ -1301,6 +1309,12 @@ void  UserChooseChar()
    if(ch!=-1)
       UserInsertControlChar(ch);
 }
+void  UserChooseWChar()
+{
+   wchar_t ch=choose_wch();
+   if(ch!=-1)
+      UserInsertWChar(ch);
+}
 
 void  UserInsertCharCode()
 {
@@ -1314,13 +1328,7 @@ void  UserInsertWCharCode()
 {
    wchar_t ch=getcode_wchar();
    if(ch!=-1)
-   {
-      char buf[MB_CUR_MAX+1];
-      int len=wctomb(buf,ch);
-      if(len<=0)
-	 return;
-      UserInsertString(buf,len);
-   }
+      UserInsertWChar(ch);
 }
 
 static int base_editmode=-1;

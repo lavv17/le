@@ -108,6 +108,7 @@ void  UserAbout();
 void  UserRefreshScreen();
 
 void  UserChooseChar();
+void  UserChooseWChar();
 void  UserInsertCharCode();
 void  UserInsertWCharCode();
 

@@ -255,6 +255,7 @@ void  PreModify();
 int   PreUserEdit();
 
 int   choose_ch();
+wchar_t choose_wch();
 
 int   InsertBlock(char *block,num len,char *rblock=NULL,num rlen=0);
 int   ReplaceBlock(char *block,num len);

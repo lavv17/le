@@ -84,6 +84,29 @@ void  PutCh(int x,int y,chtype ch)
       addch_visual(ch);
    }
 }
+void  PutWCh(int x,int y,wchar_t ch)
+{
+   Absolute(&x,1,Upper->w);
+   Absolute(&y,1,Upper->h);
+   if(x>=0 && y>=0 && x<Upper->w && y<Upper->h)
+   {
+      move(y+Upper->y,x+Upper->x);
+      wchar_t vch=visualize_wchar(ch);
+      if(vch!=ch)
+	 attrset(curr_attr->so_attr);
+      int w=wcwidth(vch);
+      if(w==0)
+      {
+	 wchar_t a[2];
+	 a[0]=' ';
+	 a[1]=vch;
+	 addnwstr(a,2);
+      }
+      else
+	 addnwstr(&vch,1);
+      attrset(curr_attr->n_attr);
+   }
+}
 void  GotoXY(int x,int y)
 {
    Absolute(&x,1,Upper->w);

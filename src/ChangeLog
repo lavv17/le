@@ -1,3 +1,11 @@
+2004-04-29  lav
+
+	* chset.cc: (choose_wch) new function to choose a wide char.
+	* edit.h: add prototype.
+	* keymap.cc, keymap.h, keymapfn.cc: add choose-wide-character action.
+	* user.cc, user.h: (UserChooseWChar) new function.
+	* window.cc, window.h: (PutWCh) new function to show single wide char.
+
 2004-04-12  lav
 
 	* block.cc: (WCharAtLC) new function.

@@ -61,6 +61,7 @@ void  GotoXY(int x,int y);
 void  Clear();
 void  PutStr(int x,int y,const char *s);
 void  PutCh(int x,int y,chtype ch);
+void  PutWCh(int x,int y,wchar_t ch);
 
 extern struct attr *curr_attr;
 extern WIN *Upper;

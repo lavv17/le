@@ -147,6 +147,7 @@ ActionNameRec  ActionNameTable[]=
    {TABS_EXPAND,"expand-tabs"},
    {TEXT_OPTIMIZE,"optimize-text"},
    {CHOOSE_CHAR,"choose-character"},
+   {CHOOSE_WCHAR,"choose-wide-character"},
    {UNIX_DOS_TRANSFORM,"change-text-type"},
 
 // Options

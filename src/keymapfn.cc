@@ -136,6 +136,7 @@ ActionProcRec  EditorActionProcTable[]=
    {TABS_EXPAND,ExpandAllTabs},
    {TEXT_OPTIMIZE,UserOptimizeText},
    {CHOOSE_CHAR,UserChooseChar},
+   {CHOOSE_WCHAR,UserChooseWChar},
    {UNIX_DOS_TRANSFORM,DOS_UNIX},
 
 // Options
