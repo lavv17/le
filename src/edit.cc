@@ -334,21 +334,33 @@ int     AskToSave()
    return(TRUE);
 }
 
+#if defined(NCURSES_VERSION) || defined(__NCURSES_H)
+#define NCUR
+#endif
+
 void  InitCurses()
 {
+#ifdef NCUR
+   static bool init=false;
+
+   if(init)
+   {
+      endwin();
+      initscr();  // for some old ncurses
+      doupdate();
+      return;
+   }
+
+   initscr();
+   init=true;
+
+#else
    static SCREEN *le_scr=NULL;
 
    if(le_scr!=NULL)
    {
-      endwin();
-#if defined(NCURSES_VERSION) || defined(__NCURSES_H)
-      initscr();
-      doupdate();
-      return;
-#else
       delscreen(le_scr);
       del_curterm(cur_term);
-#endif
    }
 
    le_scr=newterm(NULL,stdout,stdin);
@@ -357,6 +369,7 @@ void  InitCurses()
       fprintf(stderr,"le: newterm() failed. Check your $TERM variable.\n");
       exit(1);
    }
+#endif
 
    start_color();
 
