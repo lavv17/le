@@ -423,7 +423,8 @@ void syntax_hl::attrib_line(const char *buf1,int len1,
 
 #ifdef HAVE_TIMES
    struct tms tms;
-   clock_t clock=times(&tms);
+   times(&tms);
+   clock_t clock=tms.tms_utime;
 #endif
 
    for(syntax_hl *scan=chain; scan; scan=scan->next)
@@ -460,7 +461,8 @@ void syntax_hl::attrib_line(const char *buf1,int len1,
 	 pos++;
 
 #ifdef HAVE_TIMES
-	 clock_t clock1=times(&tms);
+	 times(&tms);
+	 clock_t clock1=tms.tms_utime;
 	 if(clock1-clock>CLK_TCK/5)
 	    break;
 #endif
