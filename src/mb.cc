@@ -35,6 +35,7 @@ int   MBCharWidth=1;
 // static int mb_flags=MBSW_ACCEPT_UNPRINTABLE|MBSW_ACCEPT_INVALID;
 static const char *last_mb_ptr;
 static int last_mb_len;
+static wchar_t last_wc;
 
 static void MB_Prepare(offs o)
 {
@@ -69,13 +70,13 @@ bool MBCheckLeftAt(offs o)
    for(int i=0; i<left_offset; i++)
    {
       mbtowc(0,0,0);
-      wchar_t wc=-1;
-      MBCharSize=mbtowc(&wc,last_mb_ptr+i,last_mb_len-i);
+      last_wc=-1;
+      MBCharSize=mbtowc(&last_wc,last_mb_ptr+i,last_mb_len-i);
       if(MBCharSize<=0)
 	 MBCharSize=1;
       if(MBCharSize==left_offset-i)
       {
-	 MBCharWidth=wcwidth(visualize_wchar(wc));
+	 MBCharWidth=wcwidth(visualize_wchar(last_wc));
 	 if(MBCharWidth<0)
 	    MBCharWidth=1;
 	 return true;
@@ -98,15 +99,15 @@ bool MBCheckAt(offs o)
       return false;
    MB_Prepare(o);
    mbtowc(0,0,0);
-   wchar_t wc=-1;
-   MBCharSize=mbtowc(&wc,last_mb_ptr,last_mb_len);
+   last_wc=-1;
+   MBCharSize=mbtowc(&last_wc,last_mb_ptr,last_mb_len);
    if(MBCharSize<1)
    {
       MBCharSize=1;
       MBCharWidth=1;
       return false;
    }
-   MBCharWidth=wcwidth(visualize_wchar(wc));
+   MBCharWidth=wcwidth(visualize_wchar(last_wc));
    if(MBCharWidth<0)
       MBCharWidth=1;
    return true;
@@ -115,10 +116,13 @@ wchar_t WCharAt(offs o)
 {
    if(!MBCheckAt(o))
       return CharAt(o);
-   wchar_t wc=-1;
-   if(mbtowc(&wc,last_mb_ptr,MBCharSize)==-1)
-      return REPLACEMENT_CHARACTER;
-   return wc;
+   return last_wc==-1?REPLACEMENT_CHARACTER:last_wc;
+}
+wchar_t WCharLeftAt(offs o)
+{
+   if(!MBCheckLeftAt(o))
+      return CharAt(o-1);
+   return last_wc==-1?REPLACEMENT_CHARACTER:last_wc;
 }
 
 void mb_get_col(const char *buf,int pos,int *col,int len)

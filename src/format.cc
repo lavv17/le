@@ -49,10 +49,10 @@ void  FormatPara()
 
    flag=1;
    ToLineBegin();
-   while(isspace(Char()) && !Eof())
+   while(Space() && !Eof())
    {
       ExpandTab();
-      MoveRight();
+      MoveRightOverEOL();
    }
    if(Eof())
       return;
@@ -60,20 +60,20 @@ void  FormatPara()
    /* fold the paragraph, that is delete all spaces but one and all newlines */
    for(;;)
    {
-      while(Char()!=' ' && Char()!='\t' && !Eol())
-         MoveRight();
-      while((Char()==' ' || Char()=='\t') && !Eol())
+      while(!Space() && !Eol())
+         MoveRightOverEOL();
+      while(Space() && !Eol())
          DeleteChar();
       if(Eol())
       {
          DeleteEOL();
-         for(i=ncol=0; !Eol() && (Char()==' ' || Char()=='\t'); i++)
+         for(i=ncol=0; !Eol() && Space(); i++)
          {
             if(Char()=='\t')
                ncol=Tabulate(ncol);
             else
-               ncol++;
-            MoveRight();
+               ncol+=MBCharWidth;
+            MoveRightOverEOL();
          }
 	 // end of paragraph condition:
 	 //    empty line, or
@@ -81,8 +81,8 @@ void  FormatPara()
          if(Eol() || (ncol>LeftMargin && LeftAdj))
          {
             while(i-->0)
-               MoveLeft();
-            break;
+               MoveLeftOverEOL();
+            break; // end of paragraph
          }
          while(i-->0)
             BackSpace();   /* delete old indentation */
@@ -97,13 +97,13 @@ void  FormatPara()
    if(LeftAdj)
    {
       /* create the first line margin */
-      for(i=ncol=0; ncol<LeftMargin+FirstLineMargin && isspace(Char()) && !Eol(); i++)
+      for(i=ncol=0; ncol<LeftMargin+FirstLineMargin && Space() && !Eol(); i++)
       {
          if(Char()=='\t')
             ncol=Tabulate(ncol);
          else
-            ncol++;
-         MoveRight();
+            ncol+=MBCharWidth;
+         MoveRightOverEOL();
       }
       if(ncol<LeftMargin+FirstLineMargin)
       {
@@ -114,21 +114,21 @@ void  FormatPara()
       }
       else
       {
-         while(ncol<LeftMargin+LineLen/2 && isspace(Char()) && !Eol())
+         while(ncol<LeftMargin+LineLen/2 && Space() && !Eol())
          {
             if(Char()=='\t')
                ncol=Tabulate(ncol);
             else
-               ncol++;
-            MoveRight();
+               ncol+=MBCharWidth;
+            MoveRightOverEOL();
          }
-         while(isspace(Char()) && !Eol())
+         while(Space() && !Eol())
             DeleteChar();
       }
    }
    else
    {
-      while(isspace(Char()) && !Eol())
+      while(Space() && !Eol())
          DeleteChar();
    }
 
@@ -137,17 +137,17 @@ void  FormatPara()
       if(GetCol()>LineLen+LeftMargin)
       {
          /* if the next word is over limit, then ... */
-         while(!Bol() && !isspace(CharRel(-1)))
-            MoveLeft();
-         while(!Bol() && isspace(CharRel(-1)))   /* one word right */
-            MoveLeft();
+         while(!Bol() && !SpaceLeft())
+            MoveLeftOverEOL();
+         while(!Bol() && SpaceLeft())   /* one word right */
+            MoveLeftOverEOL();
          if(Bol())
          {
             stdcol=0;   /* the word consumes the whole line */
-            while(!Eol() && isspace(Char()))
-               MoveRight();
-            while(!Eol() && !isspace(Char()))
-               MoveRight();
+            while(!Eol() && Space())
+               MoveRightOverEOL();
+            while(!Eol() && !Space())
+               MoveRightOverEOL();
             if(!Eol())
 	    {
                DeleteChar();   /* delete space after the word */
@@ -175,22 +175,22 @@ void  FormatPara()
                /* To the line beginning, and count spaces */
 	       while(!Bol())
                {
-                  MoveLeft();
-                  if(isspace(Char()))
+                  MoveLeftOverEOL();
+                  if(Space())
                      gap_num++;
                }
 	       /* skip indentation */
-               while(isspace(Char()) && GetCol()<bcol)
+               while(Space() && GetCol()<bcol)
                {
-                  MoveRight();
+                  MoveRightOverEOL();
                   gap_num--;
                }
                i=-gap_num/2;
                while(GetCol()<bcol)
                {
-                  if(isspace(Char()))
+                  if(Space())
                   {
-                     MoveRight();
+                     MoveRightOverEOL();
                      i+=spaces_to_insert;
                      while(i>0)
                      {
@@ -201,7 +201,7 @@ void  FormatPara()
                   }
                   else
                   {
-                     MoveRight();
+                     MoveRightOverEOL();
                   }
                }
             }
@@ -215,16 +215,14 @@ void  FormatPara()
                InsertChar(' ');
                bcol++;
             }
-            GetCol();
             while(GetCol()<bcol)
-               MoveRight();
+               MoveRightOverEOL();
             NewLine();
          }
          else if(!LeftAdj && !RightAdj)
          {
-            GetCol();
             while(GetCol()<bcol)
-               MoveRight();
+               MoveRightOverEOL();
             NewLine();
             MoveUp();
             CenterLine();
@@ -241,7 +239,7 @@ void  FormatPara()
       {
 	 if(Eol())
 	    break;   /* this is the end of line and the paragraph */
-         MoveRight();
+         MoveRightOverEOL();
       }
    }
    if(!LeftAdj && RightAdj)
@@ -253,9 +251,8 @@ void  FormatPara()
          InsertChar(' ');
          bcol++;
       }
-      GetCol();
       while(GetCol()<bcol)
-         MoveRight();
+         MoveRightOverEOL();
    }
 
    ToLineBegin();
@@ -300,12 +297,12 @@ void  CenterLine()
       return;
    flag=REDISPLAY_LINE;
    ToLineBegin();
-   while((Char()==' ' || Char()=='\t') && !Eol())
+   while(Space() && !Eol())
       DeleteChar();
    if(Eol())
       return; /* nothing to center */
    ToLineEnd();
-   while(isspace(CharRel(-1)))
+   while(SpaceLeft())
       BackSpace();
    shift=(LineLen-GetCol())/2+LeftMargin;
    if(shift>0) /* not too long line */
@@ -325,12 +322,12 @@ void  ShiftRightLine()
       return;
    flag=REDISPLAY_LINE;
    ToLineBegin();
-   while((Char()==' ' || Char()=='\t') && !Eol())
+   while(Space() && !Eol())
       DeleteChar();
    if(Eol())
       return; /* nothing to shift */
    ToLineEnd();
-   while(isspace(CharRel(-1)))
+   while(SpaceLeft())
       BackSpace();
    shift=(LineLen-GetCol())+LeftMargin;
    if(shift>0) /* not too long line */
@@ -412,12 +409,12 @@ void WordWrapInsertHook()
    if(GetCol()<LineLen+LeftMargin)
       return;
    offs pos=CurrentPos;
-   while(!BolAt(pos) && !(CharAt(pos-1)==' ' || CharAt(pos-1)=='\t'))
+   while(!BolAt(pos) && !SpaceLeft())
       pos--;
    if(pos==CurrentPos)
       return;
    offs word_begin=pos;
-   while(!BolAt(pos) && (CharAt(pos-1)==' ' || CharAt(pos-1)=='\t'))
+   while(!BolAt(pos) && SpaceLeft())
       pos--;
    if(BolAt(pos))
       return;

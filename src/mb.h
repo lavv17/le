@@ -32,6 +32,7 @@ extern int  MBCharWidth;
 bool MBCheckLeftAt(offs o);
 bool MBCheckAt(offs o);
 wchar_t WCharAt(offs o);
+wchar_t WCharLeftAt(offs o);
 void InsertWChar(wchar_t ch);
 wchar_t WCharAtLC(num,num);
 wchar_t getcode_wchar();
@@ -46,6 +47,7 @@ static inline int CharSizeAt(offs o)  { MBCheckAt(o); return MBCharSize;  }
 static inline int CharSize()  { return CharSizeAt(Offset()); }
 static inline int CharWidth() { return CharWidthAt(Offset()); }
 static inline int WChar() { return WCharAt(Offset()); }
+static inline int WCharLeft() { return WCharLeftAt(Offset()); }
 
 void mb_get_col(const char *buf,int pos,int *col,int len);
 void mb_char_left(const char *buf,int *pos,int *col,int len);
@@ -66,6 +68,8 @@ int  mb_len(const char *buf,int len);
 # define CharWidth()	(1)
 # define CharSize()	(1)
 # define WCharAt(o)	CharAt((o))
+# define WCharLeftAt(o) CharAt((o)-1)
+# define WCharLeft()    CharRel(-1)
 # define WChar()	Char()
 # define WCharAtLC(l,c)	CharAtLC(l,c)
 # define getcode_wchar() getcode_char()

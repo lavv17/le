@@ -158,3 +158,18 @@ int   ReplaceChar(char ch)
 {
    return ReplaceBlock(&ch,1);
 }
+static inline
+bool le_isspace(int c)
+{
+   return c==' ' || c=='\t';
+}
+static inline
+bool Space()
+{
+   return le_isspace(WChar());
+}
+static inline
+bool SpaceLeft()
+{
+   return le_isspace(WCharLeft());
+}

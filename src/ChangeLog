@@ -2,6 +2,10 @@
 
 	* user.cc: fix CopyFromDown/Up for wide chars.
 	* about.cc: update copyright.
+	* format.cc: fix formatting for wide chars.
+	* inline.cc: (Space, SpaceLeft) new functions.
+	* mb.cc, mb.h: (WCharLeft, WCharLeftAt) new functions; cache wc to
+	  reduce mbtowc calls.
 
 2005-01-28  lav
 
