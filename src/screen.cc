@@ -666,7 +666,7 @@ void  ErrMsg(const char *s)
    ReadMenuBox(OkMenu,HORIZ,s," Error ",ERROR_WIN_ATTR,CURR_BUTTON_ATTR);
 }
 
-void  FError(char *s)
+void  FError(const char *s)
 {
    char  msg[256];
 
