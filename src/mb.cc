@@ -30,7 +30,7 @@ bool  mb_mode=true;
 int   MBCharSize=1;
 int   MBCharWidth=1;
 
-static int mb_flags=MBSW_ACCEPT_UNPRINTABLE|MBSW_ACCEPT_INVALID;
+// static int mb_flags=MBSW_ACCEPT_UNPRINTABLE|MBSW_ACCEPT_INVALID;
 static const char *mb_ptr;
 static int mb_len;
 
@@ -115,5 +115,76 @@ wchar_t WCharAt(offs o)
    wchar_t wc=-1;
    mbtowc(&wc,mb_ptr,MBCharSize);
    return wc;
+}
+
+void mb_get_col(const char *buf,int pos,int *col,int len)
+{
+   if(!mb_mode)
+   {
+      *col=pos;
+      return;
+   }
+   *col=0;
+   for(int i=0; i<pos; )
+   {
+      mbtowc(0,0,0);
+      wchar_t wc;
+      int ch_len=mbtowc(&wc,buf+i,len-i);
+      if(ch_len<1)
+	 ch_len=1;
+      wc=visualize_wchar(wc);
+      *col+=wcwidth(wc);
+      i+=ch_len;
+   }
+}
+void mb_char_left(const char *buf,int *pos,int *col,int len)
+{
+   if(!mb_mode)
+   {
+      *col=--*pos;
+      return;
+   }
+   *col=0;
+   for(int i=0; i<*pos; )
+   {
+      mbtowc(0,0,0);
+      wchar_t wc;
+      int ch_len=mbtowc(&wc,buf+i,len-i);
+      if(ch_len<1)
+	 ch_len=1;
+      if(i+ch_len>=*pos)
+      {
+	 *pos=i;
+	 return;
+      }
+      wc=visualize_wchar(wc);
+      *col+=wcwidth(wc);
+      i+=ch_len;
+   }
+}
+void mb_char_right(const char *buf,int *pos,int *col,int len)
+{
+   if(!mb_mode)
+   {
+      *col=++*pos;
+      return;
+   }
+   wchar_t wc;
+   mbtowc(0,0,0);
+   int ch_len=mbtowc(&wc,buf+*pos,len-*pos);
+   if(ch_len<1)
+      ch_len=1;
+   wc=visualize_wchar(wc);
+   int ch_width=wcwidth(wc);
+   *pos+=ch_len;
+   *col+=ch_width;
+}
+int mb_get_pos_for_col(const char *buf,int target_col,int len)
+{
+   int pos=0;
+   int col=0;
+   while(pos<len && col<target_col)
+      mb_char_right(buf,&pos,&col,len);
+   return pos;
 }
 #endif

@@ -658,10 +658,11 @@ void  W_Dialogue(struct opt *opt,
    int first=1;
    char  s[512];
    struct opt *p,*p1,*n,*curr=opt;
-   int shift=0,pos=0,i,key=0,d,dist;
+   int shift=0,pos=0,col=0,i,key=0,d,dist;
    int   action=-1;
    int   OldShowStatusLine=ShowStatusLine;
    attr  *a=Upper->a;
+   int len,ch_len;
 
    OldTabSize=TabSize;
 
@@ -725,7 +726,7 @@ void  W_Dialogue(struct opt *opt,
             break;
          case(STR):
             if(p==curr)
-               sprintf(s,"%-*.*s",p->len,p->len,(char*)(p->var)+shift);
+               sprintf(s,"%-*.*s",p->len,p->len,(char*)(p->var)+mb_get_pos_for_col((char*)(p->var),shift,strlen((char*)(p->var))));
             else
                sprintf(s,"%-*.*s",p->len,p->len,(char*)(p->var));
             if(curr==p)
@@ -758,7 +759,7 @@ void  W_Dialogue(struct opt *opt,
             break;
          case(STR):
             curs_set(1);
-            GotoXY(curr->x+pos-shift,curr->y);
+            GotoXY(curr->x+col-shift,curr->y);
             break;
          case(NUM):
             curs_set(1);
@@ -885,12 +886,14 @@ use_key:
                if(p1->type==BUTTON)
                {
                   action=NEWLINE;
-                  strcpy(StringTyped,"\n");
+                  StringTyped[0]='\n';
+		  StringTypedLen=1;
                }
                else if(p1->type==ONE || p1->type==MANY)
                {
                   action=NO_ACTION;
-                  strcpy(StringTyped," ");
+                  StringTyped[0]=' ';
+		  StringTypedLen=1;
                }
                else
                   break;
@@ -903,6 +906,7 @@ use_key:
          newitem=0;
          shift=0;
          pos=0;
+	 col=0;
          first=1;
          continue;
       }
@@ -932,28 +936,34 @@ use_key:
          switch(action)
          {
          case(CHAR_LEFT):
-            if(pos>0)
-               pos--;
+	    if(pos>0)
+	       mb_char_left((char*)(curr->var),&pos,&col,strlen((char*)(curr->var)));
             break;
          case(CHAR_RIGHT):
             if(pos<(int)strlen((char*)(curr->var)))
-               pos++;
+	       mb_char_right((char*)(curr->var),&pos,&col,strlen((char*)(curr->var)));
             break;
          case(LINE_BEGIN):
-            pos=0;
+            pos=col=0;
             break;
          case(LINE_END):
             pos=strlen((char*)(curr->var));
+	    mb_get_col((char*)(curr->var),pos,&col,strlen((char*)(curr->var)));
             break;
          case(BACKSPACE_CHAR):
             if(pos==0)
                break;
+	    mb_char_left((char*)(curr->var),&pos,&col,strlen((char*)(curr->var)));
             if(shift>0)
                shift--;
-            pos--;
          case(DELETE_CHAR):
-            for(i=pos; ((char*)(curr->var))[i]; i++)
-               ((char*)(curr->var))[i]=((char*)(curr->var))[i+1];
+	    mblen(0,0);
+	    ch_len=mblen((char*)(curr->var)+pos,strlen((char*)(curr->var))-pos);
+	    if(ch_len<1)
+	       ch_len=1;
+	    len=strlen((char*)(curr->var))-ch_len;
+            for(i=pos; i<=len; i++)
+               ((char*)(curr->var))[i]=((char*)(curr->var))[i+ch_len];
             break;
          case(DELETE_TO_EOL):
             ((char*)(curr->var))[pos]=0;
@@ -986,12 +996,13 @@ use_key:
             for(i=strlen((char*)(curr->var)); i>=pos; i--)
                ((char*)(curr->var))[i+1]=((char*)(curr->var))[i];
             ((char*)(curr->var))[pos++]=key;
+	    mb_get_col((char*)(curr->var),pos,&col,strlen((char*)(curr->var)));
          }
          first=0;
-         if(pos-shift>=curr->len)
-            shift=pos-curr->len+1;
-         if(pos-shift<0)
-            shift=pos;
+         if(col-shift>=curr->len)
+            shift=col-curr->len+1;
+         if(col-shift<0)
+            shift=col;
       }
    }
 leave_cycle:

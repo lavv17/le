@@ -23,6 +23,7 @@
 
 #ifdef USE_MULTIBYTE_CHARS
 #include <wchar.h>
+#include <wctype.h>
 
 extern bool mb_mode;
 extern int  MBCharSize;
@@ -40,6 +41,11 @@ static inline int CharSize()  { return CharSizeAt(Offset()); }
 static inline int CharWidth() { return CharWidthAt(Offset()); }
 static inline int WChar() { return WCharAt(Offset()); }
 
+void mb_get_col(const char *buf,int pos,int *col,int len);
+void mb_char_left(const char *buf,int *pos,int *col,int len);
+void mb_char_right(const char *buf,int *pos,int *col,int len);
+int  mb_get_pos_for_col(const char *buf,int width,int len);
+
 #else
 # define mb_mode	(false)
 # define MBCheckLeft()	(false)
@@ -54,6 +60,11 @@ static inline int WChar() { return WCharAt(Offset()); }
 # define CharSize()	(1)
 # define WCharAt(o)	CharAt((o))
 # define WChar()	Char()
+# define mb_get_col(buf,pos,col,len)	*(col)=(pos)
+# define mb_char_left(buf,pos,col,len)  *(col)=--(*pos)
+# define mb_char_right(buf,pos,col,len) *(col)=++(*pos)
+# define mb_get_pos_for_col(buf,width,len) (width)
+# define mblen(s,l)	(1)
 #endif
 
 #endif//MB_H

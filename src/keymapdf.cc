@@ -115,6 +115,8 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {MARK_TEXT_END,"\033[1;6F"},
    {MARK_LINE_UP,"\033[1;2A"},
    {MARK_LINE_DOWN,"\033[1;2B"},
+   {WORD_LEFT,"\033[1;5D"},
+   {WORD_RIGHT,"\033[1;5C"},
 
 // Delete actions
    {BACKSPACE_CHAR,"^H"},

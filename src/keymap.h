@@ -238,7 +238,7 @@ struct   ActionCodeRec
    char  *code;
 };
 
-extern   char  StringTyped[];
+extern   unsigned char StringTyped[];
 extern   int   StringTypedLen;
 extern   ActionProcRec  EditorActionProcTable[];
 extern   ActionCodeRec  *ActionCodeTable;

@@ -1,3 +1,11 @@
+2004-04-01  lav
+
+	* getstr.cc, mb.cc, mb.h: move mb_* functions to mb.cc;
+	  (mb_get_pos_for_col) new function.
+	* keymap.cc, keymap.h: make StringTyped unsigned.
+	* keymapdf.cc: add some more xterm codes.
+	* options.cc: support mb chars.
+
 2004-03-31  lav
 
 	* chset.cc, kern.cc: include wctype.h

@@ -32,7 +32,7 @@
 #include "getch.h"
 #include <term.h>
 
-char  StringTyped[256];
+unsigned char StringTyped[256];
 int   StringTypedLen;
 
 int   FuncKeysNum=12;
@@ -798,7 +798,7 @@ void FreeActionCodeTable()
 
 int   GetNextAction()
 {
-   char  *store;
+   unsigned char *store;
    int   key;
    bool	 seen_func_key=false;
 
