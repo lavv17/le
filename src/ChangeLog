@@ -1,3 +1,8 @@
+2005-03-13  lav
+
+	* user.cc: fix CopyFromDown/Up for wide chars.
+	* about.cc: update copyright.
+
 2005-01-28  lav
 
 	* chset.cc: (set_chset_no8bit) new function.

@@ -179,12 +179,12 @@ void  UserCopyFromDown()
       }
       if(tp.Col()==oc && !EolAt(tp.Offset()))
       {
-         char  ch=CharAt(tp.Offset());
+         wchar_t ch=WCharAt(tp.Offset());
          PreUserEdit();
          if(insert)
-            InsertChar(ch);
+            InsertWChar(ch);
          else
-            ReplaceCharExtMove(ch);
+            ReplaceWCharExtMove(ch);
          flag|=REDISPLAY_LINE;
          return;
       }
@@ -213,12 +213,12 @@ void  UserCopyFromUp()
       }
       if(tp.Col()==oc && !EolAt(tp.Offset()))
       {
-         char  ch=CharAt(tp.Offset());
+         wchar_t ch=WCharAt(tp.Offset());
          PreUserEdit();
          if(insert)
-            InsertChar(ch);
+            InsertWChar(ch);
          else
-            ReplaceCharExtMove(ch);
+            ReplaceWCharExtMove(ch);
          flag|=REDISPLAY_LINE;
          return;
       }
