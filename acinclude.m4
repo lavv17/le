@@ -246,6 +246,7 @@ AC_DEFUN(LE_CURSES_BOOL,
       LIBS="$old_LIBS"
       CXXFLAGS="$old_CXXFLAGS"
    ])
+   AC_MSG_RESULT($ac_cv_curses_bool_defined)
   if test "$ac_cv_curses_bool_defined" = no; then
    AC_MSG_CHECKING(for curses bool type)
    AC_CACHE_VAL(ac_cv_curses_bool,
