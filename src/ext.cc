@@ -34,6 +34,20 @@ void  ReplaceCharExt(byte ch)
    MoveLeft();
    stdcol=GetCol();
 }
+void  ReplaceWCharExtMove(wchar_t ch)
+{
+   if(Char()=='\t' && ch!='\t')
+      ExpandTab();
+   InsertWChar(ch);
+   if(!Eol() || Bol())
+      DeleteChar();
+}
+void  ReplaceWCharExt(wchar_t ch)
+{
+   ReplaceWCharExtMove(ch);
+   MoveLeftOverEOL();
+   stdcol=GetCol();
+}
 
 void  ExpandAllTabs()
 {

@@ -1,3 +1,15 @@
+2004-04-12  lav
+
+	* block.cc: (WCharAtLC) new function.
+	* chset.cc: fix for non-printable wchars in 0-255 range.
+	* edit.cc: include langinfo.h.
+	* edit.h: new prototypes.
+	* ext.cc: (ReplaceWCharExt, ReplaceWCharExtMove) new functions.
+	* frames.cc: drawing with unicode chars.
+	* getstr.cc: check mb_mode var.
+	* mb.cc, mb.h: use visualize_wchar when getting char width;
+	  (InsertWChar) new function.
+
 2004-04-08  lav
 
 	* edit.cc, edit.h: (getcode) use prompt arg, use history; (getcode_char,

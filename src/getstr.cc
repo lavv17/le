@@ -78,25 +78,37 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
       for(i=0,c=0; c<=width+shift && i<(*len); )
       {
 #if USE_MULTIBYTE_CHARS
-	 wchar_t wc;
-	 int ch_len=mbtowc(&wc,buf+i,(*len)-i);
-	 if(ch_len<1)
-	    ch_len=1;
-	 wchar_t vwc=visualize_wchar(wc);
-	 if(c>=shift)
+	 if(mb_mode)
 	 {
-	    if(wc!=vwc)
-	       attrset(curr_attr->so_attr);
-	    addnwstr(&vwc,1);
-	    attrset(curr_attr->n_attr);
+	    wchar_t wc;
+	    int ch_len=mbtowc(&wc,buf+i,(*len)-i);
+	    if(ch_len<1 || (ch_len==1 && !chset_isprint(buf[i+shift])))
+	    {
+	       if(c>=shift)
+		  addch_visual((byte)buf[i+shift]);
+	       i++; c++;
+	    }
+	    else
+	    {
+	       wchar_t vwc=visualize_wchar(wc);
+	       if(c>=shift)
+	       {
+		  if(wc!=vwc)
+		     attrset(curr_attr->so_attr);
+		  addnwstr(&vwc,1);
+		  attrset(curr_attr->n_attr);
+	       }
+	       i+=ch_len;
+	       c+=wcwidth(vwc);
+	    }
 	 }
-	 i+=ch_len;
-	 c+=wcwidth(vwc);
-#else
-	 if(c>=shift)
-	    addch_visual((byte)buf[i+shift]);
-	 i++; c++;
+	 else // note the following block
 #endif
+	 {
+	    if(c>=shift)
+	       addch_visual((byte)buf[i+shift]);
+	    i++; c++;
+	 }
       }
       while(c++<=width+shift)
 	 addch(' ');

@@ -33,6 +33,9 @@
 #include <locale.h>
 #include <time.h>
 #include <errno.h>
+#ifdef HAVE_LANGINFO_H
+# include <langinfo.h>
+#endif
 #include "edit.h"
 #include "calc.h"
 #include "keymap.h"

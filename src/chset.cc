@@ -232,7 +232,7 @@ void  addch_visual(chtype ch)
    else
    {
       unsigned char ct=ch&A_CHARTEXT;
-      if(chset[ct/CHSET_BITS_PER_BYTE]&(1<<(ct%CHSET_BITS_PER_BYTE)))
+      if(!chset_isprint(ct))
       {
 	 if(ct<32)
 	    ct+='@';
@@ -275,6 +275,8 @@ chtype visualize(struct attr *a,chtype ch)
 wchar_t visualize_wchar(wchar_t wc)
 {
    if(iswprint(wc))
+      return wc;
+   if(wc>=0 && wc<256 && chset_isprint(wc))
       return wc;
    if(wc==0x80 && !chset_isprint(wc))
       return '?';

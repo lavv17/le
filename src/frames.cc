@@ -24,13 +24,14 @@
 #include "edit.h"
 #include "keymap.h"
 
-struct   graphchar
+struct   GraphChar
 {
-   byte  ch;
-   byte  prol[4];
+   int  ch;
+   enum { L=0, T, R, B };
+   char prol[4];
 };
 
-struct graphchar  DumbCoding[]=
+struct GraphChar  DumbCoding[]=
 {
 /*   {'|',{0,1,0,1}},{'+',{1,1,1,1}},{'-',{1,0,1,0}},{'=',{2,0,2,0}},
    {'+',{1,1,0,0}},{'+',{0,1,1,0}},{'+',{0,0,1,1}},{'+',{1,0,0,1}},*/
@@ -48,7 +49,7 @@ struct graphchar  DumbCoding[]=
    {' ',{0,0,0,0}},{0,{0,0,0,0}}
 };
 
-struct graphchar  AlternativeCoding[]=
+struct GraphChar  AlternativeCoding[]=
 {
    {'≥',{0,1,0,1}},{'¥',{1,1,0,1}},{'µ',{2,1,0,1}},{'∂',{1,2,0,2}},
    {'∑',{1,0,0,2}},{'∏',{2,0,0,1}},{'π',{2,2,0,2}},{'∫',{0,2,0,2}},
@@ -62,7 +63,7 @@ struct graphchar  AlternativeCoding[]=
    {'◊',{1,2,1,2}},{'ÿ',{2,1,2,1}},{'Ÿ',{1,1,0,0}},{'⁄',{0,0,1,1}},
    {' ',{0,0,0,0}},{0,{0,0,0,0}}
 };
-struct graphchar  KOI8Coding[]=
+struct GraphChar  KOI8Coding[]=
 {
 
 /* {'É',{0,1,0,1}},{'Ñ',{1,1,0,1}},{'Ö',{2,1,0,1}},{'Ü',{1,2,0,2}},
@@ -88,7 +89,7 @@ struct graphchar  KOI8Coding[]=
    {'Ø',{1,2,1,2}},{'∞',{2,1,2,1}},{'±',{1,1,0,0}},{'≤',{0,0,1,1}},
    {' ',{0,0,0,0}},{0,{0,0,0,0}}
 };
-struct graphchar  KOI8_linux_Coding[]=
+struct GraphChar  KOI8_linux_Coding[]=
 {
    {'É',{0,1,0,1}},{'Ñ',{1,1,0,1}},{'Ö',{2,1,0,1}},{'Ü',{1,2,0,2}},
    {'á',{1,0,0,2}},{'à',{2,0,0,1}},{'â',{2,2,0,2}},{'∫',{0,2,0,2}},
@@ -103,7 +104,33 @@ struct graphchar  KOI8_linux_Coding[]=
    {' ',{0,0,0,0}},{0,{0,0,0,0}}
 };
 
-struct graphchar  *GraphSets[]=
+struct GraphChar UnicodeCoding[]=
+{
+/* {'‚îÇ',{0,1,0,1}},{'‚î§',{1,1,0,1}},{'‚ï°',{2,1,0,1}},{'‚ï¢',{1,2,0,2}},
+   {'‚ïñ',{1,0,0,2}},{'‚ïï',{2,0,0,1}},{'‚ï£',{2,2,0,2}},{'‚ïë',{0,2,0,2}},
+   {'‚ïó',{2,0,0,2}},{'‚ïù',{2,2,0,0}},{'‚ïú',{1,2,0,0}},{'‚ïõ',{2,1,0,0}},
+   {'‚îê',{1,0,0,1}},{'‚îî',{0,1,1,0}},{'‚î¥',{1,1,1,0}},{'‚î¨',{1,0,1,1}},
+   {'‚îú',{0,1,1,1}},{'‚îÄ',{1,0,1,0}},{'‚îº',{1,1,1,1}},{'‚ïû',{0,1,2,1}},
+   {'‚ïü',{0,2,1,2}},{'‚ïö',{0,2,2,0}},{'‚ïî',{0,0,2,2}},{'‚ï©',{2,2,2,0}},
+   {'‚ï¶',{2,0,2,2}},{'‚ï†',{0,2,2,2}},{'‚ïê',{2,0,2,0}},{'‚ï¨',{2,2,2,2}},
+   {'‚ïß',{2,1,2,0}},{'‚ï®',{1,2,1,0}},{'‚ï§',{2,0,2,1}},{'‚ï•',{1,0,1,2}},
+   {'‚ïô',{0,2,1,0}},{'‚ïò',{0,1,2,0}},{'‚ïí',{0,0,2,1}},{'‚ïì',{0,0,1,2}},
+   {'‚ï´',{1,2,1,2}},{'‚ï™',{2,1,2,1}},{'‚îò',{1,1,0,0}},{'‚îå',{0,0,1,1}},
+   {' ',{0,0,0,0}},{0,{0,0,0,0}} */
+   {0x2502,{0,1,0,1}},{0x2524,{1,1,0,1}},{0x2561,{2,1,0,1}},{0x2562,{1,2,0,2}},
+   {0x2556,{1,0,0,2}},{0x2555,{2,0,0,1}},{0x2563,{2,2,0,2}},{0x2551,{0,2,0,2}},
+   {0x2557,{2,0,0,2}},{0x255D,{2,2,0,0}},{0x255C,{1,2,0,0}},{0x255B,{2,1,0,0}},
+   {0x2510,{1,0,0,1}},{0x2514,{0,1,1,0}},{0x2534,{1,1,1,0}},{0x252C,{1,0,1,1}},
+   {0x251C,{0,1,1,1}},{0x2500,{1,0,1,0}},{0x253C,{1,1,1,1}},{0x255E,{0,1,2,1}},
+   {0x255F,{0,2,1,2}},{0x255A,{0,2,2,0}},{0x2554,{0,0,2,2}},{0x2569,{2,2,2,0}},
+   {0x2566,{2,0,2,2}},{0x2560,{0,2,2,2}},{0x2550,{2,0,2,0}},{0x256C,{2,2,2,2}},
+   {0x2567,{2,1,2,0}},{0x2568,{1,2,1,0}},{0x2564,{2,0,2,1}},{0x2565,{1,0,1,2}},
+   {0x2559,{0,2,1,0}},{0x2558,{0,1,2,0}},{0x2552,{0,0,2,1}},{0x2553,{0,0,1,2}},
+   {0x256B,{1,2,1,2}},{0x256A,{2,1,2,1}},{0x2518,{1,1,0,0}},{0x250C,{0,0,1,1}},
+   {' ',{0,0,0,0}},{0,{0,0,0,0}}
+};
+
+struct GraphChar  *GraphSets[]=
 {
    AlternativeCoding,
    KOI8Coding,
@@ -111,10 +138,10 @@ struct graphchar  *GraphSets[]=
    DumbCoding,
    NULL
 };
-struct graphchar  *CurrGraphSet;
+struct GraphChar  *CurrGraphSet;
 int               grsetno=0;
 
-int   CharIndex(byte ch)
+int   CharIndex(int ch)
 {
    int i;
    for(i=0; CurrGraphSet[i].ch && CurrGraphSet[i].ch!=ch; i++);
@@ -130,12 +157,12 @@ void  TurnXY(int *x,int *y)
    *y=-*x;
    *x=x1;
 }
-byte  HowProlonged(byte ch,int x,int y)
+int  HowProlonged(int ch,int x,int y)
 {
    return(CurrGraphSet[CharIndex(ch)].prol[DirIndex(x,y)]);
 }
 
-int   IsProlonged(byte ch,int x,int y,byte how)
+int   IsProlonged(int ch,int x,int y,byte how)
 {
    int   dir=DirIndex(x,y);
 
@@ -148,18 +175,22 @@ int   IsProlonged(byte ch,int x,int y,byte how)
 
 void  Prolong(int x,int y,byte how)
 {
-   struct graphchar  need;
+   struct GraphChar  need;
    int               best;
    int               bestdist;
    int               dist;
    int               i;
    int               j;
 
-   need=CurrGraphSet[CharIndex(Char())];
+   need=CurrGraphSet[CharIndex(mb_mode?WChar():Char())];
    need.prol[DirIndex(x,y)]=how;
 
    for(i=1,TurnXY(&x,&y); i<4; i++,TurnXY(&x,&y))
-      need.prol[DirIndex(x,y)]=HowProlonged(CharAtLC(GetLine()+y,GetCol()+x),-x,-y);
+   {
+      int ch=mb_mode?WCharAtLC(GetLine()+y,GetCol()+x)
+		    :CharAtLC(GetLine()+y,GetCol()+x);
+      need.prol[DirIndex(x,y)]=HowProlonged(ch,-x,-y);
+   }
 
    best=-1;
    bestdist=30000;
@@ -180,12 +211,15 @@ void  Prolong(int x,int y,byte how)
          best=i;
       }
    }
-   ReplaceCharExt(CurrGraphSet[best].ch);
+   if(mb_mode)
+      ReplaceWCharExt(CurrGraphSet[best].ch);
+   else
+      ReplaceCharExt(CurrGraphSet[best].ch);
 }
 
 void  Draw(int x,int y,byte how)
 {
-   if(IsProlonged(Char(),x,y,how))
+   if(IsProlonged(mb_mode?WChar():Char(),x,y,how))
    {
       if(GetCol()<-x || GetLine()<-y)
          return;
@@ -211,6 +245,8 @@ void    DrawFrames(void)
       return;
 
    CurrGraphSet=GraphSets[grsetno];
+   if(mb_mode)
+      CurrGraphSet=UnicodeCoding;
 
    do
    {

@@ -26,7 +26,7 @@
 #include "mb.h"
 
 #ifdef USE_MULTIBYTE_CHARS
-bool  mb_mode=true;
+bool  mb_mode=false;
 int   MBCharSize=1;
 int   MBCharWidth=1;
 
@@ -75,14 +75,9 @@ bool MBCheckLeftAt(offs o)
 	 MBCharSize=1;
       if(MBCharSize==left_offset-i)
       {
-	 if(wc==0)
+	 MBCharWidth=wcwidth(visualize_wchar(wc));
+	 if(MBCharWidth<0)
 	    MBCharWidth=1;
-	 else
-	 {
-	    MBCharWidth=wcwidth(wc);
-	    if(MBCharWidth<0)
-	       MBCharWidth=1;
-	 }
 	 return true;
       }
       if(MBCharSize>left_offset-i)
@@ -111,14 +106,9 @@ bool MBCheckAt(offs o)
       MBCharWidth=1;
       return false;
    }
-   if(wc==0)
+   MBCharWidth=wcwidth(visualize_wchar(wc));
+   if(MBCharWidth<0)
       MBCharWidth=1;
-   else
-   {
-      MBCharWidth=wcwidth(wc);
-      if(MBCharWidth<0)
-	 MBCharWidth=1;
-   }
    return true;
 }
 wchar_t WCharAt(offs o)
@@ -200,5 +190,14 @@ int mb_get_pos_for_col(const char *buf,int target_col,int len)
    while(pos<len && col<target_col)
       mb_char_right(buf,&pos,&col,len);
    return pos;
+}
+
+void InsertWChar(wchar_t ch)
+{
+   char buf[MB_CUR_MAX+1];
+   int len=wctomb(buf,ch);
+   if(len<=0)
+      return;
+   InsertBlock(buf,len);
 }
 #endif

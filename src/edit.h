@@ -152,6 +152,7 @@ void  MoveRightOverEOL();
 void  MoveLineCol(num,num);
 void  HideDisplay(void);
 char  CharAtLC(num,num);
+wchar_t WCharAtLC(num,num);
 void  NewLine(void);
 void  HardMove(num,num);
 void  ExpandTab(void);
@@ -177,6 +178,8 @@ int   ReplaceCharMove(byte);
 void  ReplaceCharExt(byte);	 // Replace character under cursor with tab
 				 // expanding, line appending, etc.
 void  ReplaceCharExtMove(byte);	 // Same, but leave cursor after the new char
+void  ReplaceWCharExt(wchar_t);
+void  ReplaceWCharExtMove(wchar_t);
 
 void        MoveUp(void);
 void        MoveDown(void);
