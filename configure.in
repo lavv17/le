@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_INIT(src/edit.cc)
-AM_INIT_AUTOMAKE(le, 1.6.2)
+AM_INIT_AUTOMAKE(le, 1.6.3)
 AM_CONFIG_HEADER(config.h)
 
 AC_ARG_ENABLE(file-locks, [  --disable-file-locks    disable file locking],
