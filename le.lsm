@@ -1,21 +1,21 @@
 Begin3
 Title:		LE text editor
-Version:	1.11.0
-Entered-date:	2004-05-19
+Version:	1.11.1
+Entered-date:	2004-05-20
 Description:	LE has many block operations with stream and
 		rectangular blocks, can edit both unix and dos
 		style files (LF/CRLF), is binary clean, has hex
 		mode, can edit text with multibyte character encoding,
-		can edit files and mmap'able devices in
+		has full undo/redo, can edit files and mmap'able devices in
 		mmap shared mode (only replace), has tunable syntax
 		highlighting, tunable color scheme (can use default
 		colors), tunable key map, tunable menu. It is slightly
 		similar to Norton Editor for DOS, but has more features.
-Keywords:	text editor, block, color, binary, hex, mmap
+Keywords:	text editor, block, color, binary, hex, mmap, undo
 Author:		lav@yars.free.net (Alexander V. Lukyanov)
 Maintained-by:	lav@yars.free.net (Alexander V. Lukyanov)
 Primary-site:	ftp.yars.free.net /pub/software/unix/util/texteditors
-		426 kB le-1.11.0.tar.gz
+		426 kB le-1.11.1.tar.gz
 Alternate-site:	metalab.unc.edu /pub/Linux/apps/editors/terminal
 Platforms:	Unix, C++, ncurses or sysv curses
 Copying-policy:	GNU GPL

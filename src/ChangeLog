@@ -2,6 +2,8 @@
 
 	* undo.cc: fixed malloc(0) and memory allocation error handling;
 	  clear group_head in Clear.
+	* user.cc: call undelete if undo is disabled.
+	* keymapdf.cc: call undo on ^U and kund.
 
 2004-05-19  lav
 

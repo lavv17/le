@@ -1208,6 +1208,11 @@ void  UserUndo()
 {
    if(View)
       return;
+   if(!undo.Enabled())
+   {
+      UserUndelete();
+      return;
+   }
    undo.UndoGroup();
    flag=REDISPLAY_ALL;
 }

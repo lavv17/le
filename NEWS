@@ -1,3 +1,8 @@
+Version 1.11.1 - 2004-05-20
+
+* fixed a memory allocation error.
+* forced usage of old regex included with le to workaround a glibc bug.
+
 Version 1.11.0 - 2004-05-19
 
 * full undo/redo.

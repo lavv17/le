@@ -134,8 +134,6 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {DELETE_TO_EOL,"$kel"},
    {DELETE_LINE,"$kdl"},
    {DELETE_LINE,"\031"},
-   {UNDELETE,"^U"},
-   {UNDELETE,"$kund"},
 
 // Insert actions
 //   {INDENT,"indent"},
@@ -146,6 +144,8 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {COPY_FROM_DOWN,"^V"},
 
    {UNDO,"^Z"},
+   {UNDO,"^U"},
+   {UNDO,"$kund"},
    {REDO,"\033|Z"},
    {REDO,"\033|z"},
 
