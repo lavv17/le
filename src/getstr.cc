@@ -37,7 +37,8 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
    if(history)
       history->Open();
 
-   there_message=1;
+   if(message_sp==0)
+      message_sp=1;
    width=COLS-strlen(pr)-1;
    pos=0;
    shift=0;

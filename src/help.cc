@@ -93,8 +93,8 @@ void  Help(const char *help,const char *title)
 {
    const char  *ptr=help;
    WIN   *HelpWin;
-   const v_m=1;
-   const h_m=2;
+   const int v_m=1;
+   const int h_m=2;
 
    HelpWin=CreateWin(MIDDLE,MIDDLE,48,22,HELP_WIN_ATTR,title,0);
    DisplayWin(HelpWin);

@@ -67,8 +67,6 @@ int   SaveHst=1;
 
 int   View=FALSE;
 
-int   ShowMatchPos=TRUE;
-
 char  *HOME,*TERM,*DISPLAY;
 
 int   UseColor=1;
@@ -87,19 +85,19 @@ int   getcode()
 {
    long  i;
    static char ch[10];
-   static getcode_active=0;
+   static bool getcode_active=false;
 
    if(getcode_active)
       return(-1);
 
-   getcode_active=1;
+   getcode_active=true;
 
    if(getstring("Char: ",ch,sizeof(ch)-1)<1)
    {
-      getcode_active=0;
+      getcode_active=false;
       return(-1);
    }
-   getcode_active=0;
+   getcode_active=false;
    i=strtol(ch,0,0);
    if(i<0 || i>255)
       return(-1);
@@ -264,6 +262,7 @@ void    Edit()
 	    else
 	       flag|=REDISPLAY_LINE;
 	    ReplaceCharMove(key);
+	    stdcol=GetCol();
 	    continue;
 	 }
 	 if(hex)
@@ -276,6 +275,7 @@ void    Edit()
 	    else
 	    {
 	       ReplaceCharMove(key);
+	       stdcol=GetCol();
 	       flag|=REDISPLAY_LINE;
 	    }
 	    continue;

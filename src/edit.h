@@ -108,7 +108,7 @@ extern  int     DosEol;
 
 extern  int     hide;
 
-extern  int     there_message;
+extern  int     message_sp;
 extern  int     flag;
 
 extern  byte    chset[];
@@ -137,7 +137,7 @@ extern   int   TabsInMargin;
 #define GRAPH   2
 
 #define hex     (editmode==HEXM)
-#define Text    (editmode==TEXT)
+#define Text    (editmode==TEXT && !buffer_mmapped)
 
 void  MoveLeftOverEOL();
 void  MoveRightOverEOL();

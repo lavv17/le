@@ -183,7 +183,7 @@ void    alarmsave(int a)
    static offs dump_pos=0;
    static int fd=-1;
    static int interrupted=0;
-   const chunk=0x20000;
+   const int chunk=0x20000;
 
    (void)a;
 

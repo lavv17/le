@@ -178,8 +178,8 @@ enum
    CODE_TOO_MUCH
 };
 
-const MAX_DELAY=30000000;
-const HALF_DELAY=500;
+const int MAX_DELAY=30000000;
+const int HALF_DELAY=500;
 
 struct KeyTreeNode
 {
