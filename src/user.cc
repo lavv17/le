@@ -1004,7 +1004,7 @@ void  UserToLineNumber()
 }
 void  UserToOffset()
 {
-   static char no[10]="";
+   static char no[40]="";
    if(getstring("Move to offset: ",no,sizeof(no)-1,NULL,NULL,NULL)<1)
       return;
    CurrentPos=strtol(no,0,0);

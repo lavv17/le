@@ -4,6 +4,10 @@
 	  cursor placement during search/replace when cursor has to be
 	  placed at eol.
 
+1999-12-02  lav
+
+	* user.cc: use a larger buffer for offset.
+
 1999-11-06  lav
 
 	* about.cc, about.h: export copyright string.
