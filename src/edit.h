@@ -152,7 +152,6 @@ void  MoveRightOverEOL();
 void  MoveLineCol(num,num);
 void  HideDisplay(void);
 char  CharAtLC(num,num);
-wchar_t WCharAtLC(num,num);
 void  NewLine(void);
 void  HardMove(num,num);
 void  ExpandTab(void);
@@ -160,7 +159,6 @@ bool  IsAlNumAt(offs);
 
 long  getcode(const char *prompt);
 int   getcode_char();
-wchar_t getcode_wchar();
 int   AskToSave();
 void  Quit(void);
 
@@ -178,8 +176,6 @@ int   ReplaceCharMove(byte);
 void  ReplaceCharExt(byte);	 // Replace character under cursor with tab
 				 // expanding, line appending, etc.
 void  ReplaceCharExtMove(byte);	 // Same, but leave cursor after the new char
-void  ReplaceWCharExt(wchar_t);
-void  ReplaceWCharExtMove(wchar_t);
 
 void        MoveUp(void);
 void        MoveDown(void);
@@ -255,7 +251,6 @@ void  PreModify();
 int   PreUserEdit();
 
 int   choose_ch();
-wchar_t choose_wch();
 
 int   InsertBlock(char *block,num len,char *rblock=NULL,num rlen=0);
 int   ReplaceBlock(char *block,num len);

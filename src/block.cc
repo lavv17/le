@@ -83,12 +83,14 @@ char   CharAtLC(num l,num c)
    Last=TextPoint(l,c);
    return((EolAt(Last)||Last.Col()!=c||Last.Line()!=l)?' ':CharAt(Last));
 }
+#if USE_MULTIBYTE_CHARS
 wchar_t WCharAtLC(num l,num c)
 {
    static TextPoint Last;
    Last=TextPoint(l,c);
    return((EolAt(Last)||Last.Col()!=c||Last.Line()!=l)?' ':WCharAt(Last));
 }
+#endif
 void   NewLine()
 {
    InsertBlock(EolStr,EolSize);

@@ -115,6 +115,7 @@ int getcode_char()
       return -1;
    return (int)ch;
 }
+#if USE_MULTIBYTE_CHARS
 wchar_t getcode_wchar()
 {
    long ch=getcode("Wide Char: ");
@@ -122,6 +123,7 @@ wchar_t getcode_wchar()
       return -1;
    return (wchar_t)ch;
 }
+#endif
 
 void ProcessDragMark()
 {
@@ -545,6 +547,16 @@ void  PrintUsage(int arg)
    exit(1);
 }
 
+#if USE_MULTIBYTE_CHARS
+static bool has_widechars()
+{
+   for(int c=' '; c<256; c++)
+      if(btowc(c)>=256)
+	 return 1;
+   return 0;
+}
+#endif
+
 int     main(int argc,char **argv)
 {
    int   optView=-1,opteditmode=-1,optWarpLine=0;
@@ -610,6 +622,8 @@ int     main(int argc,char **argv)
 #else
    setlocale(LC_ALL,"");
 #if USE_MULTIBYTE_CHARS
+   if(has_widechars())
+      mb_mode=true;
 # if defined(HAVE_NL_LANGINFO) && defined(CODESET)
    char *cs=nl_langinfo(CODESET);
    if(cs && !strcasecmp(cs,"UTF-8"))

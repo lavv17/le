@@ -61,7 +61,11 @@ void  GotoXY(int x,int y);
 void  Clear();
 void  PutStr(int x,int y,const char *s);
 void  PutCh(int x,int y,chtype ch);
+#ifdef USE_MULTIBYTE_CHARS
 void  PutWCh(int x,int y,wchar_t ch);
+#else
+# define PutWCh(x,y,c) PutCh(x,y,c)
+#endif
 
 extern struct attr *curr_attr;
 extern WIN *Upper;

@@ -18,7 +18,6 @@
 
 #include <config.h>
 #include <ctype.h>
-#include <wctype.h>
 #include <string.h>
 #include <stdlib.h>
 #include "edit.h"
@@ -261,9 +260,9 @@ done:
    DestroyWin(w);
    return(res);
 }
+#if USE_MULTIBYTE_CHARS
 wchar_t choose_wch()
 {
-#if USE_MULTIBYTE_CHARS
    WIN *w;
    int i,j;
    static wchar_t curr=0;
@@ -356,12 +355,8 @@ done:
    CloseWin();
    DestroyWin(w);
    return(res);
-#else
-   ErrMsg("No wide character support compiled in");
-   return -1;
-#endif
 }
-
+#endif
 
 void  addch_visual(chtype ch)
 {
@@ -411,6 +406,7 @@ chtype visualize(struct attr *a,chtype ch)
    return ch;
 }
 
+#if USE_MULTIBYTE_CHARS
 wchar_t visualize_wchar(wchar_t wc)
 {
    if(iswprint(wc))
@@ -427,3 +423,4 @@ wchar_t visualize_wchar(wchar_t wc)
       wc='.';
    return wc;
 }
+#endif

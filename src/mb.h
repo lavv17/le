@@ -33,6 +33,11 @@ bool MBCheckLeftAt(offs o);
 bool MBCheckAt(offs o);
 wchar_t WCharAt(offs o);
 void InsertWChar(wchar_t ch);
+wchar_t WCharAtLC(num,num);
+wchar_t getcode_wchar();
+wchar_t choose_wch();
+void ReplaceWCharExt(wchar_t);
+void ReplaceWCharExtMove(wchar_t);
 
 static inline bool MBCheckRight() { return MBCheckAt(Offset()); }
 static inline bool MBCheckLeft()  { return MBCheckLeftAt(Offset()); }
@@ -62,7 +67,12 @@ int  mb_len(const char *buf,int len);
 # define CharSize()	(1)
 # define WCharAt(o)	CharAt((o))
 # define WChar()	Char()
+# define WCharAtLC(l,c)	CharAtLC(l,c)
+# define getcode_wchar() getcode_char()
+# define choose_wch()	choose_ch()
 # define InsertWChar(ch) InsertChar(ch)
+# define ReplaceWCharExt(c) ReplaceCharExt(c)
+# define ReplaceWCharExtMove(c) ReplaceWCharExtMove(c)
 # define mb_get_col(buf,pos,col,len)	*(col)=(pos)
 # define mb_char_left(buf,pos,col,len)  *(col)=--(*pos)
 # define mb_char_right(buf,pos,col,len) *(col)=++(*pos)

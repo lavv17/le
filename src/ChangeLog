@@ -1,3 +1,8 @@
+2004-12-22  lav
+
+	* block.cc, chset.cc, edit.cc, edit.h, mb.h, window.h: fix compilation
+	  without wide chars; check for wide chars and if present go to mb_mode.
+
 2004-12-08  lav
 
 	* edit.cc: initialize newname properly.
