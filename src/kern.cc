@@ -83,7 +83,7 @@ int   FileTypeDetect=1;
 
 int   TabsInMargin;
 
-char  bak[5];
+char  bak[5]="~%d~";
 
 bool  buffer_mmapped=false;
 
@@ -922,11 +922,8 @@ void  EmptyText()
       {
 	 if(newfile && st.st_size==0)
             remove(FileName);
-         else
-         {
-      	    FileInfo=InodeInfo(&st,GetLine(),GetCol());
-      	    PositionHistory+=FileInfo;
-         }
+	 else if(!modified)
+	    SavePosition();
       }
    }
    FileName[0]=0;

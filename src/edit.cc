@@ -321,7 +321,7 @@ int     AskToSave()
       case('Y'):
          errno=0;
          result=(UserSave()==OK);
-         if(errno && modified)
+         if(!result && modified)
          {
             UserSaveAs();
             result=!modified;
@@ -336,6 +336,7 @@ int     AskToSave()
       }
       return(result);
    }
+   SavePosition();
    return(TRUE);
 }
 
@@ -557,7 +558,7 @@ int     main(int argc,char **argv)
       {0,0,0,0}
    };
 
-   HistoryLine    *hl;
+   HistoryLine    *hl=0;
    char  newname[256];
 
    strcpy(Program,le_basename(argv[0]));
@@ -664,12 +665,22 @@ int     main(int argc,char **argv)
    if(optind>=argc)
    {
       LoadHistory.Open();
-      hl=LoadHistory.Prev();
-      if(hl && hl->line[0]
-	    && ((View && access(hl->line,R_OK)!=-1
-	        || (!View && access(hl->line,W_OK|R_OK)!=-1))))
-         strcpy(newname,hl->line);
-      else
+      bool first=true;
+      for(;;)
+      {
+	 hl=LoadHistory.Prev();
+	 if(!hl)
+	    break;
+	 if(hl->line[0] && (first || hl->line[0]!='/')
+	 && access(hl->line,R_OK)!=-1)
+	 {
+	    strcpy(newname,hl->line);
+      	    break;
+	 }
+	 first=false;
+      }
+
+      if(!hl)
       {
          ShowAbout();
          if(getstring("Load: ",newname,255,&LoadHistory,NULL,NULL)<1

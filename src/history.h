@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -65,9 +65,9 @@ class InodeInfo
    time_t   cr_time;
 
 public:
-   num      line,col;
+   num      line,col,offset;
 
-   InodeInfo(struct stat *st,num line=0,num col=0);
+   InodeInfo(struct stat *st,num line=0,num col=0,num o=0);
    InodeInfo();
 
    int   SameFile(const InodeInfo&) const;

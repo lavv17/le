@@ -95,7 +95,8 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
                memcpy(buf,hl->line,*len=hl->len);
             else
                *len=0;
-            start=1;
+            pos=0;
+	    start=1;
             break;
          case(LINE_DOWN):
             if(history==NULL)

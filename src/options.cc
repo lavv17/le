@@ -29,11 +29,13 @@
 #include "highli.h"
 #include "getch.h"
 
-extern  LineLen;
-extern  LeftMargin;
-extern  FirstLineMargin;
-extern  char   ContextHelpNames[];
-extern  RightAdj,LeftAdj;
+extern int LineLen;
+extern int LeftMargin;
+extern int FirstLineMargin;
+extern char ContextHelpNames[];
+extern int RightAdj,LeftAdj;
+
+extern int MaxBackup;
 
 int useidl=0;
 
@@ -64,7 +66,10 @@ struct  opt
    int   len;
    int   maxlen;
    int   flags;
-   char  *old;
+   union {
+      char *s;
+      int n;
+   } old;
 } opt[]=
 {
 {"&Insert",          ONE,  (void*)&insert,    3,2},
@@ -80,25 +85,26 @@ struct  opt
 {"&Syntax highlight",ONE,  (void*)&hl_option,	      45,5},
 {"Use tabs",         ONE,  (void*)&UseTabs,	      45,6},
 {"BackSp unindents", ONE,  (void*)&BackspaceUnindents,45,7},
-{"PageUp=PageTop",   ONE,  (void*)&PreferPageTop,     45,8},
+{"Lazy page scroll", ONE,  (void*)&PreferPageTop,     45,8},
 
-{"&Latin",           MANY, (void*)&inputmode,  3,5},
-{"r&Ussian",         MANY, (void*)&inputmode,  3,6},
-{"&Graphic",         MANY, (void*)&inputmode,  3,7},
+{"&Latin",           MANY, (void*)&inputmode,	3,5},
+{"r&Ussian",         MANY, (void*)&inputmode,	3,6},
+{"&Graphic",         MANY, (void*)&inputmode,	3,7},
 
-{"&Exact",           MANY, (void*)&editmode,   22,5},
-{"te&Xt",            MANY, (void*)&editmode,   22,6},
-{"&Hex",             MANY, (void*)&editmode,   22,7},
+{"&Exact",           MANY, (void*)&editmode,	22,5},
+{"te&Xt",            MANY, (void*)&editmode,	22,6},
+{"&Hex",             MANY, (void*)&editmode,	22,7},
 
-{"&Tab size",        NUM,  (void*)&TabSize,  3,9},
-{"Indent size",      NUM,  (void*)&IndentSize, 3,10},
+{"&Tab size",        NUM,  (void*)&TabSize,	3,9},
+{"Indent size",      NUM,  (void*)&IndentSize,	3,10},
 
-{"Vertical scroll",  NUM,  (void*)&Scroll,  22,9},
-{"Horizontal scroll",NUM,  (void*)&hscroll,   22,10},
+{"Vertical scroll",  NUM,  (void*)&Scroll,	22,9},
+{"Horizontal scroll",NUM,  (void*)&hscroll,	22,10},
 
-{"Backup suffix",    STR,  (void*)bak,	     17,12,8,sizeof(bak)   },
+{"Backup suffix",    STR,  (void*)bak,		17,12,8,sizeof(bak)   },
+{"Backup number",    NUM,  (void*)&MaxBackup,	29,12},
 
-{"backup &Path",     STR,  (void*)BakPath,   17,13,48,sizeof(BakPath)  },
+{"backup &Path",     STR,  (void*)BakPath,	17,13,48,sizeof(BakPath)  },
 
 /*
 {"  Save  ",   BUTTON, NULL,   MIDDLE-15,FDOWN-2},
@@ -567,7 +573,6 @@ void  W_Dialogue(struct opt *opt,
    char  s[512];
    struct opt *p,*p1,*n,*curr=opt;
    int shift=0,pos=0,i,key=0,d,dist;
-   int size;
    int   action;
    int   OldShowStatusLine=ShowStatusLine;
    attr  *a=Upper->a;
@@ -577,33 +582,12 @@ void  W_Dialogue(struct opt *opt,
    fx=curr->x;
    fy=curr->y;
 
-   size=0;
    for(p=opt; p->name; p++)
    {
       if(p->type==STR)
-         size+=p->maxlen;
+         p->old.s=(char*)strdup((char*)p->var);
       else if(p->type==NUM || p->type==ONE || p->type==MANY)
-         size+=sizeof(int);
-   }
-   if(!(opt->old=(char*)malloc(size)))
-   {
-      NotMemory();
-      return;
-   }
-   size=0;
-   for(p=opt; p->name; p++)
-   {
-      p->old=opt->old+size;
-      if(p->type==STR)
-      {
-         size+=p->maxlen;
-         strcpy((char*)(p->old),(char*)(p->var));
-      }
-      else if(p->type==NUM || p->type==ONE || p->type==MANY)
-      {
-         size+=sizeof(int);
-         *(int*)(p->old) = *(int*)(p->var);
-      }
+         p->old.n=*(int*)p->var;
    }
 
    for(p=opt; p->name; p++)
@@ -896,9 +880,12 @@ leave_cycle:
 esc:  for(p=opt; p->name; p++)
       {
          if(p->type==STR)
-            strcpy((char*)(p->var),(char*)(p->old));
-         else if(p->type==NUM || p->type==ONE || p->type==MANY)
-            *(int*)(p->var) = *(int*)(p->old);
+	 {
+            if(p->old.s)
+	       strcpy((char*)(p->var),p->old.s);
+         }
+	 else if(p->type==NUM || p->type==ONE || p->type==MANY)
+            *(int*)(p->var) = p->old.n;
       }
    }
    else
@@ -911,7 +898,14 @@ esc:  for(p=opt; p->name; p++)
             goto esc;
       }
    }
-   free(opt->old);
+   for(p=opt; p->name; p++)
+   {
+      if(p->type==STR)
+      {
+	 if(p->old.s)
+	    free(p->old.s);
+      }
+   }
    CorrectParameters();
    curs_set(0);
    idlok(stdscr,useidl);

@@ -52,6 +52,18 @@ public:
          FindLineCol();
       return(col);
    }
+   num	 LineSimple()
+   {
+      if(flags&LINEUNDEFINED)
+         return -1;
+      return(line);
+   }
+   num	 ColSimple()
+   {
+      if(flags&(COLUNDEFINED|LINEUNDEFINED))
+         return -1;
+      return(col);
+   }
 
    TextPoint();
    TextPoint(offs);

@@ -323,7 +323,6 @@ void  UserMarkWord()
    hide=FALSE;
    flag=REDISPLAY_ALL;
 }
-
 void  UserMarkLine()
 {
    BlockBegin=LineBegin(Offset());
@@ -340,6 +339,16 @@ void  UserMarkToEol()
    BlockBegin=CurrentPos;
    BlockEnd=LineEnd(CurrentPos.Offset());
    hide=(BlockEnd.Col()<=BlockBegin.Col());
+   flag=REDISPLAY_ALL;
+}
+void  UserMarkAll()
+{
+   BlockBegin=TextBegin;
+   if(rblock)
+      BlockEnd=LineBegin(TextEnd);
+   else
+      BlockEnd=TextEnd;
+   hide=FALSE;
    flag=REDISPLAY_ALL;
 }
 

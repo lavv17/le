@@ -33,6 +33,7 @@ void  UserMoveBlock();
 void  UserMarkWord();
 void  UserMarkLine();
 void  UserMarkToEol();
+void  UserMarkAll();
 
 void  UserLineUp();
 void  UserLineDown();

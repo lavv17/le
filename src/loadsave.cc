@@ -135,11 +135,11 @@ off_t  GetDevSize(int fd)
 {
    off_t lower=0;
    off_t upper=0x10000;
-   char buf[20*512];
+   char buf[1024];
 
    for(;;)
    {
-      off_t pos=lseek(fd,SEEK_CUR,upper);
+      off_t pos=lseek(fd,upper,SEEK_SET);
       if(pos!=upper)
 	 break;
       int res=read(fd,buf,sizeof(buf));
@@ -153,20 +153,17 @@ off_t  GetDevSize(int fd)
       if(upper==lower)
 	 break;
       off_t mid=(upper+lower)/2;
-      off_t pos=lseek(fd,SEEK_CUR,mid);
+      off_t pos=lseek(fd,mid,SEEK_SET);
       if(pos!=mid)
       {
 	 upper=mid;
 	 continue;
       }
       int res=read(fd,buf,sizeof(buf));
-      if(res<=0)
-      {
-	 if(res>0)
-	    lower=mid+res;
-	 else
-	    upper=mid;
-      }
+      if(res>0)
+	 lower=mid+res;
+      else
+	 upper=mid;
    }
 
    return lower;
@@ -332,7 +329,7 @@ int   LoadFile(char *name)
    flag=REDISPLAY_ALL;
 
    fstat(file,&st);
-   FileInfo=InodeInfo(&st,GetLine(),GetCol());
+   FileInfo=InodeInfo(&st);
    strcpy(FileName,name);
 
    CurrentPos=TextBegin;
@@ -341,13 +338,17 @@ int   LoadFile(char *name)
       old=PositionHistory.FindInode(FileInfo);
       if(old)
       {
-	 MoveLineCol(old->line,old->col);
-	 FileInfo.line=GetLine();
-	 FileInfo.col=stdcol=GetCol();
+	 if(old->offset!=-1)
+	 {
+	    CurrentPos=old->offset;
+	    if(!hex)
+	       stdcol=GetCol();
+	 }
+	 else if(old->line!=-1 && old->col!=-1)
+	    MoveLineCol(old->line,old->col);
       }
    }
 
-   PositionHistory+=FileInfo;
    LoadHistory+=HistoryLine(name);
 
    InitHighlight();
@@ -359,9 +360,47 @@ int   LoadFile(char *name)
    return(OK);
 }
 
-int   CreateBak(char *name)
+int   MaxBackup=9;
+
+static char *BackupName(char *buf,char *bp,char *filename,char *bak,int n)
 {
-   char  *buf2,bakname[512];
+   char *suffix=(char*)alloca(strlen(bak)+40+1);
+   sprintf(suffix,bak,n);
+   sprintf(buf,"%s/%s%s",bp,filename,suffix);
+   return buf;
+}
+
+static void MoveBackup(char *bp,char *filename,char *bak,int n)
+{
+   char *bakname=(char*)alloca(strlen(bp)+1+strlen(filename)+strlen(bak)+40+1);
+
+   BackupName(bakname,bp,filename,bak,n);
+   if(access(bakname,F_OK)!=-1)
+   {
+      if(n>=MaxBackup)
+	 remove(bakname);
+      else
+      {
+	 char *bakname1=(char*)alloca(strlen(bp)+1+strlen(filename)+strlen(bak)+40+1);
+	 BackupName(bakname1,bp,filename,bak,n+1);
+	 if(!strcmp(bakname,bakname1))
+	    remove(bakname);
+	 else
+	 {
+	    MoveBackup(bp,filename,bak,n+1);
+	    if(rename(bakname,bakname1)==-1)
+	       remove(bakname);
+	 }
+      }
+   }
+}
+
+static int CreateBak(char *name)
+{
+   if(bak[0]==0)
+      return OK;
+
+   char  *buf2;
    num   buf2size;
    num   bytesread;
    struct stat st;
@@ -405,10 +444,10 @@ int   CreateBak(char *name)
       sprintf(bp,"%s%s",HOME,BakPath+1);
    }
 
-   sprintf(bakname,bp[strlen(bp)-1]=='/'?"%s%.*s%s":"%s/%.*s%s",
-      bp,namemax-strlen(bak),filename,bak);
+   MoveBackup(bp,filename,bak,1);
 
-   remove(bakname);
+   char *bakname=(char*)alloca(strlen(bp)+1+strlen(filename)+strlen(bak)+40+1);
+   BackupName(bakname,bp,filename,bak,1);
 
    if(stat(name,&st)==-1)
    {
@@ -499,12 +538,6 @@ int   SaveFile(char *name)
    sprintf(msg,"Saving the file \"%s\"...",name);
    Message(msg);
 
-   if(file!=-1)
-   {
-      FileInfo.line=GetLine();
-      FileInfo.col=GetCol();
-      PositionHistory+=FileInfo;
-   }
    if(stat(name,&st)!=-1)
    {
       if(!CheckMode(st.st_mode))
@@ -620,8 +653,8 @@ int   SaveFile(char *name)
    CheckPoint();
 
    stat(name,&st);
-   FileInfo=InodeInfo(&st,GetLine(),GetCol());
-   PositionHistory+=FileInfo;
+   FileInfo=InodeInfo(&st);
+   SavePosition();
 
    close(file);
    file=nfile;
@@ -684,4 +717,17 @@ int   ReopenRW()
       hide=oldhide;
    }
    return res;
+}
+
+void SavePosition()
+{
+   num offset=CurrentPos;
+   num line=CurrentPos.LineSimple();
+   num col=CurrentPos.ColSimple();
+
+   FileInfo.line=line;
+   FileInfo.col=col;
+   FileInfo.offset=offset;
+
+   PositionHistory+=FileInfo;
 }

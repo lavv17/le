@@ -26,6 +26,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "edit.h"
 #include "keymap.h"
 #include "keynames.h"
@@ -584,12 +585,9 @@ int   GetNextAction()
 	 }
 #endif
 
-	 if(key<256)
-	 {
-	    *(store++)=key;
-	    *store=0;
-	    StringTypedLen++;
-	 }
+	 *(store++)=(key>UCHAR_MAX?UCHAR_MAX:key);
+	 *store=0;
+	 StringTypedLen++;
 
 	 for(scan=kt->child; scan; scan=scan->sibling)
 	    if(scan->keycode==key || (key==0 && scan->keycode==128))

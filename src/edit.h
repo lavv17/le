@@ -201,6 +201,7 @@ void        EmptyText();
 int         LoadFile(char *name);
 int         SaveFile(char *name);
 int	    ReopenRW();
+void	    SavePosition();   // put current pos to history
 
 void        Initialize();
 void        Terminate();

@@ -179,10 +179,10 @@ void  History::ReadFrom(FILE *f)
 
 InodeInfo::InodeInfo()
 {
-   time=size=device=inode=line=col=0;
+   time=size=device=inode=line=col=offset=0;
    cr_time=0;
 }
-InodeInfo::InodeInfo(struct stat *st,num l,num c)
+InodeInfo::InodeInfo(struct stat *st,num l,num c,num o)
 {
    time=st->st_mtime;
    size=st->st_size;
@@ -190,6 +190,7 @@ InodeInfo::InodeInfo(struct stat *st,num l,num c)
    inode=st->st_ino;
    line=l;
    col=c;
+   offset=o;
    ::time(&cr_time);
 }
 int   InodeInfo::SameFile(const InodeInfo& file) const
@@ -226,20 +227,22 @@ void  InodeHistory::WriteTo(FILE *f)
    int i=0;
    for(;;)
    {
-      fprintf(f,"%10ld %ld,%ld,%ld,%ld,%ld,%ld\n",(long)files[i].cr_time,
+      fprintf(f,"%10ld %ld,%ld,%ld,%ld,%ld,%ld,%ld\n",(long)files[i].cr_time,
          (long)files[i].inode,(long)files[i].device,(long)files[i].time,
-         (long)files[i].size,(long)files[i].line,(long)files[i].col);
+         (long)files[i].size,(long)files[i].line,(long)files[i].col,
+	 (long)files[i].offset);
       if(++i>=HISTORY_SIZE)
          break;
    }
 }
 void  InodeHistory::ReadFrom(FILE *f)
 {
-   long  inode,device,time,size,line,col,cr_time;
+   long  inode,device,time,size,line,col,cr_time,offset;
    int i=0;
    for(;;)
    {
-      if(fscanf(f,"%10ld %ld,%ld,%ld,%ld,%ld,%ld\n",&cr_time,&inode,&device,&time,&size,&line,&col)<6)
+      if(fscanf(f,"%10ld %ld,%ld,%ld,%ld,%ld,%ld,%ld\n",
+		  &cr_time,&inode,&device,&time,&size,&line,&col,&offset)<7)
          break;
       files[i].inode=inode;
       files[i].device=device;
@@ -247,6 +250,7 @@ void  InodeHistory::ReadFrom(FILE *f)
       files[i].size=size;
       files[i].line=line;
       files[i].col=col;
+      files[i].offset=offset;
       files[i].cr_time=cr_time;
       if(++i>=HISTORY_SIZE)
          break;
