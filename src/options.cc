@@ -133,9 +133,9 @@ struct  opt
 },
    FormatOpt[]=
 {
-{"Left Margin",      NUM, (void*)&LeftMargin,     3,2},
-{"Line Length",      NUM, (void*)&LineLen,        3,3},
-{"First line margin",NUM, (void*)&FirstLineMargin,3,4},
+{"Left Margin",      NUM, (void*)&LeftMargin,     3,2,3},
+{"Line Length",      NUM, (void*)&LineLen,        3,3,3},
+{"First line margin",NUM, (void*)&FirstLineMargin,3,4,3},
 {"Left adjustment",  ONE, &LeftAdj,               3,6},
 {"Right adjustment", ONE, &RightAdj,              3,7},
 {"Auto word wrap",   ONE, &wordwrap, 	      	  3,9},
@@ -162,8 +162,7 @@ struct  opt
 {NULL}
 };
 
-struct init
-   init[]=
+const struct init init[]=
 {
    { "tabsize",      NUM,  (void*)&TabSize            },
    { "indentsize",   NUM,  (void*)&IndentSize         },
@@ -195,11 +194,12 @@ struct init
    { "scrollbar",    NUM,  &ShowScrollBar             },
    { "statusline",   NUM,  &ShowStatusLine            },
    { "backupext",    STR,  bak                        },
+   { "backupnum",    NUM,  &MaxBackup		      },
    { "preferpagetop",NUM,  &PreferPageTop	      },
    { "wordwrap",     NUM,  &wordwrap		      },
    { NULL }
-},
-   term[]=
+};
+const struct init term[]=
 {
    { "coding",       NUM,  (void*)&coding	      },
    { "grsetno",      NUM,  (void*)&grsetno	      },
@@ -207,8 +207,8 @@ struct init
    { "fknum",        NUM,  (void*)&FuncKeysNum	      },
    { "useidl",       NUM,  &useidl      	      },
    { NULL }
-},
-   colors[]=
+};
+const struct init colors[]=
 {
    { "default_colors",	NUM,  &le_use_default_colors			   },
    { "status_line",	STR,  color_descriptions[STATUS_LINE]		   },
@@ -246,9 +246,9 @@ struct init
    { NULL }
 };
 
-void  SaveConfToOpenFile(FILE *f,struct init *init)
+void  SaveConfToOpenFile(FILE *f,const struct init *init)
 {
-   struct  init   *p;
+   const struct  init   *p;
 
    for(p=init; p->name; p++)
    {
@@ -261,7 +261,7 @@ void  SaveConfToOpenFile(FILE *f,struct init *init)
    }
 }
 
-void  SaveConfToFile(char *f,struct init *init)
+void  SaveConfToFile(char *f,const struct init *init)
 {
    FILE  *conf;
 
@@ -306,9 +306,9 @@ void  fskip(FILE *f)
    while((i=getc(f))!=EOF && i!='\n');
 }
 
-void  ReadConfFromOpenFile(FILE *f,struct init *init)
+void  ReadConfFromOpenFile(FILE *f,const struct init *init)
 {
-   struct init *ptr;
+   const struct init *ptr;
    int    i;
    char  str[256];
    char  *s;
@@ -367,7 +367,7 @@ void  ReadConfFromOpenFile(FILE *f,struct init *init)
    }
 }
 
-void  ReadConfFromFile(char *ini,struct init *init)
+void  ReadConfFromFile(char *ini,const struct init *init)
 {
    FILE  *f;
    f=fopen(ini,"r");
@@ -442,27 +442,33 @@ void  ReadConf()
 void  CorrectParameters()
 {
    if(TabSize>40)
-     TabSize=40;
+      TabSize=40;
    if(TabSize<2)
-     TabSize=2;
+      TabSize=2;
    if(hscroll>40)
-     hscroll=40;
+      hscroll=40;
    if(hscroll<1)
-     hscroll=1;
+      hscroll=1;
    if(Scroll>LINES/2)
-     Scroll=LINES/2;
+      Scroll=LINES/2;
    if(Scroll<1)
-     Scroll=1;
+      Scroll=1;
    if(LineLen<10)
-     LineLen=10;
-   if(LineLen>99)
-     LineLen=99;
+      LineLen=10;
+   if(LineLen>999)
+      LineLen=999;
    if(LeftMargin<0)
-     LeftMargin=0;
+      LeftMargin=0;
+   if(LeftMargin>999)
+      LeftMargin=999;
    if(FirstLineMargin<0)
-     FirstLineMargin=0;
+      FirstLineMargin=0;
    if(FirstLineMargin>LineLen/2)
-     FirstLineMargin=LineLen/2;
+      FirstLineMargin=LineLen/2;
+   if(MaxBackup<1)
+      MaxBackup=1;
+   if(MaxBackup>99)
+      MaxBackup=99;
 
    switch(ShowScrollBar)
    {
@@ -502,16 +508,6 @@ void  CorrectParameters()
      StatusLineY=-1;
      break;
    }
-#if 0
-   if(text_w)
-      delwin(text_w);
-   text_w=subwin(stdscr,TextWinHeight,TextWinWidth,TextWinY,TextWinX);
-   assert(text_w!=NULL);
-   if(status_w)
-      delwin(status_w);
-   status_w=subwin(stdscr,1,0,StatusLineY,0);
-   assert(status_w!=NULL);
-#endif
 
    idlok(stdscr,useidl);
 
@@ -629,11 +625,13 @@ void  W_Dialogue(struct opt *opt,
          PutStr(p->x+p->len,p->y,"]");
          break;
       case(NUM):
-         PutStr(p->x-1,p->y,"[  ]");
+         PutStr(p->x-1,p->y,"[");
+	 PutStr(p->x+(p->len?p->len:2),p->y,"]");
          DisplayItem(p->x+4,p->y,p->name,DIALOGUE_WIN_ATTR);
          break;
       }
    }
+
    for(;;)
    {
       for(p=opt; p->name; p++)
@@ -666,7 +664,7 @@ void  W_Dialogue(struct opt *opt,
             DisplayItem(p->x,p->y,p->name,curr==p?CURR_BUTTON_ATTR:DIALOGUE_WIN_ATTR);
             break;
          case(NUM):
-            sprintf(s,"%-2d",*(int*)(p->var));
+            sprintf(s,"%-*d",(p->len?p->len:2),*(int*)(p->var));
             if(curr==p)
                SetAttr(CURR_BUTTON_ATTR);
             PutStr(p->x,p->y,s);
@@ -731,7 +729,9 @@ use_key:
          }
          if(n)
          {
-            curr=n,newitem=1;
+            CorrectParameters();
+	    curr=n;
+	    newitem=1;
             if(action==LINE_UP || action==LINE_DOWN)
                fy=curr->y;
             else
@@ -739,7 +739,7 @@ use_key:
          }
          break;
       default:
-         if(StringTypedLen!=1)
+         if(action!=NO_ACTION || StringTypedLen!=1)
          {
             if(curr->type==STR)
                break;
@@ -821,9 +821,13 @@ use_key:
             else
             {
                *(int*)(curr->var) = *(int*)(curr->var)*10+key-'0';
-               pos=0;
-               CorrectParameters();
-            }
+               pos++;
+	       if(pos>=curr->len || curr->len==0)
+	       {
+		  pos=0;
+		  CorrectParameters();
+               }
+	    }
          }
          break;
       case(STR):
@@ -866,7 +870,7 @@ use_key:
             key=GetRawKey();
             goto do_insert;
          default:
-            if(StringTypedLen!=1)
+            if(action!=NO_ACTION || StringTypedLen!=1)
             {
                action=EatKey(action);
                goto use_key;
