@@ -211,6 +211,9 @@ int    Search(int dir,offs offslim)
    || dir==BACKWARD && srchpos<=offslim)
       return FALSE;
 
+   if(!buffer)
+      return FALSE;
+
    int res;
    if(noreg)
       res=no_re_search_2((char*)pattern,patlen,buffer,ptr1,
