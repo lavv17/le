@@ -2,6 +2,7 @@
 
 	* keymap.cc: correct error handling in keymap file reading;
 	  flushinp when we get an unknown sequence.
+	* keymapdf.cc: more binding to terminfo keys; correct kHOM.
 
 1999-10-06  lav
 
