@@ -93,7 +93,7 @@ int    LockFile(int fd,bool drop)
             errno=EACCES;
             while(fcntl(fd,F_SETLK,&Lock)==-1 && (errno==EACCES || errno==EAGAIN))
             {
-	       if(WaitForKey(1000)==OK)
+	       if(WaitForKey(1000)!=ERR)
 	       {
 	       	  int action=GetNextAction();
 		  if(action==CANCEL)
