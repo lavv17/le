@@ -183,3 +183,5 @@ switch-text-mode        \e|x|t
 switch-text-mode        \e|X|T
 switch-graph-mode       \e|x|g
 switch-graph-mode       \e|X|G
+write-block             ^X|a
+write-block             ^X|A

@@ -98,6 +98,13 @@ submenu "&Options"
       function "Load green"		  load-color-green     hide
       function "Load white"		  load-color-white     hide
       end
+   submenu  "&Keyboard map"
+      function "&Default"		     load-keymap-default  hide
+      function "Load Emacs-like keymap"	     load-keymap-emacs	  hide
+      hline
+      function "&Save"			     save-keymap	  hide
+      function "Save as &terminal specific"  save-keymap-for-terminal hide
+      end
    function "&Programs"			     programs-options
    function "&Save to current directory"     save-options-local   hide
    function "&Update current options file"   save-options	  hide

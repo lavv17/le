@@ -143,43 +143,91 @@ RANGE|ROOT|SOUND|SPACER|SQRT|TEXT|WBR|XMP\
 
 ##########################################################################
 # Lout mode by Abel Morabito <abelmora@crosswinds.net>
-#
-# language lout
 # extension .lout
-# Most standard tags for Lout 3.13
+# Most standard tags for Lout 3.24
 /*.lout
-## comments and literals
+## COMMENTS AND LITERAL TEXT
 c3,1=#.*$|"([^"\n\\]|\\\\(.|\n))*"
-## other special characters
+## SPECIAL CHARACTERS
 c2,1=(&|/|@|\^|{|}|\||~|"|\\\|``|'')
-## tags
-c1,2=@(AL|Abstract|AbstractDisplay|AbstractTitle|AlphaList|Appendix\
-|Appendix|AtEnd|Author\
-|B|BI|BL|Begin|BeginSections|BeginSubSections|BeginSubSubSections\
-|Box|BulletList\
-|CD|CL|CNP|Caption|CenteredDisplay|CenteredList|CentredList|Col\
-|Color|Colour|ColumnNumber|ContentsSeparate|CoverSheet|CurveBox\
-|D|Diag|Display|DL|DP|DashList|Date|DateLine|Doc|Document\
-|Ellipse|End|EndList|EndNote|EndSections|EndSubSections\
-|EndSubSubSections|Eq\
-|F|Figure|FirstPageNumber|Fmta|Font|FootNote\
-|Heading\
-|I|ID|IL|IncludeGraphic|IndentedDisplay|IndentedList|InitialBreak\
-|InitialFont|InitialLanguage|InitialSpace|InnerNote|Institution\
-|L|LI|LD|Link|LL|LLP|LP|Language|LeftList|LeftNote|List|ListItem\
-|NL|NP|NumberOf|NumberedList\
-|OuterNote|OptimizePages\
-|PAL|PNL|PP|PRL|PUCAL|PUCRL\
-|PageHeaders|PageMark|PageOf|PageOrientation|ParenAlphaList\
-|ParenNumberedList|ParenRomanList|ParenUCAlphaList|ParenUCRomanList\
+## TAGS
+c1,2=@(Abbreviations|Abstract|AL|AlignedDisplay|AlphaList\
+|AmberLight|And|ANode|AnotherFootNote|Appendix|Arrow|AtEnd\
+|B|BasicSetup|Begin|BeginAlignedDisplays|BeginAppendices\
+|BeginChapters|BeginOverheads|BeginSections|BeginSubAppendices\
+|BeginSubSections|BeginSubSubAppendices|BeginSubSubSections|BI\
+|BL|BNode|Book|BookSetup|BoundaryMarks|Box|Break|Bullet\
+|BulletList\
+|Caption|CD|CDot|Cell|Center|CenteredDisplay|CenteredList|Centre\
+|CentredDisplay|CentredList|ChapCite|ChapRef|ChapRefListTitle\
+|Chapter|ChapterStartPages|Char|Cite|Circle|CL|Claim|ClosedCircle|CNode\
+|CNP|Color|Colour|ColumnGap|ColumnNumber|ContentsGap\
+|ContentsGapAbove|ContentsGapBelow|ContentsGoesHere\
+|ContentsLeader|ContentsLeaderGap|ContentsRightWidth\
+|ContentsSeparate|CopyRight|Corollary|CoverSheet|CPSetup\
+|CrossLink|CurveArrow|CurveBox\
+|D|Dagger|DaggerDbl|DashJoin|DashList|Data|Database|Date|DateLine\
+|DayNum|DefaultIndent|Definition|Degree|Diag|DiagSetup|Diamond|Display\
+|DisplayGap|DisplayIndent|Divide|DL|DLI|Doc|Document|DocumentSetup\
+|DotJoin|DotSep|DP|DropCapThree|DropCapTwo|DropListItem\
+|DropTagItem|DTI\
+|E|EL|Ellipse|End|EndAlignedDisplays|EndAppendices\
+|EndChapters|EndList|EndNote|EndOverheads|EndProof\
+|EndSections|EndSubAppendices|EndSubSections|EndSubSubAppendices\
+|EndSubSubSections|Eq|Euro|EvenLeftMargin|EvenRightMargin\
+|Example\
+|Fig|Figure|FigureCaptionPos|FigureFormat|FigureLocation\
+|FigureNumbers|FirstPageNumber|Florin|Fmta|Font|FootAboveGap\
+|FootGap|FootLen|FootMargin|FootNote|FootNoteBreak\
+|FootNoteFont|FootNoteLocation|FootNoteNumbers|FootNoteThrough\
+|FullPage|FullWidth|FullWidthRule\
+|Graph|GraphCircle|GraphCross|GraphDashed|GraphDiamond\
+|GraphDotted|GraphFilledCircle|GraphFilledDiamond\
+|GraphFilledSquare|GraphFilledTriangle|GraphNoLine|GraphPlus\
+|GraphSolid|GraphSquare|GraphTriangle\
+|Heading|HeadingFont|HTree\
+|I|ID|If|II|IL|Illustration|Include|IncludeGraphic|InnerNote|Institution\
+|IndentedDisplay|IndentedList|Index|IndexBlanks|IndexBreak\
+|IndexColumnGap|IndexColumnNumber|IndexFont|InitialBreak\
+|InitialFont|InitialLanguage|InitialSpace|Introduction\
+|IntroFirstPageNumber|IntroPageNumbers|Isosceles\
+|Journal|Keywords\
+|L|Label|Language|LD|Lecture|LeftDisplay|LeftList|LeftNote\
+|Lemma|LI|Line|Link|List|ListItem|LL|LLP|LocalWidthRule\
+|Location|LOP|Lozenge|LP\
+|MajorNum|MajorTitle|MakeContents|MakeIndex|MakeReferences\
+|MinorNum|MinorTitle|Minute|Multiply\
+|NL|NoChapCite|NoChapRef|NoCite|Node|NoDotJoin|NoDotSep\
+|NoRef|Not|Note|NP|Null|NumberedDisplay|NumberedList|NumberOf\
+|NumberSeparator|NumSep\
+|OddLeftMargin|OddRightMargin|Or|OrdinarySetup|Organization|OuterNote\
+|Outline|Overhead|OverheadSetup|OverheadTransparencies\
+|OverStrike\
+|Pages|PageBackground|PageBoxType|PageHeaders|PageHeight|PageMark\
+|PageNum|PageNumbers|PageOf|PageOrientation|PageType\
+|PageWidth|PAL|ParaGap|ParaIndent|ParenAlphaList\
+|ParenNumberedList|ParenRomanList|ParenUCAlphaList\
+|ParenUCRomanList|ParSym|PartNumber|PartText|PartTitle|Pas\
+|Place|PNL|Poetry|Polygon|PP|Preface|PRL|Proof|Proposition\
+|Publisher|PUCAL|PUCRL\
 |QD|QL|QuotedDisplay|QuotedList\
-|R|RL|Report|RightDisplay|RightNote|RomanList|Rotate|Rowa\
+|R|RawEndList|RawIndex|RawList|Ref|RefCiteLabels|RefCiteStyle\
+|Reference|ReferencesBeforeAppendices|RefListBreak|RefListFont\
+|RefListFormat|RefListGap|RefListIndent|RefListLabels\
+|RefListLabelWidth|RefListRightIndent|RefListSortKey|RefListTitle\
+|RefNum|RefNumbers|RefPrint|RefStyle|Register|Report|ReportSetup\
+|Right|RightDisplay|RightNote|RL|RomanList|Rotate\
 |RunningTitle\
-|S|SL|Scale|Section|ShadowBox|StarList|SubAppendix|SubSection\
-|SubSubAppendix|SubSubSection|SysInclude\
-|TL|Tab|Table|Tag|TagItem|TaggedList\
-|Text|Time|Title\
-|UCAL|UCAlphaList|UCRL|UCRomanList|Underline\
-|VWTL|VeryWideTaggedList\
-|WTL|WideTaggedList)[\ |\n|\t|{]
-#
+|S|Scale|Second|Section|SectionGap|SectSym\
+|SeparateIntroNumbering|SetColour|ShadowBox|SL|Square|Star\
+|StarList|Sterling|StructPageNums|Sub|SubAppendix|SubIndex|SubSection\
+|SubSubAppendix|SubSubIndex|SubSubSection|Sup|Sym|SyntaxDiag\
+|SysDatabase|SysInclude\
+|Table|TableCaptionPos|TableFormat|TableLocation|TableNumbers\
+|Tag|TaggedList|TagItem|Tbl|Text|Theorem|TI|Time|Title\
+|TitlePageFont|TL|TopMargin|TradeMark|Tree|True|Type\
+|UCAL|UCAlphaList|UCRL|UCRomanList|Underline|Unpaginated\
+|URL|Use\
+|Verbatim|VeryWideTaggedList|VShift|VWTL\
+|Wide|WideTaggedList|WTL\
+|Year|Yen)
