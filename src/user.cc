@@ -1260,7 +1260,7 @@ void  UserInsertCharCode()
       UserInsertControlChar(ch);
 }
 
-static base_editmode=-1;
+static int base_editmode=-1;
 
 void  UserSwitchInsertMode()
 {

@@ -336,7 +336,7 @@ static const struct CodeName
 #endif //0
 };
 
-const CodeNameTableSize=sizeof(CodeNameTable)/sizeof(CodeNameTable[0]);
+const int CodeNameTableSize=sizeof(CodeNameTable)/sizeof(CodeNameTable[0]);
 
 static int node_compare(const void *node1, const void *node2)
 {
