@@ -26,8 +26,8 @@
 #include "keymap.h"
 #include "getch.h"
 
-int   getstring(char *pr,char *buf,int maxlen,History* history,int *len,
-                char ***help,char *title)
+int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
+                const char *help,const char *title)
 {
    int      pos,action,ch;
    int      width,start;

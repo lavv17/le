@@ -22,6 +22,7 @@
 #include "keymap.h"
 #include <string.h>
 
+#if 0
 void  Help(char ***h,char *title)
 {
    static   struct   menu
@@ -86,8 +87,9 @@ void  Help(char ***h,char *title)
    CloseWin();
    DestroyWin(HelpWin);
 }
+#endif //0
 
-void  Help(const char *help,char *title)
+void  Help(const char *help,const char *title)
 {
    const char  *ptr=help;
    WIN   *HelpWin;

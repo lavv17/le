@@ -232,6 +232,8 @@ struct init
    { "syntax2_bw",	STR,  color_descriptions[SYNTAX2+MAX_COLOR_NO]	   },
    { "syntax3",		STR,  color_descriptions[SYNTAX3]		   },
    { "syntax3_bw",	STR,  color_descriptions[SYNTAX3+MAX_COLOR_NO]	   },
+   { "highlight",	STR,  color_descriptions[HIGHLIGHT]		   },
+   { "highlight_bw",	STR,  color_descriptions[HIGHLIGHT+MAX_COLOR_NO]   },
    { NULL }
 };
 
@@ -500,7 +502,7 @@ void  CorrectParameters()
    init_attrs();
 }
 
-int GetNo(struct opt *p,struct opt *p1)
+int GetNo(const struct opt *p,const struct opt *p1)
 {
    int i;
    for(i=0; p1!=p; p1++)
@@ -511,7 +513,7 @@ int GetNo(struct opt *p,struct opt *p1)
    return(i);
 }
 
-int GetDist(struct opt *to,int action)
+int GetDist(const struct opt *to,int action)
 {
    int d=30000;
    int tx=to->x,ty=to->y;
@@ -557,7 +559,7 @@ int GetDist(struct opt *to,int action)
 
 
 void  W_Dialogue(struct opt *opt,
-             char **SetupHelp[],char *SetupTitle,
+             const char *SetupHelp,const char *SetupTitle,
              int (*EatKey)(int),int (*HandleButton)(char *))
 {
    int newitem=0;
@@ -916,7 +918,7 @@ esc:  for(p=opt; p->name; p++)
 }
 
 void  Dialogue(struct opt *opt,int WinWidth,int WinHeight,char *WinTitle,
-             char **SetupHelp[],char *SetupTitle,
+             const char *SetupHelp,const char *SetupTitle,
              int (*EatKey)(int),int (*HandleButton)(char *))
 {
    WIN *optw;
@@ -952,8 +954,8 @@ int    OptHandleBut(char *n)
 
 void  Options()
 {
-   extern  char   **SetupHelp[];
-   Dialogue(opt,68,16," Options ",SetupHelp," Setup Help ",OptEatKey,OptHandleBut);
+   extern const char OptionsHelp[];
+   Dialogue(opt,68,16," Options ",OptionsHelp," Setup Help ",OptEatKey,OptHandleBut);
 }
 
 void  SaveOpt()

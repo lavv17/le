@@ -19,9 +19,8 @@
 /* ehelp.c : English help for the editor */
 
 #include <config.h>
-#include <stdio.h>
 
-const char  *MainHelp=
+extern const char MainHelp[]=
    "The default keymap is described below:\n"
    "\n"
    "            Keys to move\n"
@@ -129,193 +128,152 @@ const char  *MainHelp=
    "combinations can be typed as ESC+key\n"
 ;
 
-const char    *setup_page1[]=
-{
-    "   Use arrows to navigate, space to",
-    "change current option. You can also",
-    "edit the strings and the numbers.",
-    "",
-    "   Enter    - use the options within",
-    "              the current editing",
-    "              session",
-    "   Shift-F2 - save the options in",
-    "              the current directory",
-    "   F2       - update current options",
-    "              file",
-    "   ^X       - quit, do not use the new",
-    "              options.",
-NULL
-};
-const char    *setup_page2[]=
-{
-    "1. Insert. In this mode characters",
-    "will be inserted before the character",
-    "on the cursor and the cursor will be",
-    "moved one position right.",
-    "2. Autoindent. In this mode on",
-    "pressing Enter a new line will be",
-    "inserted and the cursor will be placed",
-    "with the margin of the previous",
-    "line.",
-    "3. Save Positions. In this mode after",
-    "loading a file cursor will be placed",
-    "on its latest position in this file",
-    "even if you had exited from the",
-    "editor. Positions are saved in file",
-    "'$HOME/.le/history'.",
-NULL};
-const char    *setup_page3[]=
-{
-    "4. Save History. In this mode you can",
-    "choose a file name with arrows",
-    "even if you had exited from the",
-    "editor. History is saved in file",
-    "'$HOME/.le/history'.",
-    "5. Rectangle Blocks. There are two",
-    "types of blocks: string and rectangle",
-    "ones. A string block is a continuous",
-    "sequence of characters, including new",
-    "line and tab characters. A rectangle",
-    "block is a rectangle array of",
-    "characters. A special subtype of",
-    "rectangle blocks is line block which",
-    "is unlimited to the right. To mark it",
-    "set begin and end at the same column.",
-NULL};
-const char    *setup_page4[]=
-{
-    "6. Make Backup. This option enables",
-    "creating backup files with extension",
-    "'.bak'. These are created in current",
-    "or in specified directory.",
-    "7. No Windows. This option disables",
-    "windows. Most messages and questions",
-    "will be written at the last line of",
-    "the screen. It can make the editor",
-    "faster on slow terminals.",
-    "8. No Regular Expressions. This",
-    "option disables using regular",
-    "expressions. You will be able not to",
-    "type '\\' before special characters.",
-    "9. Latin. In this mode latin letters",
-    "will be typed.",
-NULL};
-const char    *setup_page5[]={
-    "10. Russian. In this mode russian",
-    "letters will be typed.",
-    "11. Graphic. In this mode graphic",
-    "characters from extended ASCII will be",
-    "typed.",
-    "12. Exact. This mode will do for both",
-    "text and binary files. Strings are",
-    "right limited, that is you have to",
-    "type a space to get right from EOL.",
-    "13. Text. This mode is only for text",
-    "files. Strings are not right limited.",
-    "14. Hex. This is hexadesimal mode for",
-    "binary files.",
-NULL};
-const char    **SetupHelp[]=
-{
-    setup_page1,
-    setup_page2,
-    setup_page3,
-    setup_page4,
-    setup_page5,
-NULL};
+extern const char OptionsHelp[]=
+   "   Use arrows to navigate, space to\n"
+   "change current option. You can also\n"
+   "edit the strings and the numbers.\n"
+   "\n"
+   "   Enter    - use the options within\n"
+   "              the current editing\n"
+   "              session\n"
+   "   Shift-F2 - save the options in\n"
+   "              the current directory\n"
+   "   F2       - update current options\n"
+   "              file\n"
+   "   ^X       - quit, do not use the new\n"
+   "              options.\n"
+   "\n"
+   "1. Insert. In this mode characters\n"
+   "will be inserted before the character\n"
+   "on the cursor and the cursor will be\n"
+   "moved one position right.\n"
+   "2. Autoindent. In this mode on\n"
+   "pressing Enter a new line will be\n"
+   "inserted and the cursor will be placed\n"
+   "with the margin of the previous\n"
+   "line.\n"
+   "3. Save Positions. In this mode after\n"
+   "loading a file cursor will be placed\n"
+   "on its latest position in this file\n"
+   "even if you had exited from the\n"
+   "editor. Positions are saved in file\n"
+   "'$HOME/.le/history'.\n"
+   "4. Save History. In this mode you can\n"
+   "choose a file name with arrows\n"
+   "even if you had exited from the\n"
+   "editor. History is saved in file\n"
+   "'$HOME/.le/history'.\n"
+   "5. Make Backup. This option enables\n"
+   "creating backup files with extension\n"
+   "'.bak'. These are created in current\n"
+   "or in specified directory.\n"
+   "6. No Regular Expressions. This\n"
+   "option disables using regular\n"
+   "expressions in search and replace.\n"
+   "You will be able not to type '\\' before\n"
+   "special characters.\n"
+   "7. Latin. In this mode latin letters\n"
+   "will be typed.\n"
+   "8. Russian. In this mode russian\n"
+   "letters will be typed. (works only on\n"
+   "certain terminals)\n"
+   "9. Graphic. In this mode graphic\n"
+   "characters from extended ASCII will be\n"
+   "typed. That is, bit 8 will be set.\n"
+   "10. Exact. This mode will do for both\n"
+   "text and binary files. Strings are\n"
+   "right limited, that is you have to\n"
+   "type a space to get right from EOL.\n"
+   "11. Text. This mode is only for text\n"
+   "files. Strings are not right limited.\n"
+   "12. Hex. This is hexadesimal mode for\n"
+   "binary files.\n"
+   "13. Use colors. When set, LE tries to\n"
+   "use colors if possible.\n"
+   "14. Syntax highlight. When set, syntax\n"
+   "constructs will be highlighted, if there\n"
+   "is support for current file type. If it\n"
+   "works too slow, turn it off.\n"
+   "15. Use tabs. Prefer tab inserting.\n"
+   "16. BackSp unindents. Specifies if\n"
+   "backspace key should move to previous tab\n"
+   "stop.\n"
+   "17. PageUp=PageTop. Specifies PageUp key\n"
+   "behaviour. If set, PageUp moves to page top\n"
+   "first, and on second press it moves page up.\n"
+   "18. Tab size. Sets size of tab character.\n"
+   "19. IndentSize. Sets number of blanks to\n"
+   "be inserted on Tab key press.\n"
+   "20. Vertical scroll. Specifies how many lines\n"
+   "text should be scrolled when cursor moves\n"
+   "outside of screen.\n"
+   "21. Horizontal scroll. Same for horizontal\n"
+   "scrolling.\n"
+;
 
-const char    *block_page1[]=
-{
-    "Press:",
-    "   B   to mark begin of block",
-    "   E   to mark end of block",
-    "   C   to copy block",
-    "   M   to move block",
-    "   D   to delete block",
-    "   W   to write block to a file",
-    "   R   to read block from a file",
-    "   I   to indent block",
-    "   U   to unindent block",
-    "   T   to change block type",
-    "   L   to convert block or characters",
-    "to end of line to lower case",
-    "   P   to convert to upper case",
-    "   X   to exchange upper/lower cases",
-NULL};
-const char    *block_page2[]=
-{
-    "   H   to hide or unhide block",
-    "or any other key to leave block",
-    "functions",
-    "   |   to pipe the block through a",
-    "specified UNIX command (such as sed)",
-    "   >   to insert prefix on the left",
-    "       side of block",
-    "   Y   to yank an old block",
-NULL};
-const char    **BlockHelp[]=
-{
-    block_page1,
-    block_page2,
-NULL};
+extern const char BlockHelp[]=
+   "Press:\n"
+   "   B   to mark begin of block\n"
+   "   E   to mark end of block\n"
+   "   C   to copy block\n"
+   "   M   to move block\n"
+   "   D   to delete block\n"
+   "   W   to write block to a file\n"
+   "   R   to read block from a file\n"
+   "   I   to indent block\n"
+   "   U   to unindent block\n"
+   "   T   to change block type\n"
+   "   L   to convert block or characters\n"
+   "to end of line to lower case\n"
+   "   P   to convert to upper case\n"
+   "   X   to exchange upper/lower cases\n"
+   "   H   to hide or unhide block\n"
+   "or any other key to leave block\n"
+   "functions\n"
+   "   |   to pipe the block through a\n"
+   "specified UNIX command (such as sed)\n"
+   "   >   to insert prefix on the left\n"
+   "       side of block\n"
+   "   Y   to yank an old block\n"
+;
 
-const char    *calc_page1[]=
-{
-    "   This is a postfix calculator. For",
-    "example, to calculate 2*2 you must",
-    "type '2 2 *', when it is done stack",
-    "will contain 4. Now to add 2 you may",
-    "type '2 +', stack will contain 6, etc.",
-    "Here are operations of the calculator:",
-    "  + - * /  simplest arithmetics",
-    "  %        take remainder of Y/X",
-    "  sq       square X",
-    "  sqr      take square root of X",
-    "  **       rise X to power Y",
-    "  ln       take natural logarithm",
-    "  lg       take log10",
-    "  pi,e     load constants",
-    "  exp      take exponent of X",
+extern const char CalcHelp[]=
+   "   This is a postfix calculator. For\n"
+   "example, to calculate 2*2 you must\n"
+   "type '2 2 *', when it is done stack\n"
+   "will contain 4. Now to add 2 you may\n"
+   "type '2 +', stack will contain 6, etc.\n"
+   "Here are operations of the calculator:\n"
+   "  + - * /  simplest arithmetics\n"
+   "  %        take remainder of Y/X\n"
+   "  sq       square X\n"
+   "  sqr      take square root of X\n"
+   "  **       rise X to power Y\n"
+   "  ln       take natural logarithm\n"
+   "  lg       take log10\n"
+   "  pi,e     load constants\n"
+   "  exp      take exponent of X\n"
+   "  del      delete number\n"
+   "  clr      clear the stack\n"
+   "  xy       swap X and Y\n"
+   "  neg      take -X\n"
+   "  rev      take 1/X\n"
+   "  cp       copy X\n"
+   "  sin,cos\n"
+;
 
-NULL
-};
-const char    *calc_page2[]=
-{
-    "  del      delete number",
-    "  clr      clear the stack",
-    "  xy       swap X and Y",
-    "  neg      take -X",
-    "  rev      take 1/X",
-    "  cp       copy X",
-    "  sin,cos",
-NULL
-};
-const char    **CalcHelp[]=
-{
-    calc_page1,
-    calc_page2,
-NULL
-};
-
-const char    *frames_page1[]=
-{
-   "   The editor is in frame-drawing",
-   "mode now. You can use the following",
-   "control keys:",
-   "",
-   "Cursor arrows - draw line",
-   "Tab           - switch between single,",
-   "                double and no line mode",
-   "Any other key - leave the mode",
-   "",
-   "You can select graphic character set",
-   "when modifying terminal options.",
-   "Note: on some terminals there is no",
-   "double lines.",
-NULL
-};
-const char    **FramesHelp[]=
-{
-    frames_page1,
-NULL
-};
+extern const char FramesHelp[]=
+   "   The editor is in frame-drawing\n"
+   "mode now. You can use the following\n"
+   "control keys:\n"
+   "\n"
+   "Cursor arrows - draw line\n"
+   "Tab           - switch between single,\n"
+   "                double and no line mode\n"
+   "Any other key - leave the mode\n"
+   "\n"
+   "You can select graphic character set\n"
+   "when modifying terminal options.\n"
+   "Note: on some terminals there is no\n"
+   "double lines.\n"
+;

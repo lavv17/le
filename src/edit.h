@@ -188,8 +188,8 @@ void        ToLineBegin(void);
 void        ToLineEnd(void);
 void        DeleteEOL(void);
 void        DeleteLine(void);
-int         getstring(char *prompt,char *buf,int maxlen,History *history=NULL,
-                      int *len=NULL,char ***help=NULL,char *help_title=NULL);
+int         getstring(const char *prompt,char *buf,int maxlen,History *history=NULL,
+                      int *len=NULL,const char *help=NULL,const char *help_title=NULL);
 void        FError(char *filename);
 void        NotMemory();
 offs        LineBegin(offs base);
@@ -274,8 +274,8 @@ int   DeleteBlock(num left,num right);
 int   Undelete();
 void  CheckPoint();
 
-void  Help(const char *help,char *title);
-void  Help(char ***help,char *title);
+void  Help(const char *help,const char *title);
+/*void  Help(char ***help,char *title);*/
 
 void  ActivateMainMenu();
 

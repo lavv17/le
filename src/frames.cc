@@ -202,8 +202,7 @@ void  Draw(int x,int y,byte how)
 
 void    DrawFrames(void)
 {
-   extern
-   char  **FramesHelp[];
+   extern const char FramesHelp[];
    static
    int   curr_frame=1;
    int   action;

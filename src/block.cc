@@ -38,7 +38,7 @@
 
 TextPoint *DragMark=0;
 
-extern  char    **BlockHelp[];
+extern const char BlockHelp[];
 
 char    BlockFile[256];
 
