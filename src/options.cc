@@ -982,10 +982,7 @@ use_key:
             if(shift>0)
                shift--;
          case(DELETE_CHAR):
-	    mblen(0,0);
-	    ch_len=mblen((char*)(curr->var)+pos,strlen((char*)(curr->var))-pos);
-	    if(ch_len<1)
-	       ch_len=1;
+	    ch_len=mb_len((char*)(curr->var)+pos,strlen((char*)(curr->var))-pos);
 	    len=strlen((char*)(curr->var))-ch_len;
             for(i=pos; i<=len; i++)
                ((char*)(curr->var))[i]=((char*)(curr->var))[i+ch_len];

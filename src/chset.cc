@@ -89,7 +89,22 @@ void  edit_chset()
       if(curr<32)
          sprintf(chstr,"^%c",curr+'@');
       else
-         sprintf(chstr,"%c",curr);
+      {
+#if USE_MULTIBYTE_CHARS
+	 if(mb_mode)
+	 {
+	    int w=wcwidth(curr);
+	    if(w==0)
+	       chstr[0]=' ';  // to show accents nicely.
+	    int ch_len=wctomb(chstr+(w==0),curr);
+	    if(ch_len<0)
+	       ch_len=0;
+	    chstr[ch_len+(w==0)]=0;
+	 }
+	 else // note the following line
+#endif
+	    sprintf(chstr,"%c",curr);
+      }
       sprintf(s,"The current character is '%s', %3d, 0%03o, 0x%02X",chstr,curr,curr,curr);
 
       PutStr(2,2,s);
@@ -160,7 +175,7 @@ int  choose_ch()
    static int curr=0;
    int   res=-1;
    char  s[256];
-   char  chstr[3];
+   char  chstr[MB_CUR_MAX+2];
    int   action;
 
    w=CreateWin(MIDDLE,MIDDLE,3*16+4,16+6,DIALOGUE_WIN_ATTR," Character Set ",0);
@@ -174,7 +189,22 @@ int  choose_ch()
       if(curr<32)
          sprintf(chstr,"^%c",curr+'@');
       else
-         sprintf(chstr,"%c",curr);
+      {
+#if USE_MULTIBYTE_CHARS
+	 if(mb_mode)
+	 {
+	    int w=wcwidth(curr);
+	    if(w==0)
+	       chstr[0]=' ';  // to show accents nicely.
+	    int ch_len=wctomb(chstr+(w==0),curr);
+	    if(ch_len<0)
+	       ch_len=0;
+	    chstr[ch_len+(w==0)]=0;
+	 }
+	 else // note the following line
+#endif
+	    sprintf(chstr,"%c",curr);
+      }
       sprintf(s,"The current character is '%s', %3d, 0%03o, 0x%02X",chstr,curr,curr,curr);
 
       PutStr(2,2,s);
@@ -183,7 +213,12 @@ int  choose_ch()
          {
             SetAttr((i<<4)+j==curr?CURR_BUTTON_ATTR:DIALOGUE_WIN_ATTR);
             PutCh(i*3+2,j+4,' ');
-            PutCh(i*3+3,j+4,(i<<4)+j);
+#ifdef USE_MULTIBYTE_CHARS
+	    if(mb_mode)
+	       PutWCh(i*3+3,j+4,(i<<4)+j);
+	    else // note the next line
+#endif
+	       PutCh(i*3+3,j+4,(i<<4)+j);
             PutCh(i*3+4,j+4,' ');
          }
       action=GetNextAction();
@@ -228,6 +263,7 @@ done:
 }
 wchar_t choose_wch()
 {
+#if USE_MULTIBYTE_CHARS
    WIN *w;
    int i,j;
    static wchar_t curr=0;
@@ -320,6 +356,10 @@ done:
    CloseWin();
    DestroyWin(w);
    return(res);
+#else
+   ErrMsg("No wide character support compiled in");
+   return -1;
+#endif
 }
 
 
@@ -378,7 +418,7 @@ wchar_t visualize_wchar(wchar_t wc)
    if(wc>=0 && wc<256 && chset_isprint(wc))
       return wc;
    if(wc==0x80 && !chset_isprint(wc))
-      return '?';
+      return '.';
    if(wc<32)
       wc+='@';
    else if(wc==127)

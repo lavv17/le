@@ -84,6 +84,7 @@ void  PutCh(int x,int y,chtype ch)
       addch_visual(ch);
    }
 }
+#if USE_MULTIBYTE_CHARS
 void  PutWCh(int x,int y,wchar_t ch)
 {
    Absolute(&x,1,Upper->w);
@@ -107,6 +108,7 @@ void  PutWCh(int x,int y,wchar_t ch)
       attrset(curr_attr->n_attr);
    }
 }
+#endif
 void  GotoXY(int x,int y)
 {
    Absolute(&x,1,Upper->w);
@@ -124,80 +126,85 @@ void  PutStr(int x,int y,const char *str)
    int   bx=x;
 
 #if USE_MULTIBYTE_CHARS
-   int len=strlen(str);
-   wchar_t *wstr=(wchar_t*)alloca((len+1)*sizeof(wchar_t));
-   memset(wstr,0,(len+1)*sizeof(wchar_t));
-   mbstowcs(wstr,str,len);
-
-   while(*wstr && y<Upper->h)
+   if(mb_mode)
    {
-      attrset(curr_attr->n_attr);
-      if(*wstr=='\n')
+      int len=strlen(str);
+      wchar_t *wstr=(wchar_t*)alloca((len+1)*sizeof(wchar_t));
+      memset(wstr,0,(len+1)*sizeof(wchar_t));
+      mbstowcs(wstr,str,len);
+
+      while(*wstr && y<Upper->h)
       {
-         while(x<Upper->w-1)
-            mvaddch(y+Upper->y,(x++)+Upper->x,' ');
-         x=bx;
-         y++;
-      }
-      else if(*wstr=='\t')
-      {
-	 int add=((x-bx+8)&~7)-x+bx;
-	 while(add-->0)
+	 attrset(curr_attr->n_attr);
+	 if(*wstr=='\n')
 	 {
-	    if(x<Upper->w)
-	       mvaddch(y+Upper->y,x+Upper->x,' ');
-	    x++;
+	    while(x<Upper->w-1)
+	       mvaddch(y+Upper->y,(x++)+Upper->x,' ');
+	    x=bx;
+	    y++;
 	 }
-      }
-      else
-      {
-	 wchar_t wc=visualize_wchar(*wstr);
-	 int width=wcwidth(wc);
-	 if(x>=0 && y>=0 && x+width<=Upper->w)
+	 else if(*wstr=='\t')
 	 {
-            move(y+Upper->y,x+Upper->x);
-	    if(wc!=*wstr)
-	       attrset(curr_attr->so_attr);
-	    addnwstr(&wc,1);
-	    x=getcurx(stdscr)-Upper->x;
+	    int add=((x-bx+8)&~7)-x+bx;
+	    while(add-->0)
+	    {
+	       if(x<Upper->w)
+		  mvaddch(y+Upper->y,x+Upper->x,' ');
+	       x++;
+	    }
 	 }
 	 else
-	    x+=width;
-      }
-      wstr++;
-   }
-#else // !USE_MULTIBYTE_CHARS
-   while(*str && y<Upper->h)
-   {
-      if(*str=='\n')
-      {
-         while(x<Upper->w-1)
-            mvaddch(y+Upper->y,(x++)+Upper->x,' ');
-         x=bx;
-         y++;
-      }
-      else if(*str=='\t')
-      {
-	 int add=((x-bx+8)&~7)-x+bx;
-	 while(add-->0)
 	 {
-	    if(x<Upper->w)
-	       mvaddch(y+Upper->y,x+Upper->x,' ');
+	    wchar_t wc=visualize_wchar(*wstr);
+	    int width=wcwidth(wc);
+	    if(x>=0 && y>=0 && x+width<=Upper->w)
+	    {
+	       move(y+Upper->y,x+Upper->x);
+	       if(wc!=*wstr)
+		  attrset(curr_attr->so_attr);
+	       addnwstr(&wc,1);
+	       x=getcurx(stdscr)-Upper->x;
+	    }
+	    else
+	       x+=width;
+	 }
+	 wstr++;
+      }
+   }
+   else	 // note the following block
+#endif // !USE_MULTIBYTE_CHARS
+   {
+      while(*str && y<Upper->h)
+      {
+	 if(*str=='\n')
+	 {
+	    while(x<Upper->w-1)
+	       mvaddch(y+Upper->y,(x++)+Upper->x,' ');
+	    x=bx;
+	    y++;
+	 }
+	 else if(*str=='\t')
+	 {
+	    int add=((x-bx+8)&~7)-x+bx;
+	    while(add-->0)
+	    {
+	       if(x<Upper->w)
+		  mvaddch(y+Upper->y,x+Upper->x,' ');
+	       x++;
+	    }
+	 }
+	 else
+	 {
+	    if(x>=0 && y>=0 && x<Upper->w)
+	    {
+	       move(y+Upper->y,x+Upper->x);
+	       addch_visual((byte)*str);
+	    }
 	    x++;
 	 }
+	 str++;
       }
-      else
-      {
-         if(x>=0 && y>=0 && x<Upper->w)
-	 {
-            move(y+Upper->y,x+Upper->x);
-	    addch_visual((byte)*str);
-	 }
-	 x++;
-      }
-      str++;
    }
-#endif // !USE_MULTIBYTE_CHARS
 }
 
 WIN   *CreateWin(int x,int y,unsigned w,unsigned h,struct attr *a,

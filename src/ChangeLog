@@ -1,3 +1,12 @@
+2004-05-18  lav
+
+	* chset.cc: display character in mb_mode properly - convert it to mb;
+	  display unprintable 0x80 as '.'.
+	* edit.cc, screen.cc: fix compile without mb chars.
+	* getstr.cc, options.cc: use custom mb_len instead of mblen.
+	* mb.cc, mb.h: add mb_len function; rename static variables.
+	* window.cc: fix compile without mb chars; check mb_mode.
+
 2004-05-12  lav
 
 	* format.cc: add "no undo" phrase only if undo is disabled.

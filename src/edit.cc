@@ -578,8 +578,10 @@ int     main(int argc,char **argv)
       {"black-white",no_argument,0,'b'},
       {"color",no_argument,0,'c'},
       {"config",required_argument,0,CONFIG_FILE},
+#if USE_MULTIBYTE_CHARS
       {"multibyte",no_argument,0,MULTIBYTE},
       {"no-multibyte",no_argument,0,NO_MULTIBYTE},
+#endif
 #ifdef HAVE_MMAP
       {"mmap",no_argument,0,USE_MMAP},
       {"mmap-rw",no_argument,0,USE_MMAP_RW},
@@ -705,8 +707,10 @@ int     main(int argc,char **argv)
       UseColor=optUseColor;
    if(opt_use_mmap!=-1)
       buffer_mmapped=opt_use_mmap;
+#if USE_MULTIBYTE_CHARS
    if(opt_mb_mode!=-1)
       mb_mode=opt_mb_mode;
+#endif
 
    if(optind<argc-1 && argv[optind][0]=='+' && isdigit(argv[optind][1]))
    {

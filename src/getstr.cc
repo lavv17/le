@@ -161,10 +161,7 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
          case(DELETE_CHAR):
             if(pos==*len)
                break;
-	    mblen(0,0);
-	    ch_len=mblen(buf+pos,*len-pos);
-	    if(ch_len<1)
-	       ch_len=1;
+	    ch_len=mb_len(buf+pos,*len-pos);
             for(i=pos; i+ch_len<=*len; i++)
                buf[i]=buf[i+ch_len];
             (*len)-=ch_len;

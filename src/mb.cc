@@ -33,26 +33,26 @@ int   MBCharWidth=1;
 #define REPLACEMENT_CHARACTER 0xFFFD
 
 // static int mb_flags=MBSW_ACCEPT_UNPRINTABLE|MBSW_ACCEPT_INVALID;
-static const char *mb_ptr;
-static int mb_len;
+static const char *last_mb_ptr;
+static int last_mb_len;
 
 static void MB_Prepare(offs o)
 {
    if(o>=ptr1)
    {
-      mb_ptr=buffer+o+GapSize;
-      mb_len=buffer+BufferSize-mb_ptr;
+      last_mb_ptr=buffer+o+GapSize;
+      last_mb_len=buffer+BufferSize-last_mb_ptr;
    }
    else if(o+MB_LEN_MAX<=ptr1)
    {
-      mb_ptr=buffer+o;
-      mb_len=ptr1-o;
+      last_mb_ptr=buffer+o;
+      last_mb_len=ptr1-o;
    }
    else
    {
       static char tmpbuf[MB_LEN_MAX*2-1];
-      mb_len=GetBlock(tmpbuf,o,MB_LEN_MAX*2-1);
-      mb_ptr=tmpbuf;
+      last_mb_len=GetBlock(tmpbuf,o,MB_LEN_MAX*2-1);
+      last_mb_ptr=tmpbuf;
    }
 }
 
@@ -64,13 +64,13 @@ bool MBCheckLeftAt(offs o)
    if(left_offset>o)
       left_offset=o;
    MB_Prepare(o-left_offset);
-   if(mb_len>MB_LEN_MAX*2-1)
-      mb_len=MB_LEN_MAX*2-1;
+   if(last_mb_len>MB_LEN_MAX*2-1)
+      last_mb_len=MB_LEN_MAX*2-1;
    for(int i=0; i<left_offset; i++)
    {
       mbtowc(0,0,0);
       wchar_t wc=-1;
-      MBCharSize=mbtowc(&wc,mb_ptr+i,mb_len-i);
+      MBCharSize=mbtowc(&wc,last_mb_ptr+i,last_mb_len-i);
       if(MBCharSize<=0)
 	 MBCharSize=1;
       if(MBCharSize==left_offset-i)
@@ -99,7 +99,7 @@ bool MBCheckAt(offs o)
    MB_Prepare(o);
    mbtowc(0,0,0);
    wchar_t wc=-1;
-   MBCharSize=mbtowc(&wc,mb_ptr,mb_len);
+   MBCharSize=mbtowc(&wc,last_mb_ptr,last_mb_len);
    if(MBCharSize<1)
    {
       MBCharSize=1;
@@ -116,7 +116,7 @@ wchar_t WCharAt(offs o)
    if(!MBCheckAt(o))
       return CharAt(o);
    wchar_t wc=-1;
-   if(mbtowc(&wc,mb_ptr,MBCharSize)==-1)
+   if(mbtowc(&wc,last_mb_ptr,MBCharSize)==-1)
       return REPLACEMENT_CHARACTER;
    return wc;
 }
@@ -191,7 +191,14 @@ int mb_get_pos_for_col(const char *buf,int target_col,int len)
       mb_char_right(buf,&pos,&col,len);
    return pos;
 }
-
+int mb_len(const char *buf,int len)
+{
+   mblen(0,0);
+   int ch_len=mblen(buf,len);
+   if(ch_len<1)
+      ch_len=1;
+   return ch_len;
+}
 void InsertWChar(wchar_t ch)
 {
    char buf[MB_CUR_MAX+1];

@@ -304,9 +304,7 @@ void  StatusLine()
    char  status_right[512];
    char  *bn;
    char  name[20];
-#if USE_MULTIBYTE_CHARS
    wchar_t *wname=0;
-#endif
    char  chr[8];
    int   l;
    char  flags[16];

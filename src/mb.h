@@ -46,6 +46,7 @@ void mb_get_col(const char *buf,int pos,int *col,int len);
 void mb_char_left(const char *buf,int *pos,int *col,int len);
 void mb_char_right(const char *buf,int *pos,int *col,int len);
 int  mb_get_pos_for_col(const char *buf,int width,int len);
+int  mb_len(const char *buf,int len);
 
 #else
 # define mb_mode	(false)
@@ -66,7 +67,7 @@ int  mb_get_pos_for_col(const char *buf,int width,int len);
 # define mb_char_left(buf,pos,col,len)  *(col)=--(*pos)
 # define mb_char_right(buf,pos,col,len) *(col)=++(*pos)
 # define mb_get_pos_for_col(buf,width,len) (width)
-# define mblen(s,l)	(1)
+# define mb_len(buf,len) (1)
 #endif
 
 #endif//MB_H
