@@ -71,6 +71,30 @@ c1,4=([^[:alnum:]_]|^)(alias|all|and|as|check|class|creation|debug\
 )([^[:alnum:]_]|$)
 c2,1=<<|>>
 
+# Ada mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.adb|*.ads|*.adc|*.gpr
+c3,1=--[^\n]*\n
+c3,1="([^"\\]|\\\\(.|\n))*"
+c1,4=([^[:alnum:]_]|^)(abort|else|new|return|abs|elsif|not|reverse|abstract\
+|end|null|accept|entry|select|access|exception|separate|aliased|exit|of\
+|subtype|all|or|and|for|others|tagged|array|function|out|task|at|terminate\
+|generic|package|then|begin|goto|pragma|type|body|private|if|procedure\
+|case|in|protected|until|constant|is|use|raise|declare|range|when|delay\
+|limited|record|while|delta|loop|rem|with|digits|renames|do|mod|requeue|xor\
+)([^[:alnum:]_]|$)
+c2,1=<<|>>|:=|\\[|\\]|\\(|\\)|{|}|,|:|#|'Access|'Address|'Size
+
+# Assembler mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.S
+c3,1=@[^\n]*\n
+c3,1=;[^\n]*\n
+c3,1="([^"\\]|\\\\(.|\n))*"
+c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[[:alpha:]]*))
+c1,4=([^[:alnum:]_]|^)(\.section|\.func|\.globl|\.global|\.code|\.comm|\.weak\
+|\.endfunc\
+)([^[:alnum:]_]|$)
+c2,1==|,|\(|\)|#|\[|\]|:
+
 # Python mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.py
 c3,1=#.*$
@@ -329,3 +353,132 @@ c1,4=([^[:alnum:]_\$@#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 c2,1={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.|<=>|&|^|->
 c2,4=([ \t)]|^)(and|or|xor|eq|ne|cmp|lt|gt|le|ge)([ \t(]|$)
 c2,4=([ \t(]|^)(not)([ \t(]|$)
+
+# PL/SQL mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.sql|*.buf
+c3,1=--.*$|/\\*([^*]|\\*[^/])*\\*/
+c3,1="([^"\n\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*'
+c1,4=([^[:alnum:]_]|^)(\
+abort|accept|access|add|all|alter|and|any|array|arraylen|as|asc|assert|\
+assign|at|audit|authorization|avg|base_table|begin|between|binary_integer|\
+body|boolean|by|case|char|char_base|check|close|cluster|clusters|colauth|\
+column|columns|comment|commit|compress|connect|constant|count|crash|create|\
+current|cursor|curval|database|data_base|date|dba|debugoff|debugon|decimal|\
+declare|default|definition|delay|delete|delta|desc|digits|dispose|distinct|\
+do|drop|else|elsif|end|entry|exception|exception_init|exclusive|exists|exit|\
+false|fetch|file|float|for|form|from|function|generic|goto|grant|group|\
+having|identified|if|immediate|in|increment|index|indexes|indicator|initial|\
+insert|integer|interface|intersect|into|is|level|like|limited|lock|long|\
+loop|max|maxextents|min|minus|mlslabel|mod|mode|modify|natural|naturaln|\
+new|nextval|noaudit|nocompress|not|nowait|null|number|number_base|of|\
+offline|on|online|open|option|or|order|others|out|package|partition|pctfree|\
+pls_integer|positive|positiven|pragma|prior|private|privileges|procedure|\
+public|raise|range|raw|real|record|ref|release|rem|rename|resource|return|\
+reverse|revoke|rollback|row|rowid|rowlabel|rownum|rows|rowtype|run|\
+savepoint|schema|select|separate|session|set|share|size|smallint|space|sql|\
+sqlcode|sqlerrm|start|statement|stddev|subtype|successful|sum|synonym|\
+sysdate|tabauth|table|tables|task|terminate|then|to|trigger|true|type|uid|\
+union|unique|update|use|user|validate|values|varchar|varchar2|variance|view|\
+views|when|whenever|where|while|with|work|write|xor|\
+constraint|foreign|key|references|primary|using|decode|replace|\
+ABORT|ACCEPT|ACCESS|ADD|ALL|ALTER|AND|ANY|ARRAY|ARRAYLEN|AS|ASC|ASSERT|\
+ASSIGN|AT|AUDIT|AUTHORIZATION|AVG|BASE_TABLE|BEGIN|BETWEEN|BINARY_INTEGER|\
+BODY|BOOLEAN|BY|CASE|CHAR|CHAR_BASE|CHECK|CLOSE|CLUSTER|CLUSTERS|COLAUTH|\
+COLUMN|COLUMNS|COMMENT|COMMIT|COMPRESS|CONNECT|CONSTANT|COUNT|CRASH|CREATE|\
+CURRENT|CURSOR|CURVAL|DATABASE|DATA_BASE|DATE|DBA|DEBUGOFF|DEBUGON|DECIMAL|\
+DECLARE|DEFAULT|DEFINITION|DELAY|DELETE|DELTA|DESC|DIGITS|DISPOSE|DISTINCT|\
+DO|DROP|ELSE|ELSIF|END|ENTRY|EXCEPTION|EXCEPTION_INIT|EXCLUSIVE|EXISTS|EXIT|\
+FALSE|FETCH|FILE|FLOAT|FOR|FORM|FROM|FUNCTION|GENERIC|GOTO|GRANT|GROUP|\
+HAVING|IDENTIFIED|IF|IMMEDIATE|IN|INCREMENT|INDEX|INDEXES|INDICATOR|INITIAL|\
+INSERT|INTEGER|INTERFACE|INTERSECT|INTO|IS|LEVEL|LIKE|LIMITED|LOCK|LONG|\
+LOOP|MAX|MAXEXTENTS|MIN|MINUS|MLSLABEL|MOD|MODE|MODIFY|NATURAL|NATURALN|\
+NEW|NEXTVAL|NOAUDIT|NOCOMPRESS|NOT|NOWAIT|NULL|NUMBER|NUMBER_BASE|OF|\
+OFFLINE|ON|ONLINE|OPEN|OPTION|OR|ORDER|OTHERS|OUT|PACKAGE|PARTITION|PCTFREE|\
+PLS_INTEGER|POSITIVE|POSITIVEN|PRAGMA|PRIOR|PRIVATE|PRIVILEGES|PROCEDURE|\
+PUBLIC|RAISE|RANGE|RAW|REAL|RECORD|REF|RELEASE|REM|RENAME|RESOURCE|RETURN|\
+REVERSE|REVOKE|ROLLBACK|ROW|ROWID|ROWLABEL|ROWNUM|ROWS|ROWTYPE|RUN|\
+SAVEPOINT|SCHEMA|SELECT|SEPARATE|SESSION|SET|SHARE|SIZE|SMALLINT|SPACE|SQL|\
+SQLCODE|SQLERRM|START|STATEMENT|STDDEV|SUBTYPE|SUCCESSFUL|SUM|SYNONYM|\
+SYSDATE|TABAUTH|TABLE|TABLES|TASK|TERMINATE|THEN|TO|TRIGGER|TRUE|TYPE|UID|\
+UNION|UNIQUE|UPDATE|USE|USER|VALIDATE|VALUES|VARCHAR|VARCHAR2|VARIANCE|VIEW|\
+VIEWS|WHEN|WHENEVER|WHERE|WHILE|WITH|WORK|WRITE|XOR|\
+CONSTRAINT|FOREIGN|KEY|REFERENCES|PRIMARY|USING|DECODE|REPLACE|\
+)([^[:alnum:]_]|$)
+c2,1=\||\)|\(|:=|=|\|\||<|>|!=
+
+# SNMP MIB mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.mib|*.smi
+c3,1=--.*$|/\\*([^*]|\\*[^/])*\\*/
+c3,1="([^"\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*'
+c1,4=([^[:alnum:]_]|^)(\
+BEGIN|END|DEFINITIONS|OBJECT-TYPE|OBJECT|OBJECTS|IDENTIFIER|FROM|SIZE|INDEX|\
+IMPORTS|SYNTAX|ACCESS|STATUS|DESCRIPTION|INTEGER|SEQUENCE|OF|OCTET|STRING|\
+TRAP-TYPE|ENTERPRISE|VARIABLES|NOTIFICATION-TYPE|MODULE-IDENTITY|\
+OBJECT-IDENTITY|MAX-ACCESS|OBJECT-GROUP|NOTIFICATION-GROUP|MODULE-COMPLIANCE|\
+TEXTUAL-CONVENTION|REVISION|LAST-UPDATED|ORGANIZATION|CONTACT-INFO|\
+DISPLAY-HINT|NOTIFICATIONS|MODULE|MANDATORY-GROUPS|GROUP\
+)([^[:alnum:]_]|$)
+c2,1=\||\)|\(|::=|=|\|\||{|}|;
+
+# Texinfo mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.texi|-\*- *texinfo *-\*-
+#c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^'\n\\]|\\\\.)*'
+#c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
+c3,1=^[ \t]*@c\W.*$
+#c3,1=/\\*([^*]|\\*[^/])*\\*/
+c1,4=([^[:alnum:]_@]|^)(@[[:alnum:]]*\
+)([^[:alnum:]_]|$)
+c2,1={|}
+
+# Tex mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.tex
+#c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^'\n\\]|\\\\.)*'
+#c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
+c3,1=%.*$
+#c3,1=/\\*([^*]|\\*[^/])*\\*/
+c1,4=()(\\\\[[:alnum:]]*)([^[:alnum:]_]|$)
+c2,1={|}|\[|\]
+
+# PHP mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.php3
+c3,1=#.*$
+c3,1=//.*$
+c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
+c1,4=([^[:alnum:]_]|^)(if|elseif|else|for|in|break|continue|while|var\
+|function|class|return|global|in|or|and|not\
+)([^[:alnum:]_]|$)
+c2,1=:|\$|->
+
+# Tcl mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.tcl|/^#![ \t]*/.*/tcl\|-\*- *tcl *-\*-
+c3,1=#.*$
+c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
+c1,4=([^[:alnum:]/_]|^)(break|case|continue|exit|for|foreach|if|return\
+|switch|while|set|eval|proc\
+)([^[:alnum:]/_]|$)
+c2,1={|}|\[|\]|\$|;|\(|\)|\|
+
+# Metafont mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.mf|*.mp
+c3,1=%.*$
+c3,2=[^\\]("([^"\\]|\\\\(.|\n))*")
+c1,4=([^[:alnum:]/_]|^)(if|else|elif|fi|lft|rt|top|bot|iff|not\
+|def|vardef|enddef|suffix|whatever|expr\
+|fill|draw|filldraw|pickup|let|beginchar|endchar\
+)([^[:alnum:]/_]|$)
+c2,1=:=|\(|\)|#|=|;|\[|]|---|--|\.\.\.|\.\.|{|}|,
+
+# Patch mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.pch
+c3,1=^\+\+.*$
+c3,1=^--.*$
+c3,1=^@@.*$
+c2,1=^(\+|-)
+
+# Generic configuration files, by Serge Vakulenko <vak@cronyx.ru>
+/*.conf|*.cf|*.cfg|Makefile|makefile
+c3,1=#.*$
+#c1,4=([^[:alnum:]_]|^)(if|elseif|else|for|in|break|continue|while|var\
+#|function|class|return|global|in|or|and|not\
+#)([^[:alnum:]_]|$)
+#c2,1=:|\$|->

@@ -1,3 +1,9 @@
+2005-03-03	Serge Vakulenko <vak@cronyx.ru>
+
+        * syntax: 1) Ada 2) GNU Assembler 3) Oracle PL/SQL 4) SNMP MIB 5)
+	  Texinfo 6) TeX 7) PHP 8) Tcl 9) Metafont 10) Patch (diff output) 11)
+	  Generic config files.
+
 2001-09-05	lav
 
 	* syntax: perl patterns improved.
