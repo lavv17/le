@@ -125,10 +125,10 @@ c3,1=^#.*$
 
 # html mode (lav)
 /*.html|*.htm|*.shtml|/-\*-html-\*-\|<![Dd][Oo][Cc][Tt][Yy][Pp][Ee]
-c3,1=<!--(([^-]|-[^-]|--[^>])*)-->
-c3,1=<!([a-zA-Z][^>]*)>
+c3,2=<!--(([^-]|-[^-]|--[^>])*)-->
+c3,2=<!([a-zA-Z][^>]*)>
 c3,2=("([^"\n\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*')[^<]*>
-c2,1=<[/!]|<|>|&[a-zA-Z]+;|&#[0-9]+;
+c2,1=<!--|-->|<[/!]|<|>|&[a-zA-Z]+;|&#[0-9]+;
 ci1,2=<[!/]?(HTML|BODY|TITLE|HEAD|META|STYLE|FRAME(SET)?|IFRAME|APPLET|BASE(FONT)?|NOFRAMES\
 |A( HREF| NAME)?|IMG( SRC)?|AREA|(NO)?SCRIPT|OBJECT|PARAM|LINK|MAP\
 |P|HR|PRE|BLOCKQUOTE|QUOTE|Q|DIV|CENTER|H[1-6]|BR|INS|DEL|BDO|SPAN\
