@@ -1387,6 +1387,9 @@ void  UserSwitchAutoindentMode()
 
 void  UserBlockPrefixIndent()
 {
+   if(View)
+      return;
+
    if(DragMark)
       UserStopDragMark();
 
