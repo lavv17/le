@@ -47,9 +47,10 @@ int   replen=0;
 offs  fndind=0;
 num   fndlen=0;
 
-struct re_registers regs;
-struct re_pattern_buffer rexp;
-bool rexp_compiled=false;
+static struct re_registers regs;
+static struct re_pattern_buffer rexp;
+static bool rexp_compiled=false;
+static char fastmap[256];
 
 int   LastOp=0;
 int   LastDir=FORWARD;
@@ -89,6 +90,7 @@ int   CompilePattern()
    }
    rexp_compiled=true;
    rexp.newline_anchor=1;
+   rexp.fastmap=fastmap;
    return 1;
 }
 
