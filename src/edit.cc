@@ -37,7 +37,9 @@
 #include "keymap.h"
 #include "block.h"
 #include "screen.h"
-#include "mouse.h"
+#ifdef WITH_MOUSE
+# include "mouse.h"
+#endif
 
 #include <getopt.h>
 
