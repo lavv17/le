@@ -943,6 +943,9 @@ void  EmptyText()
 
 void   Optimize()
 {
+   if(View || buffer_mmapped)
+      return;
+
    offs     ptr;
    TextPoint  tp=CurrentPos;
 

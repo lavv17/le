@@ -746,13 +746,13 @@ next:
       h=TRUE;
 
    if(!h && !View)
-      Message("Block: C-Copy M-Move D-Delete W-Write H-Hide I-Indent U-Unindent R-Read BETXLP");
+      Message("Block: C-Copy M-Move D-Delete W-Write H-Hide I-Indent U-Unindent R-Read BETXLPA");
    else if(h && !View)
-      Message("Block: B-Begin E-End T-Type L-to Lower P-to uPper X-exchange H-display");
+      Message("Block: B-Begin E-End T-Type L-to Lower P-to uPper X-exchange H-display A-mark All");
    else if(h && View)
-      Message("Block: B-Begin E-End T-Type H-display");
+      Message("Block: B-Begin E-End T-Type H-display A-mark All");
    else
-      Message("Block: W-Write B-Begin E-End T-Type H-Hide");
+      Message("Block: W-Write B-Begin E-End T-Type H-Hide A-mark All");
    SetCursor();
    action=GetNextAction();
    flag=REDISPLAY_ALL;
@@ -830,6 +830,9 @@ next:
          break;
       case('Y'):
 	 UserYankBlock();
+	 break;
+      case('A'):
+	 UserMarkAll();
 	 break;
       case('|'):
 #ifndef MSDOS

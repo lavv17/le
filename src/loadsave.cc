@@ -235,11 +235,11 @@ int   LoadFile(char *name)
       if(S_ISDIR(FileMode))
 	 View|=2;
    }
-   file=open(name,(View?O_RDONLY:O_RDWR|O_CREAT)|O_NDELAY,0644);
+   file=open(name,(View?O_RDONLY:O_RDWR|O_CREAT),0644);
    if(file==-1)
    {
       View|=2;
-      file=open(name,O_RDONLY|O_NDELAY);
+      file=open(name,O_RDONLY);
 	 /* try to open the file in read-only mode */
       if(file==-1)
       {
@@ -525,16 +525,19 @@ int CheckMode(mode_t mode)
 
 int   SaveFile(char *name)
 {
-   if(buffer_mmapped)
-      return OK;
-
    struct stat st;
    char  msg[256];
    int   nfile;
    num   act_written;
    int   delete_old_file=0;
 
-   if(Text)
+   if(buffer_mmapped)
+   {
+      if(!strcmp(name,FileName))
+	 return OK;
+   }
+
+   if(Text && !View)
       Optimize();
 
    sprintf(msg,"Saving the file \"%s\"...",name);
@@ -545,13 +548,16 @@ int   SaveFile(char *name)
       if(!CheckMode(st.st_mode))
          return(ERR);
 
-     InodeInfo   NewFileInfo(&st,GetLine(),GetCol());
+      InodeInfo   NewFileInfo(&st,GetLine(),GetCol());
 
-     if(file!=-1)
-     {
-        if(FileInfo.SameFileModified(NewFileInfo))
-        {
-           switch(ReadMenuBox(ConCan4Menu,HORIZ,"The file was changed out of the editor",
+      if(file!=-1)
+      {
+	 if(buffer_mmapped && FileInfo.SameFile(NewFileInfo))
+	    return OK;
+
+	 if(FileInfo.SameFileModified(NewFileInfo))
+	 {
+	    switch(ReadMenuBox(ConCan4Menu,HORIZ,"The file was changed out of the editor",
 		     " Warning ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
 	    {
 	    case('C'):
@@ -643,6 +649,12 @@ int   SaveFile(char *name)
      return(ERR);
    }
 
+   if(buffer_mmapped)
+   {
+      close(nfile);
+      return OK;
+   }
+
    modified=0;
    CheckPoint();
 
@@ -702,6 +714,7 @@ int   ReopenRW()
 
    offs oldbb=BlockBegin;
    offs oldbe=BlockEnd;
+   offs oldpos=CurrentPos;
    int oldhide=hide;
 
    int res=LoadFile(name);
@@ -709,6 +722,7 @@ int   ReopenRW()
    {
       BlockBegin=oldbb;
       BlockEnd=oldbe;
+      CurrentPos=oldpos;
       hide=oldhide;
    }
    return res;
