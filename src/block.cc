@@ -592,7 +592,7 @@ void    DoIndent(int i)
       for(li=BlockBegin.Line(); li<=BlockEnd.Line(); li++)
       {
          HardMove(li,BlockBegin.Col());
-         while(!Eol() && isspace(Char()))
+         while(!Eol() && Space())
          {
             ExpandTab();
             MoveRight();
@@ -610,7 +610,7 @@ void    DoIndent(int i)
    do
    {
       space=0;
-      while(!Eol() && isspace(Char()))
+      while(!Eol() && Space())
       {
          if(Char()=='\t')
             space=Tabulate(space);
@@ -645,13 +645,13 @@ void    DoUnindent(int i)
       for(li=BlockBegin.Line(); li<=BlockEnd.Line(); li++)
       {
          HardMove(li,BlockBegin.Col());
-         while(!Eol() && isspace(Char()))
+         while(!Eol() && Space())
          {
             ExpandTab();
             MoveRight();
          }
          HardMove(li,BlockBegin.Col());
-         for(j=i; j>0 && !Eol() && isspace(Char()); j--)
+         for(j=i; j>0 && !Eol() && Space(); j--)
             DeleteChar();
       }
       return;
@@ -663,7 +663,7 @@ void    DoUnindent(int i)
    do
    {
       space=0;
-      while(!Eol() && isspace(Char()))
+      while(!Eol() && Space())
       {
          if(Char()=='\t')
             space=Tabulate(space);

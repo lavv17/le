@@ -1,3 +1,7 @@
+2005-03-23  lav
+
+	* block.cc: use Space function.
+
 2005-03-13  lav
 
 	* user.cc: fix CopyFromDown/Up for wide chars.
