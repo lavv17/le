@@ -428,10 +428,12 @@ int   CodeCompare(char *typed,int typedLen, char *code)
          bracket=(code_ch=='{');
          code+=bracket;
 
-         if(sscanf(code,bracket ? "%255[^}]}" : "%255[a-zA-Z0-9]",term_name)<1)
-            return(CODE_NOT_EQUAL);
-
-         code+=strlen(term_name)+bracket;
+	 term_str=term_name;
+	 while(*code!=0 && (bracket?*code=='}':isalnum(*code)) && term_str-term_name<255)
+	    *term_str++=*code++;
+	 *term_str=0;
+	 if(bracket && *code=='}')
+	    code++;
 
          if(sscanf(term_name,"%1dkf%d",&shift,&fk)==2)
             sprintf(term_name,"kf%d",shift*FuncKeysNum+fk);
