@@ -253,3 +253,5 @@ c1,4=([^[:alnum:]_\$@]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |use|utime|values|vec|wait|waitpid|wantarray|warn|while|write\
 )([^[:alnum:]/_]|$)
 c2,1={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.| not | and | or | xor |\||->
+c2,1={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.| not | and | or | xor |\
+<=>| eq | ne | cmp | lt | gt | le | ge |&|^|->
