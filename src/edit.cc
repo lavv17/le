@@ -341,7 +341,8 @@ void  InitCurses()
    if(le_scr!=NULL)
    {
       endwin();
-#ifdef NCURSES_VERSION
+#if defined(NCURSES_VERSION) || defined(__NCURSES_H)
+      initscr();
       doupdate();
       return;
 #else
