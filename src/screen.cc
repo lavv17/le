@@ -666,7 +666,10 @@ void  CenterView()
    }
    offs max_top=PrevNLines(TextEnd,TextWinHeight-1);
    if(max_top<ScreenTop)
+   {
       ScreenTop=max_top;
+      flag=REDISPLAY_ALL;
+   }
 }
 
 struct  menu   OkMenu[]={

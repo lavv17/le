@@ -4,6 +4,10 @@
 	  search.cc, search.h: don't include search.h in edit.h;
 	  support ignore case option in highlightling patterns.
 
+2000-02-12  lav
+
+	* screen.cc: don't forget to set flag when ScreenTop changes.
+
 2000-02-11  lav
 
 	* user.cc: (UserMarkMove*) handle LineEnd in text mode properly.
