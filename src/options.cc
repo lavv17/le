@@ -728,15 +728,14 @@ use_key:
 	 MEVENT mev;
 	 if(getmouse(&mev)==ERR)
 	    continue;
-	 if(mev.bstate!=BUTTON1_CLICKED && mev.bstate!=BUTTON1_DOUBLE_CLICKED)
+	 if(!(mev.bstate&ALL_MOUSE_EVENTS))
 	    continue;
 	 for(p=opt; p->name; p++)
 	 {
 	    if(InOptField(mev.y-Upper->y,mev.x-Upper->x,p))
 	    {
 	       curr=p;
-	       if((curr->type==ONE || curr->type==MANY || curr->type==BUTTON)
-	       && mev.bstate==BUTTON1_DOUBLE_CLICKED)
+	       if(curr->type==ONE || curr->type==MANY || curr->type==BUTTON)
 	       {
 		  ungetch(' ');
 	       }
