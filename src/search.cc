@@ -364,45 +364,77 @@ search_again:
 
 void  ReplaceFound()
 {
-   register int  i;
    offs	 o=0;
 
    if(!noreg)
    {
-      for(i=0; i<replen; i++)
+      char *scan=(char*)replace;
+      int scan_len=replen;
+      for(;;)
       {
-         switch(replace[i])
-         {
-         case('\\'):
-	    if(i < (replen-1))
-            {
-	       i++;
-	       char ch=replace[i];
-	       if(ch=='&')
-		  ch='0';
-	       if(ch>='0' && ch<='9')
+	 if(scan_len==0)
+	    break;
+	 char *bslash=(char*)memchr(scan,'\\',scan_len);
+	 int len=(bslash?bslash-scan:scan_len);
+	 if(len==scan_len-1)
+	    len=scan_len;  // backslash at eol
+	 if(len>0)
+	 {
+	    if(buffer_mmapped)
+	    {
+	       ReplaceBlock(scan,len);
+	       CurrentPos+=len;
+	    }
+	    else
+	    {
+	       InsertBlock(scan,len);
+	       o+=len;
+	    }
+	    scan+=len;
+	    scan_len-=len;
+	 }
+	 if(!bslash)
+	    break;
+	 scan++;
+	 scan_len--;
+	 if(scan_len==0)
+	    break;
+	 char ch=*scan++;
+	 scan_len--;
+	 if(ch=='&')
+	    ch='0';
+	 if(ch>='0' && ch<='9')
+	 {
+	    unsigned n=ch-'0';
+	    if(n<regs.num_regs)
+	    {
+	       if(!buffer_mmapped)
 	       {
-		  unsigned n=ch-'0';
-		  if(n<regs.num_regs)
-		  {
-		     CopyBlock(regs.start[n]+o,regs.end[n]-regs.start[n]);
-		     o+=regs.end[n]-regs.start[n];
-		  }
-		  break;
+		  CopyBlock(regs.start[n]+o,regs.end[n]-regs.start[n]);
+		  o+=regs.end[n]-regs.start[n];
+	       }
+	       else
+	       {
+		  int rlen=regs.end[n]-regs.start[n];
+		  ReplaceBlock(buffer+regs.start[n],rlen);
+		  CurrentPos+=rlen;
 	       }
 	    }
-         default:
-            InsertChar(replace[i]);
-            o++;
-	    break;
-         }
+	 }
       }
    }
    else
    {
-      InsertBlock((char*)replace,replen);
+      if(buffer_mmapped)
+      {
+	 ReplaceBlock((char*)replace,replen);
+	 CurrentPos+=replen;
+      }
+      else
+	 InsertBlock((char*)replace,replen);
    }
-   DeleteBlock(0,fndlen);   /* delete found substitute */
+   if(!buffer_mmapped)
+	DeleteBlock(0,fndlen);   /* delete found substitute */
    flag=REDISPLAY_ALL;
 }
 

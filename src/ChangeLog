@@ -1,3 +1,8 @@
+1999-07-18  lav
+
+	* search.cc: support mmap in replace; speed up replace.
+	* options.cc: fix typo.
+
 1999-07-16  lav
 
 	* search.cc: add $n and $x search modifiers for numeric and hex mode.

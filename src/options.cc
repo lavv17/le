@@ -450,7 +450,7 @@ void  ReadConf()
    if(!ConfOK(InitName,mine=true))
    {
       sprintf(InitName,"%s/.le/le.ini",HOME);
-      if(!ConfOK(InitName,mine=false)==-1)
+      if(!ConfOK(InitName,mine=false))
       {
 	 sprintf(t,"%s/le.ini",PKGDATADIR);
 	 ReadConfFromFile(t,init,false);
