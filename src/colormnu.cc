@@ -54,7 +54,7 @@ void LoadColor(const char *f)
       FError(f);
       return;
    }
-   ReadConfFromFile(f,colors);
+   ReadConfFromFile(f,colors,false);
    ParseColors();
    init_attrs();
    clearok(stdscr,1);
@@ -66,7 +66,9 @@ void LoadColorDefault()
    memcpy(color_pal,default_color_pal,sizeof(default_color_pal));
    memcpy(bw_pal,default_bw_pal,sizeof(default_bw_pal));
    init_attrs();
+#if !defined(NCURSES_VERSION_PATCH) || NCURSES_VERSION_PATCH<980627
    clearok(stdscr,1);
+#endif
    flag=REDISPLAY_ALL;
 }
 
