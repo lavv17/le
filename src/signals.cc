@@ -175,6 +175,15 @@ void    hup(int sig)
    {
       fprintf(stderr,"le: Caught signal %d\n",sig);
    }
+   if(sig==SIGSEGV || sig==SIGBUS)
+   {
+      ReleaseSignalHandlers();
+      sigset_t mask;
+      sigemptyset(&mask);
+      sigaddset(&mask,sig);
+      sigprocmask(SIG_UNBLOCK,&mask,0);
+      kill(getpid(),sig);
+   }
    exit(1);
 }
 
