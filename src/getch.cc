@@ -18,7 +18,7 @@
 
 #include <config.h>
 
-#define FAILCOUNT   10
+#define MAX_FAIL_COUNT   100
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -39,6 +39,13 @@
 sigjmp_buf getch_return;
 bool  getch_return_set=false;
 
+static int fail_count=0;
+static void fail()
+{
+   if(++fail_count>=MAX_FAIL_COUNT)
+      raise(SIGHUP);
+}
+
 void    UnrefKey(int key) // ???
 {
     if(iscntrl(key))
@@ -58,6 +65,10 @@ int   GetRawKey()
    timeout(-1);
    keypad(stdscr,0);
    key=getch();
+   if(key==ERR)
+      fail();
+   else
+      fail_count=0;
    keypad(stdscr,1);
 
    BlockSignals();
@@ -102,6 +113,13 @@ int   GetKey(int delay)
       bkgdset(NORMAL_TEXT_ATTR->attr|' ');   // recent ncurses uses bkgd for default clearing
       timeout(delay);
       int key=getch();
+      if(key==ERR)
+      {
+	 if(delay==-1)
+	    fail();
+      }
+      else
+	 fail_count=0;
       timeout(-1);
       bkgdset(' ');
 
