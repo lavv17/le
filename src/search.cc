@@ -56,6 +56,7 @@ static struct re_registers regs;
 static struct re_pattern_buffer rexp;
 static bool rexp_compiled=false;
 static char fastmap[256];
+static bool word_bounds;
 
 int   LastOp=0;
 int   LastDir=FORWARD;
@@ -88,6 +89,18 @@ void  NotFound()
    WaitForKey();
 }
 
+static unsigned char map_to_lower[256];
+static void map_to_lower_init()
+{
+   if(map_to_lower[' '])  // assumes tolower(' ')!='\0' :-)
+      return;
+
+   unsigned i;
+   /* Map uppercase characters to corresponding lowercase ones.  */
+   for (i = 0; i < sizeof(map_to_lower); i++)
+      map_to_lower[i] = isupper (i) ? tolower (i) : i;
+}
+
 int   CompilePattern()
 {
 //    if(rexp_compiled)
@@ -95,7 +108,39 @@ int   CompilePattern()
 
    re_syntax_options=RE_BK_PLUS_QM|RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS|
 		     RE_UNMATCHED_RIGHT_PAREN_ORD;
-   const char *err=re_compile_pattern((char*)pattern,patlen,&rexp);
+   rexp.translate=0;
+   word_bounds=false;
+
+   unsigned char *p=pattern;
+   int len=patlen;
+   if(*p=='$') // search options
+   {
+      for(p++,len--; len>0 && *p!=' '; p++,len--)
+      {
+	 switch(*p)
+	 {
+	    case('i'): // ignore case
+	       map_to_lower_init();
+	       rexp.translate=map_to_lower;
+	       break;
+	    case('w'):
+	       word_bounds=true;
+	       break;
+	    default:
+	       goto so_out;
+	 }
+      }
+      if(len>0 && *p==' ')
+	 p++,len--;
+      if(len==0)
+      {
+	 p=pattern;
+	 len=patlen;
+      }
+   so_out:;
+   }
+
+   const char *err=re_compile_pattern((char*)p,len,&rexp);
    if(err)
    {
       ErrMsg(err);
@@ -248,6 +293,7 @@ int    Search(int dir,offs offslim)
       buf1=buf2; buf2=0;
       len1=len2; len2=0;
    }
+search_again:
    int res;
    if(noreg)
       res=no_re_search_2((char*)pattern,patlen,buf1,len1,
@@ -264,6 +310,16 @@ int    Search(int dir,offs offslim)
    else
       fndlen=regs.end[0]-res;
    CurrentPos=fndind;
+
+   if(word_bounds)
+   {
+      if(isalnum(CharRel(-1)) || isalnum(CharRel(fndlen)))
+      {
+	 srchpos=CurrentPos+1;
+	 goto search_again;
+      }
+   }
+
    return(TRUE);
 }
 
