@@ -117,6 +117,7 @@ ActionNameRec  ActionNameTable[]=
    {FORMAT_ONE_PARA,"format-paragraph"},
    {FORMAT_DOCUMENT,"format-document"},
    {CENTER_LINE,"center-line"},
+   {AJUST_RIGHT_LINE,"ajust-right-line"},
    {FORMAT_FUNC_BAR,"format-functions"},
 
 // Others

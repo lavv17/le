@@ -162,8 +162,11 @@ ActionCodeRec  DefaultActionCodeTable[]=
 //   {FORMAT_ONE_PARA,FormatPara,"format-paragraph"},
 //   {FORMAT_DOCUMENT,FormatAll,"format-document"},
 //   {CENTER_LINE,CenterLine,"center-line"},
+//   {AJUST_RIGHT_LINE,ShiftRightLine,"ajust-right-line"}
    {FORMAT_FUNC_BAR,"\033|$kf4"},
    {FORMAT_FUNC_BAR,"$1kf4"},
+   {FORMAT_FUNC_BAR,"\033|f"},
+   {FORMAT_FUNC_BAR,"\033|F"},
 
 // Others
 //   {CALCULATOR,editcalc,"calculator"},

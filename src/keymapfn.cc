@@ -23,6 +23,7 @@
 #include "block.h"
 #include "options.h"
 #include "keymap.h"
+#include "format.h"
 
 ActionProcRec  EditorActionProcTable[]=
 {
@@ -102,6 +103,7 @@ ActionProcRec  EditorActionProcTable[]=
    {FORMAT_ONE_PARA,FormatPara},
    {FORMAT_DOCUMENT,FormatAll},
    {CENTER_LINE,CenterLine},
+   {AJUST_RIGHT_LINE,ShiftRightLine},
    {FORMAT_FUNC_BAR,FormatFunc},
 
 // Others

@@ -99,6 +99,7 @@ enum  Action
    FORMAT_ONE_PARA,
    FORMAT_DOCUMENT,
    CENTER_LINE,
+   AJUST_RIGHT_LINE,
    FORMAT_FUNC_BAR,
 
 // Others
