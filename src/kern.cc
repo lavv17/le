@@ -50,7 +50,7 @@ int       oldmodified;	/* status of text if ptr1 and ptr2 restored */
 num       stdcol;
 num       ScrShift=0;
 int       modified=0;
-int       newfile=0;
+bool      newfile=false;
 
 int       DosEol=0;
 int       EolSize=1;
