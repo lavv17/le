@@ -80,7 +80,7 @@ int   CompilePattern()
 //    if(rexp_compiled)
 //       regfree(&rexp);
 
-   re_syntax_options=RE_RE_BK_PLUS_QM|RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS|
+   re_syntax_options=RE_BK_PLUS_QM|RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS|
 		     RE_UNMATCHED_RIGHT_PAREN_ORD;
    const char *err=re_compile_pattern((char*)pattern,patlen,&rexp);
    if(err)
