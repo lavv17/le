@@ -1,3 +1,5 @@
+Version 1.5.3  1999-08-18
+
 * search/replace is now supported in mmap-rw mode.
 * search/replace sped up.
 * added search for binary strings given as codes:
