@@ -1,3 +1,7 @@
+2001-07-02  lav
+
+	* options.cc: save UseMouse in le.ini.
+
 2001-06-08  lav
 
 	* edit.cc: don't call ChooseFile for file from command line.

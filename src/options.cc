@@ -202,6 +202,7 @@ const struct init init[]=
    { "backupnum",    NUM,  &MaxBackup		      },
    { "preferpagetop",NUM,  &PreferPageTop	      },
    { "wordwrap",     NUM,  &wordwrap		      },
+   { "usemouse",     NUM,  &UseMouse		      },
    { NULL }
 };
 const struct init term[]=
