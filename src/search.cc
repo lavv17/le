@@ -300,10 +300,6 @@ void  ReplaceFound()
             InsertChar(replace[i]);
             o++;
 	    break;
-         case('&'):
-            CopyBlock(fndind+o,fndlen);
-	    o+=fndlen;
-	    break;
          }
       }
    }

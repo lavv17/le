@@ -61,8 +61,11 @@ int   PipeBlock(char *filter,int in,int out)
    if(!in && !out)
       return OK;  /* nothing to do */
 
-   if(View && in)
+   if((View || buffer_mmapped) && in)
+   {
+      beep();
       return ERR;
+   }
 
    ClipBoard cb;
    if(rblock)

@@ -44,6 +44,19 @@ int    there_message=0;
 int   range_begin;
 int   range_end;
 
+#if !defined(NCURSES_VERSION) && defined(__NCURSES_H) && !defined(mvaddchnstr)
+#define mvaddchnstr le_mvaddchnstr
+
+int le_mvaddchnstr(int line, int col, chtype *s, int n)
+{
+   if(move(line,col)==ERR)
+      return ERR;
+   while(n-->0)
+      addch(*s++);
+   return OK;
+}
+#endif
+
 void  TestPosition()
 {
    if(hex)
@@ -219,7 +232,13 @@ void  SetCursor()
       move(GetLine()-ScrLine+TextWinY,
           ((Text&&Eol())?stdcol:GetCol())-ScrShift+TextWinX);
    }
-   curs_set(insert?1:2);
+   if(insert)
+      curs_set(1);
+   else
+   {
+      if(curs_set(2)==ERR)
+	 curs_set(1);
+   }
 }
 
 void  Message(const char *s)
