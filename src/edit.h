@@ -55,7 +55,7 @@ typedef long            num;
 #include "file.h"
 #include "about.h"
 
-extern  inputmode,editmode,noreg;
+extern  int inputmode,editmode,noreg;
 #define BACKUP_SUFFIX_LEN 16
 extern  char   bak[BACKUP_SUFFIX_LEN];
 extern  int    TabSize;
@@ -75,37 +75,23 @@ extern  int    PreferPageTop;
    insert/delete line capability of a terminal */
 extern  int     useidl;
 
-extern  ShowScrollBar;
-extern  ShowStatusLine;
-
-extern   TextWinX,TextWinY,TextWinWidth,TextWinHeight,ScrollBarX,StatusLineY;
-
 extern   InodeHistory   PositionHistory;
 extern   InodeInfo      FileInfo;
 extern   History        LoadHistory;
 
-enum {
-    SHOW_RIGHT=0,
-    SHOW_NONE=1,
-    SHOW_LEFT=2,
-    SHOW_BOTTOM=0,
-    SHOW_TOP=2
-};
-
-extern  FuncKeysNum;
+extern int FuncKeysNum;
 
 extern  char    Make[256],Shell[256],Run[256],Compile[256],HelpCmd[256],BakPath[256];
 extern  char    InitName[];
 extern  char    FileName[];
 
-extern  mode_t  FileMode;
-extern  file;
-extern  newfile;
+extern  mode_t	  FileMode;
+extern  int	  file;
+extern  bool	  newfile;
 
 extern  int     View;
 
 extern  char    *table;
-extern  GetchFlag;
 
 extern  int     ascii,right;    /* modifiers for HEX mode */
 
@@ -124,8 +110,6 @@ extern  int     hide;
 
 extern  int     there_message;
 extern  int     flag;
-
-extern  num     ScrShift;
 
 extern  byte    chset[];
 
@@ -246,9 +230,9 @@ extern  void    Quit(void),
                 FindBlockBegin(void),FindBlockEnd(void),ConvertToLower(void),
                 ConvertToUpper(void),ExchangeCases(void),BlockType(void),
                 FindMatch(void),DoMake(void),DoRun(void),DoCompile(void),
-                DoShell(void),editcalc(void),DrawFrames(void),FormatFunc(void),
-                ExpandAllTabs(void),FormatAll(void),FormatPara(void),
-                CenterLine(void),TermOpt(void),SaveOpt(void),UpdtOpt(void),AppearOpt(void),
+                DoShell(void),editcalc(void),DrawFrames(void),
+                ExpandAllTabs(void),
+                TermOpt(void),SaveOpt(void),UpdtOpt(void),AppearOpt(void),
                 edit_chset(void),SaveTermOpt(void),GoToLineNumber(void),
                 FormatOptions(void),Optimize(void),DOS_UNIX(void);
 
