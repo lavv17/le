@@ -19,8 +19,6 @@
 
 #include <config.h>
 
-#include <stdlib.h>
-
 #include "edit.h"
 #include "calc.h"
 
@@ -46,7 +44,11 @@ void  editcalc()
       if(sp<1)
          PutStr(MIDDLE,2,"Stack empty");
       else
-         for(i=max(0,sp-Upper->h+3),y=2; i<sp; i++,y++)
+      {
+	 i=sp-Upper->h+3;
+	 if(i<0)
+	    i=0;
+         for(y=2; i<sp; i++,y++)
          {
             sprintf(str,"%.*g",15,stack[i]);
             PutStr(MIDDLE,y,str);
@@ -55,6 +57,7 @@ void  editcalc()
             if(i==sp-1)
                PutStr(2,y,"X");
          }
+      }
 
       if(getstring("Expression: ",expr,sizeof(expr)-1,&CalcHistory,NULL,CalcHelp," Calculator Help ")<1)
          break;

@@ -105,7 +105,9 @@ void  TestPosition()
       ScreenTop=PrevNLines(Offset(),Scroll-1);
       flag=REDISPLAY_ALL;
    }
-   num   col=(Text?max(stdcol,GetCol()):GetCol());
+   num   col=GetCol();
+   if(Text && stdcol>col)
+      col=stdcol;
    if(ScrShift>col)
    {
       ScrShift=(col/hscroll)*hscroll;
