@@ -1,24 +1,23 @@
 /* Definitions for data structures and routines for the regular
    expression library, version 0.12.
    Copyright (C) 1985,1989-1993,1995-1998, 2000 Free Software Foundation, Inc.
-
    This file is part of the GNU C Library.  Its master source is NOT part of
    the C library, however.  The master source lives in /gd/gnu/lib.
 
    The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Library General Public License as
-   published by the Free Software Foundation; either version 2 of the
-   License, or (at your option) any later version.
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 2.1 of the License, or (at your option) any later version.
 
    The GNU C Library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
+   Lesser General Public License for more details.
 
-   You should have received a copy of the GNU Library General Public
-   License along with the GNU C Library; see the file COPYING.LIB.  If not,
-   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.  */
+   You should have received a copy of the GNU Lesser General Public
+   License along with the GNU C Library; if not, write to the Free
+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
+   02111-1307 USA.  */
 
 #ifndef _REGEX_H
 #define _REGEX_H 1
@@ -160,6 +159,11 @@ typedef unsigned long int reg_syntax_t;
    this bit set, and it won't affect anything in the normal case. */
 #define RE_DEBUG (RE_NO_GNU_OPS << 1)
 
+/* If this bit is set, a syntactically invalid interval is treated as
+   a string of ordinary characters.  For example, the ERE 'a{1' is
+   treated as 'a\{1'.  */
+#define RE_INVALID_INTERVAL_ORD (RE_DEBUG << 1)
+
 /* This global variable defines the particular regexp syntax to use (for
    some interfaces).  When a regexp is compiled, the syntax used is
    stored in the pattern buffer, so changing this does not affect
@@ -199,7 +203,8 @@ extern reg_syntax_t re_syntax_options;
    | RE_NO_BK_VBAR)
 
 #define RE_SYNTAX_POSIX_EGREP						\
-  (RE_SYNTAX_EGREP | RE_INTERVALS | RE_NO_BK_BRACES)
+  (RE_SYNTAX_EGREP | RE_INTERVALS | RE_NO_BK_BRACES			\
+   | RE_INVALID_INTERVAL_ORD)
 
 /* P1003.2/D11.2, section 4.20.7.1, lines 5078ff.  */
 #define RE_SYNTAX_ED RE_SYNTAX_POSIX_BASIC
