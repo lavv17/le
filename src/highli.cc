@@ -190,6 +190,10 @@ void InitHighlight()
 	    {
 	       // it is a regex for file contents
 	       s++;
+
+	       if(!buffer)
+		  continue;   // no buffer - no pattern
+
 	       static re_pattern_buffer rexp;
 	       re_syntax_options=0;
 	       if(!re_compile_pattern(s,strlen(s),&rexp))
