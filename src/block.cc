@@ -378,7 +378,7 @@ void    Write()
            FError(BlockFile);
            return;
        }
-       if(LockFile(fd)==-1)    /* check if the file is already locked */
+       if(LockFile(fd,false)==-1)    /* check if the file is already locked */
        {
            close(fd);
            return;

@@ -46,7 +46,7 @@
 #endif
 
 #ifndef __MSDOS__
-int    LockFile(int fd)
+int    LockFile(int fd,bool drop)
 {
    struct  flock   Lock;
    Lock.l_start=0;
@@ -116,12 +116,17 @@ int    LockFile(int fd)
          return(-2);
       }
    }
+   if(drop)
+   {
+      Lock.l_type=F_RDLCK;	// drop write lock to read lock
+      if(fcntl(fd,F_SETLK,&Lock)==-1)
+	 FError(FileName);
+   }
    return(0);
 }
 #else /* __MSDOS__ */
-int   LockFile(int f)
+int   LockFile(int,bool)
 {
-   (void)f;
    return 0;
 }
 #endif /* __MSDOS__ */
@@ -250,7 +255,7 @@ int   LoadFile(char *name)
 
    if(!View)
    {
-      int lock_res=LockFile(file);
+      int lock_res=LockFile(file,true);
       if(lock_res==-1)
       {
 	 View&=~2;
@@ -600,14 +605,14 @@ int   SaveFile(char *name)
    Message(msg);
 
    errno=0;
-   nfile=open(name,O_CREAT|O_RDWR|O_TRUNC,st.st_mode);
+   nfile=open(name,O_CREAT|O_RDWR,st.st_mode);
    if(nfile==-1)
    {
      FError(name);
      return(ERR);
    }
 
-   int lock_res=LockFile(nfile);
+   int lock_res=LockFile(nfile,false);
    if(lock_res==-1)
    {
      close(nfile);
@@ -616,33 +621,25 @@ int   SaveFile(char *name)
    if(lock_res==-2)
       ErrMsg("Warning: file locking failed");
 
-   if(LockEnforce(FileMode))
-   {
-     close(nfile);
-     nfile=open(name,O_CREAT|O_TRUNC|O_RDWR,st.st_mode);
-     if(nfile==-1)
-     {
-       FError(name);
-       return(ERR);
-     }
-     LockFile(nfile);
-   }
-   else
-     close(open(name,O_TRUNC|O_RDONLY));
+   // now after locking truncate the file
+   close(open(name,O_TRUNC|O_RDONLY));
 
    /* force new file to be the same mode as source one */
    chmod(name,st.st_mode);
 
    /* now, after all that stuff, write the buffer contents */
+   errno=0;
    if(WriteBlock(nfile,0,Size(),&act_written)!=OK)
    {
      if(errno)
        FError(name);
+     close(nfile);
      return(ERR);
    }
    if(act_written!=Size())
    {
-     ErrMsg("Cannot write the file up to end\nPerhaps disk full");
+     ErrMsg("Cannot write the file up to end\nPerhaps disk is full");
+     close(nfile);
      return(ERR);
    }
 
@@ -655,6 +652,7 @@ int   SaveFile(char *name)
 
    close(file);
    file=nfile;
+   LockFile(file,true);
 
    if(delete_old_file)
    {

@@ -194,7 +194,7 @@ void        Terminate();
 
 void        Edit();
 
-int         LockFile(int fd);
+int         LockFile(int fd,bool drop_write_lock);
 int         CheckMode(mode_t);
 int	    file_check(char *);	 /* checks existence or ability to create */
 
