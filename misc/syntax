@@ -6,16 +6,21 @@
 # This file describes how to highlight syntax. The following format
 # used:
 # /PATTERN - selects file names for which next lines apply
-# cCOLOR,MASK=REGEXP - use COLOR (1-3) to highlight subexpressions
+# c[i]COLOR,MASK=REGEXP - use COLOR (1-3) to highlight subexpressions
 # of REGEXP; MASK is bitmask selecting which subexpressions are to
 # highlight. C escapes can be used in REGEXP; it also can be split
-# into several lines by last \ on the line.
+# into several lines by last \ on the line. The optional `i' means
+# to ignore case.
+
+# c3 usually marks comments or text strings
+# c2 usually marks important syntax elements
+# c1 usually marks keywords
 
 # maximum height of constructs
 h18
 
 # C language mode (lav)
-/*.c
+/*.c|/-\*-c-\*-
 c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^'\n\\]|\\\\.)*'
 #c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
 c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[[:alpha:]]*))
@@ -28,7 +33,7 @@ c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 c2,1=\\[|\\]|\\(|\\)|{|}|,
 
 # C++ mode (lav)
-/*.cc|*.C|*.cpp|*.h|*.hh|*.hpp|*.H
+/*.cc|*.C|*.cpp|*.h|*.hh|*.hpp|*.H|/-\*-c++-\*-
 c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^\n'\\]|\\\\.)*'
 #c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
 c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[[:alpha:]]*))
@@ -101,7 +106,7 @@ c1,4=([^[:alnum:]/_]|^)(if|then|else|elif|fi|while|do|done|for|break|continue\
 c2,1={|}|<<|<|>>|>|;;|;|\(|\)|\|
 
 # java mode (bird@yars.free.net)
-/*.java
+/*.java|/-\*-java-\*-
 c3,1="([^"\n\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*'
 c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
 c1,4=([^[:alnum:]_]|^)(abstract|default|if|private|throw|boolean|do|implements\
@@ -117,3 +122,18 @@ c2,1=\\[|\\]|\\(|\\)|{|}|,
 c1,1=^#, .*
 c2,1="|\\\\n|%[+- #]*[0-9*]*\\.?[0-9*]*[l]?[diouxXfeEgGcs]
 c3,1=^#.*$
+
+# html mode (lav)
+/*.html|*.htm|/-\*-html-\*-\|<![Dd][Oo][Cc][Tt][Yy][Pp][Ee]
+c3,1=<!--(([^-]|-[^-]|--[^>])*)-->
+c3,1=<!([a-zA-Z][^>]*)>
+c3,2=("([^"\n\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*')[^<]*>
+c2,1=<[/!]|<|>|&[a-zA-Z]+;|&#[0-9]+;
+ci1,7=<[!/]?(HTML|BODY|TITLE|HEAD|META|STYLE|FRAME|IFRAME|LAYER|APPLET|BASE\
+|A( HREF| NAME)?|IMG( SRC)?|FIG|OVERLAY|AREA|SCRIPT\
+|P|HR|PRE|BLOCKQUOTE|DIV|CENTER|H[0-9]|BR\
+|TT|B|I|FONT|STRONG|SAMP|VAR|CODE|EM|ADDRESS|DFN|CITE\
+|UL|OL|LI|DIR|MENU|DL( COMPACT)?|DT|DD\
+|INPUT|FORM|SELECT|OPTION\
+|TABLE|TR|TD|TH\
+)[\n\t >=]
