@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -25,8 +25,7 @@ typedef struct	sr_menu
 	char	*text;	/* the text of the item, NULL means end of (sub)menu */
 	byte	fl;
 	void	(*func)(void);	/* the function to call		*/
-	int		*ctrl1;
-	int		*ctrl2;
+	bool	(*valid)();
 } Menu1;
 
 #define SUBM    1

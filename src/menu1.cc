@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -34,7 +34,7 @@ int   IsValid(int n)
 {
    if(!strcmp(m[n].text,"---"))
       return(2);
-   if(m[n].ctrl1 && *(m[n].ctrl1) || m[n].ctrl2 && *(m[n].ctrl2))
+   if(m[n].valid && !(*m[n].valid)())
       return(1);
    return(0);
 }
