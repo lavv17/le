@@ -45,7 +45,7 @@
 # define MAP_FAILED ((void*)-1)
 #endif
 
-#ifndef __MSDOS__
+#ifndef DISABLE_FILE_LOCKS
 int    LockFile(int fd,bool drop)
 {
    struct  flock   Lock;
@@ -104,32 +104,27 @@ int    LockFile(int fd,bool drop)
                }
             }
             if(errno!=EACCES && errno!=EAGAIN)
-            {
-               FError(FileName);
                return(-2);
-            }
          }
       }
       else
       {
-         FError(FileName);
          return(-2);
       }
    }
    if(drop)
    {
       Lock.l_type=F_RDLCK;	// drop write lock to read lock
-      if(fcntl(fd,F_SETLK,&Lock)==-1)
-	 FError(FileName);
+      fcntl(fd,F_SETLK,&Lock);
    }
    return(0);
 }
-#else /* __MSDOS__ */
+#else /* DISABLE_FILE_LOCKS */
 int   LockFile(int,bool)
 {
    return 0;
 }
-#endif /* __MSDOS__ */
+#endif /* DISABLE_FILE_LOCKS */
 
 struct  menu   ConCan4Menu[]={
 {   " C&ontinue ",MIDDLE-6,FDOWN-2  },

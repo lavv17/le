@@ -1,3 +1,9 @@
+2000-09-04  lav
+
+	* edit.cc, loadsave.cc: support DISABLE_FILE_LOCKS
+	* screen.cc: use TextPoint in display process (minor speed-up).
+	* textpoin.cc, textpoin.h: speed-up TextPoint cache.
+
 2000-03-24  lav
 
 	* block.cc, edit.cc, edit.h, ext.cc, format.cc, frames.cc, kern.cc,

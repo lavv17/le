@@ -576,13 +576,28 @@ void  Redisplay(num line,offs ptr,num limit)
       }
    after_hl:
 
-      for(; line<limit; line++,ptr=next_line_ptr)
+      for(;;)
       {
-	 next_line_ptr=NextLine(ptr);
+	 col=ScrShift-TabSize+1;
+	 if(col<0)
+	    col=0;
+
+	 TextPoint n(ScreenTop.Line()+line,col);
+	 next_line_ptr=n.Offset();
+
+	 if(hlp)
+	    hlp+=next_line_ptr-ptr;
+
+	 ptr=next_line_ptr;
+
+	 if(n.Line()!=ScreenTop.Line()+line)
+	    col=0;
+	 else
+	    col=n.Col()-ScrShift;
+
 	 clp=cl;
 
-         for(col=(-ScrShift);
-            col<TextWinWidth && !EolAt(ptr); ptr++)
+         for( ; col<TextWinWidth && !EolAt(ptr); ptr++)
          {
 	    if(col>-TabSize)
 	       ca=FindPosAttr(ptr,line,col,hlp);
@@ -593,6 +608,8 @@ void  Redisplay(num line,offs ptr,num limit)
                i=Tabulate(col+ScrShift)-ScrShift;
                if(i>0)
 	       {
+		  if(col<0)
+		     col=0;
 		  *clp++ = ca->n_attr|' ';
 		  col++;
 		  while(col<i && col<TextWinWidth)
@@ -629,9 +646,11 @@ void  Redisplay(num line,offs ptr,num limit)
 	 attrset(0);
 	 mvaddchnstr(TextWinY+line,TextWinX,cl,TextWinWidth);
 
-	 if(hlp)
-	    hlp+=next_line_ptr-ptr;
-      }
+	 if(++line>=limit)
+	    break;
+
+      } // end for(;;)
+
       if(hl)
 	 free(hl);
    }

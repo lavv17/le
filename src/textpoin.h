@@ -18,6 +18,11 @@
 
 /* $Id$ */
 
+#ifndef TEXTPOINT_H
+#define TEXTPOINT_H
+
+#include <string.h>
+
 #define  COLUNDEFINED      1
 #define  LINEUNDEFINED     2
 
@@ -26,7 +31,8 @@ class TextPoint
    offs  offset;
    num   line,col;
    int   flags;
-   bool	 cached;
+   static TextPoint cached_array[];
+   static int cached_array_ptr;
 
    TextPoint   *next;
    static TextPoint   *base;
@@ -37,7 +43,9 @@ class TextPoint
    void  FindOffset();
    void  FindLineCol();
 
-   void  Init();
+   void  Init() {
+      offset=line=col=flags=0;
+   }
 
 public:
    offs  Offset()
@@ -75,7 +83,7 @@ public:
    TextPoint(const TextPoint&);
    TextPoint(offs,num,num);
 
-   static void CacheTextPoint(TextPoint *);
+   void CacheTextPoint();
 
    ~TextPoint();
 
@@ -116,3 +124,5 @@ extern TextPoint  TextBegin;
 
 #define ScrPtr  ScreenTop.Offset()
 #define ScrLine ScreenTop.Line()
+
+#endif

@@ -49,8 +49,8 @@
 
 // #include <term.h>
 
-#ifdef __MSDOS__
-#define	 fcntl(x,y,z)	(0)
+#ifdef DISABLE_FILE_LOCKS
+# define fcntl(x,y,z)	(0)
 #endif
 
 #include <xalloca.h>

@@ -30,6 +30,10 @@ TextPoint   TextEnd;
 TextPoint   BlockBegin;
 TextPoint   BlockEnd;
 
+static const int cached_array_size=64;
+TextPoint   TextPoint::cached_array[cached_array_size];
+int	    TextPoint::cached_array_ptr;
+
 TextPoint   *TextPoint::base=NULL;
 
 void  TextPoint::AddTextPoint()
@@ -86,12 +90,6 @@ TextPoint::TextPoint(offs o,num l,num c)
    AddTextPoint();
 }
 
-void TextPoint::Init()
-{
-   offset=line=col=flags=0;
-   cached=false;
-   next=0;
-}
 TextPoint::TextPoint()
 {
    Init();
@@ -107,40 +105,20 @@ TextPoint::TextPoint(num l,num c)
 }
 TextPoint::TextPoint(const TextPoint& tp)
 {
-   Init();
-   offset=tp.offset;
-   line=tp.line;
-   col=tp.col;
-   flags=tp.flags;
+   memcpy(this,&tp,sizeof(tp));
    AddTextPoint();
 }
 
 TextPoint::~TextPoint()
 {
    DeleteTextPoint();
-   if(!cached)
-      CacheTextPoint(new TextPoint(*this));
+   CacheTextPoint();
 }
 
-void TextPoint::CacheTextPoint(TextPoint *tp)
+void TextPoint::CacheTextPoint()
 {
-//   tp->DeleteTextPoint();
-//   tp->AddTextPoint();
-   tp->cached=true;
-
-   TextPoint *scan=base;
-   TextPoint *found=0;
-   int count=0;
-   for( ; scan; scan=scan->next)
-   {
-      if(scan->cached)
-      {
-	 found=scan;
-	 count++;
-      }
-   }
-   if(count>16)
-       delete found;
+   cached_array[cached_array_ptr++]=*this;
+   cached_array_ptr&=(cached_array_size-1);
 }
 
 void  TextPoint::FindOffset()
