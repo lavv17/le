@@ -1,3 +1,7 @@
+2005-03-10	lav
+
+	* syntax: make sql key words case insensitive.
+
 2005-03-03	Serge Vakulenko <vak@cronyx.ru>
 
         * syntax: 1) Ada 2) GNU Assembler 3) Oracle PL/SQL 4) SNMP MIB 5)
