@@ -1,3 +1,10 @@
+2000-03-16  lav
+
+	* search.cc, screen.cc: move screen shifting because of status line
+	  to TestPosition.
+	* edit.cc: don't ask for save if read-only.
+	* keymap.cc: leave more space for func name.
+
 2000-02-28  lav
 
 	* keymap.cc: break loop on EOF.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2000 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,11 +80,6 @@ char *my_memrchr(const char *mem,char ch,int len)
 
 void  NotFound()
 {
-   if(ShowStatusLine!=SHOW_BOTTOM && GetLine()-ScreenTop.Line()==TextWinHeight-1)
-   {
-      ScreenTop=NextLine(ScreenTop);
-      flag=REDISPLAY_ALL;
-   }
    CurrentPos=back_tp;
    SyncTextWin();
    StatusLine();

@@ -312,7 +312,7 @@ void    Quit()
 }
 int     AskToSave()
 {
-   if(modified)
+   if(modified && !View)
    {
       static struct menu Menu[]={
       {"   &Yes   "},{"   &No   "},{" &Cancel "},

@@ -249,7 +249,7 @@ void  WriteActionMap(FILE *f)
 {
    for(int i=0; ActionCodeTable[i].action!=-1; i++)
    {
-      fprintf(f,"%-20s %s\n",GetActionName(ActionCodeTable[i].action),
+      fprintf(f,"%-23s %s\n",GetActionName(ActionCodeTable[i].action),
                              GetActionCodeText(ActionCodeTable[i].code));
    }
 }

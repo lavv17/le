@@ -66,6 +66,10 @@ int le_mvaddchnstr(int line, int col, chtype *s, int n)
 
 void  TestPosition()
 {
+   int m=message_sp;
+   if(ShowStatusLine==SHOW_BOTTOM && m>0)
+      m--;  // one message is over status.
+
    if(hex)
    {
       if(ScreenTop&15)
@@ -82,18 +86,18 @@ void  TestPosition()
             ScreenTop=(Offset()&~15)-Scroll*16+16;
          }
       }
-      if(Offset()>=(ScreenTop.Offset()+16*TextWinHeight))
+      if(Offset()>=(ScreenTop.Offset()+16*(TextWinHeight-m)))
       {
          flag=REDISPLAY_ALL;
-         ScreenTop=(Offset()&~15)-(TextWinHeight-Scroll)*16;
+         ScreenTop=(Offset()&~15)-(TextWinHeight-m-Scroll)*16;
       }
       return;
    }
    num oldtop=ScreenTop.Line();
    num newtop;
-   if(GetLine()-oldtop>TextWinHeight-1)
+   if(GetLine()-oldtop>TextWinHeight-m-1)
    {
-      ScreenTop=PrevNLines(Offset(),TextWinHeight-Scroll);
+      ScreenTop=PrevNLines(Offset(),TextWinHeight-m-Scroll);
       newtop=ScreenTop.Line();
       flag=REDISPLAY_ALL;
    }
@@ -454,10 +458,11 @@ void  Redisplay(num line,offs ptr,num limit)
 	    *clp++=ca->n_attr|s[0];
 	    *clp++=ca->n_attr|s[1];
             ptr++;
-            if(InBlock(ptr-1) && InBlock(ptr) && (ptr&15))
-               *clp++=blk_attr->n_attr|' ';
+	    char b=' '; // ((ptr&15)!=8 ? ' ' : '-');
+	    if(InBlock(ptr-1) && InBlock(ptr) && (ptr&15))
+               *clp++=blk_attr->n_attr|b;
             else
-               *clp++=norm_attr->n_attr|' ';
+               *clp++=norm_attr->n_attr|b;
          }
 	 while(clp-cl<AsciiPos)
 	    *clp++=norm_attr->n_attr|' ';
