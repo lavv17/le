@@ -68,14 +68,14 @@ int   PipeBlock(char *filter,int in,int out)
    }
 
    ClipBoard cb;
-   if(rblock)
+   if(rblock && out)
    {
       if(!cb.Copy())
 	 return ERR;
       if(!cb.Linearize(&block_buf,&block_size))
 	 return ERR;
       block_ptr=block_buf;
-      if(out && in)
+      if(in)
 	 Delete();
    }
 

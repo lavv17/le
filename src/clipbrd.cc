@@ -76,7 +76,7 @@ int ClipBoard::Copy()
       }
       width=col2-col1;
       height=line2-line1+1;
-      text=(char*)malloc(width*height);
+      text=(char*)malloc(width*height+1);
       if(!text)
       {
 	 NotMemory();
@@ -268,7 +268,7 @@ int ClipBoard::Linearize(char **buf,int *len)
 {
    if(!text)
       return 0;
-   *buf=(char*)malloc(width*height);
+   *buf=(char*)malloc((width+EolSize)*height+1);
    if(!*buf)
    {
       NotMemory();
