@@ -23,7 +23,9 @@ struct init
    void  *var;
 };
 
-void SaveConfToOpenFile(FILE *f,struct init *init);
+void SaveConfToOpenFile(FILE *f,const struct init *init);
 
 void ColorsOpt();
 void ProgOpt();
+
+extern const struct init colors[];
