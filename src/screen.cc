@@ -396,8 +396,8 @@ void  Redisplay(num line,offs ptr,num limit)
             else
                *clp++=norm_attr->attr|' ';
          }
-	 *clp++=norm_attr->attr|' ';
-	 *clp++=norm_attr->attr|' ';
+	 while(clp-cl<AsciiPos)
+	    *clp++=norm_attr->attr|' ';
          ptr=lptr;
          for(i=0; i<16 && !EofAt(ptr); i++,ptr++)
          {
