@@ -1,3 +1,6 @@
+* added search for binary strings given as codes:
+   for hex: `$x 5A F4 EC'
+   for others: `$n 0x5A 124 0177'
 * fixed Tab key (indent) in overstrike mode.
 
 Version 1.5.2  1999-06-11
