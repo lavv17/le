@@ -1489,8 +1489,7 @@ static void post_mark_move()
    }
    else
    {
-      if(*mark_move_point!=CurrentPos)
-	 flag=REDISPLAY_ALL;
+      flag=REDISPLAY_ALL;
       *mark_move_point=CurrentPos;
       if(BlockBegin>BlockEnd)
       {
@@ -1506,6 +1505,7 @@ static void post_mark_move()
    void UserMark##move()   \
    {			   \
       pre_mark_move();	   \
+      hide=1;		   \
       User##move();	   \
       post_mark_move();	   \
    }

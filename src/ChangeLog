@@ -1,3 +1,7 @@
+2000-02-11  lav
+
+	* user.cc: (UserMarkMove*) handle LineEnd in text mode properly.
+
 2000-02-05  lav
 
 	* loadsave.cc: cast MAP_FAILED (for osf/1)
