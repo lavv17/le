@@ -71,7 +71,7 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(fcntl.h limits.h sys/time.h unistd.h sys/ioctl.h\
- sys/select.h sys/poll.h sys/mman.h sys/times.h sys/mount.h)
+ sys/select.h sys/poll.h sys/mman.h sys/times.h sys/mount.h langinfo.h)
 
 LE_PATH_CURSES
 if test x$no_curses = xyes
@@ -122,7 +122,7 @@ AC_FUNC_ALLOCA
 AC_PROG_GCC_TRADITIONAL
 AC_FUNC_STRCOLL
 AC_CHECK_FUNCS(getcwd mkdir select strdup strerror strftime strtol poll mmap\
- ftruncate fchmod times)
+ ftruncate fchmod times nl_langinfo)
 
 dnl AC_REPLACE_GNU_GETOPT
 AC_LIBOBJ(getopt)
@@ -152,6 +152,8 @@ if test x$ac_cv_func_fnmatch_works = xno; then
    AC_LIBOBJ(fnmatch)
    AC_CONFIG_LINKS([include/fnmatch.h:lib/fnmatch.h])
 fi
+
+LE_FUNC_WCWIDTH_REPLACE
 
 AC_CONFIG_FILES([Makefile lib/Makefile include/Makefile src/Makefile misc/Makefile doc/Makefile m4/Makefile])
 AC_OUTPUT

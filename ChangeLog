@@ -1,3 +1,7 @@
+2004-04-12  lav
+
+	* configure.ac: check for nl_langinfo; call LE_FUNC_WCWIDTH_REPLACE.
+
 2001-01-17  Paul Slootman <paul@debian.org>
 
 	* acinclude.m4: add quotes (fixes build on alpha).
