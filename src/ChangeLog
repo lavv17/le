@@ -1,3 +1,7 @@
+2000-02-28  lav
+
+	* keymap.cc: break loop on EOF.
+
 2000-02-18  lav
 
 	* highli.cc, highli.h, search.cc: fix few memory alloc/free problems

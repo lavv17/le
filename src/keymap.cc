@@ -451,6 +451,8 @@ void  ReadActionMap(FILE *f)
       {
          while(ch!='\n' && ch!=EOF)
             ch=fgetc(f);
+	 if(ch==EOF)
+	    break;
 	 continue;
       }
 
