@@ -531,6 +531,7 @@ int     main(int argc,char **argv)
 {
    int   optView=-1,opteditmode=-1,optWarpLine=0;
    int	 opt_use_mmap=-1;
+   int	 opt_mb_mode=-1;
    int   opt;
 
    enum {
@@ -540,7 +541,12 @@ int     main(int argc,char **argv)
       PRINT_VERSION,
       CONFIG_FILE,
       USE_MMAP,
-      USE_MMAP_RW
+      USE_MMAP_RW,
+#if USE_MULTIBYTE_CHARS
+      MULTIBYTE,
+      NO_MULTIBYTE,
+#endif
+      MAX_OPTION
    };
 
    static struct option le_options[]=
@@ -554,6 +560,8 @@ int     main(int argc,char **argv)
       {"black-white",no_argument,0,'b'},
       {"color",no_argument,0,'c'},
       {"config",required_argument,0,CONFIG_FILE},
+      {"multibyte",no_argument,0,MULTIBYTE},
+      {"no-multibyte",no_argument,0,NO_MULTIBYTE},
 #ifdef HAVE_MMAP
       {"mmap",no_argument,0,USE_MMAP},
       {"mmap-rw",no_argument,0,USE_MMAP_RW},
@@ -580,6 +588,13 @@ int     main(int argc,char **argv)
     _fmode=O_BINARY;
 #else
    setlocale(LC_ALL,"");
+#if USE_MULTIBYTE_CHARS
+# if defined(HAVE_NL_LANGINFO) && defined(CODESET)
+   char *cs=nl_langinfo(CODESET);
+   if(cs && !strcasecmp(cs,"UTF-8"))
+      mb_mode=true;
+# endif
+#endif
 
    HOME=getenv("HOME");
    if(HOME==NULL)
@@ -649,6 +664,14 @@ int     main(int argc,char **argv)
 	 ExplicitInitName=true;
 	 strncpy(InitName,optarg,sizeof(InitName)-1);
 	 break;
+#if USE_MULTIBYTE_CHARS
+      case MULTIBYTE:
+	 opt_mb_mode=true;
+	 break;
+      case NO_MULTIBYTE:
+	 opt_mb_mode=false;
+	 break;
+#endif
       }
    }
    if(optUseColor!=-1)
@@ -664,6 +687,8 @@ int     main(int argc,char **argv)
       UseColor=optUseColor;
    if(opt_use_mmap!=-1)
       buffer_mmapped=opt_use_mmap;
+   if(opt_mb_mode!=-1)
+      mb_mode=opt_mb_mode;
 
    if(optind<argc-1 && argv[optind][0]=='+' && isdigit(argv[optind][1]))
    {

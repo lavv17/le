@@ -312,14 +312,14 @@ void  TextPoint::FindLineCol()
 	 o++;
 	 continue;
       }
-      else if(MBCheckLeftAt(o+1))
-      {
-         c+=MBCharWidth;
-	 o++;
-      }
       else if(CharAt(o)=='\t')
       {
          c=Tabulate(c);
+	 o++;
+      }
+      else if(MBCheckLeftAt(o+1))
+      {
+         c+=MBCharWidth;
 	 o++;
       }
       else

@@ -6,8 +6,9 @@
 	* mb.cc, mb.h: protect from including multiple times; define mb_mode
 	  to false if not USE_MULTIBYTE_CHARS.
 	* screen.cc: display control chars properly in mb_mode.
-	* textpoin.cc: fix endless loop.
+	* textpoin.cc: fix endless loop; make \t priority over mb chars.
 	* user.cc: fix word ops in mb_mode.
+	* edit.cc: --multibyte, --no-multibyte options.
 
 2004-03-22  lav
 
