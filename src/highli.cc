@@ -29,6 +29,11 @@
 #include "search.h"
 #include "xalloca.h"
 
+#ifdef HAVE_SYS_TIMES_H
+#include <sys/times.h>
+#endif
+#include <limits.h>
+
 int hl_option=1;
 int hl_active=0;
 
@@ -416,6 +421,11 @@ void syntax_hl::attrib_line(const char *buf1,int len1,
    element *el;
    element **elpp;
 
+#ifdef HAVE_TIMES
+   struct tms tms;
+   clock_t clock=times(&tms);
+#endif
+
    for(syntax_hl *scan=chain; scan; scan=scan->next)
    {
       int pos=0;
@@ -448,6 +458,12 @@ void syntax_hl::attrib_line(const char *buf1,int len1,
 	    *elpp=el;
 	 }
 	 pos++;
+
+#ifdef HAVE_TIMES
+	 clock_t clock1=times(&tms);
+	 if(clock1-clock>CLK_TCK/5)
+	    break;
+#endif
       }
    }
    for(el=els; el; el=el->next)

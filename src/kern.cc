@@ -32,6 +32,7 @@
 #include   <unistd.h>
 #include   <time.h>
 #include   <stdlib.h>
+#include   <assert.h>
 #include   "keymap.h"
 #include   "edit.h"
 
@@ -511,6 +512,37 @@ int   ReadBlock(int fd,num size,num *act_read)
    if(*act_read==0)
       return(OK);
    return(InsertBlock(buffer+ptr1,*act_read));
+}
+
+int   ReplaceTextFromFile(int fd,num size,num *act_read)
+{
+   // buffer should be clear
+   assert(Size()==0);
+
+   if(buffer_mmapped)
+      return ERR;
+
+   if(size==0)
+   {
+      *act_read=0;
+      return(OK);
+   }
+
+   if(GetSpace(size)!=OK)
+      return(ERR);
+
+   *act_read=read(fd,buffer+ptr1,size);
+   if(*act_read==-1)
+      return(ERR);
+   if(*act_read==0)
+      return(OK);
+
+   ptr1+=*act_read;
+   GapSize-=*act_read;
+
+   TextEnd=TextPoint(Size());
+
+   return(OK);
 }
 
 int   ReadBlockOver(int fd,num size,num *act_read)
@@ -1062,4 +1094,23 @@ void  SeekStdCol()
       while(GetCol()<std && !Eol())
 	MoveRight();
    }
+}
+
+offs  ScanForCharForward(offs start,byte ch)
+{
+   char *pos;
+   if(start<ptr1)
+   {
+      pos=(char*)memchr(buffer+start,ch,ptr1-start);
+      if(pos)
+	 return pos-buffer;
+      start=ptr1;
+   }
+   if(start<Size())
+   {
+      pos=(char*)memchr(buffer+GapSize+start,ch,Size()-start);
+      if(pos)
+	 return pos-buffer-GapSize;
+   }
+   return -1;
 }

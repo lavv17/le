@@ -346,7 +346,8 @@ void  TextPoint::OrFlags(int mask)
 {
    mask&=COLUNDEFINED|LINEUNDEFINED;
    for(TextPoint *scan=TextPoint::base; scan; scan=scan->next)
-      scan->flags|=mask;
+      if(scan->offset>0)
+	 scan->flags|=mask;
 }
 
 TextPoint TextPoint::ForcedLineCol(num l,num c)

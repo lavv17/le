@@ -1,3 +1,11 @@
+2001-04-13  lav
+
+	* highli.cc: stop highlighting when it takes too long.
+	* edit.h, kern.cc: (ReplaceTextFromFile, ScanForCharForward) new functions.
+	* keymap.cc, keymap.h, keymapfn.cc: support for loading/saving keymaps.
+	* loadsave.cc: use fchmod/ftruncate; speed up file loading.
+	* textpoin.cc: don't set flags for zero TextPoint.
+
 2001-04-11  lav
 
 	* user.cc: stop drag mark on block operations.

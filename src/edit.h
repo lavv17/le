@@ -253,11 +253,13 @@ int   CopyBlock(offs from,num len);
 int   CopyBlockOver(offs from,num len);
 int   ReadBlock(int fd,num len,num *act_read);
 int   ReadBlockOver(int fd,num len,num *act_read);
+int   ReplaceTextFromFile(int fd,num len,num *act_read);
 int   WriteBlock(int fd,offs from,num len,num *act_written);
 int   DeleteBlock(num left,num right);
 int   GetBlock(char *copy,offs from,num size);
 int   Undelete();
 void  CheckPoint();
+offs  ScanForCharForward(offs start,byte ch);
 
 void  Help(const char *help,const char *title);
 /*void  Help(char ***help,char *title);*/

@@ -186,6 +186,10 @@ enum  Action
    LOAD_COLOR_WHITE,
    PROGRAMS_OPTIONS,
    ABOUT,
+   LOAD_KEYMAP_DEFAULT,
+   LOAD_KEYMAP_EMACS,
+   SAVE_KEYMAP,
+   SAVE_KEYMAP_FOR_TERM,
 
    MOUSE_ACTION,
    NO_ACTION
@@ -216,6 +220,7 @@ extern   int   StringTypedLen;
 extern   ActionProcRec  EditorActionProcTable[];
 extern   ActionCodeRec  *ActionCodeTable;
 extern   ActionCodeRec  DefaultActionCodeTable[];
+extern   bool NeedFreeActionCodeTable;
 
 int   GetNextAction(void);
 char  *GetActionString(int action);
@@ -224,9 +229,15 @@ void  WriteActionMap(FILE*);
 ActionProc  GetActionProc(ActionProcRec*,int action);
 void  EditorReadKeymap();
 void  RebuildKeyTree();
+void  FreeActionCodeTable();
 
 int   FindActionCode(const char *);
 
 const char *ShortcutPrettyPrint(int c);
+
+void LoadKeymapEmacs();
+void LoadKeymapDefault();
+void SaveKeymap();
+void SaveKeymapForTerminal();
 
 #endif /* KEYMAP_H */

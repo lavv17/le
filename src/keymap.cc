@@ -203,6 +203,10 @@ ActionNameRec  ActionNameTable[]=
    {LOAD_COLOR_WHITE,"load-color-white"},
    {PROGRAMS_OPTIONS,"programs-options"},
    {ABOUT,"about"},
+   {LOAD_KEYMAP_DEFAULT,"load-keymap-default"},
+   {LOAD_KEYMAP_EMACS,  "load-keymap-emacs"},
+   {SAVE_KEYMAP,"save-keymap"},
+   {SAVE_KEYMAP_FOR_TERM,"save-keymap-for-terminal"},
 
    {-1,NULL}
 };
@@ -230,6 +234,7 @@ struct KeyTreeNode
 
 extern   ActionCodeRec  DefaultActionCodeTable[];
 ActionCodeRec  *ActionCodeTable=DefaultActionCodeTable;
+bool NeedFreeActionCodeTable=false;
 //char  *ti_cache[128]={NULL};
 
 char  *GetActionName(int action)
@@ -626,6 +631,8 @@ int FindActionCode(const char *ActionName)
 
 void  ReadActionMap(FILE *f)
 {
+   FreeActionCodeTable();
+
    char  ActionName[256];
    char  ActionCode[256];
    char  *store;
@@ -744,6 +751,21 @@ void  ReadActionMap(FILE *f)
    NewTable[CurrTableCell].code=NULL;
 
    ActionCodeTable=NewTable;
+   NeedFreeActionCodeTable=true;
+}
+
+void FreeActionCodeTable()
+{
+   if(!NeedFreeActionCodeTable)
+   {
+      ActionCodeTable=0;
+      return;
+   }
+   for(int i=0; ActionCodeTable[i].code; i++)
+      free(ActionCodeTable[i].code);
+   free(ActionCodeTable);
+   ActionCodeTable=0;
+   NeedFreeActionCodeTable=false;
 }
 
 int   GetNextAction()

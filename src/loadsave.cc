@@ -172,10 +172,9 @@ off_t  GetDevSize(int fd)
 int   LoadFile(char *name)
 {
    struct stat    st;
-   register num   i;
+   offs   i;
    num    act_read;
    char   msg[256];
-   num    DosLastLine;
    InodeInfo   *old;
 
    CheckBlock();
@@ -265,7 +264,7 @@ int   LoadFile(char *name)
 
    if(!buffer_mmapped)
    {
-      if(ReadBlock(file,st.st_size,&act_read)!=OK)
+      if(ReplaceTextFromFile(file,st.st_size,&act_read)!=OK)
       {
 	 if(errno)
 	    FError(name);
@@ -274,19 +273,21 @@ int   LoadFile(char *name)
       }
       CheckPoint();
 
-      DosLastLine=0;
-      for(i=Size()-1; i>0; )
+      num DosLastLine=0;
+      num UnixLastLine=0;
+      for(i=0; ; i++)
       {
-	 if(CharAt_NoCheck(--i)=='\r')
-	 {
-	    if(CharAt_NoCheck(i+1)=='\n')
-	       DosLastLine++;
-	 }
+	 i=ScanForCharForward(i,'\n');
+	 if(i==-1)
+	    break;
+	 UnixLastLine++;
+	 if(i>0 && CharAt_NoCheck(i-1)=='\r')
+	    DosLastLine++;
       }
-#ifndef __MSDOS__
-      if(TextEnd.Line()/2<DosLastLine) /* check if the file has unix or dos format */
+#if !defined(__MSDOS__) && !defined(__CYGWIN32__)
+      if(UnixLastLine/2<DosLastLine) /* check if the file has unix or dos format */
 #else
-      if(TextEnd.Line()/2<=DosLastLine)
+      if(UnixLastLine/2<=DosLastLine)
 #endif
       {
 	DosEol=1;
@@ -294,6 +295,10 @@ int   LoadFile(char *name)
 	EolStr="\r\n";
 	TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
 	TextEnd=TextPoint(Size(),DosLastLine,-1);
+      }
+      else
+      {
+	 TextEnd=TextPoint(Size(),UnixLastLine,-1);
       }
    }
    else /* buffer_mmapped */
@@ -623,10 +628,22 @@ int   SaveFile(char *name)
       ErrMsg("Warning: file locking failed");
 
    // now after locking truncate the file
+#ifdef HAVE_FTRUNCATE
+   ftruncate(nfile,0);
+#else
    close(open(name,O_TRUNC|O_RDONLY));
+#endif
 
-   /* force new file to be the same mode as source one */
-   chmod(name,st.st_mode);
+   struct stat new_st;
+   if(fstat(nfile,&new_st)!=-1 && new_st.st_mode!=st.st_mode)
+   {
+      /* force new file to be the same mode as source one */
+#ifdef HAVE_FCHMOD
+      fchmod(nfile,st.st_mode);
+#else
+      chmod(name,st.st_mode);
+#endif
+   }
 
    /* now, after all that stuff, write the buffer contents */
    errno=0;

@@ -193,6 +193,10 @@ ActionProcRec  EditorActionProcTable[]=
    {LOAD_COLOR_WHITE,LoadColorWhite},
    {PROGRAMS_OPTIONS,ProgOpt},
    {ABOUT,UserAbout},
+   {LOAD_KEYMAP_DEFAULT,LoadKeymapDefault},
+   {LOAD_KEYMAP_EMACS,  LoadKeymapEmacs},
+   {SAVE_KEYMAP,SaveKeymap},
+   {SAVE_KEYMAP_FOR_TERM,SaveKeymapForTerminal},
 
    {-1,NULL}
 };
@@ -227,8 +231,57 @@ void  EditorReadKeymap()
    if(errno)
    {
       FError(filename);
-      ActionCodeTable=DefaultActionCodeTable;
    }
 
+   fclose(f);
+}
+
+void LoadKeymapEmacs()
+{
+   const char *k=PKGDATADIR"/keymap-emacs";
+   FILE *f=fopen(k,"r");
+   if(!f)
+   {
+      FError(k);
+      return;
+   }
+   ReadActionMap(f);
+   fclose(f);
+   RebuildKeyTree();
+}
+void LoadKeymapDefault()
+{
+   FreeActionCodeTable();
+   ActionCodeTable=DefaultActionCodeTable;
+   RebuildKeyTree();
+}
+void SaveKeymap()
+{
+   char  filename[1024];
+   FILE  *f;
+
+   sprintf(filename,"%s/.le/keymap",HOME);
+   f=fopen(filename,"w");
+   if(!f)
+   {
+      FError(filename);
+      return;
+   }
+   WriteActionMap(f);
+   fclose(f);
+}
+void SaveKeymapForTerminal()
+{
+   char  filename[1024];
+   FILE  *f;
+
+   sprintf(filename,"%s/.le/keymap-%s",HOME,TERM);
+   f=fopen(filename,"w");
+   if(!f)
+   {
+      FError(filename);
+      return;
+   }
+   WriteActionMap(f);
    fclose(f);
 }
