@@ -1,3 +1,8 @@
+2001-10-03  lav
+
+	* help.cc: fix for 8-bit characters.
+	* options.cc: fix for old curses without mouse support.
+
 2001-07-02  lav
 
 	* options.cc: save UseMouse in le.ini.

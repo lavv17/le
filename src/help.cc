@@ -159,7 +159,7 @@ void  Help(const char *helpf,const char *title)
             if(col >= HelpWin->w-h_m)
                break;
 
-            PutCh(col++,line,*c);
+            PutCh(col++,line,(unsigned char)*c);
          }
          while(col < HelpWin->w-h_m)
             PutCh(col++,line,' ');
