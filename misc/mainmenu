@@ -15,6 +15,18 @@ submenu "&File"
    function "&Quit"	   quit-editor	     hide
    end
 
+submenu "&Edit"
+   function "&Undo"	   undo		     hide rw
+   function "&Redo"	   redo		     hide rw
+   function "Undo step"	   undo-step	     hide rw
+   function "Redo step"	   redo-step	     hide rw
+   hline
+   function "Cu&t"	   delete-block	     hide rw no-mm
+   function "&Copy"	   remember-block    hide
+   function "&Paste"	   yank-block	     hide rw
+   function "&Select all"  mark-all	     hide
+   end
+
 submenu	"&Block"
    function "set &Begin"   set-block-begin   hide
    function "set &End"     set-block-end     hide
@@ -63,7 +75,7 @@ submenu "Fo&rmat" rw no-mm
    function "enter &Format mode"    format-functions  hide rw no-mm
    function "format one &Paragraph" format-paragraph  hide rw no-mm
    function "&Center line"	    center-line	      hide rw no-mm
-   function "ajust &Right line"	    adjust-right-line hide rw no-mm
+   function "&Right adjust line"    adjust-right-line hide rw no-mm
    function "format &All"	    format-document   hide rw no-mm
    end
 
@@ -74,13 +86,14 @@ submenu "O&thers"
    function "&Expand all tabs"	    expand-tabs	      hide rw no-mm
    function "&Optimize text"	    optimize-text     hide rw no-mm
    function "character &Set"	    choose-character  hide
-   function "&Wide character set"   choose-wide-character hide
+#   function "&Wide character set"   choose-wide-character hide
    function "&Unix<->Dos"	    change-text-type  hide rw no-mm
    end
 
 submenu "&Options"
    function "&Editor"	editor-options
    function "&Format"	format-options
+   function "&Undo"	undo-options
    submenu  "&Terminal"
       function "coding, &Graphics, etc..."   terminal-options
       function "&Character set visualization" edit-charset

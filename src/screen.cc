@@ -401,12 +401,12 @@ void  StatusLine()
    move(StatusLineY,0);
    SetAttr(STATUS_LINE_ATTR);
    int prev_x=0;
-   int x=0;
+   int x=0,y;
    for(bn=status; *bn; bn++)
    {
       prev_x=x;
       addch((byte)*bn);
-      x=getcurx(stdscr);
+      getyx(stdscr,y,x);
       if(prev_x>x || (prev_x==x && x==COLS-1))
 	 return;
    }
@@ -414,7 +414,7 @@ void  StatusLine()
    if(x>=COLS-3)
       return;
    addch('"');
-   x=getcurx(stdscr);
+   getyx(stdscr,y,x);
 #if USE_MULTIBYTE_CHARS
    if(wname)
    {
@@ -426,7 +426,7 @@ void  StatusLine()
 	    attrset(curr_attr->so_attr);
 	 addnwstr(&wc,1);
 	 attrset(curr_attr->n_attr);
-	 x=getcurx(stdscr);
+	 getyx(stdscr,y,x);
 	 if(prev_x>x || (prev_x==x && x==COLS-1))
 	    return;
       }
@@ -438,21 +438,21 @@ void  StatusLine()
       {
 	 prev_x=x;
 	 addch((byte)*bn);
-	 x=getcurx(stdscr);
+	 getyx(stdscr,y,x);
 	 if(prev_x>x || (prev_x==x && x==COLS-1))
 	    return;
       }
    }
    prev_x=x;
    addch('"');
-   x=getcurx(stdscr);
+   getyx(stdscr,y,x);
    if(prev_x>x || (prev_x==x && x==COLS-1))
       return;
    for(bn=status_right; *bn; bn++)
    {
       prev_x=x;
       addch((byte)*bn);
-      x=getcurx(stdscr);
+      getyx(stdscr,y,x);
       if(prev_x>x || (prev_x==x && x==COLS-1))
 	 return;
    }

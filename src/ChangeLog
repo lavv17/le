@@ -8,6 +8,7 @@
 	  choose-character and insert-char-by-code; add corresponding byte
 	  actions.
 	* edit.cc: remove "no undo" message.
+	* screen.cc: use more compatible getyx instead of getcurx.
 
 2004-05-18  lav
 
