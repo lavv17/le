@@ -2,7 +2,8 @@
 
 	* edit.h: define _XOPEN_SOURCE_EXTENDED; prototype for IsAlNumAt.
 	* inline.h: don't use register; (IsAlNumRel, IsAlNumLeft) new functions.
-	* kern.cc: implement IsAlNumAt; use it in GetWord.
+	* kern.cc: implement IsAlNumAt; use it in GetWord; mark CurrentPos
+	  COLUNDEFINED if inserted something at the left.
 	* mb.cc, mb.h: protect from including multiple times; define mb_mode
 	  to false if not USE_MULTIBYTE_CHARS.
 	* screen.cc: display control chars properly in mb_mode.

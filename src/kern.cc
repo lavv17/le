@@ -424,10 +424,11 @@ int   InsertBlock(char *block_left,register num size_left,char *block_right,num 
       }
       else if(scan==&CurrentPos)
       {
-         scan->col=num_of_columns_curr;
+//          scan->col=num_of_columns_curr;
          scan->line+=num_of_lines_curr;
          scan->offset+=size_left;
-	 scan->flags&=~(COLUNDEFINED|LINEUNDEFINED);
+	 scan->flags&=~LINEUNDEFINED;
+	 scan->flags|=COLUNDEFINED;
       }
    }
 
