@@ -17,6 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/* $Id$ */
+
 #include <config.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -53,6 +55,7 @@ int ClipBoard::Copy()
    if(rblock)
    {
       rect=true;
+      toeol=false;
 
       num     i,j;
       num     line1=BlockBegin.Line();
@@ -62,6 +65,7 @@ int ClipBoard::Copy()
 
       if(col1==col2)
       {
+	 toeol=true;
 	 for(i=line1; i<=line2; i++)
 	 {
 	    GoToLineNum(i);
@@ -109,20 +113,48 @@ int ClipBoard::Copy()
    return(true);
 }
 
-int ClipBoard::Paste()
+int ClipBoard::Paste(bool mark)
 {
    int res=OK;
 
    if(!text)
       return true;
 
-   PreUserEdit();
+   if(!PreUserEdit())
+      return false;
 
    if(rect)
    {
       num l=GetLine();
       num c=GetCol();
-      for(int i=0; i<height; i++)
+      int i;
+
+      // if the block is unlimited on the right and there is some text to the
+      // right of current position, insert blank lines to make place for block
+      if(toeol)
+      {
+	 for(i=0; i<height; i++)
+	 {
+	    MoveLineCol(l+i,c);
+	    while(!Eol() && (Char()==' ' || Char()=='\t'))
+	       MoveRight();
+	    if(!Eol())
+	    {
+	       GoToLineNum(l);
+	       for(i=0; i<height; i++)
+		  NewLine();
+	       break;
+	    }
+	 }
+      }
+
+      if(mark)
+      {
+         HardMove(l,c);
+	 hide=1;
+	 BlockBegin=CurrentPos;
+      }
+      for(i=0; i<height; i++)
       {
 	 HardMove(l+i,c);
 	 num ll=width;
@@ -133,14 +165,26 @@ int ClipBoard::Paste()
 	 }
 	 res=InsertBlock(&text[i*width],ll);
 	 if(res!=OK)
-	    break;
+	    return false;
       }
+      if(mark)
+	 HardMove(BlockBegin.Line()+height-1,BlockBegin.Col()+(toeol?0:width));
    }
    else
    {
       res=InsertBlock(text,width*height);
+      if(res!=OK)
+         return false;
    }
-   return res==OK;
+   if(mark)
+   {
+      BlockEnd=CurrentPos;
+      rblock=rect;
+      hide=0;
+   }
+
+   stdcol=GetCol();
+   return true;
 }
 
 int ClipBoard::Write(int fd)
