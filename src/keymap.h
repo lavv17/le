@@ -85,6 +85,7 @@ enum  Action
    BLOCK_FUNC_BAR,
    MARK_LINE,
    MARK_TO_EOL,
+   START_DRAG_MARK,
 
 // Search
    SEARCH_FORWARD,

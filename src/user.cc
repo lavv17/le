@@ -568,11 +568,17 @@ void  UserSetBlockBegin()
    if(rblock?(CurrentPos.Line()<=BlockEnd.Line()
               && CurrentPos.Col()<=BlockEnd.Col())
             :(CurrentPos.Offset()<=BlockEnd.Offset()))
+   //then
       BlockBegin=CurrentPos;
    else
    {
       BlockBegin=/*BlockEnd;*/
       BlockEnd=CurrentPos;
+   }
+   if(DragMark)
+   {
+      if(*DragMark < BlockBegin)
+	 *DragMark = BlockBegin;
    }
 }
 void  UserSetBlockEnd()
@@ -588,12 +594,17 @@ void  UserSetBlockEnd()
    if(rblock?(CurrentPos.Line()>=BlockBegin.Line()
               && CurrentPos.Col()>=BlockBegin.Col())
             :(CurrentPos.Offset()>=BlockBegin.Offset()))
-   /*then*/
+   //then
       BlockEnd=CurrentPos;
    else
    {
       BlockEnd=/*BlockBegin;*/
       BlockBegin=CurrentPos;
+   }
+   if(DragMark)
+   {
+      if(*DragMark > BlockEnd)
+	 *DragMark = BlockEnd;
    }
 }
 
@@ -1388,6 +1399,7 @@ void  UserStartDragMark()
       UserStopDragMark();
       return;
    }
+   PreUserEdit();
    DragMark=new TextPoint(CurrentPos);
    if(hide)
       UserSetBlockBegin();

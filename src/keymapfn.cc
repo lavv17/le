@@ -89,6 +89,7 @@ ActionProcRec  EditorActionProcTable[]=
    {BLOCK_FUNC_BAR,BlockFunc},
    {MARK_LINE,UserMarkLine},
    {MARK_TO_EOL,UserMarkToEol},
+   {START_DRAG_MARK,UserStartDragMark},
 
 // Search
    {SEARCH_FORWARD,StartSearch},

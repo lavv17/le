@@ -76,6 +76,7 @@ Menu1 MainMenu[]={
    {" e&Xchange cases F4 X ",FUNC+HIDE,ExchangeCases,	 RW },
    {"---"},
    {" &Hide/display   F4 H ",FUNC+HIDE,HideDisplay          },
+   {" Drag mark      F4 &V ",FUNC+HIDE,UserStartDragMark    },
    {" block &Type     F4 T ",FUNC+HIDE,BlockType,  	 noMM },
    {NULL},
 {" &Search ",SUBM},
