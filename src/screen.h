@@ -32,6 +32,7 @@ void  SetCursor();
 void  SyncTextWin();
 
 void  Message(const char *msg);
+void  MessageSync(const char *msg);
 void  AddMessage(const char *msg);
 void  ClearMessage();
 

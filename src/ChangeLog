@@ -1,3 +1,13 @@
+2000-03-24  lav
+
+	* block.cc, edit.cc, edit.h, ext.cc, format.cc, frames.cc, kern.cc,
+	  keymapdf.cc, keymapfn.cc, loadsave.cc, mainmenu.cc, options.cc,
+	  screen.cc, screen.h, search.cc, user.cc, user.h: add MessageSync
+	  function; use it; don't call refresh from Message; move Optimize
+	  to user.cc and rename it to UserOptimizeText; Redisplay now checks
+	  if a message is on screen; TestPosition shifts screen left when
+	  cursor is closer to left side than hscroll.
+
 2000-03-21  lav
 
 	* kern.cc: (ToLineEnd) set flag when spaces are truncated in test mode.

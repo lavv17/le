@@ -109,9 +109,11 @@ void  TestPosition()
    num   col=GetCol();
    if(Text && stdcol>col)
       col=stdcol;
-   if(ScrShift>col)
+   if(ScrShift+hscroll>col && ScrShift>0)
    {
-      ScrShift=(col/hscroll)*hscroll;
+      ScrShift=(col/hscroll-1)*hscroll;
+      if(ScrShift<0)
+	 ScrShift=0;
       flag=REDISPLAY_ALL;
    }
    else if(col-ScrShift>=TextWinWidth)
@@ -125,7 +127,11 @@ static int skipped=0;	// number of times Sync skipped its work
 
 void  SyncTextWin()
 {
-   int line=TextWinHeight;
+   int m=message_sp;
+   if(ShowStatusLine==SHOW_BOTTOM && m>0)
+      m--;  // one message is over status.
+
+   int line=TextWinHeight-m;
    int lim=-1;
    offs ptr;
 
@@ -158,12 +164,12 @@ void  SyncTextWin()
    if(flag&REDISPLAY_ALL)
    {
       line=0;
-      lim=TextWinHeight;
+      lim=TextWinHeight-m;
    }
    else if(flag&REDISPLAY_AFTER)
    {
       line=hex ? (CurrentPos-ScreenTop)/16-1 : GetLine()-ScreenTop.Line()-1;
-      lim=TextWinHeight;
+      lim=TextWinHeight-m;
    }
    else if(flag&REDISPLAY_LINE)
    {
@@ -193,6 +199,9 @@ void  SyncTextWin()
       ptr=(ScreenTop&~15)+16*line;
    else
       ptr=NextNLines(ScreenTop,line);
+
+   if(lim>TextWinHeight-m)
+      lim=TextWinHeight-m;
 
    if(lim>=line)
       Redisplay(line,ptr,lim);
@@ -258,7 +267,6 @@ void  AddMessage(const char *s)
    mvaddstr(LINES-message_sp,0,(char*)s);
    for(int x=strlen(s); x<COLS; x++)
       addch(' ');
-   refresh();
 }
 void  Message(const char *s)
 {
@@ -268,13 +276,21 @@ void  Message(const char *s)
       ClearMessage();
    AddMessage(s);
 }
+void  MessageSync(const char *s)
+{
+   Message(s);
+   refresh();
+}
+
 void  ClearMessage()
 {
    if(message_sp>0 && (ShowStatusLine!=SHOW_BOTTOM || message_sp>1))
    {
-      Redisplay(TextWinHeight-message_sp,
-              hex?ScreenTop.Offset()+16*(TextWinHeight-message_sp)
-                :NextNLines(ScreenTop.Offset(),TextWinHeight-message_sp),
+      int m=message_sp;
+      message_sp=0;
+      Redisplay(TextWinHeight-m,
+              hex?ScreenTop.Offset()+16*(TextWinHeight-m)
+                :NextNLines(ScreenTop.Offset(),TextWinHeight-m),
               TextWinHeight);
       ScrollBar(false);
    }
@@ -395,6 +411,10 @@ void  Redisplay(num line,offs ptr,num limit)
    char  s[64],*sp;
    offs  lptr;
 
+   int m=message_sp;
+   if(ShowStatusLine==SHOW_BOTTOM && m>0)
+      m--;  // one message is over status.
+
    norm_attr=NORMAL_TEXT_ATTR;
    blk_attr=BLOCK_TEXT_ATTR;
    syntax[0]=find_attr(SYNTAX1);
@@ -411,15 +431,15 @@ void  Redisplay(num line,offs ptr,num limit)
       ptr=ScreenTop.Offset();
       line=0;
    }
-   if(limit>TextWinHeight)
-      limit=TextWinHeight;
+   if(limit>TextWinHeight-m)
+      limit=TextWinHeight-m;
 
    if(flag&REDISPLAY_ALL)
    {
       ScrollBar(FALSE);	/* redraw all the scrollbar */
       line=0;
       ptr=ScreenTop.Offset();
-      limit=TextWinHeight;
+      limit=TextWinHeight-m;
    }
 
    if(limit<=line)
@@ -494,7 +514,7 @@ void  Redisplay(num line,offs ptr,num limit)
       if(hl_option && hl_active)
       {
 	 start=PrevNLines(ScreenTop,hl_lines-1);
-	 end=NextNLines(ScreenTop,TextWinHeight+hl_lines);
+	 end=NextNLines(ScreenTop,TextWinHeight-m+hl_lines);
 	 int ll=end-start;
 	 if(ll==0)
 	    goto after_hl;
@@ -532,7 +552,7 @@ void  Redisplay(num line,offs ptr,num limit)
 	 offs p=ScreenTop;
 	 hlp=hl+(p-start);
 	 int l;
-	 for(l=0; l<TextWinHeight && l<1024; l++)
+	 for(l=0; l<TextWinHeight-m && l<1024; l++)
 	 {
 	    next_line_ptr=NextLine(p);
 	    newhash=mkhash(hlp,next_line_ptr-p);
@@ -619,25 +639,13 @@ void  Redisplay(num line,offs ptr,num limit)
 
 void  RedisplayAll()
 {
-   ScrollBar(FALSE);
-   flag=0;
-   Redisplay(0,ScreenTop.Offset(),TextWinHeight);
-}
-void  RedisplayAfter()
-{
-   flag&=~REDISPLAY_AFTER;
-   if(hex)
-      Redisplay((Offset()-ScreenTop.Offset())/16-1,(Offset()&~15)-16,TextWinHeight);
-   else
-      Redisplay(GetLine()-ScreenTop.Line()-1,PrevLine(Offset()),TextWinHeight);
+   flag=REDISPLAY_ALL;
+   SyncTextWin();
 }
 void  RedisplayLine()
 {
-   flag&=~REDISPLAY_LINE;
-   if(hex)
-      Redisplay((Offset()-ScreenTop.Offset())/16-1,(Offset()&~15)-16,(Offset()-ScrPtr)/16+2);
-   else
-      Redisplay(GetLine()-ScreenTop.Line()-1,PrevLine(Offset()),GetLine()-ScrLine+1);
+   flag|=REDISPLAY_LINE;
+   SyncTextWin();
 }
 
 void  CenterView()

@@ -120,7 +120,7 @@ void   ExpandTab()
 
 void    RCopy()
 {
-   Message("Copying...");
+   MessageSync("Copying...");
 
    ClipBoard cb;
    TextPoint tp=CurrentPos;
@@ -174,7 +174,7 @@ static int lines_deleted;
 
 int   RDelete()
 {
-   Message("Deleting...");
+   MessageSync("Deleting...");
 
    num   i,j;
    num   h=BlockEnd.Line()-BlockBegin.Line()+1;
@@ -345,7 +345,7 @@ void    Write()
    {
       LoadHistory.Push();
       /* write to pipe */
-      Message("Piping to...");
+      MessageSync("Piping to...");
       PipeBlock(BlockFile+1,/*IN*/FALSE,/*OUT*/TRUE);
       return;
    }
@@ -410,7 +410,7 @@ void    Write()
       return;
    }
    errno=0;
-   Message("Writing...");
+   MessageSync("Writing...");
    if(rblock)
    {
       ClipBoard cb;
@@ -500,7 +500,7 @@ void    Read()
    {
       LoadHistory.Push();
       /* read from pipe */
-      Message("Piping in...");
+      MessageSync("Piping in...");
       if(PipeBlock(BlockFile+1,TRUE,FALSE)==OK)
 	 goto after_read;
       return;
@@ -527,7 +527,7 @@ void    Read()
        close(fd);
        return;
    }
-   Message("Reading...");
+   MessageSync("Reading...");
    PreUserEdit();
    if(buffer_mmapped || (hex && !insert))
       res=ReadBlockOver(fd,st.st_size,&act_read);
@@ -757,6 +757,7 @@ next:
       Message("Block: B-Begin E-End T-Type H-display A-mark All");
    else
       Message("Block: W-Write B-Begin E-End T-Type H-Hide A-mark All");
+   SyncTextWin();
    SetCursor();
    action=GetNextAction();
    flag=REDISPLAY_ALL;

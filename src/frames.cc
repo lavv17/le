@@ -214,6 +214,7 @@ void    DrawFrames(void)
 
    do
    {
+      ClearMessage();
       SyncTextWin();
       StatusLine();
       attrset(STATUS_LINE_ATTR->n_attr);

@@ -89,7 +89,7 @@ int    LockFile(int fd,bool drop)
          case('I'):
             return(0);
          case('W'):
-            Message("Waiting for unlocking the file... (C-x - cancel)");
+            MessageSync("Waiting for unlocking the file... (C-x - cancel)");
             errno=EACCES;
             while(fcntl(fd,F_SETLK,&Lock)==-1 && (errno==EACCES || errno==EAGAIN))
             {
@@ -201,7 +201,7 @@ int   LoadFile(char *name)
    }
 
    sprintf(msg,"Loading the file \"%.60s\"...",name);
-   Message(msg);
+   MessageSync(msg);
 
    newfile=0;
 
@@ -430,7 +430,7 @@ static int CreateBak(char *name)
       filename++;
    }
 
-   Message("Creating backup file...");
+   MessageSync("Creating backup file...");
 
    namemax=pathconf(directory,_PC_NAME_MAX);
    if(namemax==-1)
@@ -538,10 +538,10 @@ int   SaveFile(char *name)
    }
 
    if(Text && !View)
-      Optimize();
+      UserOptimizeText();
 
-   sprintf(msg,"Saving the file \"%s\"...",name);
-   Message(msg);
+   sprintf(msg,"Saving the file \"%.60s\"...",name);
+   MessageSync(msg);
 
    if(stat(name,&st)!=-1)
    {
@@ -608,7 +608,7 @@ int   SaveFile(char *name)
 
    newfile=0;
 
-   Message(msg);
+   MessageSync(msg);
 
    errno=0;
    nfile=open(name,O_CREAT|O_RDWR,st.st_mode);

@@ -130,7 +130,7 @@ ActionProcRec  EditorActionProcTable[]=
    {CALCULATOR,editcalc},
    {DRAW_FRAMES,DrawFrames},
    {TABS_EXPAND,ExpandAllTabs},
-   {TEXT_OPTIMIZE,Optimize},
+   {TEXT_OPTIMIZE,UserOptimizeText},
    {CHOOSE_CHAR,UserChooseChar},
    {UNIX_DOS_TRANSFORM,DOS_UNIX},
 

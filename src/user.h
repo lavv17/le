@@ -127,3 +127,5 @@ void  UserYankBlock();
 
 void  UserStartDragMark();
 void  UserStopDragMark();
+
+void  UserOptimizeText();

@@ -199,7 +199,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
 //   {CALCULATOR,editcalc,"calculator"},
 //   {DRAW_FRAMES,DrawFrames,"draw-frames"},
 //   {TABS_EXPAND,ExpandAllTabs,"expand-tabs"},
-//   {TEXT_OPTIMIZE,Optimize,"optimize-text"},
+//   {TEXT_OPTIMIZE,UserOptimizeText,"optimize-text"},
    {CHOOSE_CHAR,"\005"},
 //   {UNIX_DOS_TRANSFORM,DOS_UNIX,"change-text-type"},
 

@@ -50,7 +50,7 @@ void  ExpandAllTabs()
    case('C'):
       return;
    }
-   Message("Expanding...");
+   MessageSync("Expanding...");
    CurrentPos=TextBegin;
    while(!Eof())
    {
@@ -78,7 +78,7 @@ void  DOS_UNIX(void)
    case('C'):
       return;
    case('Y'):
-      Message("Changing EOLs between DOS and UNIX formats...");
+      MessageSync("Changing EOLs between DOS and UNIX formats...");
       CurrentPos=TextBegin;
       while(!Eof())
       {

@@ -278,7 +278,7 @@ void  FormatAll()
    case('C'):
       return;
    }
-   Message("Formatting all document...");
+   MessageSync("Formatting all document...");
    TextPoint oldpos=CurrentPos;
    CurrentPos=TextBegin;
    while(!Eof())
@@ -345,6 +345,7 @@ void  FormatFunc()
    ToLineBegin();
    stdcol=GetCol();
 again:
+   ClearMessage();
    CenterView();
    SyncTextWin();
    StatusLine();
@@ -370,14 +371,14 @@ again:
       {
       case('P'):
       case('p'):
-         Message("Formatting one paragraph...");
+         MessageSync("Formatting one paragraph...");
          FormatPara();
          RedisplayAll();
          goto again;
       case('R'):
       case('r'):
       {
-         Message("Shifting right...");
+         MessageSync("Shifting right...");
 	 ShiftRightLine();
 	 UserLineDown();
          RedisplayLine();
@@ -385,7 +386,7 @@ again:
       }
       case('C'):
       case('c'):
-         Message("Centering...");
+         MessageSync("Centering...");
          CenterLine();
          UserLineDown();
          RedisplayLine();

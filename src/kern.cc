@@ -973,35 +973,6 @@ void  EmptyText()
    EolStr="\n";
 }
 
-void   Optimize()
-{
-   if(View || buffer_mmapped)
-      return;
-
-   offs     ptr;
-   TextPoint  tp=CurrentPos;
-
-   Message("Optimizing...");
-   for(ptr=0; !EofAt(ptr); ptr++)
-   {
-      if(EolAt(ptr))
-      {
-         CurrentPos=ptr;
-         while(!Bol() && (CharRel_NoCheck(-1)==' ' || CharRel_NoCheck(-1)=='\t'))
-            BackSpace();
-      }
-   }
-   CurrentPos=TextEnd;
-   while(!Bof() && Bol() && BolAt(Offset()-EolSize))
-      DeleteBlock(EolSize,0);
-   if(!Bol())
-      NewLine();
-
-   CurrentPos=tp;
-   stdcol=GetCol();
-   flag=REDISPLAY_ALL;
-}
-
 char  *GetWord()
 {
    static   char  word[256];

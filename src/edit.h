@@ -238,7 +238,7 @@ extern  void    Quit(void),
                 ExpandAllTabs(void),
                 TermOpt(void),SaveOpt(void),UpdtOpt(void),AppearOpt(void),
                 edit_chset(void),SaveTermOpt(void),GoToLineNumber(void),
-                FormatOptions(void),Optimize(void),DOS_UNIX(void);
+                FormatOptions(void),DOS_UNIX(void);
 
 void  PreModify();
 int   PreUserEdit();

@@ -156,6 +156,7 @@ void    Edit()
       if(DragMark)
 	 ProcessDragMark();
 
+      ClearMessage();
       SyncTextWin();
       StatusLine();
       SetCursor();
@@ -442,7 +443,7 @@ void    Initialize()
    l.l_type=F_RDLCK;
    l.l_whence=SEEK_SET;
    l.l_start=l.l_len=0;
-   Message("Loading history...");
+   MessageSync("Loading history...");
    f=fopen(HstName,"rb");
    if(f && fcntl(fileno(f),F_SETLKW,&l)!=-1)
    {
@@ -468,7 +469,7 @@ void    Terminate()
    {
       if(SaveHst)
       {
-         Message("Saving history...");
+         MessageSync("Saving history...");
          int fd=open(HstName,O_RDWR|O_CREAT,0644);
          struct flock l;
 	 l.l_type=F_RDLCK;

@@ -1378,7 +1378,7 @@ void  UserPipeBlock()
    if(getstring("Pipe through: ",filter,sizeof(filter)-1,NULL,NULL,NULL)<1)
       return;
 
-   Message("Piping...");
+   MessageSync("Piping...");
 
    PipeBlock(filter,TRUE,TRUE);
 
@@ -1523,3 +1523,33 @@ MarkMove(PageTop);
 MarkMove(PageBottom);
 MarkMove(LineUp);
 MarkMove(LineDown);
+
+
+void UserOptimizeText()
+{
+   if(View || buffer_mmapped)
+      return;
+
+   offs     ptr;
+   TextPoint  tp=CurrentPos;
+
+   MessageSync("Optimizing...");
+   for(ptr=0; !EofAt(ptr); ptr++)
+   {
+      if(EolAt(ptr))
+      {
+         CurrentPos=ptr;
+         while(!Bol() && (CharRel_NoCheck(-1)==' ' || CharRel_NoCheck(-1)=='\t'))
+            BackSpace();
+      }
+   }
+   CurrentPos=TextEnd;
+   while(!Bof() && Bol() && BolAt(Offset()-EolSize))
+      DeleteBlock(EolSize,0);
+   if(!Bol())
+      NewLine();
+
+   CurrentPos=tp;
+   stdcol=GetCol();
+   flag=REDISPLAY_ALL;
+}

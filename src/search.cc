@@ -307,7 +307,7 @@ int   no_re_search_2(const char *str,const int slen,
 
 int    Search(int dir,offs offslim)
 {
-   Message(dir==FORWARD?"Searching forwards...":"Searching backwards...");
+   MessageSync(dir==FORWARD?"Searching forwards...":"Searching backwards...");
 
    offs srchpos=CurrentPos;
 
@@ -805,7 +805,7 @@ void  FindMatch()
             level--;
       }
    }
-   Message("Matching bracket not found");
+   Message("Matching bracket not found.");
    SetCursor();
    WaitForKey();
 }

@@ -288,7 +288,7 @@ void  SaveConfToFile(const char *f,const struct init *init)
 
 void  SaveConf(char *f)
 {
-   Message("Saving the editor options...");
+   MessageSync("Saving the editor options...");
    SaveConfToFile(f,init);
    strcpy(InitName,f);
 }
@@ -296,7 +296,7 @@ void  SaveConf(char *f)
 void  SaveTermOpt()
 {
    char  t[256];
-   Message("Saving the terminal options...");
+   MessageSync("Saving the terminal options...");
 #ifndef MSDOS
    sprintf(t,"%s/.le/term-%s",HOME,TERM);
 #else
