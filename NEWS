@@ -1,3 +1,13 @@
+Version 1.8.0  2001-04-16
+
+* sped up file loading.
+* use ftruncate/fchmod when they are available.
+* stop highlighting if it takes too much time (e.g. for very long lines).
+* added lout syntax patterns (by Abel Morabito <amorabito@funescoop.com.ar>).
+* added emacs-like keymap (by Abel Morabito).
+* stop drag mark on block operations.
+* fixed handling of 8-bit characters and ^@ in keymap.
+
 Version 1.7.1  2001-03-21
 
 * don't insert many newline characters at end of file in text mode on
