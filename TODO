@@ -2,8 +2,12 @@
 
 2. Full undo
 
-?3. RCS interaction
+3. RCS/CVS interaction
 
 4. macros
 
 5. ispell interaction
+
+6. Get rid of fixed size arrays.
+
+7. Move to newer GNU rx (use rx_make_solutions/rx_next_solution)

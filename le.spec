@@ -1,6 +1,6 @@
 Summary: This is terminal text editor: LE.
 Name: le
-Version: 1.5.6
+Version: 1.5.8
 Release: 1
 Copyright: GPL
 Group: Applications/Editors
@@ -51,13 +51,14 @@ tunable syntax highlighting, tunable color scheme, tunable key map.
 %setup
 
 %build
-./configure --prefix=/usr --with-regex
-make "CFLAGS=$RPM_OPT_FLAGS"
+CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s \
+   ./configure --prefix=/usr --with-regex
+make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make "prefix=$RPM_BUILD_ROOT/usr" install
-strip $RPM_BUILD_ROOT/usr/bin/le
+make "DESTDIR=$RPM_BUILD_ROOT" install
+#strip $RPM_BUILD_ROOT/usr/bin/le
 
 %clean
 rm -rf $RPM_BUILD_ROOT
