@@ -30,7 +30,7 @@ void  ReplaceCharExtMove(byte ch)
 }
 void  ReplaceCharExt(byte ch)
 {
-   ReplaceCharExt(ch);
+   ReplaceCharExtMove(ch);
    MoveLeft();
    stdcol=GetCol();
 }
