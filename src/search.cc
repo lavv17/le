@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -80,7 +80,8 @@ int   CompilePattern()
 //    if(rexp_compiled)
 //       regfree(&rexp);
 
-   re_syntax_options=RE_SYNTAX_EMACS;
+   re_syntax_options=RE_RE_BK_PLUS_QM|RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS|
+		     RE_UNMATCHED_RIGHT_PAREN_ORD;
    const char *err=re_compile_pattern((char*)pattern,patlen,&rexp);
    if(err)
    {
