@@ -23,6 +23,7 @@
 #include <memory.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 #include "edit.h"
 #include "keymap.h"
 #include "getch.h"
@@ -57,6 +58,9 @@ static struct re_pattern_buffer rexp;
 static bool rexp_compiled=false;
 static char fastmap[256];
 static bool word_bounds;
+static bool numeric_search;
+static bool hex_search;
+static bool no_regex;
 
 int   LastOp=0;
 int   LastDir=FORWARD;
@@ -101,8 +105,11 @@ static void map_to_lower_init()
       map_to_lower[i] = isupper (i) ? tolower (i) : i;
 }
 
-int   CompilePattern()
+static bool CompilePattern()
 {
+   if(noreg)
+      return true;
+
 //    if(rexp_compiled)
 //       regfree(&rexp);
 
@@ -110,6 +117,9 @@ int   CompilePattern()
 		     RE_UNMATCHED_RIGHT_PAREN_ORD;
    rexp.translate=0;
    word_bounds=false;
+   hex_search=false;
+   numeric_search=false;
+   no_regex=false;
 
    unsigned char *p=pattern;
    int len=patlen;
@@ -126,6 +136,12 @@ int   CompilePattern()
 	    case('w'):
 	       word_bounds=true;
 	       break;
+	    case('n'):
+	       numeric_search=true;
+	       break;
+	    case('x'):
+	       hex_search=true;
+	       break;
 	    default:
 	       goto so_out;
 	 }
@@ -140,15 +156,35 @@ int   CompilePattern()
    so_out:;
    }
 
+   if(numeric_search || hex_search)
+   {
+      int radix=0;
+      if(hex_search)
+	 radix=16;
+      char *s=(char*)alloca(len+1);
+      char *store=s;
+      len=0;
+      for(char *t=strtok((char*)p," "); t; t=strtok(0," "))
+      {
+	 int num=strtoul(t,0,radix);
+	 unsigned char n=(unsigned char)num;
+	 if(strchr("[]\\*.",n))
+	    *store++='\\', len++;
+	 *store++=n, len++;
+      }
+      *store=0;
+      p=(unsigned char*)s;
+   }
+
    const char *err=re_compile_pattern((char*)p,len,&rexp);
    if(err)
    {
       ErrMsg(err);
-      return 0;
+      return false;
    }
    rexp_compiled=true;
    rexp.fastmap=fastmap;
-   return 1;
+   return true;
 }
 
 int   no_re_search_2(const char *str,const int slen,
