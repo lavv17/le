@@ -48,7 +48,7 @@ num   fndlen=0;
 
 struct re_registers regs;
 struct re_pattern_buffer rexp;
-bool rexp_compiled=flase;
+bool rexp_compiled=false;
 
 int   LastOp=0;
 int   LastDir=FORWARD;
