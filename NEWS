@@ -1,3 +1,7 @@
+* add start-drag-mark action to keymap and menu.
+* handle set-block-begin and set-block-end well in case drag-mark is active.
+* fix start-drag-mark in text mode when cursor is past eol.
+
 Version 1.5.3  1999-08-18
 
 * search/replace is now supported in mmap-rw mode.
