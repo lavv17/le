@@ -1390,6 +1390,7 @@ void  UserYankBlock()
       return;
    MainClipBoard.PasteAndMark();
    OptionallyConvertBlockNewLines("yanked");
+   flag=REDISPLAY_ALL;
 }
 
 void  UserStartDragMark()

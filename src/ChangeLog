@@ -1,3 +1,7 @@
+1999-10-31  lav
+
+	* user.cc: (UserYankBlock) set REDISPLAY_ALL.
+
 1999-10-30  lav
 
 	* keymap.cc: correct error handling in keymap file reading;
