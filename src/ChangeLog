@@ -1,6 +1,12 @@
 1999-10-31  lav
 
 	* user.cc: (UserYankBlock) set REDISPLAY_ALL.
+	* help.cc: read help from file by section tag.
+	* block.cc: use new help; add help for write-block/read-block.
+	* user.cc, options.cc, frames.cc, editcalc.cc: use new help.
+	* le.1: describe block piping.
+	* le.hlp: new file.
+	* Makefile.am: remove ehelp.cc, add le.hlp.
 
 1999-10-30  lav
 

@@ -1,7 +1,7 @@
 bin_PROGRAMS = le
 
 le_SOURCES = about.cc block.cc calc.cc chset.cc cmd.cc color.cc edit.cc\
- editcalc.cc ehelp.cc ext.cc file.cc format.cc frames.cc getch.cc getstr.cc\
+ editcalc.cc ext.cc file.cc format.cc frames.cc getch.cc getstr.cc\
  help.cc history.cc kern.cc keymap.cc keymapdf.cc keymapfn.cc loadsave.cc\
  mainmenu.cc menu.cc menu1.cc options.cc pipe.cc rus.cc screen.cc search.cc\
  signals.cc tables.cc textpoin.cc user.cc window.cc about.h block.h\
@@ -15,7 +15,8 @@ le_LDADD = $(top_builddir)/lib/liblib.a $(CURSES_LIBS)
 INCLUDES = -I$(top_builddir)/include -I$(top_srcdir)/include $(CURSES_INCLUDES)
 CPPFLAGS = -DPKGDATADIR=\"$(pkgdatadir)\"
 
-EXTRA_DIST = le.1
+EXTRA_DIST = le.1 le.hlp
 man_MANS = le.1
+pkgdata_DATA = le.hlp
 
 OMIT_DEPENDENCIES = fnmatch.h poll.h

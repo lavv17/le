@@ -38,8 +38,6 @@
 
 TextPoint *DragMark=0;
 
-extern const char BlockHelp[];
-
 char    BlockFile[256];
 
 int     hide=TRUE;
@@ -340,17 +338,20 @@ void    Write()
    if(hide)
        return;
 
-   if(getstring("Write to: ",BlockFile,sizeof(BlockFile)-1,&LoadHistory,NULL,NULL)<1 || ChooseFileName(BlockFile)<0)
+   if(getstring("Write to: ",BlockFile,sizeof(BlockFile)-1,&LoadHistory,0,
+	 "WriteBlockHelp"," Write Block Help ")<1)
        return;
-   LoadHistory.Push();
-
    if(BlockFile[0]=='|')
    {
+      LoadHistory.Push();
       /* write to pipe */
       Message("Piping to...");
       PipeBlock(BlockFile+1,/*IN*/FALSE,/*OUT*/TRUE);
       return;
    }
+   if(ChooseFileName(BlockFile)<0)
+      return;
+   LoadHistory.Push();
 
    if(stat(BlockFile,&st)==-1)
    {
@@ -492,7 +493,8 @@ void    Read()
 
    if(View)
       return;
-   if(getstring("Read from: ",BlockFile,sizeof(BlockFile)-1,&LoadHistory,NULL,NULL)<1)
+   if(getstring("Read from: ",BlockFile,sizeof(BlockFile)-1,&LoadHistory,0,
+	 "ReadBlockHelp"," Read Block Help ")<1)
       return;
    if(BlockFile[0]=='|')
    {
@@ -761,7 +763,7 @@ next:
    switch(action)
    {
    case(EDITOR_HELP):
-      Help(BlockHelp," Block Help ");
+      Help("BlockHelp"," Block Help ");
       goto next;
    case(REFRESH_SCREEN):
       UserRefreshScreen();

@@ -39,7 +39,6 @@
 bool ExplicitInitName=false;
 char InitName[256];
 
-extern char ContextHelpNames[];
 extern int MaxBackup;
 
 extern int le_use_default_colors;
@@ -1064,8 +1063,7 @@ int    OptHandleBut(char *,int)
 
 void  Options()
 {
-   extern const char OptionsHelp[];
-   Dialogue(opt,68,17," Options ",OptionsHelp," Setup Help ",OptEatKey,OptHandleBut);
+   Dialogue(opt,68,17," Options ","OptionsHelp"," Setup Help ",OptEatKey,OptHandleBut);
 }
 
 void  SaveOpt()

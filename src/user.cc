@@ -1241,8 +1241,7 @@ void  UserWordHelp()
 
 void  UserKeysHelp()
 {
-   extern const char MainHelp[];
-   Help(MainHelp," Help on Keys ");
+   Help("MainHelp"," Help on Keys ");
 }
 
 void  UserAbout()

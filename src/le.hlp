@@ -1,0 +1,285 @@
+[MainHelp]
+The default keymap is described below:
+
+            Keys to move
+Up               - line up
+Down             - line down
+Left             - character left
+Right            - character right
+Home             - to begin of line
+End              - to end of line
+PgUp             - page up
+PgDn             - page down
+~Left            - word left
+~Right           - word right
+~Home | ^G+B     - to begin of file
+~End  | ^G+E     - to end of file
+F8    | ^G+G     - move to line number
+~F8   | ^G+O     - move to offset
+
+            Keys to delete
+Del | ^D         - delete char right
+BackSp | ^H      - delete char left
+^Y               - delete line
+^K               - delete to EOL
+^W               - delete word
+^U               - undelete
+Esc+BackSp       - delete word left
+Esc+Del          - delete word right
+
+                 Files
+F2               - save current file
+F3               - load another file
+~F3              - load previous file
+~F2              - save as...
+F9               - make
+~F9              - shell
+^F9              - run
+~^F9             - compile
+Esc+!            - execute a shell command
+
+                Blocks
+F5 | F4+B        - set block begin
+F6 | F4+E        - set block end
+F4+H             - hide/display block
+F4+C | F11       - copy block
+F4+D | ~F12      - delete block
+F4+M | F12       - move block
+F4+W             - write block
+F4+R             - read block
+F4+I             - indent block
+F4+U             - unindent block
+F4+T             - change block type
+F4+^B | ^F5      - find block begin
+F4+^E | ^F6      - find block end
+~F5              - mark line
+~F6              - mark to eol
+F4+P             - to upper case
+F4+L             - to lower case
+F4+X             - exchange cases
+F4+| | M-|       - pipe block through a
+                   command
+F4+>             - insert a prefix
+F4+Y | ~F11      - insert block from
+                   buffer. Can be used
+                   to yank block from
+                   previous file
+
+           Search & Replace
+F7 | ^F          - search forwards
+~^F7 | ^B        - search backwards
+~F7 | ^C         - cont. search/replace
+^F7 | ^R         - start replace
+Ctrl-]           - find matching bracket
+
+          Exit from the editor
+^X | Esc+Esc     - ask to save, then exit
+
+             Editor control
+^O               - start setting options
+^A+H             - switch HEX mode
+^A+T             - switch TEXT mode
+^A+A             - switch autoindent
+^A+I             - switch insert
+^A+R             - switch RUS/LAT
+
+                Options
+^O               - start setting options
+  Enter          - use the setup
+  F2             - save to current opt file
+  ~F2            - save to working directory
+  ^X             - restore old setup
+  Space          - change item
+  F1             - help
+
+ F10 | ^N  - enter main menu
+
+                Others
+^P               - put control character
+^E               - insert char with a code
+^L               - refresh screen
+^V               - copy char below
+^T               - copy char above
+~F4              - format functions
+^F1              - run 'help' program
+M-/              - comment line (C, C++)
+
+                 Note
+   Some of ^key, ~key and any M-key
+combinations can be typed as ESC+key
+
+[OptionsHelp]
+   Use arrows to navigate, space to
+change current option. You can also
+edit the strings and the numbers.
+
+   Enter    - use the options within
+              the current editing
+              session
+   Shift-F2 - save the options in
+              the current directory
+   F2       - update current options
+              file
+   ^X       - quit, do not use the new
+              options.
+
+1. Insert. In this mode characters
+will be inserted before the character
+on the cursor and the cursor will be
+moved one position right.
+2. Autoindent. In this mode on
+pressing Enter a new line will be
+inserted and the cursor will be placed
+with the margin of the previous
+line.
+3. Save Positions. In this mode after
+loading a file cursor will be placed
+on its latest position in this file
+even if you had exited from the
+editor. Positions are saved in file
+'$HOME/.le/history'.
+4. Save History. In this mode you can
+choose a file name with arrows
+even if you had exited from the
+editor. History is saved in file
+'$HOME/.le/history'.
+5. Make Backup. This option enables
+creating backup files with a suffix
+given below. These are created in current
+or in specified directory.
+6. No Regular Expressions. This
+option disables using regular
+expressions in search and replace.
+You will be able not to type '\\' before
+special characters.
+7. Latin. In this mode latin letters
+will be typed.
+8. Russian. In this mode russian
+letters will be typed. (works only on
+certain terminals)
+9. Graphic. In this mode graphic
+characters from extended ASCII will be
+typed. That is, bit 8 will be set.
+10. Exact. This mode will do for both
+text and binary files. Strings are
+right limited, that is you have to
+type a space to get right from EOL.
+11. Text. This mode is only for text
+files. Strings are not right limited.
+12. Hex. This is hexadesimal mode for
+binary files.
+13. Use colors. When set, LE tries to
+use colors if possible.
+14. Syntax highlight. When set, syntax
+constructs will be highlighted, if there
+is support for current file type. If it
+works too slow, turn it off.
+15. Use tabs. Prefer tab inserting.
+16. BackSp unindents. Specifies if
+backspace key should move to previous tab
+stop.
+17. Lazy page scroll. Specifies PageUp/Down
+keys behaviour. If set, PageUp moves to
+page top first, and on second press it
+moves page up.
+18. Tab size. Sets size of tab character.
+19. IndentSize. Sets virtual tab stops.
+20. Vertical scroll. Specifies how many lines
+text should be scrolled when cursor moves
+outside of screen.
+21. Horizontal scroll. Same for horizontal
+scrolling.
+22. Backup suffix specifies the suffix for
+backup files (simple version control). In
+This field `%d' can be used, it will be
+replaced with a version number, the older
+the greater.
+23. Backup number specifies the maximum
+number of backup files for each file.
+24. Backup path specifies a directory for
+backup files to be placed into. Default -
+current directory.
+
+[BlockHelp]
+Press:
+   B   to mark begin of block
+   E   to mark end of block
+   C   to copy block
+   M   to move block
+   D   to delete block
+   W   to write block to a file
+   R   to read block from a file
+   I   to indent block
+   U   to unindent block
+   T   to change block type
+   L   to convert block or characters
+to end of line to lower case
+   P   to convert to upper case
+   X   to exchange upper/lower cases
+   H   to hide or unhide block
+or any other key to leave block
+functions
+   |   to pipe the block through a
+specified UNIX command (such as sed)
+   >   to insert prefix on the left
+       side of block
+   Y   to yank an old block
+
+[CalcHelp]
+   This is a postfix calculator. For
+example, to calculate 2*2 you must
+type '2 2 *', when it is done stack
+will contain 4. Now to add 2 you may
+type '2 +', stack will contain 6, etc.
+Here are operations of the calculator:
+  + - * /  simplest arithmetics
+  %        take remainder of Y/X
+  sq       square X
+  sqr      take square root of X
+  **       rise X to power Y
+  ln       take natural logarithm
+  lg       take log10
+  pi,e     load constants
+  exp      take exponent of X
+  del      delete number
+  clr      clear the stack
+  xy       swap X and Y
+  neg      take -X
+  rev      take 1/X
+  cp       copy X
+  sin,cos
+
+[FramesHelp]
+   The editor is in frame-drawing
+mode now. You can use the following
+control keys:
+
+Cursor arrows - draw line
+Tab           - switch between single,
+                double and no line mode
+Any other key - leave the mode
+
+You can select graphic character set
+when modifying terminal options.
+Note: on some terminals there is no
+double lines.
+
+[ReadBlockHelp]
+   Enter file name to read block from.
+You can use ~ and wildcards in file name.
+If the name is beginning with `|', then
+the rest is interpreted as command with
+arguments, and output of the command is
+read in as a block. If the command writes
+something to stderr, it will be displayed
+in a window.
+
+[WriteBlockHelp]
+   Enter file name to write the block to.
+You can use ~ and wildcards in file name.
+If the name is beginning with `|', then
+the rest is interpreted as command with
+arguments, and the block contents is fed to
+stdin of the command. If the command writes
+something to stderr, it will be displayed
+in a window.

@@ -21,8 +21,6 @@
 #include "edit.h"
 #include "calc.h"
 
-extern const char CalcHelp[];
-
 void  editcalc()
 {
    WIN   *w;
@@ -58,7 +56,7 @@ void  editcalc()
          }
       }
 
-      if(getstring("Expression: ",expr,sizeof(expr)-1,&CalcHistory,NULL,CalcHelp," Calculator Help ")<1)
+      if(getstring("Expression: ",expr,sizeof(expr)-1,&CalcHistory,NULL,"CalcHelp"," Calculator Help ")<1)
          break;
       calcerrno=0;
       calculator(expr);

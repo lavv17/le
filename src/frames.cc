@@ -202,7 +202,6 @@ void  Draw(int x,int y,byte how)
 
 void    DrawFrames(void)
 {
-   extern const char FramesHelp[];
    static
    int   curr_frame=1;
    int   action;
@@ -226,7 +225,7 @@ void    DrawFrames(void)
       switch(action)
       {
       case(EDITOR_HELP):
-         Help(FramesHelp," Frame-Drawing Help ");
+         Help("FramesHelp"," Frame-Drawing Help ");
          break;
       case(CHAR_LEFT):
          Draw(-1,0,curr_frame);

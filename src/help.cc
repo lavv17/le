@@ -21,6 +21,7 @@
 #include "edit.h"
 #include "keymap.h"
 #include <string.h>
+#include <stdlib.h>
 
 #if 0
 void  Help(char ***h,char *title)
@@ -89,8 +90,51 @@ void  Help(char ***h,char *title)
 }
 #endif //0
 
-void  Help(const char *help,const char *title)
+static char *LoadHelp(const char *tag)
 {
+   char *help=(char*)malloc(0x10000);
+   if(!help)
+      return 0;
+   help[0]=0;
+   FILE *hf=fopen(PKGDATADIR "/le.hlp","r");
+   if(!hf)
+   {
+      free(help);
+      return 0;
+   }
+   char buf[256];
+   char this_tag[256];
+   bool tag_match=false;
+   buf[255]=0;
+   while(fgets(buf,sizeof(buf)-1,hf)!=0)
+   {
+      if(1==sscanf(buf,"[%[^]]]",this_tag))
+      {
+	 if(tag_match)
+	    return help;
+	 if(!strcasecmp(tag,this_tag))
+	    tag_match=true;
+	 continue;
+      }
+      if(tag_match)
+      {
+	 // FIXME: dynamically increment size.
+	 if(strlen(help)>0x10000-256)
+	    return help;
+	 strcat(help,buf);
+      }
+   }
+   if(tag_match)
+      return help;
+   free(help);
+   return 0;
+}
+
+void  Help(const char *helpf,const char *title)
+{
+   char *help=LoadHelp(helpf);
+   if(!help)
+      return;
    const char  *ptr=help;
    WIN   *HelpWin;
    const int v_m=1;
@@ -192,4 +236,5 @@ void  Help(const char *help,const char *title)
 quit:
    CloseWin();
    DestroyWin(HelpWin);
+   free(help);
 }
