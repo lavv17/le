@@ -1,3 +1,11 @@
+Version 1.9.0  2001-07-05
+
+* added bookmark support (M-m sets bookmark, M-' goes to it).
+* added $kspd to keymap-emacs, this fixes ^Z for linux terminal.
+* more complete lout highlighting (by Abel Morabito).
+* perl highlighting (by Vladislav V. Zhuk).
+* fixed saving UseMouse parameter in ini file.
+
 Version 1.8.2  2001-05-11
 
 * added a configure test for broken re_search_2 in libc (it helps redhat-7.1).
