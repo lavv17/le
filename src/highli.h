@@ -53,4 +53,4 @@ struct syntax_hl
    const char *set_rexp(const char *rexp);
 };
 
-#endif  HIGHLI_H
+#endif//HIGHLI_H

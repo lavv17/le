@@ -80,7 +80,7 @@ public:
 
    friend   int   InsertBlock(char *,num,char *,num);
    friend   int   DeleteBlock(num,num);
-   friend   int   ReplaceChar(byte);
+   friend   int   ReplaceBlock(char *,num);
 };
 
 extern TextPoint  CurrentPos;

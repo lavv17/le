@@ -137,3 +137,8 @@ int  InsertChar(char ch)
 {
    return(InsertBlock(&ch,1));
 }
+static inline
+int   ReplaceChar(char ch)
+{
+   return ReplaceBlock(&ch,1);
+}

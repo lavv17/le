@@ -138,29 +138,35 @@ void    RCopy()
 
 void    Copy()
 {
-    CheckBlock();
-    if(View || hide)
-        return;
-
-    PreUserEdit();
-
-    if(rblock)
-    {
-        RCopy();
-        return;
-    }
-
-    if(CopyBlock(BlockBegin,BlockEnd-BlockBegin)!=OK)
+   CheckBlock();
+   if(View || hide)
       return;
 
-    flag=REDISPLAY_ALL;
-    if(!InBlock(Offset(),GetLine(),GetCol()))
-    {
-        num size=BlockEnd-BlockBegin;
-        BlockBegin=CurrentPos;
-        BlockBegin-=size;
-        BlockEnd=CurrentPos;
-    }
+   PreUserEdit();
+
+   if(buffer_mmapped || (hex && !insert))
+   {
+      CopyBlockOver(BlockBegin,BlockEnd-BlockBegin);
+      return;
+   }
+
+   if(rblock)
+   {
+      RCopy();
+      return;
+   }
+
+   if(CopyBlock(BlockBegin,BlockEnd-BlockBegin)!=OK)
+      return;
+
+   flag=REDISPLAY_ALL;
+   if(!InBlock(Offset(),GetLine(),GetCol()))
+   {
+      num size=BlockEnd-BlockBegin;
+      BlockBegin=CurrentPos;
+      BlockBegin-=size;
+      BlockEnd=CurrentPos;
+   }
 }
 
 /* when lines_deleted!=0 then last RDelete deleted block lines */
@@ -239,6 +245,8 @@ int   Delete()
    CheckBlock();
    if(View || hide)
       return 1;
+   if(buffer_mmapped)
+      return 0;
    flag=REDISPLAY_ALL;
    if(rblock)
       return RDelete();
@@ -286,33 +294,38 @@ void    RMove()
 }
 void    Move()
 {
-    num     size=BlockEnd-BlockBegin;
+   num	 size=BlockEnd-BlockBegin;
 
-    CheckBlock();
-
-    if(View || hide)
+   CheckBlock();
+   if(View || hide)
         return;
 
-    flag=REDISPLAY_ALL;
-    if(rblock)
-    {
-        RMove();
-        return;
-    }
-    if(InBlock(CurrentPos))
-        return;
+   flag=REDISPLAY_ALL;
+   if(rblock)
+   {
+      RMove();
+      return;
+   }
+   if(InBlock(CurrentPos))
+      return;
 
-    TextPoint tp=CurrentPos;
+   if(buffer_mmapped)
+   {
+      // FIXME
+      return;
+   }
 
-    if(CopyBlock(BlockBegin,size)!=OK)
-       return;
+   TextPoint tp=CurrentPos;
 
-    Delete();
+   if(CopyBlock(BlockBegin,size)!=OK)
+      return;
 
-    CurrentPos=BlockBegin=BlockEnd=tp;
-    stdcol=GetCol();
-    BlockEnd+=size;
-    hide=0;
+   Delete();
+
+   CurrentPos=BlockBegin=BlockEnd=tp;
+   stdcol=GetCol();
+   BlockEnd+=size;
+   hide=0;
 }
 
 void    Write()
@@ -419,7 +432,7 @@ int OptionallyConvertBlockNewLines(const char *bname)
    TextPoint old=CurrentPos;
 
    int block_size=BlockEnd-BlockBegin;
-   if(rblock || hex || block_size<EolSize)
+   if(buffer_mmapped || rblock || hex || block_size<EolSize)
       return 1;
 
    num   dos_nl,unix_nl;
@@ -473,6 +486,7 @@ void    Read()
    int             fd;
    struct stat     st;
    num   act_read;
+   int res=OK;
 
    if(View)
       return;
@@ -509,11 +523,13 @@ void    Read()
        close(fd);
        return;
    }
-   if(GetSpace(st.st_size)!=OK)
-       return;
    Message("Reading...");
    PreUserEdit();
-   if(ReadBlock(fd,st.st_size,&act_read)!=OK)
+   if(buffer_mmapped || (hex && !insert))
+      res=ReadBlockOver(fd,st.st_size,&act_read);
+   else
+      res=ReadBlock(fd,st.st_size,&act_read);
+   if(res!=OK)
    {
       close(fd);
       if(errno)

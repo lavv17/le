@@ -108,6 +108,16 @@ void  PutStr(int x,int y,const char *str)
          x=bx;
          y++;
       }
+      else if(*str=='\t')
+      {
+	 int add=((x-bx+8)&~7)-x+bx;
+	 while(add-->0)
+	 {
+	    if(x<Upper->w)
+	       mvaddch(y+Upper->y,x+Upper->x,' ');
+	    x++;
+	 }
+      }
       else
       {
          if(x>=0 && y>=0 && x<Upper->w)

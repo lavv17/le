@@ -43,7 +43,7 @@
 
 #include <getopt.h>
 
-#include <term.h>
+// #include <term.h>
 
 #ifdef __MSDOS__
 #define	 fcntl(x,y,z)	(0)
@@ -151,8 +151,6 @@ void    Edit()
          old_num_of_lines=TextEnd.Line();
       }
 
-      CheckWindowResize();
-
       if(DragMark)
 	 ProcessDragMark();
 
@@ -161,6 +159,13 @@ void    Edit()
       SetCursor();
 
       action=GetNextAction();
+
+      if(action==WINDOW_RESIZE)
+      {
+	 CorrectParameters();
+	 flag|=REDISPLAY_ALL;
+      	 continue;
+      }
 
       if(hex)
       {
@@ -510,6 +515,10 @@ void  PrintUsage(int arg)
 	  "-c  --color        color mode\n"
 	  "    --dump-keymap  dump default keymap to stdout and exit\n"
 	  "    --dump-colors  dump default color map to stdout and exit\n"
+	  "    --mmap         load file using mmap (read only)\n"
+	  "    --mmap-rw      mmap read-write. Use with extreme caution,\n"
+	  "                   expecially on your hard disk! No undo, all\n"
+	  "                   changes go directly to file/disk. You're warned.\n"
 	  "\n"
 	  "The last file will be loaded. If no files specified, last file from history\n"
 	  "will be loaded if it's not read-only or read-only mode selected.\n");
@@ -527,7 +536,8 @@ int     main(int argc,char **argv)
       DUMP_COLORS,
       PRINT_HELP,
       PRINT_VERSION,
-      USE_MMAP
+      USE_MMAP,
+      USE_MMAP_RW
    };
 
    static struct option le_options[]=
@@ -542,6 +552,7 @@ int     main(int argc,char **argv)
       {"color",no_argument,0,'c'},
 #ifdef HAVE_MMAP
       {"mmap",no_argument,0,USE_MMAP},
+      {"mmap-rw",no_argument,0,USE_MMAP_RW},
 #endif
       {0,0,0,0}
    };
@@ -614,7 +625,16 @@ int     main(int argc,char **argv)
 	 exit(0);
       case(USE_MMAP):
 	 opt_use_mmap=1;
+	 if(optView==-1)
+	    optView=2;
+	 else
+	    optView|=2;
 	 break;
+      case(USE_MMAP_RW):
+	 opt_use_mmap=1;
+	 if(optView!=-1)
+	    optView&=~2;
+      	 break;
       }
    }
    if(optUseColor!=-1)
@@ -623,7 +643,7 @@ int     main(int argc,char **argv)
    Initialize();
 
    if(optView!=-1)
-      View=optView;
+      View=!!optView;
    if(opteditmode!=-1)
       editmode=opteditmode;
    if(optUseColor!=-1)

@@ -64,10 +64,13 @@ void  init_attr_table(struct color *pal)
       attr_table[an].attr|=pal[i].attr;
    }
 
+   color *hl=FindColor(pal,HIGHLIGHT);
+   bool hl_bw=(hl->fg || hl->bg);
+
    /* make standout attributes */
    for(i=0; i<MAX_COLOR_NO; i++)
    {
-      if(i==DISABLED_ITEM || i==SHADOWED)
+      if(i==DISABLED_ITEM || i==SHADOWED || i==HIGHLIGHT)
       {
 	 attr_table[i].so_attr=attr_table[i].attr;
 	 continue;
@@ -77,17 +80,17 @@ void  init_attr_table(struct color *pal)
 	 p++;
       if(pal[p].fg || pal[p].bg)
       {
-	 if(pal[p].fg==COLOR_YELLOW)
-	    attr_table[i].so_attr=attr_table[i].attr^A_BOLD;
+	 if(hl_bw && pal[p].fg==hl->fg)
+	    attr_table[i].so_attr=attr_table[i].attr^hl->attr;
 	 else
 	 {
-	    attr_table[i].so_attr=(attr_table[i].attr|A_BOLD)&~A_COLOR;
-	    pair=find_pair(COLOR_YELLOW,pal[p].bg);
+	    attr_table[i].so_attr=(attr_table[i].attr|hl->attr)&~A_COLOR;
+	    pair=find_pair(hl->fg,pal[p].bg);
 	    attr_table[i].so_attr|=COLOR_PAIR(pair);
 	 }
       }
       else
-	 attr_table[i].so_attr=attr_table[i].attr^A_BOLD;
+	 attr_table[i].so_attr=attr_table[i].attr^hl->attr;
    }
 }
 
@@ -108,6 +111,7 @@ struct color default_color_pal[]=
    {SYNTAX1,	  A_BOLD,     COLOR_YELLOW,  COLOR_BLUE},
    {SYNTAX2,	  A_BOLD,     COLOR_CYAN,    COLOR_BLUE},
    {SYNTAX3,	  A_BOLD,     COLOR_GREEN,   COLOR_BLUE},
+   {HIGHLIGHT,	  A_BOLD,     COLOR_YELLOW,  COLOR_BLACK},
    {-1}
 };
 struct color default_bw_pal[]=
@@ -127,6 +131,7 @@ struct color default_bw_pal[]=
    {SYNTAX1,	  A_BOLD	    },
    {SYNTAX2,	  A_BOLD	    },
    {SYNTAX3,	  A_DIM		    },
+   {HIGHLIGHT,	  A_BOLD	    },
    {-1}
 };
 

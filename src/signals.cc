@@ -36,17 +36,12 @@
 
 #include "xalloca.h"
 
-int   resize_flag=0;
-
 void  BlockSignals()
 {
    sigset_t ss;
 
    sigemptyset(&ss);
    sigaddset(&ss,SIGALRM);
-#ifdef SIGWINCH
-   sigaddset(&ss,SIGWINCH);
-#endif
 
    sigprocmask(SIG_BLOCK,&ss,NULL);
 }
@@ -56,12 +51,12 @@ void  UnblockSignals()
 
    sigemptyset(&ss);
    sigaddset(&ss,SIGALRM);
-#ifdef SIGWINCH
-   sigaddset(&ss,SIGWINCH);
-#endif
 
    sigprocmask(SIG_UNBLOCK,&ss,NULL);
 }
+
+#ifndef KEY_RESIZE
+int   resize_flag=0;
 
 void  CheckWindowResize()
 {
@@ -109,6 +104,7 @@ void  resize_sig(int sig)
    if(getch_return_set)
       siglongjmp(getch_return,1);
 }
+#endif // KEY_RESIZE
 
 void    SuspendEditor()
 {
@@ -260,7 +256,6 @@ void    InstallSignalHandlers()
    struct sigaction  alarmsaveaction;
    struct sigaction  ign_action;
    struct sigaction  suspend_action;
-   struct sigaction  resize_action;
 
    hupaction.sa_handler=(SA_HANDLER_TYPE)hup;
    hupaction.sa_flags=0;
@@ -277,9 +272,12 @@ void    InstallSignalHandlers()
    suspend_action.sa_flags=0;
    sigemptyset(&suspend_action.sa_mask);
 
+#ifndef	KEY_RESIZE
+   struct sigaction  resize_action;
    resize_action.sa_handler=(SA_HANDLER_TYPE)resize_sig;
    resize_action.sa_flags=0;
    sigemptyset(&resize_action.sa_mask);
+#endif
 
    BlockSignals();
 
@@ -326,7 +324,7 @@ void    InstallSignalHandlers()
    sigaction(SIGUSR1,&ign_action,NULL);
    sigaction(SIGUSR2,&ign_action,NULL);
 
-#ifdef SIGWINCH
+#if defined(SIGWINCH) && !defined(KEY_RESIZE)
    sigaction(SIGWINCH,&resize_action,NULL);
 #endif
 #ifdef SIGCHLD
@@ -385,7 +383,6 @@ void    ReleaseSignalHandlers()
 #endif
    sigaction(SIGUSR1,&dfl_action,NULL);
    sigaction(SIGUSR2,&dfl_action,NULL);
-//   sigaction(SIGWINCH,&dfl_action,NULL);
 
    UnblockSignals();
 }

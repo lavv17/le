@@ -125,6 +125,8 @@ void   PreModify(void)
 
 int PreUserEdit()
 {
+   if(buffer_mmapped)
+      return 1;
    if(Text && Eol() && !hex)
    {
       num i=GetCol();
@@ -243,6 +245,9 @@ num    MarginSizeAt(offs pos)
 
 int    GetSpace(num s)
 {
+   if(buffer_mmapped)
+      return ERR;
+
    char   *nb;
    num    _add;
    offs   nptr1=ptr1;
@@ -468,6 +473,32 @@ int   CopyBlock(offs from,num size)
    return(InsertBlock(buffer+from,ptr1-from,buffer+ptr2,from+size-ptr1));
 }
 
+int   CopyBlockOver(offs from,num size)
+{
+   if(from<0)
+   {
+     size+=from;
+     from=0;
+   }
+   if(from+size>Size())
+   {
+     size=Size()-from;
+   }
+   if(size<=0)
+     return(OK);
+
+   if(buffer_mmapped)
+   {
+      int res=ReplaceBlock(buffer+from,size);
+      if(res==OK)
+	 CurrentPos+=size;
+      return res;
+   }
+   if(CopyBlock(from,size)==OK)
+      return DeleteBlock(0,size);
+   return ERR;
+}
+
 int   ReadBlock(int fd,num size,num *act_read)
 {
    if(buffer_mmapped)
@@ -477,21 +508,57 @@ int   ReadBlock(int fd,num size,num *act_read)
 
    if(size==0)
    {
-     *act_read=0;
-     return(OK);
+      *act_read=0;
+      return(OK);
    }
 
    PreModify();
 
    if(GetSpace(size)!=OK)
-     return(ERR);
+      return(ERR);
 
    *act_read=read(fd,buffer+ptr1,size);
    if(*act_read==-1)
-     return(ERR);
+      return(ERR);
    if(*act_read==0)
-     return(OK);
+      return(OK);
    return(InsertBlock(buffer+ptr1,*act_read));
+}
+
+int   ReadBlockOver(int fd,num size,num *act_read)
+{
+   if(buffer_mmapped)
+   {
+      if(size>Size()-Offset())
+	 size=Size()-Offset();
+   }
+   if(size==0)
+   {
+      *act_read=0;
+      return(OK);
+   }
+   if(buffer_mmapped)
+   {
+      char *buf=(char*)malloc(size);
+      if(buf==0)
+      {
+	 NotMemory();
+	 return ERR;
+      }
+      *act_read=read(fd,buf,size);
+      int res=OK;
+      if(*act_read==-1)
+	 res=ERR;
+      if(res==OK && *act_read>0)
+	 res=ReplaceBlock(buf,*act_read);
+      if(res==OK)
+	 CurrentPos+=*act_read;
+      free(buf);
+      return res;
+   }
+   if(ReadBlock(fd,size,act_read)==OK)
+      return DeleteBlock(0,*act_read);
+   return ERR;
 }
 
 int   WriteBlock(int fd,offs from,num size,num *act_written)
@@ -646,30 +713,32 @@ int   DeleteBlock(num left,num right)
 
 int   ReplaceBlock(char *block,num size)
 {
-}
-
-int   ReplaceChar(byte ch)
-{
    if(!buffer_mmapped)
    {
-      int res=ReplaceCharMove(ch);
+      int res=InsertBlock(block,size);
       if(res==OK)
-	 MoveLeft();
+      {
+	 res=DeleteBlock(0,size);
+      	 CurrentPos-=size;
+      }
       return res;
    }
 
    offs base=Offset();
    offs newline=GetLine();
-   num size=1;
 
-   if(base==Size())
-      return ERR;
+   if(base>Size()-size)
+   {
+      size=Size()-base;
+      if(size<=0)
+	 return ERR;
+   }
 
    int break_at=-1;
    int i;
    for(i=1; i<EolSize; i++)
    {
-      if(BolAt(base+i))
+      if(BolAt(base+size+i))
       {
          break_at=i;
          break;
@@ -677,41 +746,46 @@ int   ReplaceChar(byte ch)
    }
 
    num num_of_lines=0;
+   offs o;
+   for(o=base+1; o<=base+size; o++)
+      if(BolAt(o))
+	 num_of_lines++;
 
-   if(EolAt(base))
-      num_of_lines++;
+   memmove(buffer+base,block,size);
 
-   buffer[base]=ch;
+   for(o=base; o<base+size; o++)
+      if(EolAt(o))
+	 num_of_lines--;
 
    int join_at=-1;
    for(i=1; i<EolSize; i++)
    {
-     if(BolAt(base+i))
+     if(BolAt(base+size+i))
      {
        join_at=i;
        break;
      }
    }
 
-   if(EolAt(base))
-      num_of_lines--;
-
-
    for(TextPoint *scan=TextPoint::base; scan; scan=scan->next)
    {
       if(scan->offset>base+size)
       {
-         scan->offset-=size;
          if(!(scan->flags&LINEUNDEFINED))
          {
             scan->line-=num_of_lines;
-            if(break_at>0 && scan->offset>=base+break_at)
+            if(break_at>0 && scan->offset>=base+size+break_at)
                scan->line--;
-            if(join_at>0  && scan->offset>=base+join_at)
+            if(join_at>0  && scan->offset>=base+size+join_at)
                scan->line++;
             if(scan->line==newline)
                scan->flags|=COLUNDEFINED;
          }
+      }
+      else if(scan->offset>base)
+      {
+	 scan->offset=base+size;
+	 scan->flags|=COLUNDEFINED|LINEUNDEFINED;
       }
    }
 

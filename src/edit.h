@@ -177,7 +177,6 @@ char *HupFileName(int sig);
 
 extern bool buffer_mmapped;
 
-int   ReplaceChar(byte);
 int   ReplaceCharMove(byte);
 void  ReplaceCharExt(byte);	 // Replace character under cursor with tab
 				 // expanding, line appending, etc.
@@ -265,8 +264,11 @@ int   PreUserEdit();
 int   choose_ch();
 
 int   InsertBlock(char *block,num len,char *rblock=NULL,num rlen=0);
+int   ReplaceBlock(char *block,num len);
 int   CopyBlock(offs from,num len);
+int   CopyBlockOver(offs from,num len);
 int   ReadBlock(int fd,num len,num *act_read);
+int   ReadBlockOver(int fd,num len,num *act_read);
 int   WriteBlock(int fd,offs from,num len,num *act_written);
 int   DeleteBlock(num left,num right);
 int   Undelete();

@@ -525,8 +525,6 @@ int   GetNextAction()
    char  *store;
    int   key;
 
-   extern   resize_flag;
-
    store=StringTyped;
    StringTypedLen=0;
    *store=0;
@@ -554,6 +552,11 @@ int   GetNextAction()
 	 else
 	    key=GetKey(delay-time_passed);
 
+#ifdef KEY_RESIZE
+	 if(key==KEY_RESIZE)
+	    return WINDOW_RESIZE;
+#else // !KEY_RESIZE
+	 extern int resize_flag;
 	 if(resize_flag && kt==KeyTree)
 	 {
 	    if(key!=ERR)
@@ -561,6 +564,7 @@ int   GetNextAction()
 	    CheckWindowResize();
 	    return WINDOW_RESIZE;
 	 }
+#endif // !KEY_RESIZE
 
 	 if(key==ERR)
 	 {  // no key in the time interval

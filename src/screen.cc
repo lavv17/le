@@ -335,7 +335,7 @@ void  StatusLine()
    sprintf(status+strlen(status),
       " Size:%-6lu Ch:%3s %s %s Offs:%lu (%d%%)",
          (unsigned long)(Size()),chr,flags,name,(unsigned long)(Offset()),
-         (int)(Size()?(Offset()*100+Size()/2)/Size():100));
+         (int)(Size()?(Offset()*100.+Size()/2)/Size():100));
 
    l=strlen(status);
    if(l<COLS)

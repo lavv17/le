@@ -43,4 +43,4 @@ public:
 
 extern ClipBoard MainClipBoard;
 
-#endif  CLIPBRD_H
+#endif//CLIPBRD_H
