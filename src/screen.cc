@@ -46,7 +46,7 @@ int    there_message=0;
 int   range_begin;
 int   range_end;
 
-#if !defined(NCURSES_VERSION) && defined(__NCURSES_H) && !defined(mvaddchnstr)
+#if defined(__NCURSES_H) && !defined(mvaddchnstr)
 #define mvaddchnstr le_mvaddchnstr
 
 int le_mvaddchnstr(int line, int col, chtype *s, int n)
