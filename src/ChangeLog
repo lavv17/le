@@ -1,3 +1,8 @@
+2001-03-20  lav
+
+	* user.cc: (UserLineDown) don't insert many \n in text mode; don't
+	  mark text modified if last eol is added.
+
 2001-03-16  lav
 
 	* getch.cc: (linux_process_key) new function.

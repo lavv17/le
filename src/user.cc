@@ -81,8 +81,10 @@ void  UserLineDown()
 	    if(!Bol())
 	    {
 	       num old_stdcol=stdcol;
+	       int old_modified=modified;
 	       InsertChar('\n');
 	       stdcol=old_stdcol;
+	       modified=old_modified;
 	    }
 	 }
 	 else
