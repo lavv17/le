@@ -25,8 +25,13 @@
 #include <string.h>
 #include "edit.h"
 #include "keymap.h"
+
 extern "C" {
-#include <regex.h>
+#ifdef WITH_REGEX
+   #include <regex.h>
+#else
+   #include <rx.h>
+#endif
 }
 
 #define SEARCH  1
@@ -100,6 +105,9 @@ int   no_re_search_2(const char *str,const int slen,
 {
    const char *pos;
    char c0=str[0];
+
+   if(!buf2)
+      buf2="";
 
    if(range>0)
    {
@@ -214,13 +222,31 @@ int    Search(int dir,offs offslim)
    if(!buffer)
       return FALSE;
 
+   char *buf1=0,*buf2=0;
+   int len1=0,len2=0;
+
+   if(ptr1>0)
+   {
+      buf1=buffer;
+      len1=ptr1;
+   }
+   if(BufferSize-ptr2>0)
+   {
+      buf2=buffer+ptr2;
+      len2=BufferSize-ptr2;
+   }
+   if(buf2 && !buf1)
+   {
+      buf1=buf2; buf2=0;
+      len1=len2; len2=0;
+   }
    int res;
    if(noreg)
-      res=no_re_search_2((char*)pattern,patlen,buffer,ptr1,
-			 buffer+ptr2,BufferSize-ptr2,srchpos,offslim-srchpos);
+      res=no_re_search_2((char*)pattern,patlen,buf1,len1,
+			 buf2,len2,srchpos,offslim-srchpos);
    else
-      res=re_search_2(&rexp,buffer,ptr1,buffer+ptr2,BufferSize-ptr2,
-		      srchpos,offslim-srchpos,&regs,offslim);
+      res=re_search_2(&rexp,buf1,len1,buf2,len2,
+		      srchpos,offslim-srchpos,&regs,len1+len2);
    if(res==-1)
       return FALSE;
 
@@ -312,7 +338,7 @@ void  Replace()
                CurrentPos=back_tp;
             stdcol=GetCol();
 	    CenterView();
-            RedisplayAll();
+            SyncTextWin();
             Message(str);
             SetCursor();
             while(WaitForKey()==ERR);
@@ -360,7 +386,7 @@ void  Replace()
          {
             int oldh=hide;
             hide=1;
-            RedisplayAll();
+	    RedisplayAll();
             hide=oldh;
          }
       }
