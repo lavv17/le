@@ -112,6 +112,8 @@ void  TestPosition()
    }
 }
 
+static int skipped=0;	// number of times Sync skipped its work
+
 void  SyncTextWin()
 {
    int line=TextWinHeight;
@@ -167,7 +169,6 @@ void  SyncTextWin()
 	 lim=range_end;
    }
 
-   static int skipped=0;
    if(CheckPending()>0)
    {
       if(++skipped<5)
@@ -221,6 +222,9 @@ void  ScrollBar(int check)
 }
 void  SetCursor()
 {
+   if(skipped)
+      return;
+
    ScrollBar(TRUE);
    if(hex)
    {
