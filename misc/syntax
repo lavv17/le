@@ -327,4 +327,5 @@ c1,4=([^[:alnum:]_\$@#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |package|sub|BEGIN|END|INIT|CHECK|socket|defined\
 )([^[:alnum:]/_]|$)
 c2,1={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.|<=>|&|^|->
-c2,4=([ \t]|^)(not|and|or|xor|eq|ne|cmp|lt|gt|le|ge)([ \t]|$)
+c2,4=([ \t)]|^)(and|or|xor|eq|ne|cmp|lt|gt|le|ge)([ \t(]|$)
+c2,4=([ \t(]|^)(not)([ \t(]|$)
