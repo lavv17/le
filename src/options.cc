@@ -616,7 +616,7 @@ void  W_Dialogue(struct opt *opt,
    char  s[512];
    struct opt *p,*p1,*n,*curr=opt;
    int shift=0,pos=0,i,key=0,d,dist;
-   int   action;
+   int   action=-1;
    int   OldShowStatusLine=ShowStatusLine;
    attr  *a=Upper->a;
 

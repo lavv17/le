@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -198,7 +198,7 @@ int   cosx()
    return(OKAY);
 }
 
-struct   func
+struct   func_def
 {
    char  *name;
    int      (*func)();
@@ -222,7 +222,7 @@ int   check_for_number(char *w)
 int   calculator(char *in)
 {
    int      wl;
-   struct   func  *f;
+   struct   func_def  *f;
    do
    {
       while(*in && isspace(*in))
