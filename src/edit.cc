@@ -368,7 +368,6 @@ void  InitCurses()
    if(le_scr!=NULL)
    {
       delscreen(le_scr);
-      del_curterm(cur_term);
    }
 
    le_scr=newterm(NULL,stdout,stdin);
