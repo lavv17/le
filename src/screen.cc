@@ -153,6 +153,7 @@ void  SyncTextWin()
       ptr=NextNLines(ScreenTop,line);
 
    Redisplay(line,ptr,lim);
+   flag=0;
 }
 
 void  LocateCursor()
@@ -355,7 +356,6 @@ void  Redisplay(num line,offs ptr,num limit)
       line=0;
       ptr=ScreenTop.Offset();
       limit=TextWinHeight;
-      flag=0;
    }
 
    chtype *cl=(chtype*)alloca(TextWinWidth*sizeof(chtype));
