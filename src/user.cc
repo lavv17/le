@@ -941,6 +941,7 @@ int   file_check(char *fn)
 void    UserLoad()
 {
    char  newname[256];
+   newname[0]=0;
 
    if(getstring("Load: ",newname,sizeof(newname)-1,&LoadHistory)>0)
    {
@@ -967,6 +968,7 @@ void    UserLoad()
 int   UserSaveAs()
 {
    char  newname[256];
+   newname[0]=0;
 
    if(getstring("Save as: ",newname,sizeof(newname)-1,&LoadHistory,NULL,NULL)>0)
    {

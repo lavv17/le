@@ -875,6 +875,10 @@ int   ReplaceBlock(char *block,num size)
       }
    }
 
+   // when mmapped, changes are committed to disk automatically.
+   if(!buffer_mmapped)
+      modified=1;
+
    return OK;
 }
 

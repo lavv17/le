@@ -146,8 +146,11 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {UNDO,"^Z"},
    {UNDO,"^U"},
    {UNDO,"$kund"},
+   {UNDO_STEP,"$kUND"},
    {REDO,"\033|Z"},
    {REDO,"\033|z"},
+   {REDO,"$krdo"},
+   {REDO_STEP,"$kRDO"},
 
 // File ops
    {LOAD_FILE,"$kf3"},
@@ -264,14 +267,12 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {ENTER_CHAR_CODE,"\033|w"},
    {ENTER_CHAR_CODE,"\033|W"},
 
-//   WINDOW_RESIZE,
-
    {EDITOR_HELP,"$kf1"},
    {EDITOR_HELP,"\033|1"},
    {CONTEXT_HELP,"\033|$kf1"},
    {CONTEXT_HELP,"$2kf1"},
 
-//   {SUSPEND_EDITOR,SuspendEditor,"suspend-editor"},
+//    {SUSPEND_EDITOR,"$ksusp"},
    {QUIT_EDITOR,"\030"},
    {QUIT_EDITOR,"$kext"},
    {QUIT_EDITOR,"$kcan"},
