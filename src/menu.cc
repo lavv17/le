@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -50,7 +50,7 @@ void  DisplayItem(int x,int y,char *i,attr *a)
       return;
    }
    attr r=*a;
-   r.attr=a->so_attr;
+   r.n_attr=a->so_attr;
    for(; *i; i++)
    {
       if(*i=='&')

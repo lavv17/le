@@ -190,7 +190,7 @@ void  DisplayWin(WIN *win)
          {
             if(y+win->y<LINES && x+win->x<COLS)
             {
-               attrset(SHADOW_ATTR->attr);
+               attrset(SHADOW_ATTR->n_attr);
                mvaddch(y+win->y,x+win->x,*save&(A_CHARTEXT|A_ALTCHARSET));
             }
          }

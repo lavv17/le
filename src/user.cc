@@ -1209,7 +1209,7 @@ void  UserEnterControlChar()
    if(View)
       return;
 
-   attrset(STATUS_LINE_ATTR->attr);
+   attrset(STATUS_LINE_ATTR->n_attr);
    mvaddch(StatusLineY,COLS-2,'^');
    SetCursor();
    key=GetRawKey();

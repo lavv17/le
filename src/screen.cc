@@ -30,6 +30,10 @@
 #include "highli.h"
 #include "getch.h"
 
+#ifndef max
+# define max(a,b) ((a)>(b)?(a):(b))
+#endif
+
 int       ShowScrollBar=SHOW_NONE;
 int       ShowStatusLine=SHOW_BOTTOM;
 
@@ -205,7 +209,7 @@ void  ScrollBar(int check)
       return;
    }
 
-   attrset(SCROLL_BAR_ATTR->attr);
+   attrset(SCROLL_BAR_ATTR->n_attr);
 
    if(check && NewPos==ScrollBarPos)
       return;
@@ -246,7 +250,7 @@ void  SetCursor()
 void  AddMessage(const char *s)
 {
    message_sp++;
-   attrset(STATUS_LINE_ATTR->attr);
+   attrset(STATUS_LINE_ATTR->n_attr);
    mvaddstr(LINES-message_sp,0,s);
    for(int x=strlen(s); x<COLS; x++)
       addch(' ');
@@ -254,7 +258,10 @@ void  AddMessage(const char *s)
 }
 void  Message(const char *s)
 {
-   ClearMessage();
+   if(message_sp==1)
+      message_sp=0;  // don't need to clear, as we'll add the line again
+   else
+      ClearMessage();
    AddMessage(s);
 }
 void  ClearMessage()
@@ -266,8 +273,8 @@ void  ClearMessage()
                 :NextNLines(ScreenTop.Offset(),TextWinHeight-message_sp),
               TextWinHeight);
       ScrollBar(false);
-      message_sp=0;
    }
+   message_sp=0;
 }
 
 void  StatusLine()
@@ -416,7 +423,7 @@ void  Redisplay(num line,offs ptr,num limit)
    if(ptr<0)
       ptr=0;
 
-   chtype *cl=(chtype*)alloca(TextWinWidth*sizeof(chtype));
+   chtype *cl=(chtype*)alloca(max(TextWinWidth,80)*sizeof(chtype));
    chtype *clp;
    struct attr *ca=norm_attr;
 
@@ -433,8 +440,8 @@ void  Redisplay(num line,offs ptr,num limit)
 	 if(!EofAt(ptr) || line==(Size()-ScreenTop.Offset()+15)/16)
          {
             sprintf(s,"%08lX   ",(unsigned long)ptr);
-            for(sp=s; *sp; sp++)
-	       *clp++=norm_attr->attr|*sp;
+	    for(sp=s; *sp; sp++)
+	       *clp++=norm_attr->n_attr|*sp;
          }
          for(i=0; i<16 && !EofAt(ptr); i++)
          {
@@ -444,27 +451,27 @@ void  Redisplay(num line,offs ptr,num limit)
             ca=(InBlock(ptr)?blk_attr:norm_attr);
             if(ascii && ptr==Offset() && ShowMatchPos)
                ca=SHADOW_ATTR;
-	    *clp++=ca->attr|s[0];
-	    *clp++=ca->attr|s[1];
+	    *clp++=ca->n_attr|s[0];
+	    *clp++=ca->n_attr|s[1];
             ptr++;
             if(InBlock(ptr-1) && InBlock(ptr) && (ptr&15))
-               *clp++=blk_attr->attr|' ';
+               *clp++=blk_attr->n_attr|' ';
             else
-               *clp++=norm_attr->attr|' ';
+               *clp++=norm_attr->n_attr|' ';
          }
 	 while(clp-cl<AsciiPos)
-	    *clp++=norm_attr->attr|' ';
+	    *clp++=norm_attr->n_attr|' ';
          ptr=lptr;
          for(i=0; i<16 && !EofAt(ptr); i++,ptr++)
          {
             ca=(InBlock(ptr)?blk_attr:norm_attr);
             if(!ascii && ptr==Offset() && ShowMatchPos)
                ca=SHADOW_ATTR;
-	    *clp++=visualize(ca,CharAt_NoCheck(ptr)|ca->attr);
+	    *clp++=visualize(ca,CharAt_NoCheck(ptr)|ca->n_attr);
          }
 	 // clear the rest of line
 	 for(i=TextWinWidth-(clp-cl); i>0; i--)
-            *clp++=norm_attr->attr|' ';
+            *clp++=norm_attr->n_attr|' ';
 
 	 attrset(0);
 	 mvaddchnstr(TextWinY+line,TextWinX,cl,TextWinWidth);
@@ -561,12 +568,12 @@ void  Redisplay(num line,offs ptr,num limit)
                i=Tabulate(col+ScrShift)-ScrShift;
                if(i>0)
 	       {
-		  *clp++ = ca->attr|' ';
+		  *clp++ = ca->n_attr|' ';
 		  col++;
 		  while(col<i && col<TextWinWidth)
 		  {
 		     ca=FindPosAttr(ptr,line,col,hlp);
-		     *clp++ = ca->attr|' ';
+		     *clp++ = ca->n_attr|' ';
 		     col++;
 		  }
 	       }
@@ -576,7 +583,7 @@ void  Redisplay(num line,offs ptr,num limit)
             else
             {
                if(col>=0)
-		  *clp++=visualize(ca,ch|ca->attr);
+		  *clp++=visualize(ca,ch|ca->n_attr);
 	       col++;
             }
 	    if(hlp)
@@ -591,7 +598,7 @@ void  Redisplay(num line,offs ptr,num limit)
          for( ; col<TextWinWidth; col++)
 	 {
 	    ca=FindPosAttr(ptr,line,col,hlp);
-            *clp++ = ca->attr|' ';
+            *clp++ = ca->n_attr|' ';
 	 }
 
 	 attrset(0);
