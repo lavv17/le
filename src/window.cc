@@ -103,8 +103,12 @@ void  PutWCh(int x,int y,wchar_t ch)
 	 a[1]=vch;
 	 addnwstr(a,2);
       }
-      else
+      else if(w>0)
 	 addnwstr(&vch,1);
+      else if(ch<256)
+	 addch_visual(ch&255);
+      else
+         addch_visual('?');
       attrset(curr_attr->n_attr);
    }
 }

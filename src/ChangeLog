@@ -1,6 +1,7 @@
 2004-12-30  lav
 
 	* getch.cc: workaround KEY_F definition from linux/keyboard.h
+	* window.cc: add code for displaying invalid wchars.
 
 2004-12-22  lav
 
