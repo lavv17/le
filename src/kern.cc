@@ -1004,6 +1004,7 @@ void  EmptyText()
       }
    }
    FileName[0]=0;
+   undo.Clear();
    TextPoint::ResetTextPoints();
 
    if(buffer)

@@ -30,6 +30,7 @@ Undo::Undo()
    chain_tail=0;
    group_open=0;
    current_group=0;
+   group_head=0;
    enabled=true;
    locked=false;
 
@@ -48,6 +49,7 @@ void Undo::Clear()
    chain_tail=chain_ptr=0;
    current_group=0;
    group_open=0;
+   delete group_head;
 }
 Undo::~Undo()
 {
@@ -57,10 +59,11 @@ Undo::~Undo()
 void Undo::BeginUndoGroup()
 {
    if(!group_open)
+   {
       current_group++;
+      group_head=new GroupHead;
+   }
    group_open++;
-   group_pos=CurrentPos;
-   group_stdcol=stdcol;
 }
 void Undo::AddChange(Change *c)
 {
@@ -87,12 +90,11 @@ void Undo::AddChange(Change *c)
    if(!group_open)
    {
       current_group++;
-      group_pos=CurrentPos;
-      group_stdcol=stdcol;
+      group_head=new GroupHead;
    }
    c->group=current_group;
-   c->group_pos=group_pos;
-   c->group_stdcol=group_stdcol;
+   c->group_head=group_head;
+   group_head=0;
    if(glue_changes && chain_tail && chain_tail->Join(c))
    {
       delete c;
@@ -105,11 +107,11 @@ void Undo::AddChange(Change *c)
    chain_tail=c;
    if(!chain_head)
       chain_head=c;
-   group_pos=-1;
-   group_stdcol=-1;
 }
 void Undo::EndUndoGroup()
 {
+   delete group_head;
+   group_head=0;
    if(group_open<=0)
       return;
    group_open--;
@@ -161,8 +163,6 @@ void Undo::UndoGroup()
 	 break;
       chain_ptr=chain_ptr->prev;
    }
-   CurrentPos=chain_ptr->group_pos;
-   stdcol=chain_ptr->group_stdcol;
    locked=false;
 }
 void Undo::RedoGroup()
@@ -194,12 +194,7 @@ void Undo::UndoOne()
    }
    locked=true;
    chain_ptr->Undo();
-   if(chain_ptr->group_pos!=-1)
-   {
-      CurrentPos=chain_ptr->group_pos;
-      stdcol=chain_ptr->group_stdcol;
-   }
-   else
+   if(!chain_ptr->group_head)
       stdcol=GetCol();
    locked=false;
 }
@@ -231,6 +226,8 @@ void Undo::Change::Undo()
       break;
    }
    modified=old_modified;
+   if(group_head)
+      group_head->Undo();
 }
 void Undo::Change::Redo()
 {
@@ -274,7 +271,7 @@ bool Undo::Change::Join(const Change *c)
 {
    if(c->type!=type)
       return false;
-   if(c->group_pos!=-1 && c->group_pos!=c->pos)
+   if(c->group_head && c->group_head->pos!=c->pos)
       return false;
    switch(type)
    {
@@ -352,4 +349,21 @@ void Undo::CheckSize()
 	 }
       }
    }
+}
+
+Undo::GroupHead::GroupHead()
+{
+   pos=CurrentPos;
+   stdcol=::stdcol;
+   block_begin=BlockBegin;
+   block_end=BlockEnd;
+   block_hide=hide;
+}
+void Undo::GroupHead::Undo()
+{
+   CurrentPos=pos;
+   ::stdcol=stdcol;
+   BlockBegin=block_begin;
+   BlockEnd=block_end;
+   hide=block_hide;
 }

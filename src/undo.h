@@ -23,12 +23,22 @@
 
 class Undo
 {
+   struct GroupHead
+   {
+      offs pos;
+      num stdcol;
+      offs block_begin;
+      offs block_end;
+      bool block_hide;
+
+      GroupHead();
+      void Undo();
+   };
    class Change
    {
       friend class Undo;
       unsigned group;
-      offs group_pos;
-      num  group_stdcol;
+      GroupHead *group_head;
       Change *next;
       Change *prev;
       bool Join(const Change *);
@@ -43,7 +53,13 @@ class Undo
    public:
       Change(type_t t,const char *l,num ls,const char *r,num rs);
       ~Change() { free(left); free(right); }
-      size_t GetSize() { return (left?left_size:0)+(right?right_size:0)+sizeof(Change); }
+      size_t GetSize()
+	 {
+	    return (left?left_size:0)
+		  +(right?right_size:0)
+		  +(group_head?sizeof(*group_head):0)
+		  +sizeof(Change);
+	 }
       void Undo();
       void Redo();
    };
@@ -53,8 +69,7 @@ class Undo
    Change *chain_tail;
    int group_open;
    unsigned current_group;
-   offs group_pos;
-   num group_stdcol;
+   GroupHead *group_head;
 
    bool locked;
    bool enabled;
