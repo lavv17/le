@@ -1,20 +1,19 @@
-/*
+/* 
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published by
- * the Free Software Foundation; either version 2, or (at your option)
- * any later version.
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Library General Public License
- * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 #include <config.h>
@@ -120,9 +119,9 @@ struct  opt
 {"KOI-8-BESTA",      MANY,   (void*)&coding, 3,6},
 {"Main",             MANY,   (void*)&coding, 3,7},
 
-{"IBM coding      ≥≈ø⁄¬√¥¿Ÿ¡ƒ",MANY, (void*)&grsetno,32,2},
-{"KOI-8 coding 1  ãùó≤öõåò±ôú",MANY, (void*)&grsetno,32,3},
-{"KOI-8 coding 2  Éïè™íìÑê©ëî",MANY, (void*)&grsetno,32,4},
+{"IBM coding      ˛ ¿ı√»≥¡„¬˝",MANY, (void*)&grsetno,32,2},
+{"KOI-8 coding 1  Ô•˘ô‹¢Óˇò÷£",MANY, (void*)&grsetno,32,3},
+{"KOI-8 coding 2  ‚Ú≈¨∆Ù‰…®Êˆ",MANY, (void*)&grsetno,32,4},
 {"No graphics     |+++++++++-",MANY, (void*)&grsetno,32,5},
 
 {"Use insert/delete line cap.",ONE, &useidl,32,7},

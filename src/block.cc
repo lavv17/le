@@ -1,20 +1,19 @@
-/*
+/* 
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- *
+ * 
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published by
- * the Free Software Foundation; either version 2, or (at your option)
- * any later version.
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Library General Public License
- * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 /* block.cc : block operations */
@@ -43,85 +42,80 @@ char    BlockFile[256];
 
 int     hide=TRUE;
 
-int     InBlock(offs ptr,num line,num col)
+int rInBlock(num line,num col)
 {
-    if(hide)
-        return(FALSE);
-    if(!rblock || hex)
-    {
-        return(ptr>=BlockBegin.Offset() && ptr<BlockEnd.Offset());
-    }
-    else
-    {
-        if(line>=BlockBegin.Line()
-        && line<=BlockEnd.Line())
-        {
-            if(BlockBegin.Col()>BlockEnd.Col())
-            {
-                TextPoint tp=CurrentPos;
-                HardMove(BlockEnd.Line(),BlockBegin.Col());
-                BlockEnd=CurrentPos;
-                CurrentPos=tp;
-            }
-            if(BlockBegin.Col()==BlockEnd.Col())
-                return(col>=BlockBegin.Col());
-            return(col>=BlockBegin.Col() && col<BlockEnd.Col());
-        }
-        return(FALSE);
-    }
+   if(hide)
+      return(FALSE);
+   if(line>=BlockBegin.Line()
+   && line<=BlockEnd.Line())
+   {
+#if 0
+      if(BlockBegin.Col()>BlockEnd.Col())
+      {
+	 TextPoint tp=CurrentPos;
+	 HardMove(BlockEnd.Line(),BlockBegin.Col());
+	 BlockEnd=CurrentPos;
+	 CurrentPos=tp;
+      }
+#endif
+      if(BlockBegin.Col()==BlockEnd.Col())
+	 return(col>=BlockBegin.Col());
+      return(col>=BlockBegin.Col() && col<BlockEnd.Col());
+   }
+   return(FALSE);
 }
 
-void    MoveLineCol(num l,num c)
+void   MoveLineCol(num l,num c)
 {
    CurrentPos=TextPoint(l,c);
 }
-void    HideDisplay()
+void   HideDisplay()
 {
    hide=!hide;
    CheckBlock();
    flag=1;
 }
-char    CharAtLC(num l,num c)
+char   CharAtLC(num l,num c)
 {
-    static  TextPoint   Last;
-    Last=TextPoint(l,c);
-    return((EolAt(Last)||Last.Col()!=c||Last.Line()!=l)?' ':CharAt(Last));
+   static  TextPoint   Last;
+   Last=TextPoint(l,c);
+   return((EolAt(Last)||Last.Col()!=c||Last.Line()!=l)?' ':CharAt(Last));
 }
-void    NewLine()
+void   NewLine()
 {
-    InsertBlock(EolStr,EolSize);
+   InsertBlock(EolStr,EolSize);
 }
 
 /* Moves exactly to specified line/column, edits the text as needed */
-void    HardMove(num l,num c)
+void   HardMove(num l,num c)
 {
-    MoveLineCol(l,c);
-    if(Eof())
-       while(GetLine()<l)
-          NewLine();
-    if(Eol())
-        while(GetCol()<c)
-            InsertChar(' ');
-    if(GetCol()>c)
-    {
-        MoveLeft();
-        ExpandTab();
-        while(GetCol()<c)
-            MoveRight();
-    }
-    stdcol=GetCol();
+   MoveLineCol(l,c);
+   if(Eof())
+      while(GetLine()<l)
+        NewLine();
+   if(Eol())
+      while(GetCol()<c)
+         InsertChar(' ');
+   if(GetCol()>c)
+   {
+      MoveLeft();
+      ExpandTab();
+      while(GetCol()<c)
+         MoveRight();
+   }
+   stdcol=GetCol();
 }
 
-void    ExpandTab()
+void   ExpandTab()
 {
-    int i,size;
-    if(Char()!='\t')
-        return;
-    size=TabSize-GetCol()%TabSize;
-    for(i=size; i>0; i--)
-        InsertChar(' ');
-    DeleteChar();
-    CurrentPos-=size;
+   int i,size;
+   if(Char()!='\t')
+      return;
+   size=TabSize-GetCol()%TabSize;
+   for(i=size; i>0; i--)
+      InsertChar(' ');
+   DeleteChar();
+   CurrentPos-=size;
 }
 
 void    RCopy()
@@ -405,6 +399,55 @@ void    Write()
    close(fd);
 }
 
+int OptionallyConvertBlockNewLines(const char *bname)
+{
+   TextPoint old=CurrentPos;
+
+   int block_size=BlockEnd-BlockBegin;
+   if(rblock || hex || block_size<EolSize)
+      return 1;
+
+   num   dos_nl,unix_nl;
+   CountNewLines(BlockBegin,block_size,&unix_nl,&dos_nl);
+   static struct menu ynMenu[]={{"  &Yes  "},{"   &No   "},{NULL}};
+   char msg[512];
+
+   if(DosEol && dos_nl*2<unix_nl)
+   {
+      sprintf(msg,"The %s block looks like it is in UNIX format,\n"
+		  "whereas the current text is in DOS format\n"
+		  "Do you wish to convert the block?",bname);
+      switch(ReadMenuBox(ynMenu,HORIZ,msg,
+	       " Verify ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
+      {
+      case(0):
+      case('N'):
+	 break;
+      case('Y'):
+	 ConvertFromUnixToDos(BlockBegin,block_size);
+	 break;
+      }
+   }
+   else if(!DosEol && dos_nl*2>unix_nl)
+   {
+      sprintf(msg,"The %s block looks like it is in DOS format,\n"
+		  "whereas the current text is in UNIX format\n"
+		  "Do you wish to convert the block?",bname);
+      switch(ReadMenuBox(ynMenu,HORIZ,msg,
+	       " Verify ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
+      {
+      case(0):
+      case('N'):
+	 break;
+      case('Y'):
+	 ConvertFromDosToUnix(BlockBegin,block_size);
+	 break;
+      }
+   }
+   CurrentPos=old;
+   return 1;
+}
+
 void    Read()
 {
    int             fd;
@@ -466,224 +509,189 @@ void    Read()
    rblock=hide=FALSE;
 
 after_read:
-   act_read=BlockEnd-BlockBegin;
-   if(!hex)
-   {
-      num   dos_nl,unix_nl;
-      CountNewLines(BlockBegin,act_read,&unix_nl,&dos_nl);
-      struct   menu  ynMenu[]={{"  &Yes  "},{"   &No   "},{NULL}};
-
-      if(DosEol && dos_nl*2<unix_nl)
-      {
-	 switch(ReadMenuBox(ynMenu,HORIZ,"The read block looks like it is in UNIX format,\n"
-					 "whereas the current text is in DOS format\n"
-					 "Do you wish to convert the block?",
-		  " Verify ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
-	 {
-	 case(0):
-	 case('N'):
-	    break;
-	 case('Y'):
-	    ConvertFromUnixToDos(BlockBegin,act_read);
-	    break;
-	 }
-      }
-      if(!DosEol && dos_nl*2>unix_nl)
-      {
-	 switch(ReadMenuBox(ynMenu,HORIZ,"The read block looks like it is in DOS format,\n"
-					 "whereas the current text is in UNIX format\n"
-					 "Do you wish to convert the block?",
-		  " Verify ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
-	 {
-	 case(0):
-	 case('N'):
-	    break;
-	 case('Y'):
-	    ConvertFromDosToUnix(BlockBegin,act_read);
-	    break;
-	 }
-      }
-   }
+   OptionallyConvertBlockNewLines("read");
    CurrentPos=BlockEnd;
    stdcol=GetCol();
 }
 
 void    DoIndent(int i)
 {
-    int j;
-    num space;
+   int j;
+   num space;
 
-    flag=1;
+   flag=1;
 
-    if(rblock)
-    {
-        num     li;
-        for(li=BlockBegin.Line(); li<=BlockEnd.Line(); li++)
-        {
-            HardMove(li,BlockBegin.Col());
-            while(!Eol() && isspace(Char()))
-            {
-                ExpandTab();
-                MoveRight();
-            }
-            HardMove(li,BlockBegin.Col());
-            for(j=i; j>0; j--)
-                InsertChar(' ');
-        }
-        return;
-    }
-
-    CurrentPos=BlockBegin;
-    ToLineBegin();
-    BlockBegin=CurrentPos;
-    do
-    {
-        space=0;
-        while(!Eol() && isspace(Char()))
-        {
-            if(Char()=='\t')
-                space=Tabulate(space);
-            else
-                space++;
-            DeleteChar();
-        }
-        j=space+i;
-        if(UseTabs)
-            for(; j>=TabSize; j-=TabSize)
-                InsertChar('\t');
-        for(; j>0; j--)
+   if(rblock)
+   {
+      num    li;
+      for(li=BlockBegin.Line(); li<=BlockEnd.Line(); li++)
+      {
+         HardMove(li,BlockBegin.Col());
+         while(!Eol() && isspace(Char()))
+         {
+            ExpandTab();
+            MoveRight();
+         }
+         HardMove(li,BlockBegin.Col());
+         for(j=i; j>0; j--)
             InsertChar(' ');
-        MoveDown();
-        ToLineBegin();
-    }
-    while(CurrentPos<BlockEnd);
-    BlockEnd=CurrentPos;
-    CheckPoint();
+      }
+      return;
+   }
+
+   CurrentPos=BlockBegin;
+   ToLineBegin();
+   BlockBegin=CurrentPos;
+   do
+   {
+      space=0;
+      while(!Eol() && isspace(Char()))
+      {
+         if(Char()=='\t')
+            space=Tabulate(space);
+         else
+            space++;
+         DeleteChar();
+      }
+      j=space+i;
+      if(UseTabs)
+         for(; j>=TabSize; j-=TabSize)
+            InsertChar('\t');
+      for(; j>0; j--)
+         InsertChar(' ');
+      MoveDown();
+      ToLineBegin();
+   }
+   while(CurrentPos<BlockEnd);
+   BlockEnd=CurrentPos;
+   stdcol=GetCol();
+   CheckPoint();
 }
 void    DoUnindent(int i)
 {
-    int j;
-    num space;
+   int j;
+   num space;
 
-    flag=1;
-    if(rblock)
-    {
-        num     li;
-        for(li=BlockBegin.Line(); li<=BlockEnd.Line(); li++)
-        {
-            HardMove(li,BlockBegin.Col());
-            while(!Eol() && isspace(Char()))
-            {
-                ExpandTab();
-                MoveRight();
-            }
-            HardMove(li,BlockBegin.Col());
-            for(j=i; j>0 && !Eol() && isspace(Char()); j--)
-                DeleteChar();
-        }
-        return;
-    }
-
-    CurrentPos=BlockBegin;
-    ToLineBegin();
-    BlockBegin=CurrentPos;
-    do
-    {
-        space=0;
-        while(!Eol() && isspace(Char()))
-        {
-            if(Char()=='\t')
-                space=Tabulate(space);
-            else
-                space++;
+   flag=1;
+   if(rblock)
+   {
+      num    li;
+      for(li=BlockBegin.Line(); li<=BlockEnd.Line(); li++)
+      {
+         HardMove(li,BlockBegin.Col());
+         while(!Eol() && isspace(Char()))
+         {
+            ExpandTab();
+            MoveRight();
+         }
+         HardMove(li,BlockBegin.Col());
+         for(j=i; j>0 && !Eol() && isspace(Char()); j--)
             DeleteChar();
-        }
-        j=space-i;
-        if(UseTabs)
-            for(; j>=TabSize; j-=TabSize)
-                InsertChar('\t');
-        for(; j>0; j--)
-            InsertChar(' ');
-        MoveDown();
-        ToLineBegin();
-    }
-    while(CurrentPos<BlockEnd);
-    BlockEnd=CurrentPos;
-    CheckPoint();
+      }
+      return;
+   }
+
+   CurrentPos=BlockBegin;
+   ToLineBegin();
+   BlockBegin=CurrentPos;
+   do
+   {
+      space=0;
+      while(!Eol() && isspace(Char()))
+      {
+         if(Char()=='\t')
+            space=Tabulate(space);
+         else
+            space++;
+         DeleteChar();
+      }
+      j=space-i;
+      if(UseTabs)
+         for(; j>=TabSize; j-=TabSize)
+            InsertChar('\t');
+      for(; j>0; j--)
+         InsertChar(' ');
+      MoveDown();
+      ToLineBegin();
+   }
+   while(CurrentPos<BlockEnd);
+   BlockEnd=CurrentPos;
+   stdcol=GetCol();
+   CheckPoint();
 }
 
-char    is[64]="";
-void    Indent()
+char   is[64]="";
+void   Indent()
 {
-    int     i;
-    CheckBlock();
-    if(View || hide)
-        return;
-    if(is[0]==0)
-        sprintf(is,"%d",IndentSize);
-    if(getstring("Indent size: ",is,sizeof(is)-1,NULL,NULL,NULL)<1)
-        return;
-    if(sscanf(is,"%d",&i)==0 || i==0 || abs(i)>1024)
-    {
-        is[0]=0;
-        return;
-    }
-    if(i>0)
-        DoIndent(i);
-    else
-        DoUnindent(-i);
+   int    i;
+   CheckBlock();
+   if(View || hide)
+      return;
+   if(is[0]==0)
+      sprintf(is,"%d",IndentSize);
+   if(getstring("Indent size: ",is,sizeof(is)-1,NULL,NULL,NULL)<1)
+      return;
+   if(sscanf(is,"%d",&i)==0 || i==0 || abs(i)>1024)
+   {
+      is[0]=0;
+      return;
+   }
+   if(i>0)
+      DoIndent(i);
+   else
+      DoUnindent(-i);
 }
-void    Unindent()
+void   Unindent()
 {
-    int     i;
-    CheckBlock();
-    if(View || hide)
-        return;
-    if(is[0]==0)
-        sprintf(is,"%d",IndentSize);
-    if(getstring("Unindent size: ",is,sizeof(is)-1,NULL,NULL,NULL)<1)
-        return;
-    if(sscanf(is,"%d",&i)==0 || i==0 || abs(i)>1024)
-    {
-        is[0]=0;
-        return;
-    }
-    if(i>0)
-        DoUnindent(i);
-    else
-        DoIndent(-i);
+   int    i;
+   CheckBlock();
+   if(View || hide)
+      return;
+   if(is[0]==0)
+      sprintf(is,"%d",IndentSize);
+   if(getstring("Unindent size: ",is,sizeof(is)-1,NULL,NULL,NULL)<1)
+      return;
+   if(sscanf(is,"%d",&i)==0 || i==0 || abs(i)>1024)
+   {
+      is[0]=0;
+      return;
+   }
+   if(i>0)
+      DoUnindent(i);
+   else
+      DoIndent(-i);
 }
 
 int Islower(byte ch)
 {
-    return(islower(ch) || islowerrus(ch));
+   return(islower(ch) || islowerrus(ch));
 }
 int Isupper(byte ch)
 {
-    return(isupper(ch) || isupperrus(ch));
+   return(isupper(ch) || isupperrus(ch));
 }
-byte    Toupper(byte ch)
+byte   Toupper(byte ch)
 {
-    if(islowerrus(ch))
-        ch=toupperrus(ch);
-    else if(islower(ch))
-        ch=toupper(ch);
-    return(ch);
+   if(islowerrus(ch))
+      ch=toupperrus(ch);
+   else if(islower(ch))
+      ch=toupper(ch);
+   return(ch);
 }
-byte    Tolower(byte ch)
+byte   Tolower(byte ch)
 {
-    if(isupperrus(ch))
-        ch=tolowerrus(ch);
-    else if(isupper(ch))
-        ch=tolower(ch);
-    return(ch);
+   if(isupperrus(ch))
+      ch=tolowerrus(ch);
+   else if(isupper(ch))
+      ch=tolower(ch);
+   return(ch);
 }
-byte    Inverse(byte ch)
+byte   Inverse(byte ch)
 {
-    if(Islower(ch))
-        return(Toupper(ch));
-    else
-        return(Tolower(ch));
+   if(Islower(ch))
+      return(Toupper(ch));
+   else
+      return(Tolower(ch));
 }
 
 void    BlockFunc()

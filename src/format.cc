@@ -2,19 +2,18 @@
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
  * 
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published by
- * the Free Software Foundation; either version 2, or (at your option)
- * any later version.
- * 
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- * 
- * You should have received a copy of the GNU Library General Public License
- * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330, 
- * Boston, MA 02111-1307, USA. 
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 /*_____________________________________________________________________________
@@ -54,7 +53,7 @@ void  FormatPara()
    if(Eof())
       return;
 
-   /* свернем параграф, т.е. удалим все пробелы кроме одного и переводы строк */
+   /* тзйсПйм обсблсбк, у.й. ьЩбчпм зтй оснцйчЦ щснмй нЩПнлн п ойсйзнЩЦ туснщ */
    for(;;)
    {
       while(Char()!=' ' && Char()!='\t' && !Eol())
@@ -79,7 +78,7 @@ void  FormatPara()
             break;
          }
          while(i-->0)
-            BackSpace();   /* удалить старый отступ */
+            BackSpace();   /* ьЩбчпуш тубсЦв нутуьо */
       }
       InsertChar(' ');
    }
@@ -90,7 +89,7 @@ void  FormatPara()
 
    if(LeftAdj)
    {
-      /* создадим отступ первой строки */
+      /* тнУЩбЩпм нутуьо ойсзнв туснщп */
       for(i=ncol=0; ncol<LeftMargin+FirstLineMargin && isspace(Char()) && !Eol(); i++)
       {
          if(Char()=='\t')
@@ -130,14 +129,14 @@ void  FormatPara()
    {
       if(GetCol()>LineLen+LeftMargin)
       {
-         /* если очередное слово вылезло за правый край, то ... */
+         /* йтчп н²йсйЩПнй тчнзн зЦчйУчн Уб осбзЦв щсбв, ун ... */
          while(!Bol() && !isspace(CharRel(-1)))
             MoveLeft();
-         while(!Bol() && isspace(CharRel(-1)))   /* на одно слово влево */
+         while(!Bol() && isspace(CharRel(-1)))   /* Пб нЩПн тчнзн зчйзн */
             MoveLeft();
          if(Bol())
          {
-            stdcol=0;   /* слово занимает всю строку */
+            stdcol=0;   /* тчнзн УбПпмбйу зта туснщь */
             while(!Eol() && isspace(Char()))
                MoveRight();
             while(!Eol() && !isspace(Char()))
@@ -158,7 +157,7 @@ void  FormatPara()
          
 	 if(RightAdj && LeftAdj)
          {
-            /* растянем строку до нужного размера */
+            /* сбтурПйм туснщь Щн ПьыПнлн сбУмйсб */
 
             int gap_num=0;
             int spaces_to_insert=LineLen+LeftMargin-bcol;
@@ -232,7 +231,7 @@ void  FormatPara()
       else
       {
 	 if(Eol())
-	    break;   /* конец строки и параграфа */
+	    break;   /* щнПйх туснщп п обсблсбкб */
          MoveRight();
       }
    }
