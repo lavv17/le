@@ -238,10 +238,7 @@ int   Delete()
 void    RMove()
 {
    num    oldcol,oldline;
-   num    oldcol1=BlockBegin.Col();
-   num    oldcol2=BlockEnd.Col();
    num    oldline2=BlockEnd.Line();
-   num    i;
    num    h=BlockEnd.Line()-BlockBegin.Line()+1;
             /* height of the block */
 
