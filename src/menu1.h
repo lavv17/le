@@ -25,11 +25,22 @@ typedef struct	sr_menu
 	char	*text;	/* the text of the item, NULL means end of (sub)menu */
 	byte	fl;
 	void	(*func)(void);	/* the function to call		*/
-	bool	(*valid)();
+	unsigned cond;
 } Menu1;
 
 #define SUBM    1
 #define FUNC    2
 #define HIDE    4
+
+enum menu_conds
+{
+   MENU_COND_RW=1,
+   MENU_COND_RO=2,
+   MENU_COND_BLOCK=4,
+   MENU_COND_NO_MM=8,
+   MENU_COND_CLIPBOARD=16
+};
+
+void LoadMainMenu();
 
 #endif /* MENU1_H */

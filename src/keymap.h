@@ -77,6 +77,7 @@ enum  Action
 // File ops
    LOAD_FILE,
    SWITCH_FILE,
+   REOPEN_FILE_RW,
    SAVE_FILE,
    SAVE_FILE_AS,
    FILE_INFO,
@@ -117,7 +118,7 @@ enum  Action
    FORMAT_ONE_PARA,
    FORMAT_DOCUMENT,
    CENTER_LINE,
-   AJUST_RIGHT_LINE,
+   ADJUST_RIGHT_LINE,
    FORMAT_FUNC_BAR,
 
 // Others
@@ -168,6 +169,22 @@ enum  Action
    SWITCH_TEXT_MODE,
    SWITCH_GRAPH_MODE,
 
+   EDIT_CHARSET,
+   SET_CHARSET_8BIT,
+   SET_CHARSET_8BIT_NO_CONTROL,
+   SAVE_TERMINAL_OPTIONS,
+   EDIT_COLORS,
+   SAVE_COLORS,
+   SAVE_COLORS_FOR_TERM,
+   LOAD_COLOR_DEFAULT,
+   LOAD_COLOR_DEFBG,
+   LOAD_COLOR_BLACK,
+   LOAD_COLOR_BLUE,
+   LOAD_COLOR_GREEN,
+   LOAD_COLOR_WHITE,
+   PROGRAMS_OPTIONS,
+   ABOUT,
+
    MOUSE_ACTION,
    NO_ACTION
 };
@@ -205,5 +222,9 @@ void  WriteActionMap(FILE*);
 ActionProc  GetActionProc(ActionProcRec*,int action);
 void  EditorReadKeymap();
 void  RebuildKeyTree();
+
+int   FindActionCode(const char *);
+
+const char *ShortcutPrettyPrint(int c);
 
 #endif /* KEYMAP_H */

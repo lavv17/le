@@ -25,6 +25,7 @@
 #include "keymap.h"
 #include "format.h"
 #include "search.h"
+#include "colormnu.h"
 
 ActionProcRec  EditorActionProcTable[]=
 {
@@ -83,6 +84,7 @@ ActionProcRec  EditorActionProcTable[]=
 // File ops
    {LOAD_FILE,UserLoad},
    {SWITCH_FILE,UserSwitch},
+   {REOPEN_FILE_RW,(void(*)())ReopenRW},
    {SAVE_FILE,(void(*)())UserSave},
    {SAVE_FILE_AS,(void(*)())UserSaveAs},
    {FILE_INFO,UserInfo},
@@ -123,7 +125,7 @@ ActionProcRec  EditorActionProcTable[]=
    {FORMAT_ONE_PARA,FormatPara},
    {FORMAT_DOCUMENT,FormatAll},
    {CENTER_LINE,CenterLine},
-   {AJUST_RIGHT_LINE,ShiftRightLine},
+   {ADJUST_RIGHT_LINE,ShiftRightLine},
    {FORMAT_FUNC_BAR,FormatFunc},
 
 // Others
@@ -173,6 +175,22 @@ ActionProcRec  EditorActionProcTable[]=
    {SWITCH_RUSSIAN_MODE,UserSwitchRussianMode},
    {SWITCH_TEXT_MODE,UserSwitchTextMode},
    {SWITCH_GRAPH_MODE,UserSwitchGraphMode},
+
+   {EDIT_CHARSET,edit_chset},
+   {SET_CHARSET_8BIT,set_chset_8bit},
+   {SET_CHARSET_8BIT_NO_CONTROL,set_chset_8bit_noctrl},
+   {SAVE_TERMINAL_OPTIONS,SaveTermOpt},
+   {EDIT_COLORS,ColorsOpt},
+   {SAVE_COLORS,ColorsSave},
+   {SAVE_COLORS_FOR_TERM,ColorsSaveForTerminal},
+   {LOAD_COLOR_DEFAULT,LoadColorDefault},
+   {LOAD_COLOR_DEFBG,LoadColorDefaultBG},
+   {LOAD_COLOR_BLACK,LoadColorBlack},
+   {LOAD_COLOR_BLUE,LoadColorBlue},
+   {LOAD_COLOR_GREEN,LoadColorGreen},
+   {LOAD_COLOR_WHITE,LoadColorWhite},
+   {PROGRAMS_OPTIONS,ProgOpt},
+   {ABOUT,UserAbout},
 
    {-1,NULL}
 };

@@ -95,6 +95,7 @@ ActionNameRec  ActionNameTable[]=
 // File ops
    {LOAD_FILE,"load-file"},
    {SWITCH_FILE,"switch-file"},
+   {REOPEN_FILE_RW,"reopen-file-rw"},
    {SAVE_FILE,"save-file"},
    {SAVE_FILE_AS,"save-file-as"},
    {FILE_INFO,"file-info"},
@@ -135,7 +136,7 @@ ActionNameRec  ActionNameTable[]=
    {FORMAT_ONE_PARA,"format-paragraph"},
    {FORMAT_DOCUMENT,"format-document"},
    {CENTER_LINE,"center-line"},
-   {AJUST_RIGHT_LINE,"ajust-right-line"},
+   {ADJUST_RIGHT_LINE,"adjust-right-line"},
    {FORMAT_FUNC_BAR,"format-functions"},
 
 // Others
@@ -164,6 +165,7 @@ ActionNameRec  ActionNameTable[]=
 
    {SUSPEND_EDITOR,"suspend-editor"},
    {QUIT_EDITOR,"escape"},
+   {QUIT_EDITOR,"quit-editor"},
 
    {COMPILE_CMD,"compile"},
    {MAKE_CMD,"make"},
@@ -183,6 +185,22 @@ ActionNameRec  ActionNameTable[]=
    {SWITCH_RUSSIAN_MODE,"switch-russian-mode"},
    {SWITCH_TEXT_MODE,"switch-text-mode"},
    {SWITCH_GRAPH_MODE,"switch-graph-mode"},
+
+   {EDIT_CHARSET,"edit-charset"},
+   {SET_CHARSET_8BIT,"set-charset-8bit"},
+   {SET_CHARSET_8BIT_NO_CONTROL,"set-charset-8bit-no-control"},
+   {SAVE_TERMINAL_OPTIONS,"save-terminal-options"},
+   {EDIT_COLORS,"edit-colors"},
+   {SAVE_COLORS,"save-colors"},
+   {SAVE_COLORS_FOR_TERM,"save-colors-for-terminal"},
+   {LOAD_COLOR_DEFAULT,"load-color-default"},
+   {LOAD_COLOR_DEFBG,"load-color-defbg"},
+   {LOAD_COLOR_BLACK,"load-color-black"},
+   {LOAD_COLOR_BLUE,"load-color-blue"},
+   {LOAD_COLOR_GREEN,"load-color-green"},
+   {LOAD_COLOR_WHITE,"load-color-white"},
+   {PROGRAMS_OPTIONS,"programs-options"},
+   {ABOUT,"about"},
 
    {-1,NULL}
 };
@@ -220,7 +238,7 @@ char  *GetActionName(int action)
    return(NULL);
 }
 
-char  *GetActionCodeText(char *code)
+const char *GetActionCodeText(const char *code)
 {
    static char code_text[1024];
    char  *store=code_text;
@@ -243,6 +261,180 @@ char  *GetActionCodeText(char *code)
    }
    *store=0;
    return(code_text);
+}
+
+#define LEFT_BRACE  '{'
+#define RIGHT_BRACE '}'
+
+static int PrettyCodeScore(const char *c)
+{
+   if(c==0)
+      return 1000000;
+
+   int score=0;
+   while(*c)
+   {
+      score++;
+
+      char  term_name[256];
+      char  *term_str;
+      int   bracket;
+      int   fk;
+      int   shift;
+      char code_ch=*c;
+      switch(code_ch)
+      {
+      case('$'):
+	 code_ch=*(++c);
+
+	 if(code_ch==0)
+	    break;
+
+	 bracket=(code_ch==LEFT_BRACE);
+	 c+=bracket;
+
+	 term_str=term_name;
+	 while(*c!=0 && (bracket?*c!=RIGHT_BRACE:isalnum(*c)) && term_str-term_name<255)
+	    *term_str++=*c++;
+	 *term_str=0;
+	 if(!(bracket && *c==RIGHT_BRACE))
+	    c--;
+
+	 if(sscanf(term_name,"%1dkf%d",&shift,&fk)==2
+	 || sscanf(term_name,"kf%d",&fk)==1)
+	 {
+	    if(shift)
+	       score+=4*shift;
+	    else
+	       score+=2;
+	 }
+	 else
+	    score+=8;
+
+	 break;
+      case('|'):
+	 score+=5;
+	 break;
+      case('^'):;
+      case('\\'):;
+      }
+      c++;
+   }
+   return score;
+}
+
+const char *ActionCodePrettyPrint(const char *c)
+{
+   static char code_text[1024];
+   char  *store=code_text;
+   *store=0;
+
+   while(*c)
+   {
+      char  term_name[256];
+      char  *term_str;
+      int   bracket;
+      int   fk;
+      int   shift;
+      char  code_ch=*c;
+      switch(code_ch)
+      {
+      case('$'):
+	 code_ch=*(++c);
+
+	 if(code_ch==0)
+	    break;
+
+	 bracket=(code_ch==LEFT_BRACE);
+	 c+=bracket;
+
+	 term_str=term_name;
+	 while(*c!=0 && (bracket?*c!=RIGHT_BRACE:isalnum(*c)) && term_str-term_name<255)
+	    *term_str++=*c++;
+	 *term_str=0;
+	 if(!(bracket && *c==RIGHT_BRACE))
+	    c--;
+
+	 shift=0;
+	 if((sscanf(term_name,"%1dkf%d",&shift,&fk)==2
+	  || sscanf(term_name,"kf%d",&fk)==1) && shift<4)
+	 {
+	    static char shift_str_map[][3]={"","~","^","~^"};
+	    store+=sprintf(store,"%sF%d",shift_str_map[shift],fk);
+	 }
+	 else
+	 {
+	    // FIXME.
+	    store+=sprintf(store,"%s",term_name);
+	 }
+	 if(c[1] && c[1]!='|')
+	 {
+	    *store++=' ';
+	    *store=0;
+	 }
+	 break;
+      case('|'):
+	 *store++='+';
+	 *store=0;
+	 break;
+      case('^'):
+	 if(c[1])
+	 {
+	    *store++='^';
+	    *store++=toupper(*++c);
+	    *store=0;
+	    break;
+	 }
+	 goto default_l;
+      case('\\'):
+	 code_ch=*(++c);
+      default:
+      default_l:
+	 if(code_ch==27 && c[1]=='|' && c[2] && c[2]!='$')
+	 {
+	    *store++='M';
+	    *store++='-';
+	    *store=0;
+	    c++;
+	 }
+	 else if(code_ch<32)
+	 {
+	    *store++='^';
+	    *store++=code_ch+'@';
+	 }
+	 else
+	    *store++=code_ch;
+	 *store=0;
+      }
+      c++;
+   }
+   return code_text;
+}
+
+const char *ShortcutPrettyPrint(int c)
+{
+   static char code_text[1024];
+   char  *store=code_text;
+
+   const char *best_code=0;
+   int best_score=1000000;
+   for(int i=0; ActionCodeTable[i].action!=-1; i++)
+   {
+      if(ActionCodeTable[i].action!=c)
+	 continue;
+      const char *code=ActionCodeTable[i].code;
+      int score=PrettyCodeScore(code);
+      if(score<best_score)
+      {
+	 best_code=code;
+	 best_score=score;
+      }
+   }
+   if(best_code==0)
+      return 0;
+
+   strcpy(store,ActionCodePrettyPrint(best_code));
+   return code_text;
 }
 
 void  WriteActionMap(FILE *f)
@@ -334,7 +526,7 @@ KeyTreeNode *BuildKeyTree(ActionCodeRec *ac_table)
 	       code+=bracket;
 
 	       term_str=term_name;
-	       while(*code!=0 && (bracket?*code==RIGHT_BRACE:isalnum(*code)) && term_str-term_name<255)
+	       while(*code!=0 && (bracket?*code!=RIGHT_BRACE:isalnum(*code)) && term_str-term_name<255)
 		  *term_str++=*code++;
 	       *term_str=0;
 	       if(bracket && *code==RIGHT_BRACE)
@@ -418,6 +610,18 @@ void RebuildKeyTree()
    KeyTree=BuildKeyTree(ActionCodeTable);
 }
 
+int FindActionCode(const char *ActionName)
+{
+   int action_no;
+
+   /* find the named action in table */
+   for(action_no=0; ActionNameTable[action_no].action!=-1
+      && strcmp(ActionNameTable[action_no].name,ActionName); action_no++);
+
+   return ActionNameTable[action_no].action;
+}
+
+
 void  ReadActionMap(FILE *f)
 {
    char  ActionName[256];
@@ -427,7 +631,6 @@ void  ReadActionMap(FILE *f)
    ActionCodeRec  *NewTable=NULL;
    int   CurrTableSize=0;
    int   CurrTableCell=0;
-   int   action_no;
 
    for(;;)  /* line cycle */
    {
@@ -442,12 +645,8 @@ void  ReadActionMap(FILE *f)
       }
       *store=0;
 
-      /* find the named action in table */
-      for(action_no=0; ActionNameTable[action_no].action!=-1
-         && strcmp(ActionNameTable[action_no].name,ActionName); action_no++);
-
-      /* is the action found in the table ? */
-      if(ActionNameTable[action_no].action==-1)
+      int action_found=FindActionCode(ActionName);
+      if(action_found==-1)
       {
          while(ch!='\n' && ch!=EOF)
             ch=fgetc(f);
@@ -523,7 +722,7 @@ void  ReadActionMap(FILE *f)
             exit(1);
          }
       }
-      NewTable[CurrTableCell].action=ActionNameTable[action_no].action;
+      NewTable[CurrTableCell].action=action_found;
       NewTable[CurrTableCell].code=strdup(ActionCode);
       if(NewTable[CurrTableCell].code==NULL)
       {

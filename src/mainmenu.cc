@@ -27,13 +27,13 @@
 #include "about.h"
 #include "search.h"
 
-static bool RW() { return !View; }
-static bool BLK() { return !hide; }
-static bool noMM() { return !buffer_mmapped; }
-static bool RW_BLK() { return RW() && BLK(); }
-static bool RW_noMM() { return RW() && noMM(); }
-static bool RW_BLK_noMM() { return RW_BLK() && noMM(); }
-static bool RW_CLIP() { return RW() && !MainClipBoard.IsEmpty(); }
+#define RW  MENU_COND_RW
+#define BLK MENU_COND_BLOCK
+#define noMM MENU_COND_NO_MM
+#define RW_BLK MENU_COND_RW|MENU_COND_BLOCK
+#define RW_noMM MENU_COND_RW|MENU_COND_NO_MM
+#define RW_BLK_noMM MENU_COND_RW|MENU_COND_BLOCK|MENU_COND_NO_MM
+#define RW_CLIP MENU_COND_RW|MENU_COND_CLIPBOARD
 
 typedef void (*f)();
 

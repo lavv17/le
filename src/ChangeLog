@@ -1,3 +1,10 @@
+2000-09-15  lav
+
+	* edit.cc: call LoadMainMenu.
+	* keymap.cc, keymap.h, keymapdf.cc, keymapfn.cc: lots of new functions;
+	  pretty keys support.
+	* menu1.cc, menu1.h: loadable menu support.
+
 2000-09-04  lav
 
 	* edit.cc, loadsave.cc: support DISABLE_FILE_LOCKS

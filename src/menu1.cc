@@ -19,8 +19,11 @@
 #include <config.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 #include "edit.h"
 #include "keymap.h"
+#include "clipbrd.h"
+#include "block.h"
 
 extern   Menu1 MainMenu[];
 
@@ -34,8 +37,20 @@ int   IsValid(int n)
 {
    if(!strcmp(m[n].text,"---"))
       return(2);
-   if(m[n].valid && !(*m[n].valid)())
+   if((m[n].cond&MENU_COND_RW) && View)
       return(1);
+   if((m[n].cond&MENU_COND_RO) && !View)
+      return(1);
+   if((m[n].cond&MENU_COND_NO_MM) && buffer_mmapped)
+      return 1;
+   if((m[n].cond&MENU_COND_CLIPBOARD) && MainClipBoard.IsEmpty())
+      return 1;
+   if((m[n].cond&MENU_COND_BLOCK))
+   {
+      CheckBlock();
+      if(hide)
+	 return 1;
+   }
    return(0);
 }
 
@@ -236,6 +251,37 @@ void  CreateMenuWindow(int n,int x,int y)
    }
    while(o<n);
    m[n-1].func=(void(*)())CreateWin(x,y+1,width,height+2,MENU_ATTR,"",0);
+
+   char *tab;
+   char *end;
+   int clear_len;
+   do
+   {
+      if(!strcmp(m[n].text,"---"))
+	 goto next;
+      clear_len=width-2-ItemLen(m[n].text);
+      if(clear_len<0)
+	 goto next;
+      tab=strchr(m[n].text,'\t');
+      if(tab)
+      {
+	 clear_len++;
+	 memmove(tab+clear_len,tab+1,strlen(tab+1)+1);
+	 memset(tab,' ',clear_len);
+      }
+      else
+      {
+	 if(clear_len==0)
+	    goto next;
+	 end=m[n].text+strlen(m[n].text);
+	 memset(end,' ',clear_len);
+	 end[clear_len]=0;
+      }
+   next:
+      o=n;
+      n=NextItem(n);
+   }
+   while(o<n);
 }
 
 void  InitMenu()
@@ -444,4 +490,158 @@ leave_menu:
       CloseWin();
    CloseWin();
    refresh();
+}
+
+extern void fskip(FILE*);
+
+void LoadMainMenu()
+{
+   FILE *f;
+   char fn[1024];
+   char func[256];
+   char str[256];
+   int mi=0;
+   int level=0;
+
+   sprintf(fn,"%s/.le/mainmenu",HOME);
+
+   f=fopen(fn,"r");
+   if(f)
+      goto read_it;
+
+   f=fopen(PKGDATADIR "/mainmenu","r");
+   if(f==0)
+      return;
+
+read_it:
+   m=(Menu1*)calloc(1024,sizeof(Menu1));
+   if(!m)
+   {
+      fclose(f);
+      return;
+   }
+
+   for(;;)
+   {
+      int c=fgetc(f);
+      if(c=='#')
+      {
+	 fskip(f);
+	 continue;
+      }
+      if(c==' ' || c=='\t' || c=='\n')
+	 continue;
+      if(c==EOF)
+	 break;
+      ungetc(c,f);
+
+      if(fscanf(f,"%256s",func)!=1)
+	 break;
+      if(!strcmp(func,"submenu") || !strcmp(func,"function"))
+      {
+	 for(;;)
+	 {
+	    c=fgetc(f);
+	    if(c!=' ' && c!='\t')
+	       break;
+	 }
+	 if(c!='"')
+	 {
+	    if(c!='\n' && c!=EOF)
+	       fskip(f);
+	    continue;
+	 }
+	 if(fscanf(f,"%[^\"]\"",str)!=1)
+	 {
+	    fskip(f);
+	    continue;
+	 }
+	 m[mi].text=(char*)malloc(strlen(str)+2+128);
+	 sprintf(m[mi].text," %s ",str);
+	 if(!strcmp(func,"submenu"))
+	 {
+	    m[mi].fl=SUBM;
+	    m[mi].func=0;
+	    level++;
+	 }
+	 else
+	 {
+	    m[mi].fl=FUNC;
+
+	    for(;;)
+	    {
+	       c=fgetc(f);
+	       if(c!=' ' && c!='\t')
+		  break;
+	    }
+	    if(c==EOF)
+	       break;
+	    ungetc(c,f);
+	    if(c=='\n')
+	       continue;
+
+	    if(fscanf(f,"%s",str)==1)
+	    {
+	       int code=FindActionCode(str);
+	       if(code!=-1)
+	       {
+		  m[mi].func=GetActionProc(EditorActionProcTable,code);
+		  const char *shcut=ShortcutPrettyPrint(code);
+		  if(shcut && level>0)
+		     sprintf(m[mi].text+strlen(m[mi].text),"\t%s ",shcut);
+	       }
+	       if(m[mi].func==0)
+		  fprintf(stderr,"invalid function name: %s\n",str);
+	    }
+	 }
+	 for(;;)
+	 {
+	    for(;;)
+	    {
+	       c=fgetc(f);
+	       if(c!=' ' && c!='\t')
+		  break;
+	    }
+	    if(c==EOF)
+	       break;
+	    ungetc(c,f);
+
+	    if(c=='\n')
+	       break;
+
+	    if(fscanf(f,"%s",str)==1)
+	    {
+	       if(!strcmp(str,"hide"))
+		  m[mi].fl|=HIDE;
+	       else if(!strcmp(str,"rw"))
+		  m[mi].cond|=MENU_COND_RW;
+	       else if(!strcmp(str,"ro"))
+		  m[mi].cond|=MENU_COND_RO;
+	       else if(!strcmp(str,"block"))
+		  m[mi].cond|=MENU_COND_BLOCK;
+	       else if(!strcmp(str,"no-mm"))
+		  m[mi].cond|=MENU_COND_NO_MM;
+	    }
+	 }
+	 mi++;
+	 fskip(f);
+      }
+      else if(!strcmp(func,"hline"))
+      {
+	 m[mi++].text="---";
+	 fskip(f);
+      }
+      else if(!strcmp(func,"end"))
+      {
+	 m[mi++].text=0;
+	 level--;
+	 fskip(f);
+      }
+      else
+      {
+	 fskip(f);
+      }
+   }
+   fclose(f);
+   InitMenu();
 }

@@ -455,6 +455,8 @@ void    Initialize()
 
    EditorReadKeymap();
    RebuildKeyTree();
+
+   LoadMainMenu();
 }
 void    Terminate()
 {
