@@ -3,7 +3,9 @@
 	* chset.cc, chset.h: (chset_isprint) new function.
 	* edit.h: don't redefine _XOPEN_SOURCE_EXTENDED.
 	* mb.cc: make mb_ptr const.
-	* screen.cc: use chset_isprint; fix highlight in mb_mode.
+	* screen.cc: use chset_isprint; fix highlight in mb_mode;
+	  display wchar code.
+	* mb.h: add missing macros.
 
 2004-03-23  lav
 

@@ -313,13 +313,18 @@ void  StatusLine()
       return;
 
    if(Eof())
-      strcpy(chr,"EOF");
+      strcpy(chr,"Ch:EOF");
    else
    {
       if(Eol())
-	 strcpy(chr,"EOL");
+	 strcpy(chr,"Ch:EOL");
       else
-	 sprintf(chr,"%-3d",Char());
+      {
+	 if(MBCheckRight() && MBCharSize>1)
+	    sprintf(chr,"UC:%04X",WChar());
+	 else
+	    sprintf(chr,"Ch:%-3d",Char());
+      }
    }
 
    if(View)
@@ -369,7 +374,7 @@ void  StatusLine()
 	 (unsigned long)(((Text&&Eol())?stdcol:GetCol())+1));
 
    sprintf(status+strlen(status),
-      " Size:%-6lu Ch:%3s %s %s Offs:%lu (%d%%)",
+      " Sz:%-6lu %-7s %s %s Offs:%lu (%d%%)",
          (unsigned long)(Size()),chr,flags,name,(unsigned long)(Offset()),
          (int)(Size()?(Offset()*100.+Size()/2)/Size():100));
 

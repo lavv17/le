@@ -38,6 +38,7 @@ static inline int CharWidthAt(offs o) { MBCheckAt(o); return MBCharWidth; }
 static inline int CharSizeAt(offs o)  { MBCheckAt(o); return MBCharSize;  }
 static inline int CharSize()  { return CharSizeAt(Offset()); }
 static inline int CharWidth() { return CharWidthAt(Offset()); }
+static inline int WChar() { return WCharAt(Offset()); }
 
 #else
 # define mb_mode	(false)
@@ -51,6 +52,8 @@ static inline int CharWidth() { return CharWidthAt(Offset()); }
 # define CharSizeAt(o)	(1)
 # define CharWidth()	(1)
 # define CharSize()	(1)
+# define WCharAt(o)	CharAt((o))
+# define WChar()	Char()
 #endif
 
 #endif//MB_H
