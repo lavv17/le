@@ -1,6 +1,7 @@
 2001-07-06	lav
 
 	* keymap-emacs: add suspend-editor $kspd.
+	* syntax: add defined keyword to perl mode.
 
 2001-06-25	Abel Morabito <abelmora@crosswinds.net>
 
