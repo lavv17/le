@@ -463,7 +463,7 @@ void syntax_hl::attrib_line(const char *buf1,int len1,
 #ifdef HAVE_TIMES
 	 times(&tms);
 	 clock_t clock1=tms.tms_utime;
-	 if(clock1-clock>CLK_TCK/5)
+	 if(clock1-clock>CLOCKS_PER_SEC/5)
 	    break;
 #endif
       }

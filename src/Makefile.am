@@ -17,5 +17,3 @@ CPPFLAGS = -DPKGDATADIR=\"$(pkgdatadir)\"
 
 EXTRA_DIST = le.hlp
 pkgdata_DATA = le.hlp
-
-OMIT_DEPENDENCIES = fnmatch.h poll.h
