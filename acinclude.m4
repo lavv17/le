@@ -290,7 +290,7 @@ AC_DEFUN(LE_CURSES_BOOL,
       CFLAGS="$old_CFLAGS"
    ])
    AC_MSG_RESULT($ac_cv_curses_bool)
-   if test x$ac_cv_curses_bool != xunknown; then
+   if test "x$ac_cv_curses_bool" != xunknown; then
       AC_DEFINE_UNQUOTED(LE_CURSES_BOOL_TYPE,$ac_cv_curses_bool)
    fi
   fi

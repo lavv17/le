@@ -1,3 +1,7 @@
+2001-01-17  Paul Slootman <paul@debian.org>
+
+	* acinclude.m4: add quotes (fixes build on alpha).
+
 2000-01-21  lav
 
 	* acinclude.m4: check if curses.h tries to declare bool in C++.
