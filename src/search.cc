@@ -406,6 +406,18 @@ void  ReplaceFound()
 	    break;
 	 char ch=*scan++;
 	 scan_len--;
+	 if(ch=='\\')
+	 {
+	 insert_ch:
+	    if(buffer_mmapped)
+	       ReplaceCharMove(ch);
+	    else
+	    {
+	       InsertChar(ch);
+	       o++;
+	    }
+	    continue;
+	 }
 	 if(ch=='&')
 	    ch='0';
 	 if(ch>='0' && ch<='9')
@@ -425,7 +437,13 @@ void  ReplaceFound()
 		  CurrentPos+=rlen;
 	       }
 	    }
+	    continue;
 	 }
+	 // we've got an unknown backslashed sequence. Insert it verbatim.
+	 scan--;
+	 scan_len++;
+	 ch='\\';
+	 goto insert_ch;
       }
    }
    else

@@ -88,7 +88,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {LINE_UP,"$kcuu1"},
    {LINE_DOWN,"$kcud1"},
 
-// Movement with block marking
+// Movement with block marking (new xterm codes)
    {MARK_CHAR_LEFT,"\eO2D"},
    {MARK_CHAR_RIGHT,"\eO2C"},
    {MARK_WORD_LEFT,"\eO6D"},
@@ -97,10 +97,10 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {MARK_LINE_END,"\eO2F"},
    {MARK_TEXT_BEGIN,"\eO6H"},
    {MARK_TEXT_END,"\eO6F"},
-//    {MARK_NEXT_PAGE,""},
-//    {MARK_PREV_PAGE,""},
-//    {MARK_PAGE_TOP,""},
-//    {MARK_PAGE_BOTTOM,""},
+   {MARK_NEXT_PAGE,"\e[6;2~"},
+   {MARK_PREV_PAGE,"\e[5;2~"},
+   {MARK_PAGE_TOP,"\e[5;6~"},
+   {MARK_PAGE_BOTTOM,"\e[6;6~"},
    {MARK_LINE_UP,"\eO2A"},
    {MARK_LINE_DOWN,"\eO2B"},
 
@@ -146,6 +146,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {COPY_BLOCK,"$kf11"},
    {MOVE_BLOCK,"$kf12"},
    {DELETE_BLOCK,"$1kf12"},
+   {DELETE_BLOCK,"\e$kf12"},
    {SET_BLOCK_END,"$kf6"},
    {SET_BLOCK_END,"\033|6"},
    {SET_BLOCK_BEGIN,"$kf5"},
@@ -168,6 +169,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {MARK_TO_EOL,"\033|$kf6"},
    {MARK_TO_EOL,"$1kf6"},
    {YANK_BLOCK,"$1kf11"},
+   {YANK_BLOCK,"\e$kf11"},
 
 // Search
    {SEARCH_FORWARD,"$kf7"},

@@ -1,3 +1,9 @@
+1999-11-05  lav
+
+	* search.cc: (ReplaceFound) fixed replace to \\. (reported by
+	  <sen@adm.yar.ru>); insert unknown backslashed characters verbatim.
+	* keymapdf.cc: few more sequences.
+
 1999-10-31  lav
 
 	* user.cc: (UserYankBlock) set REDISPLAY_ALL.
