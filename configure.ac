@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.9.2], [le@uniyar.ac.ru])
+AC_INIT([le], [1.10.0], [le@uniyar.ac.ru])
 AC_CONFIG_SRCDIR([src/edit.cc])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
@@ -7,7 +7,7 @@ AM_CONFIG_HEADER(config.h)
 AC_ARG_ENABLE(file-locks, [  --disable-file-locks    disable file locking],
    [enable_file_locks=$enableval],[enable_file_locks=yes])
 if test "x$enable_file_locks" = xno; then
-   AC_DEFINE(DISABLE_FILE_LOCKS)
+   AC_DEFINE([DISABLE_FILE_LOCKS], 1, [define if file locking does not work or is not desirable])
 fi
 
 test -z "$CXX"	     && DEFAULT_CXX=yes
@@ -21,6 +21,9 @@ CXX_DYNAMIC_INITIALIZERS
 LFTP_NOIMPLEMENTINLINE
 AC_PROG_LN_S
 AC_PROG_RANLIB
+
+# for lib/mbswidth.{c,h}
+jm_PREREQ_MBSWIDTH
 
 AC_ARG_WITH(debug,
 [  --with-debug            enable debug info],
@@ -68,7 +71,7 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(fcntl.h limits.h sys/time.h unistd.h sys/ioctl.h\
- sys/select.h sys/poll.h sys/mman.h sys/times.h)
+ sys/select.h sys/poll.h sys/mman.h sys/times.h sys/mount.h)
 
 LE_PATH_CURSES
 if test x$no_curses = xyes
@@ -92,10 +95,15 @@ then
 else
    CURSES_LIBS="$CURSES_LIBS -lcurses"
 fi
+if test x$use_libcursesw = xyes
+then
+   CURSES_LIBS="${CURSES_LIBS}w"
+fi
 LE_MYTINFO_CHECK
 LE_CURSES_MOUSE
 LE_CURSES_BOOL
 dnl LE_NCURSES_BUGS
+LE_CURSES_WIDECHAR
 
 AC_SUBST(CURSES_LIBS)
 AC_SUBST(CURSES_INCLUDES)
@@ -145,5 +153,5 @@ if test x$ac_cv_func_fnmatch_works = xno; then
    AC_CONFIG_LINKS([include/fnmatch.h:lib/fnmatch.h])
 fi
 
-AC_CONFIG_FILES([Makefile lib/Makefile include/Makefile src/Makefile misc/Makefile doc/Makefile])
+AC_CONFIG_FILES([Makefile lib/Makefile include/Makefile src/Makefile misc/Makefile doc/Makefile m4/Makefile])
 AC_OUTPUT

@@ -8,16 +8,6 @@
 /* the version of package */
 #undef VERSION
 
-#undef WITH_REGEX
-
-#undef WITH_MOUSE
-
-#undef USE_NCURSES_H
-
-#undef LE_CURSES_BOOL_TYPE
-
-#undef DISABLE_FILE_LOCKS
-
 @BOTTOM@
 
 #ifndef HAVE_STRERROR

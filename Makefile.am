@@ -1,6 +1,7 @@
-SUBDIRS = doc lib include src misc
+SUBDIRS = doc lib include src misc m4
 EXTRA_DIST = le.lsm FEATURES HISTORY le.spec
 AUTOMAKE_OPTIONS = foreign
+ACLOCAL_AMFLAGS = -I m4
 
 dist-hook:
 	@echo $(PACKAGE).spec updating...

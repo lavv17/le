@@ -276,6 +276,8 @@ wchar_t visualize_wchar(wchar_t wc)
 {
    if(iswprint(wc))
       return wc;
+   if(wc==0x80 && !chset_isprint(wc))
+      return '?';
    if(wc<32)
       wc+='@';
    else if(wc==127)

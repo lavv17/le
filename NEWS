@@ -1,3 +1,13 @@
+Version 1.10.0 - 2004-04-??
+
+* multibyte encoding support (e.g. utf-8). Ncurses compiled with
+  --enable-widec option is required.
+* position to previous line indent on line-end if in text mode.
+* default comment-line prefix is now '# '
+* recognize // as comment beginning in C files.
+* newer xterm key coded added.
+* use BLKGETSIZE ioctl if supported by OS.
+
 Version 1.9.2  2003-03-18
 
 * save syntax highlighting on/off flag in le.ini.

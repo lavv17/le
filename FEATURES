@@ -1,4 +1,4 @@
-   The text editor LE 1.5.0 has the following functions:
+   The text editor LE 1.10.0 has the following functions:
 
    Rectangular and stream blocks: copy, move, delete, write to file, read
 from file, filtering through external command, shift left, shift right,
@@ -20,6 +20,9 @@ wrap.
    
    Binary clean -- you can safely load binary files in `Exact' or `Hex'
 mode (Exact is the default).
+
+   Multibyte character encoding support with ncurses library version 5.4 or
+newer, built with --enable-widechar option.
 
    Viewing/editing (replace only) of very large files or even devices using
 mmap system call (--mmap or --mmap-rw option). Use with caution --mmap-rw
