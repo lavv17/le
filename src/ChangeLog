@@ -1,3 +1,7 @@
+2004-10-14  lav
+
+	* user.cc: add .cpp and .cxx extensions for line commenting.
+
 2004-09-20  lav
 
 	* getstr.cc: choose wide char in mb_mode.

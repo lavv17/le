@@ -562,7 +562,9 @@ void  UserCommentLine()
       return;
 
    ToLineBegin();
-   if(Suffix(FileName,".cc"))
+   if(Suffix(FileName,".cc")
+   || Suffix(FileName,".cpp")
+   || Suffix(FileName,".cxx"))
    {
       if(Char()=='/' && CharRel(1)=='/')
       {
