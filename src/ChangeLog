@@ -1,3 +1,8 @@
+2001-04-09  lav
+
+	* keymap.cc: fix several sign-expansion bugs.
+	* block.cc: stop drag mark on block operations.
+
 2001-03-20  lav
 
 	* user.cc: (UserLineDown) don't insert many \n in text mode; don't

@@ -71,6 +71,8 @@ void   MoveLineCol(num l,num c)
 }
 void   HideDisplay()
 {
+   if(DragMark)
+      UserStopDragMark();
    hide=!hide;
    CheckBlock();
    flag=1;
@@ -138,6 +140,9 @@ void    RCopy()
 
 void    Copy()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    CheckBlock();
    if(View || hide)
       return;
@@ -242,6 +247,9 @@ int   RDelete()
 }
 int   Delete()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    CheckBlock();
    if(View || hide)
       return 1;
@@ -294,6 +302,9 @@ void    RMove()
 }
 void    Move()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    num	 size=BlockEnd-BlockBegin;
 
    CheckBlock();
@@ -330,6 +341,9 @@ void    Move()
 
 void    Write()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    int         fd;
    struct stat st;
    num         act_written;
@@ -486,6 +500,9 @@ int OptionallyConvertBlockNewLines(const char *bname)
 
 void    Read()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    int             fd;
    struct stat     st;
    num   act_read;
@@ -665,6 +682,9 @@ void    DoUnindent(int i)
 char   is[64]="";
 void   Indent()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    int    i;
    CheckBlock();
    if(View || hide)
@@ -685,6 +705,9 @@ void   Indent()
 }
 void   Unindent()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    int    i;
    CheckBlock();
    if(View || hide)
@@ -908,20 +931,29 @@ void  Transform(byte (*func)(byte))
 
 void    ConvertToUpper()
 {
-    Transform(Toupper);
+   if(DragMark)
+      UserStopDragMark();
+
+   Transform(Toupper);
 }
 void    ConvertToLower()
 {
-    Transform(Tolower);
+   if(DragMark)
+      UserStopDragMark();
+
+   Transform(Tolower);
 }
 void    ExchangeCases()
 {
-    Transform(Inverse);
+   if(DragMark)
+      UserStopDragMark();
+
+   Transform(Inverse);
 }
 void    BlockType()
 {
-    rblock=!rblock;
-    flag=!hide;
+   rblock=!rblock;
+   flag=!hide;
 }
 
 void    CheckBlock()
@@ -941,6 +973,9 @@ void    CheckBlock()
 
 void  PrefixIndent(char *prefix,num len)
 {
+   if(DragMark)
+      UserStopDragMark();
+
    CheckBlock();
    if(hide)
       return;

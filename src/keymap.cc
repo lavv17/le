@@ -553,7 +553,7 @@ KeyTreeNode *BuildKeyTree(ActionCodeRec *ac_table)
 		     delay=HALF_DELAY;
 		     term_str++;
 		  }
-		  key_code=term_str[0];
+		  key_code=(unsigned char)term_str[0];
 		  if(key_code==0)
 		     goto fallback;
 	       }
@@ -576,7 +576,7 @@ KeyTreeNode *BuildKeyTree(ActionCodeRec *ac_table)
 	       code_ch=*(++code);
 	    default:
 	    default_l:
-	       key_code=code_ch;
+	       key_code=(unsigned char)code_ch;
 	       code++;
 	    }
 
@@ -701,7 +701,7 @@ void  ReadActionMap(FILE *f)
             }
          }
          if(ch=='\000')
-            ch='\200';
+            ch=128;
 
          if(store-ActionCode<(int)sizeof(ActionCode)-1)
             *(store++)=ch;
