@@ -26,3 +26,4 @@ void LoadColorDefaultBG();
 void LoadColorBlack();
 void LoadColorBlue();
 void LoadColorWhite();
+void LoadColorGreen();
