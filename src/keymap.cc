@@ -525,6 +525,7 @@ int   GetNextAction()
 {
    char  *store;
    int   key;
+   bool	 seen_func_key=false;
 
    store=StringTyped;
    StringTypedLen=0;
@@ -585,9 +586,14 @@ int   GetNextAction()
 	 }
 #endif
 
-	 *(store++)=(key>UCHAR_MAX?UCHAR_MAX:key);
-	 *store=0;
-	 StringTypedLen++;
+	 if(key>UCHAR_MAX)
+	    seen_func_key=true;
+	 else
+	 {
+	    *(store++)=key;
+	    *store=0;
+	    StringTypedLen++;
+	 }
 
 	 for(scan=kt->child; scan; scan=scan->sibling)
 	    if(scan->keycode==key || (key==0 && scan->keycode==128))
