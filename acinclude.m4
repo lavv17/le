@@ -1,0 +1,245 @@
+dnl Locate ncurses or curses library
+AC_DEFUN(LE_PATH_CURSES_DIRECT,
+[
+  ncurses_h=no
+  for ac_dir in               \
+    /usr/include/ncurses      \
+    /usr/local/include/ncurses\
+    /usr/local/include	      \
+    /usr/include	      \
+    ; \
+  do
+    if test -r "$ac_dir/curses.h"; then
+      no_curses=
+      ac_curses_includes=$ac_dir
+
+      if grep NCURSES_VERSION $ac_curses_includes/curses.h >/dev/null; then
+	ac_with_ncurses=yes
+	curses_direct_test_library=ncurses
+      else
+	ac_with_ncurses=no
+	curses_direct_test_library=curses
+      fi
+
+      break
+    fi
+  done
+
+  if test -z "$ac_curses_includes" -o "$ac_with_ncurses" = no ; then
+    for ac_dir in             \
+      /usr/local/include      \
+      /usr/include	      \
+      ; \
+    do
+      if test -r "$ac_dir/ncurses.h"; then
+	no_curses=
+	ac_curses_includes=$ac_dir
+	ac_with_ncurses=yes
+	ncurses_h=yes
+        curses_direct_test_library=ncurses
+	break
+      fi
+    done
+  fi
+
+# First see if replacing the include by lib works.
+for ac_dir in `echo "$ac_curses_includes" | sed -e 's:include:lib:' -e 's:/ncurses$::'` \
+    /usr/lib              \
+    /usr/local/lib        \
+    ; \
+do
+  for ac_extension in a so sl; do
+    if test -r $ac_dir/lib${curses_direct_test_library}.$ac_extension; then
+      no_curses= ac_curses_libraries=$ac_dir
+      break 2
+    fi
+  done
+done
+])
+
+AC_DEFUN(LE_PATH_CURSES,
+[AC_REQUIRE_CPP()dnl
+
+curses_includes=NONE
+curses_libraries=NONE
+with_ncurses=NONE
+ncurses_h=NONE
+
+AC_MSG_CHECKING(for Curses)
+dnl AC_ARG_WITH(curses, [  --with-curses            enable Curses tests])
+if test "x$with_curses" = xno; then
+  no_curses=yes
+else
+  if test "x$curses_includes" != xNONE && test "x$curses_libraries" != xNONE \
+        && test x$with_ncurses != xNONE && test x$ncurses_h != xNONE
+  then
+    no_curses=
+  else
+AC_CACHE_VAL(ac_cv_path_curses,
+[# One or both of these vars are not set, and there is no cached value.
+no_curses=yes
+
+LE_PATH_CURSES_DIRECT
+
+if test "$no_curses" = yes; then
+  ac_cv_path_curses="no_curses=yes"
+else
+  ac_cv_path_curses="no_curses= ac_curses_includes=$ac_curses_includes ac_curses_libraries=$ac_curses_libraries ac_with_ncurses=$ac_with_ncurses ncurses_h=$ncurses_h"
+fi])dnl
+  fi
+  eval "$ac_cv_path_curses"
+fi # with_curses != no
+
+if test "$no_curses" = yes; then
+  AC_MSG_RESULT(no)
+else
+  test "x$curses_includes" = xNONE && curses_includes=$ac_curses_includes
+  test "x$curses_libraries" = xNONE && curses_libraries=$ac_curses_libraries
+  test "x$with_ncurses" = xNONE && with_ncurses=$ac_with_ncurses
+  ac_cv_path_curses="no_curses= ac_curses_includes=$curses_includes ac_curses_libraries=$curses_libraries ac_with_ncurses=$with_ncurses"
+  if test x$ac_with_ncurses = xyes
+  then
+    AC_MSG_RESULT([Ncurses, libraries $curses_libraries, headers $curses_includes])
+  else
+    AC_MSG_RESULT([libraries $curses_libraries, headers $curses_includes])
+  fi
+  if test x$ncurses_h = xyes; then
+    AC_DEFINE(USE_NCURSES_H)
+  fi
+fi
+])
+
+# check if mytinfo is required for ncurses usage
+AC_DEFUN(LE_MYTINFO_CHECK,
+[
+   AC_CACHE_CHECK(whether mytinfo is required, ac_cv_need_mytinfo,
+   [
+      old_LIBS="$LIBS"
+      old_CFLAGS="$CFLAGS"
+      LIBS="$LIBS $CURSES_LIBS"
+      CFLAGS="$CFLAGS $CURSES_INCLUDES"
+      AC_TRY_LINK([
+	 #ifdef USE_NCURSES_H
+	 #include <ncurses.h>
+	 #else
+	 #include <curses.h>
+	 #endif],[initscr();reset_prog_mode();refresh();endwin();],[ac_cv_need_mytinfo=no],
+      [
+	 LIBS="$LIBS -lmytinfo"
+	 AC_TRY_LINK([
+	    #ifdef USE_NCURSES_H
+	    #include <ncurses.h>
+	    #else
+	    #include <curses.h>
+	    #endif],[initscr();reset_prog_mode();refresh();endwin();],[ac_cv_need_mytinfo=yes],
+	    [AC_MSG_ERROR(cannot make curses work)])
+      ])
+      LIBS="$old_LIBS"
+      CFLAGS="$old_CFLAGS"
+   ])
+   if test x$ac_cv_need_mytinfo = xyes; then
+      CURSES_LIBS="$CURSES_LIBS -lmytinfo"
+   fi
+])
+
+AC_DEFUN(LE_CURSES_MOUSE,
+[
+   AC_LANG_SAVE
+   AC_LANG_CPLUSPLUS
+   AC_MSG_CHECKING(if curses provides mouse routines)
+   AC_CACHE_VAL(ac_cv_curses_mouse,
+   [
+      old_LIBS="$LIBS"
+      old_CFLAGS="$CFLAGS"
+      LIBS="$LIBS $CURSES_LIBS"
+      CFLAGS="$CFLAGS $CURSES_INCLUDES"
+      AC_TRY_LINK([
+	    #ifdef USE_NCURSES_H
+	    # include <ncurses.h>
+	    #else
+	    # include <curses.h>
+	    #endif
+	 ],
+	 [
+	    MEVENT mev;
+	    mousemask(ALL_MOUSE_EVENTS,0);
+	    getmouse(&mev);
+	    ungetmouse(&mev);
+	 ],
+	 [ac_cv_curses_mouse=yes],
+	 [ac_cv_curses_mouse=no])
+      LIBS="$old_LIBS"
+      CFLAGS="$old_CFLAGS"
+   ])
+   AC_MSG_RESULT($ac_cv_curses_mouse)
+   if test x$ac_cv_curses_mouse = xyes; then
+      AC_DEFINE(WITH_MOUSE)
+   fi
+   AC_LANG_RESTORE
+])
+
+AC_DEFUN(LE_NCURSES_BUGS,
+[
+   if test x$ac_with_ncurses = xyes; then
+      AC_LANG_SAVE
+      AC_LANG_CPLUSPLUS
+      AC_MSG_CHECKING(if ncurses has correct CXX_TYPE_OF_BOOL)
+      AC_CACHE_VAL(ac_cv_ncurses_correct_bool,
+      [
+	 old_LIBS="$LIBS"
+	 old_CFLAGS="$CFLAGS"
+	 LIBS="$LIBS $CURSES_LIBS"
+	 CFLAGS="$CFLAGS $CURSES_INCLUDES"
+	 AC_TRY_RUN([
+	       #ifdef USE_NCURSES_H
+	       # include <ncurses.h>
+	       #else
+	       # include <curses.h>
+	       #endif
+	       int main()
+	       {
+	       #ifdef CXX_TYPE_OF_BOOL
+		  return sizeof(CXX_TYPE_OF_BOOL)==sizeof(bool)?0:1;
+	       #else
+		  return 0;
+	       #endif
+	       }
+	    ],
+	    [ac_cv_ncurses_correct_bool=yes],
+	    [ac_cv_ncurses_correct_bool=no],
+	    [ac_cv_ncurses_correct_bool=yes])
+	 LIBS="$old_LIBS"
+	 CFLAGS="$old_CFLAGS"
+      ])
+      AC_MSG_RESULT($ac_cv_ncurses_correct_bool)
+      if test x$ac_cv_ncurses_correct_bool = xno; then
+	 AC_MSG_ERROR(ncurses misconfigured - wrong CXX_TYPE_OF_BOOL)
+      fi
+      AC_LANG_RESTORE
+   fi
+])
+
+dnl check if c++ compiler can use dynamic initializers for static variables
+AC_DEFUN(CXX_DYNAMIC_INITIALIZERS,
+[
+   AC_LANG_SAVE
+   AC_LANG_CPLUSPLUS
+   AC_MSG_CHECKING(if c++ compiler can handle dynamic initializers)
+   AC_TRY_RUN(
+   [
+      int f() { return 1; }
+      int a=f();
+      int main()
+      {
+	 exit(1-a);
+      }
+   ],
+   [cxx_dynamic_init=yes],
+   [cxx_dynamic_init=no],
+   [cxx_dynamic_init=yes])
+   AC_MSG_RESULT($cxx_dynamic_init)
+   if test x$cxx_dynamic_init = xno; then
+      AC_MSG_ERROR(C++ compiler cannot handle dynamic initializers of static objects)
+   fi
+   AC_LANG_RESTORE
+])

@@ -1,0 +1,8 @@
+1. Make more classes (Text, multibuffer support)
+
+2. Full undo
+
+?3. RCS interaction
+
+search/replace in mmap-rw mode
+hex/oct/etc search

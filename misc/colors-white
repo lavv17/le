@@ -1,0 +1,33 @@
+# This is an alternative color scheme for LE editor.
+# Copy it to ~/.le/colors if you like.
+default_colors=1
+status_line=bg:cyan,fg:black
+status_line_bw=rev,dim
+normal_text=bg:white,fg:black
+normal_text_bw=normal
+block_text=bold,fg:white,bg:blue
+block_text_bw=rev
+error_win=bold,fg:white,bg:red
+error_win_bw=rev,bold
+verify_win=bg:cyan,fg:black
+verify_win_bw=rev
+curr_button=bold,fg:white,bg:black
+curr_button_bw=normal
+help_win=bg:cyan,fg:black
+help_win_bw=rev
+dialogue_win=bg:white,fg:black
+dialogue_win_bw=rev
+menu_win=bg:cyan,fg:black
+menu_win_bw=rev
+disabled_item=bg:cyan,fg:black
+disabled_item_bw=rev
+scroll_bar=fg:cyan,bg:black
+scroll_bar_bw=dim
+shadowed=fg:white,bg:black
+shadowed_bw=dim
+syntax1=fg:red,bg:white
+syntax1_bw=bold
+syntax2=fg:magenta,bg:white
+syntax2_bw=bold
+syntax3=fg:blue,bg:white
+syntax3_bw=dim

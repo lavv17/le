@@ -1,0 +1,21 @@
+Begin3
+Title:		LE text editor
+Version:	1.5.2
+Entered-date:	11JUN99
+Description:	LE has many block operations with stream and
+		rectangular blocks, can edit both unix and dos
+		style files (LF/CRLF), is binary clean, has hex
+		mode, can edit files and mmap'pable devices in
+		mmap shared mode (only replace), has tunable syntax
+		highlighting, tunable color scheme (can use default
+		colors), tunable key map. It is slightly similar
+		to Norton Editor, but has more features.
+Keywords:	text editor, block, color, binary, hex, mmap
+Author:		lav@yars.free.net (Alexander V. Lukyanov)
+Maintained-by:	lav@yars.free.net (Alexander V. Lukyanov)
+Primary-site:	ftp.yars.free.net /pub/software/unix/util/texteditors
+		298 kB le-1.5.2.tar.gz
+Alternate-site:	sunsite.unc.edu /pub/Linux/apps/editors/terminal
+Platforms:	Unix, C++, ncurses or sysv curses
+Copying-policy:	GNU GPL
+End

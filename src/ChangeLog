@@ -1,0 +1,69 @@
+1999-07-11  lav
+
+	* user.cc: fix UserIndent when !insert.
+	* highli.cc: paranoia memset to zero.
+
+1999-06-11  lav
+
+	* search.cc: fix backward searching for a word (was cycling);
+	  restore text position before saying Not found.
+
+1999-06-11  Adam Rogoyski <rogoyski@cs.utexas.edu>
+
+	* le.1: correction to make whatis work.
+
+1999-02-25  lav
+
+	* options.cc: fix typo in ReadConf
+
+1999-02-15  lav
+
+	* edit.cc, mainmenu.cc, keymap.cc: don't include signal.h
+	* signals.cc: reset alarm handler for safety
+	* colormnu.cc: check for ncurses version before repainting screen
+	* options.cc, options.h: check if .le.ini belongs to current user
+	* signals.cc: make disable_resize bool (removes a warning)
+
+1999-02-05  lav
+
+	* about.cc: update year
+	* clipbrd.cc: (Copy) speed optimized
+	* kern.cc: (GetBlock) new function - copy region to buffer
+	* textpoin.cc: (FindOffset) fix condition in near point search
+	* block.cc: (RCopy) save/restore stdcol
+	* pipe.cc: checkpoint before filtering to undelete only old block.
+	* signals.cc: dump core on SIGSEGV and SIGBUS (to help debugging)
+	* menu.cc, window.cc, user.cc, screen.cc: use n_attr instead of attr
+	  to avoid warning about name collision.
+
+1998-12-16  lav
+
+	* screen.cc: alloc at least 80 columns in hex mode to avoid checking
+	  for end of screen
+	* mainmenu.cc: add FormatFunc
+	* keymapdf.cc: change keol to kel
+
+1998-11-30  lav
+
+	* calc.cc: rename struct func to avoid warning.
+	* options.cc: initialize action to avoid warning.
+
+1998-11-28  lav
+
+	* window.h, chset.cc, color.cc, color.h, frames.cc, getch.cc,
+	  menu.cc, window.cc, user.cc, screen.cc: rename attr to n_attr
+	  to avoid warning.
+
+1998-11-26  lav
+
+	* keymapdf.cc: add key_ll binding
+	* options.cc: proper ifdef USE_MOUSE, shut up warning
+	* search.cc: handle ^L
+	* screen.cc, screen.h: use message_sp, (AddMessage) new function; use leaveok.
+	* edit.h: (message_sp) declare; redefine Text to check buffer_mmapped.
+	* getstr.cc: support new status line
+	* keynames.cc, user.cc, calc.h, help.cc, keymap.cc, signals.cc, edit.cc: shut up warning
+	* block.cc: support UserMarkAll function.
+	* kern.cc: (Optimize) quit if buffer_mmapped
+	* loadsave.cc: (Save) support buffer_mmapped;
+	  (ReopenRW) restore old position.

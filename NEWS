@@ -1,0 +1,118 @@
+* fixed Tab key (indent) in overstrike mode.
+
+Version 1.5.2  1999-06-11
+
+* fixed backward word search (e.g. for `$w word').
+* fixed man page to work with whatis.
+
+Version 1.5.1  1999-02-26
+
+* fixed typo in ReadConf, now terminal options are read in properly.
+
+Version 1.5.0
+
+* mouse support inside option forms
+* mouse is now optional
+* allow to choose one of predefined color schemes
+* hold read lock while editing, and set write lock only on load and save
+* added M-f for formatting commands
+* added key_ll for end-of-line
+* 'r' in format mode ajusts to the right only one line instead of paragraph
+* *.po syntax support
+* don't set environment variable NAME, use FNAME (the former conflicts with
+  mail programs)
+* syntax and predefined colors tweaks
+* search options: ``$options string'' where options is string of chars:
+  `i' for case insensitive, `w' for whole words only. Then it searches for
+  string using the options.
+* rectangular block operations sped up
+bugs fixed:
+* extra space was left in right-only formatting - fixed
+* disallow block yank in r/o mode
+* a bug made deleting of rectangular block very slow
+* rectangular block copy in Text mode fixed.
+
+Version 1.4.2
+
+* extended maximum line length for formatting
+* backup number was not saved in options file - fixed
+* backup files were not created with no suffix in specified backup directory
+* F2, ~F2 in options form did not work
+
+Version 1.4.1
+
+* auto word wrap added (turn on in format options)
+* sped up automatic search/replace
+* added java syntax patterns
+* Display problem in hex mode for huge files fixed
+* ^P (quoted-insert) in mmap mode fixed
+* tables drawing fixed
+
+Version 1.4.0
+
+* now it is possible to use default colors of xterm in palette
+* some bugs in palette handling fixed
+* save many versions of old file contents, %d in backup suffix.
+* do not save position when file save is not confirmed
+* save offset in position file -- speeds up startup in hex mode
+* new editing mode selected with --mmap or --mmap-rw. Now it is possible to
+  edit/view directly very large files or even devices. (e.g. /dev/kmem)
+* search file history for first available from cwd file to load automatically
+* added python, eiffel, sather and shell syntax patterns (Serge Vakulenko
+  <vak@cronyx.ru>)
+* make rx the default, as it seems to be faster
+* milti-line constructs can now be highlighted; nested constructs disallowed
+* mark last on-screen char of lines longer than screen width
+* drag mode block marking added (F4+V; mark; F4)
+* mouse support in xterm (via ncurses)
+* added two checks for environment sanity
+* cleaned up keyboard input code/improved typeahead feature
+* improved scroling by pages in hex mode; optional page scrolling mode
+* dump text into ~/.le/tmp - it is safer than cwd
+* dump large files smoothly, 128k at a time
+* save block marks on Reopen
+* save timestamp on backup files
+* fixed backward search (broken since 1.3.0)
+* in history.cc, fixed history wrap in Prev
+* fixed transformation for rectangular, unlimited to the right block
+* removed accidently forgotten idcok(0)
+* added fnmatch.[ch]
+
+Version 1.3.1
+
+* changed regex options for search
+bugs fixed:
+* remove condition for refresh in getch.cc - sometimes cursor was not
+  positioned correctly
+* ^V/^T sometimes did not refresh screen properly after copying a tab
+* rectangular block was copied at wrong place
+
+Version 1.3.0
+
+* full regular expressions search and replace
+* tunable syntax highlighting based on regular expressions
+* added a buffer for old block, so it is possible now to yank
+  a block from one file to another; deleted block can be yanked too.
+* color palette editing form
+* a short man page written
+* M-e for line-end, M-a for line-begin; ESC+[1-0] is now equivalent to F[1-10]
+* automake used
+* eliminated sscanf in key recognition, so it would be faster (esp. on fbsd22)
+bugs fixed:
+* allow creating files when R/O file loaded
+* don't turn R/O on when the load is unsuccessful
+* don't bring up file selection box when reading block from pipe and the
+  command has * or ?
+* rectangular blocks should now work better when there are tabs in text
+
+Version 1.2.0b
+* don't add -I/usr/include -L/usr/lib
+* fix using TIOCGWINSZ on sco
+* block.cc:Transform update
+* increase delay in GetNextAction to 500ms
+
+Version 1.2.0a
+* History::operator- fixed a coredump due to extra ;
+
+Version 1.2.0
+* this is the first public release

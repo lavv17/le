@@ -1,0 +1,18 @@
+   I started this project as a laboratory work being first year student of
+Yaroslavl State University in 1993. That time I worked on a BESTA machine
+under some kind of Unix. It had 8M of memory and 14 terminals plugged in.
+(That was fun :) And it had no good editor, except vi... Honestly, that
+time I did not know that emacs or internet exist :)
+
+   The first version of the editor could do not too much -- load a file,
+browse, insert, delete, save -- that's all. Since that, the editor was
+almost completely rewritten in C++. Some old code is still there, since I
+don't know what to do with it. Now it become quite a powerful editor and I
+decided at last to publish it under GPL and did it in early 1997. (See
+FEATURES for brief description of capabilities)
+
+   I understand that there are many other text editors out there, but I
+used to my own editor and some my friends told me that the editor is
+actually better than many others.
+
+   Alexander V. Lukyanov <lav@yars.free.net>

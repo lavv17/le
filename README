@@ -1,0 +1,35 @@
+This is terminal text editor - LE.
+
+
+Read the file FEATURES to learn what LE can do.
+Read the file HISTORY to learn about LE beginning.
+
+
+You can try to find out how to use the editor by reading help,
+browsing the menu and reading the man page. Some hints:
+   F10 or C-n -- menu
+   F1 -- help
+   C-x -- exit (cancel)
+   Arrows -- navigate
+
+In the editor the following key description is used:
+   Key1-Key2 -- simultaneous key1 and key2 press
+   Key1+Key2 -- sequential keys press
+   Key1 | Key2 -- press Key1 OR Key2
+   ^Key -- Ctrl-Key
+   ~Key -- Shift-Key
+   ^~Key -- Ctrl-Shift-Key | Alt-Key
+Some of ^Fx, ~Fx, ^~Fx can be typed as ESC+Fx
+
+
+   There are two  mailing lists for LE.  le@uniyar.ac.ru is for
+general  discussions and  for  announcements  of "official"  le
+versions. le-devel@uniyar.ac.ru is for  development of le, that
+is  patches  and  announcements of  development  snapshots  are
+posted there. The lists are managed by majordomo; to subscribe,
+send mail  with "subscribe" in body  to le-request@uniyar.ac.ru
+or le-devel-request@uniyar.ac.ru.
+
+
+Author: Alexander V. Lukyanov <lav@yars.free.net>
+Postal address: Aviatorov st. 80-45, Yaroslavl 150051, Russia

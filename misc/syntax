@@ -1,0 +1,119 @@
+# Syntax patterns for LE editor. (c) 1997 Alexander V. Lukyanov
+# Please send corrections and improvements to <lav@yars.free.net>
+#
+# $Id$
+#
+# This file describes how to highlight syntax. The following format
+# used:
+# /PATTERN - selects file names for which next lines apply
+# cCOLOR,MASK=REGEXP - use COLOR (1-3) to highlight subexpressions
+# of REGEXP; MASK is bitmask selecting which subexpressions are to
+# highlight. C escapes can be used in REGEXP; it also can be split
+# into several lines by last \ on the line.
+
+# maximum height of constructs
+h18
+
+# C language mode (lav)
+/*.c
+c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^'\n\\]|\\\\.)*'
+#c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
+c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[[:alpha:]]*))
+c3,1=/\\*([^*]|\\*[^/])*\\*/
+c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
+|continue|char|short|int|long|unsigned|signed|auto\
+|const|default|do|double|enum|extern|float|register\
+|return|sizeof|static|struct|typedef|union|void|volatile\
+)([^[:alnum:]_]|$)
+c2,1=\\[|\\]|\\(|\\)|{|}|,
+
+# C++ mode (lav)
+/*.cc|*.C|*.cpp|*.h|*.hh|*.hpp|*.H
+c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^\n'\\]|\\\\.)*'
+#c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
+c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[[:alpha:]]*))
+c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
+c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
+|continue|char|short|int|long|unsigned|signed|auto\
+|const|default|do|double|enum|extern|float|register\
+|return|sizeof|static|struct|typedef|union|void|volatile\
+|try|catch|class|new|delete|private|public|protected|this|virtual\
+|inline|bool|true|false|operator|overload|template|friend\
+)([^[:alnum:]_]|$)
+c2,1=\\[|\\]|\\(|\\)|{|}|,
+
+# nroff mode (lav)
+/*.[1-9]|/-\*-nroff-\*-
+c3,1=^\.\\\\".*$
+c2,1=^\.[[:alpha:]]*
+c1,2=\\\\fB((\\\\[^f]|[^\\])*[^\\]?)(\\\\f|$)
+c3,2=\\\\fI((\\\\[^f]|[^\\])*[^\\]?)(\\\\f|$)
+c1,2=^\.B[IR]? (.*)$
+c3,2=^\.I (.*)$
+
+# Eiffel mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.e
+c3,1=--[^\n]*\n
+c3,1="([^"\\]|\\\\(.|\n))*"
+c1,4=([^[:alnum:]_]|^)(alias|all|and|as|check|class|creation|debug\
+|deferred|do|else|elseif|end|ensure|expanded|export|external|false\
+|feature|from|frozen|if|implies|indexing|infix|inherit|inspect|invariant\
+|is|like|local|loop|not|obsolete|old|once|or|prefix|redefine|rename\
+|require|rescue|retry|select|separate|strip|then|true|undefine|unique\
+|until|variant|when|xor|Current|Result|True|False|Void\
+|ARRAY|BIT|BOOLEAN|CHARACTER|DOUBLE|INTEGER|NONE|POINTER|REAL|STRING\
+)([^[:alnum:]_]|$)
+c2,1=<<|>>
+
+# Python mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.py
+c3,1=#.*$
+c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
+c1,4=([^[:alnum:]_]|^)(if|elif|else|for|in|break|continue|while|pass\
+|try|except|raise|finally|import|from|class|def|return|global\
+|print|del|exec|access|in|or|and|not|is|lambda\
+)([^[:alnum:]_]|$)
+c2,1=:
+
+# Sather mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.sa
+c3,1=--[^\n]*$
+c3,1="([^"\\]|\\\\(.|\n))*"
+c1,4=([^[:alnum:]_]|^)(abstract|and|any|assert|attr|bind|break!|builtin|case\
+|class|clusters!|cohort|const|else|elsif|end|exception|external|false|far\
+|fork|guard|if|immutable|inout|include|initial|is|ITER|lock|loop|near|new\
+|once|or|out|par|parloop|post|pre|private|protect|quit|raise|readonly|result\
+|return|ROUT|SAME|self|shared|sync|then|true|typecase|unlock|until|void|when\
+|while!|with|yuild|ARRAY|BOOL|CHAR|FLTD|INT|INTI|FLT|FLTI|STR|\\$OB|AREF|AVAL\
+|TUP|SYS|\\$NIL|\\$FINALIZE\
+)([^[:alnum:]_]|$)
+c2,1=\||#|::=|:=|::
+
+# Shell mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.sh|/^#![ \t]*/.*/\(ba\|z\|k\)?sh
+c3,1=#.*$
+c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
+c1,4=([^[:alnum:]/_]|^)(if|then|else|elif|fi|while|do|done|for|break|continue\
+|case|in|esac|local|return|exit|alias|bg|cd|eval|exec|export|fc|fg|getopts|hash\
+|jobid|jobs|pwd|read|readonly|set|setvar|shift|trap|ulimit|umask|unalias|unset\
+|wait\
+)([^[:alnum:]/_]|$)
+c2,1={|}|<<|<|>>|>|;;|;|\(|\)|\|
+
+# java mode (bird@yars.free.net)
+/*.java
+c3,1="([^"\n\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*'
+c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
+c1,4=([^[:alnum:]_]|^)(abstract|default|if|private|throw|boolean|do|implements\
+|protected|throws|break|double|import|public|transient|byte|else|instanceof\
+|return|try|case|extends|int|short|void|catch|final|interface|static|volatile\
+|char|finally|long|super|while|class|float|native|switch|const|for|new\
+|synchronized|continue|goto|package|this\
+)([^[:alnum:]_]|$)
+c2,1=\\[|\\]|\\(|\\)|{|}|,
+
+# po (i18n) mode (lav)
+/*.po
+c1,1=^#, .*
+c2,1="|\\\\n|%[+- #]*[0-9*]*\\.?[0-9*]*[l]?[diouxXfeEgGcs]
+c3,1=^#.*$
