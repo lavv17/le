@@ -270,3 +270,16 @@ chtype visualize(struct attr *a,chtype ch)
    }
    return ch;
 }
+
+wchar_t visualize_wchar(wchar_t wc)
+{
+   if(iswprint(wc))
+      return wc;
+   if(wc<32)
+      wc+='@';
+   else if(wc==127)
+      wc='?';
+   else
+      wc='.';
+   return wc;
+}

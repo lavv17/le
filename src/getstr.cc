@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2004 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,67 @@
 #include <sys/types.h>
 #include <ctype.h>
 #include <string.h>
+#include <stdlib.h>
 #include "edit.h"
 #include "keymap.h"
 #include "getch.h"
+#include <wchar.h>
+
+void mb_get_col(const char *buf,int pos,int *col,int len)
+{
+   *col=0;
+   for(int i=0; i<pos; )
+   {
+      mblen(0,0);
+      wchar_t wc;
+      int ch_len=mbtowc(&wc,buf+i,len-i);
+      if(ch_len<1)
+	 ch_len=1;
+      wc=visualize_wchar(wc);
+      *col+=wcwidth(wc);
+      i+=ch_len;
+   }
+}
+void mb_char_left(const char *buf,int *pos,int *col,int len)
+{
+   *col=0;
+   for(int i=0; i<*pos; )
+   {
+      mblen(0,0);
+      wchar_t wc;
+      int ch_len=mbtowc(&wc,buf+i,len-i);
+      if(ch_len<1)
+	 ch_len=1;
+      if(i+ch_len>=*pos)
+      {
+	 *pos=i;
+	 return;
+      }
+      wc=visualize_wchar(wc);
+      *col+=wcwidth(wc);
+      i+=ch_len;
+   }
+}
+void mb_char_right(const char *buf,int *pos,int *col,int len)
+{
+   wchar_t wc;
+   mblen(0,0);
+   int ch_len=mbtowc(&wc,buf+*pos,len-*pos);
+   if(ch_len<1)
+      ch_len=1;
+   wc=visualize_wchar(wc);
+   int ch_width=wcwidth(wc);
+   *pos+=ch_len;
+   *col+=ch_width;
+}
 
 int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
                 const char *help,const char *title)
 {
-   int      pos,action,ch;
+   int      pos,col,action,ch;
    int      width,start;
-   int      shift,i,stuff;
+   int      shift,i,c,stuff;
+   int	    ch_len;
    HistoryLine *hl;
 
    if(history)
@@ -41,6 +92,7 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
       message_sp=1;
    width=COLS-strlen(pr)-1;
    pos=0;
+   col=0;
    shift=0;
    start=TRUE;
    if(len==NULL)
@@ -58,20 +110,41 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
    }
    do
    {
-      if(pos-shift>width)
-         shift=pos-width;
-      if(pos-shift<0)
-         shift=pos;
+      if(col==-1)
+	 mb_get_col(buf,pos,&col,*len);
+      if(col-shift>width)
+         shift=col-width;
+      if(col-shift<0)
+         shift=col;
       SetAttr(STATUS_LINE_ATTR);
       mvaddstr(LINES-1,0,(char*)pr);
-      for(i=0; i<width && i+shift<(*len); i++)
+      for(i=0,c=0; c<=width+shift && i<(*len); )
       {
-         addch_visual((byte)buf[i+shift]);
+#if USE_MULTIBYTE_CHARS
+	 wchar_t wc;
+	 int ch_len=mbtowc(&wc,buf+i,(*len)-i);
+	 if(ch_len<1)
+	    ch_len=1;
+	 wchar_t vwc=visualize_wchar(wc);
+	 if(c>=shift)
+	 {
+	    if(wc!=vwc)
+	       attrset(curr_attr->so_attr);
+	    addnwstr(&vwc,1);
+	    attrset(curr_attr->n_attr);
+	 }
+	 i+=ch_len;
+	 c+=wcwidth(vwc);
+#else
+	 if(c>=shift)
+	    addch_visual((byte)buf[i+shift]);
+	 i++; c++;
+#endif
       }
-      while(i++<=width)
+      while(c++<=width+shift)
 	 addch(' ');
 
-      move(LINES-1,pos-shift+strlen(pr));
+      move(LINES-1,col-shift+strlen(pr));
       curs_set(1);
       action=GetNextAction();
       switch(action)
@@ -97,6 +170,7 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
             else
                *len=0;
             pos=0;
+	    col=0;
 	    start=1;
             break;
          case(LINE_DOWN):
@@ -108,31 +182,36 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
             else
                *len=0;
             pos=0;
+	    col=0;
             start=1;
             break;
          case(BACKSPACE_CHAR):
             if(pos==0)
                break;
-            pos--;
+	    mb_char_left(buf,&pos,&col,*len);
          case(DELETE_CHAR):
             if(pos==*len)
                break;
-            for(i=pos; i<*len; i++)
-               buf[i]=buf[i+1];
-            (*len)--;
+	    ch_len=mblen(buf+pos,*len-pos);
+	    if(ch_len<1)
+	       ch_len=1;
+            for(i=pos; i+ch_len<=*len; i++)
+               buf[i]=buf[i+ch_len];
+            (*len)-=ch_len;
             start=FALSE;
             break;
          case(LINE_END):
             pos=(*len);
+	    col=-1;
             start=0;
             break;
          case(LINE_BEGIN):
-            pos=start=0;
+            pos=col=start=0;
             break;
          case(CHAR_LEFT):
             start=0;
-            if(pos)
-               pos--;
+	    if(pos)
+	       mb_char_left(buf,&pos,&col,*len);
             break;
          case(DELETE_TO_EOL):
             (*len)=pos;
@@ -141,7 +220,7 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
          case(CHAR_RIGHT):
             start=0;
             if(pos<(*len))
-               pos++;
+	       mb_char_right(buf,&pos,&col,*len);
             break;
          case(CHOOSE_CHAR):
             ch=choose_ch();
@@ -176,6 +255,7 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
                buf[i+1]=buf[i];
             (*len)++;
             buf[pos++]=ModifyKey(ch);
+	    col=-1;
       }
    }
    while(TRUE);

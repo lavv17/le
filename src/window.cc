@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "edit.h"
+#include "xalloca.h"
 
 attr  *curr_attr;
 
@@ -99,6 +100,50 @@ void  PutStr(int x,int y,const char *str)
 
    int   bx=x;
 
+#if USE_MULTIBYTE_CHARS
+   int len=strlen(str);
+   wchar_t *wstr=(wchar_t*)alloca((len+1)*sizeof(wchar_t));
+   memset(wstr,0,(len+1)*sizeof(wchar_t));
+   mbstowcs(wstr,str,len);
+
+   while(*wstr && y<Upper->h)
+   {
+      attrset(curr_attr->n_attr);
+      if(*wstr=='\n')
+      {
+         while(x<Upper->w-1)
+            mvaddch(y+Upper->y,(x++)+Upper->x,' ');
+         x=bx;
+         y++;
+      }
+      else if(*wstr=='\t')
+      {
+	 int add=((x-bx+8)&~7)-x+bx;
+	 while(add-->0)
+	 {
+	    if(x<Upper->w)
+	       mvaddch(y+Upper->y,x+Upper->x,' ');
+	    x++;
+	 }
+      }
+      else
+      {
+	 wchar_t wc=visualize_wchar(*wstr);
+	 int width=wcwidth(wc);
+	 if(x>=0 && y>=0 && x+width<=Upper->w)
+	 {
+            move(y+Upper->y,x+Upper->x);
+	    if(wc!=*wstr)
+	       attrset(curr_attr->so_attr);
+	    addnwstr(&wc,1);
+	    x=getcurx(stdscr)-Upper->x;
+	 }
+	 else
+	    x+=width;
+      }
+      wstr++;
+   }
+#else // !USE_MULTIBYTE_CHARS
    while(*str && y<Upper->h)
    {
       if(*str=='\n')
@@ -129,6 +174,7 @@ void  PutStr(int x,int y,const char *str)
       }
       str++;
    }
+#endif // !USE_MULTIBYTE_CHARS
 }
 
 WIN   *CreateWin(int x,int y,unsigned w,unsigned h,struct attr *a,

@@ -27,5 +27,6 @@ void  set_chset_8bit_noctrl();
 
 void  addch_visual(chtype ch);
 chtype visualize(struct attr *a,chtype ch);
+wchar_t visualize_wchar(wchar_t ch);
 
 bool chset_isprint(int);

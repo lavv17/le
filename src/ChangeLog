@@ -1,3 +1,10 @@
+2004-03-30  lav
+
+	* chset.cc, chset.h: (visualize_wchar) new function.
+	* getstr.cc: support mb_mode.
+	* screen.cc: support mb chars in file name.
+	* window.cc: support mb chars in PutStr.
+
 2004-03-29  lav
 
 	* chset.cc, chset.h: (chset_isprint) new function.

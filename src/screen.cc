@@ -301,8 +301,12 @@ void  ClearMessage()
 void  StatusLine()
 {
    char  status[512];
+   char  status_right[512];
    char  *bn;
    char  name[20];
+#if USE_MULTIBYTE_CHARS
+   wchar_t *wname=0;
+#endif
    char  chr[4];
    int   l;
    char  flags[16];
@@ -358,13 +362,30 @@ void  StatusLine()
    {
       bn=le_basename(FileName);
       l=strlen(bn);
+#if USE_MULTIBYTE_CHARS
+      wname=(wchar_t*)alloca((l+1)*sizeof(wchar_t));
+      memset(wname,0,(l+1)*sizeof(wchar_t));
+      mbstowcs(wname,bn,l);
+      l=wcslen(wname);
       if(l>14)
-         sprintf(name,"\"%.*s..%.*s\"",6,bn,6,bn+l-6);
-      else
-         sprintf(name,"\"%s\"",bn);
+      {
+	 memmove(wname+8,wname+l-6,7*sizeof(wchar_t));
+	 wname[6]=wname[7]=L'.';
+      }
+      if(l<=0)
+	 wname=0;
+#endif // USE_MULTIBYTE_CHARS
+      if(wname==0)
+      {
+	 if(l>14)
+	    sprintf(name,"%.*s..%.*s",6,bn,6,bn+l-6);
+	 else
+	    strcpy(name,bn);
+      }
    }
    else
       sprintf(name,"NewFile");
+
 
    if(hex)
       sprintf(status,"OctOffs:0%-11lo",(unsigned long)(Offset()));
@@ -373,20 +394,72 @@ void  StatusLine()
 	 (unsigned long)(GetLine()+1),
 	 (unsigned long)(((Text&&Eol())?stdcol:GetCol())+1));
 
-   sprintf(status+strlen(status),
-      " Sz:%-6lu %-7s %s %s Offs:%lu (%d%%)",
-         (unsigned long)(Size()),chr,flags,name,(unsigned long)(Offset()),
-         (int)(Size()?(Offset()*100.+Size()/2)/Size():100));
+   sprintf(status+strlen(status)," Sz:%-6lu %-7s %s",
+         (unsigned long)(Size()),chr,flags);
 
-   l=strlen(status);
-   if(l<COLS)
-      memset(status+l,' ',COLS-l);
-   status[COLS]=0;
+   sprintf(status_right," Offs:%lu (%d%%)",(unsigned long)(Offset()),
+         (int)(Size()?(Offset()*100.+Size()/2)/Size():100));
 
    move(StatusLineY,0);
    SetAttr(STATUS_LINE_ATTR);
+   int prev_x=0;
+   int x=0;
    for(bn=status; *bn; bn++)
-      addch_visual((byte)*bn);
+   {
+      prev_x=x;
+      addch((byte)*bn);
+      x=getcurx(stdscr);
+      if(prev_x>x || (prev_x==x && x==COLS-1))
+	 return;
+   }
+
+   if(x>=COLS-3)
+      return;
+   addch('"');
+   x=getcurx(stdscr);
+#if USE_MULTIBYTE_CHARS
+   if(wname)
+   {
+      for(wchar_t *w=wname; *w; w++)
+      {
+	 prev_x=x;
+	 wchar_t wc=visualize_wchar(*w);
+	 if(wc!=*w)
+	    attrset(curr_attr->so_attr);
+	 addnwstr(&wc,1);
+	 attrset(curr_attr->n_attr);
+	 x=getcurx(stdscr);
+	 if(prev_x>x || (prev_x==x && x==COLS-1))
+	    return;
+      }
+   }
+   else // note the following block
+#endif
+   {
+      for(bn=name; *bn; bn++)
+      {
+	 prev_x=x;
+	 addch((byte)*bn);
+	 x=getcurx(stdscr);
+	 if(prev_x>x || (prev_x==x && x==COLS-1))
+	    return;
+      }
+   }
+   prev_x=x;
+   addch('"');
+   x=getcurx(stdscr);
+   if(prev_x>x || (prev_x==x && x==COLS-1))
+      return;
+   for(bn=status_right; *bn; bn++)
+   {
+      prev_x=x;
+      addch((byte)*bn);
+      x=getcurx(stdscr);
+      if(prev_x>x || (prev_x==x && x==COLS-1))
+	 return;
+   }
+   for(int i=COLS-x; i>0; i--)
+      addch(' ');
 }
 
 static unsigned mkhash(byte *data,int len)
