@@ -22,7 +22,7 @@
 
 WIN   *about_window;
 
-const char copyright[]="Copyright (C) 1993-2000 by Alexander V. Lukyanov";
+const char copyright[]="Copyright (C) 1993-2001 by Alexander V. Lukyanov";
 
 void  ShowAbout()
 {
