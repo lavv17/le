@@ -31,13 +31,13 @@
 char    Shell  [256]="exec $SHELL";
 char    Make   [256]="exec make";
 char    Run    [256]="exec make run";
-char    Compile[256]="exec make \"$NAME.o\"";
+char    Compile[256]="exec make \"$FNAME.o\"";
 char    HelpCmd[256]="exec man \"$WORD\"";
 #else
 char    Shell  [256]="command";
 char    Make   [256]="make";
 char    Run    [256]="make run";
-char    Compile[256]="make \"$NAME.o\"";
+char    Compile[256]="make \"$FNAME.o\"";
 char    HelpCmd[256]="man \"$WORD\"";
 #endif
 
@@ -107,7 +107,7 @@ void    cmd(char *c,int autosave,int pauseafter)
     else
         *n='\0',*ext='\0';  /* there was no extension */
 #ifndef __MSDOS__
-    sprintf(cl,"FILE=\"%s\";NAME=\"%s\";EXT=\"%s\";WORD=\"%s\";export WORD FILE EXT NAME; %s",
+    sprintf(cl,"FILE=\"%s\";FNAME=\"%s\";EXT=\"%s\";WORD=\"%s\";export WORD FILE EXT FNAME; %s",
                 file,name,ext,GetWord(),c);
 #else
     {
@@ -118,7 +118,7 @@ void    cmd(char *c,int autosave,int pauseafter)
          FError("lecmd.bat");
          return;
       }
-      fprintf(bat,"@echo off\nset FILE=%s\nset NAME=%s\nset EXT=%s\nset WORD=%s\n%s",
+      fprintf(bat,"@echo off\nset FILE=%s\nset FNAME=%s\nset EXT=%s\nset WORD=%s\n%s",
                 file,name,ext,GetWord(),c);
       fclose(bat);
       strcpy(cl,"lecmd.bat");
