@@ -1,3 +1,7 @@
+2004-08-11  lav
+
+	* getstr.cc: fixed display of long input lines.
+
 2004-06-08  lav
 
 	* keymap.cc: don't show shortcut if corresponding key in terminfo

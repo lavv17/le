@@ -82,10 +82,10 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
 	 {
 	    wchar_t wc;
 	    int ch_len=mbtowc(&wc,buf+i,(*len)-i);
-	    if(ch_len<1 || (ch_len==1 && !chset_isprint(buf[i+shift])))
+	    if(ch_len<1 || (ch_len==1 && !chset_isprint(buf[i])))
 	    {
 	       if(c>=shift)
-		  addch_visual((byte)buf[i+shift]);
+		  addch_visual((byte)buf[i]);
 	       i++; c++;
 	    }
 	    else
@@ -106,7 +106,7 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
 #endif
 	 {
 	    if(c>=shift)
-	       addch_visual((byte)buf[i+shift]);
+	       addch_visual((byte)buf[i]);
 	    i++; c++;
 	 }
       }
