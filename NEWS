@@ -1,4 +1,12 @@
-Version 1.10.0 - 2004-04-??
+Version 1.10.1 - 2004-04-29
+
+* new action choose-wide-character, accessible from menu.
+* new action insert-wchar-by-code, default binding is Meta-W.
+* implemented frame drawing in mb mode.
+* preserve block marks on line-end action in text mode.
+* fixes for non-printable and zero-width characters.
+
+Version 1.10.0 - 2004-04-02
 
 * multibyte encoding support (e.g. utf-8). Ncurses compiled with
   --enable-widec option is required.

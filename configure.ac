@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.10.0], [le@uniyar.ac.ru])
+AC_INIT([le], [1.10.1], [le@uniyar.ac.ru])
 AC_CONFIG_SRCDIR([src/edit.cc])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
@@ -135,6 +135,8 @@ AC_FUNC_FNMATCH
 
 # probably we should test for rx bug, but this is simpler
 ac_cv_func_re_rx_search=no
+# disable libc regex until the problem with mb chars+html highlighting is resolved.
+le_cv_good_gnu_regex=yes
 
 LE_CHECK_REGEX_BUGS
 
