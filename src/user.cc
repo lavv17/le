@@ -150,6 +150,7 @@ void  UserCopyFromDown()
       {
          PreUserEdit();
          InsertChar('\t');
+         flag|=REDISPLAY_LINE;
          return;
       }
       if(tp.Col()==oc && !EolAt(tp.Offset()))
@@ -183,6 +184,7 @@ void  UserCopyFromUp()
       {
          PreUserEdit();
          InsertChar('\t');
+         flag|=REDISPLAY_LINE;
          return;
       }
       if(tp.Col()==oc && !EolAt(tp.Offset()))
@@ -763,7 +765,7 @@ int   file_check(char *fn)
 	 ErrMsg(msg);
 	 return ERR;
       }
-      if(View)
+      if(View&1)  // view mode
       {
 	 sprintf(msg,"File: %s\nThe specified file does not exist",fn);
 	 ErrMsg(msg);
@@ -1177,10 +1179,9 @@ void  UserAbout()
 
 void  UserRefreshScreen()
 {
-   flag=REDISPLAY_ALL;
-   clearok(curscr,TRUE);
    reset_prog_mode();
    flushinp();
+   RedisplayAll();
    refresh();
 }
 
