@@ -16,6 +16,8 @@
 
 #undef LE_CURSES_BOOL_TYPE
 
+#undef DISABLE_FILE_LOCKS
+
 @BOTTOM@
 
 #ifndef HAVE_STRERROR

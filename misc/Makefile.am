@@ -1,5 +1,5 @@
 
-pkgdata_DATA = syntax colors-black colors-blue colors-white colors-defbg colors-green
+pkgdata_DATA = syntax colors-black colors-blue colors-white colors-defbg colors-green mainmenu
 EXTRA_DIST   = $(pkgdata_DATA)
 
 colors: ../src/le

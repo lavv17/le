@@ -16,4 +16,4 @@
 
 9. more colors for syntax highlight, scrollable color menu.
 
-10. tunable menu with real key reference.
+11. mmap range (edit part of file in mmap mode)

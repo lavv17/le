@@ -1,6 +1,6 @@
 Summary: This is terminal text editor: LE.
 Name: le
-Version: 1.5.8
+Version: 1.6.0
 Release: 1
 Copyright: GPL
 Group: Applications/Editors
@@ -67,5 +67,5 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0644, root, root, 0755)
 %doc FEATURES HISTORY NEWS README 
 %attr(0755, root, root) /usr/bin/le
-/usr/man/man1/le.1
+/usr/man/man1/le.1*
 /usr/share/le
