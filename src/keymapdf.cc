@@ -104,6 +104,18 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {MARK_LINE_UP,"\033O2A"},
    {MARK_LINE_DOWN,"\033O2B"},
 
+// Movement with block marking (even newer xterm codes)
+   {MARK_CHAR_LEFT,"\033[1;2D"},
+   {MARK_CHAR_RIGHT,"\033[1;2C"},
+   {MARK_WORD_LEFT,"\033[1;6D"},
+   {MARK_WORD_RIGHT,"\033[1;6C"},
+   {MARK_LINE_BEGIN,"\033[1;2H"},
+   {MARK_LINE_END,"\033[1;2F"},
+   {MARK_TEXT_BEGIN,"\033[1;6H"},
+   {MARK_TEXT_END,"\033[1;6F"},
+   {MARK_LINE_UP,"\033[1;2A"},
+   {MARK_LINE_DOWN,"\033[1;2B"},
+
 // Delete actions
    {BACKSPACE_CHAR,"^H"},
    {DELETE_CHAR,"^D"},

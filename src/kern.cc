@@ -35,6 +35,7 @@
 #include   <assert.h>
 #include   "keymap.h"
 #include   "edit.h"
+#include   "mb.h"
 
 #ifndef O_NDELAY
 #define O_NDELAY 0
@@ -177,18 +178,31 @@ void   ToLineEnd()
 
 void   MoveLeftOverEOL()
 {
-   if(Bol() && !hex)
+   if(hex)
+   {
+      CurrentPos-=1;
+      return;
+   }
+   if(Bol())
       CurrentPos-=EolSize;
    else
-      CurrentPos-=1;
+   {
+      MBCheckLeft();
+      CurrentPos-=MBCharSize;
+   }
 }
 
 void   MoveRightOverEOL()
 {
-   if(Eol() && !hex)
+   if(hex)
+   {
+      CurrentPos+=1;
+      return;
+   }
+   if(Eol())
       CurrentPos+=EolSize;
    else
-      CurrentPos+=1;
+      CurrentPos+=CharSize();
 }
 
 void   MoveUp()

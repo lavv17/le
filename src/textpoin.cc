@@ -22,6 +22,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include "edit.h"
+#include "mb.h"
 
 TextPoint   CurrentPos;
 TextPoint   ScreenTop;
@@ -215,7 +216,7 @@ void  TextPoint::FindOffset()
    }
    while(c>col)
    {
-      if(CharAt(o-1)=='\t')
+      if(CharAt(o-1)=='\t' || mb_mode)
       {
          o=LineBegin(o);
          c=0;
@@ -231,8 +232,8 @@ void  TextPoint::FindOffset()
       if(CharAt(o)=='\t')
          c=Tabulate(c);
       else
-         c++;
-      o++;
+         c+=CharWidthAt(o);
+      o+=CharSizeAt(o);
    }
    col=c;
    offset=o;
@@ -288,8 +289,9 @@ void  TextPoint::FindLineCol()
    {
       if(BolAt(o) || CharAt(o-1)=='\t')
          break;
-      c--;
-      o--;
+      MBCheckLeft();
+      c-=MBCharWidth;
+      o-=MBCharSize;
    }
    if(o>offset)
    {
@@ -307,12 +309,27 @@ void  TextPoint::FindLineCol()
       {
          l++;
          c=0;
+	 o++;
+	 continue;
+      }
+      else if(MBCheckLeftAt(o+1))
+      {
+         c+=MBCharWidth;
+	 o++;
       }
       else if(CharAt(o)=='\t')
          c=Tabulate(c);
       else
-         c++;
-      o++;
+      {
+	 MBCheckAt(o);
+         if(o+MBCharSize>offset)
+	 {
+	    o=offset;
+	    break;
+	 }
+	 c+=MBCharWidth;
+	 o+=MBCharSize;
+      }
    }
    col=c;
    line=l;

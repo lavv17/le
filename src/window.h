@@ -19,9 +19,21 @@
 #ifndef WINDOW_H
 #define WINDOW_H
 
+#ifdef USE_MULTIBYTE_CHARS
+#define win_cell cchar_t
+#define win_cell_set_attrs(ch,a) (ch)->attr=((ch)->attr&A_ALTCHARSET)|((a)&~(A_CHARTEXT|A_ALTCHARSET))
+#define scr_get_cell(y,x,out) mvin_wch(y,x,out)
+#define scr_put_cell(y,x,ch)  mvadd_wchnstr(y,x,ch,1)
+#else
+#define win_cell chtype
+#define win_cell_set_attrs(ch,a) (*ch)=((*ch)&(A_CHARTEXT|A_ALTCHARSET))|((a)&~(A_CHARTEXT|A_ALTCHARSET))
+#define scr_get_cell(y,x,out) (*out)=mvinch(y,x)
+#define scr_put_cell(y,x,ch)  mvaddch(y,x,*(ch))
+#endif
+
 typedef struct  win
 {
-    chtype  *buf;
+    win_cell *buf;
     int     x,y;
     int     w,h;
     struct attr *a;

@@ -1,3 +1,11 @@
+2004-03-22  lav
+
+	* mb.cc, mb.h: new files.
+	* Makefile.am: (mb.cc, mb.h) new files.
+	* about.cc: update copyright.
+	* kern.cc, textpoin.cc, screen.cc, window.cc, window.h: support wide chars.
+	* keymapdf.cc: support newer xterm keys.
+
 2003-10-21  lav
 
 	* user.cc: (UserLineEnd) position on previous line indent if in text

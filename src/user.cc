@@ -127,7 +127,7 @@ void  UserCharRight()
    if(hex)
    {
       if(ascii)
-         MoveRight();
+	 MoveRight();
       else
       {
          if(right)

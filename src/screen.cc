@@ -29,6 +29,7 @@
 #include "block.h"
 #include "highli.h"
 #include "getch.h"
+#include "mb.h"
 
 #ifndef max
 # define max(a,b) ((a)>(b)?(a):(b))
@@ -392,7 +393,7 @@ static unsigned mkhash(byte *data,int len)
 }
 
 static attr *norm_attr,*blk_attr,*syntax[3];
-static inline attr *FindPosAttr(offs ptr,num line,num col,byte *hlp)
+static attr *FindPosAttr(offs ptr,num line,num col,byte *hlp)
 {
    if(col==TextWinWidth-1 && !EolAt(ptr) && !EolAt(ptr+1))
       return SHADOW_ATTR;
@@ -447,9 +448,16 @@ void  Redisplay(num line,offs ptr,num limit)
    if(ptr<0)
       ptr=0;
 
-   chtype *cl=(chtype*)alloca(max(TextWinWidth,80)*sizeof(chtype));
+   int ll=max(TextWinWidth,80);
+   chtype *cl=(chtype*)alloca(ll*sizeof(chtype));
    chtype *clp;
    struct attr *ca=norm_attr;
+
+#ifdef USE_MULTIBYTE_CHARS
+   cchar_t *clw=(cchar_t*)alloca(ll*sizeof(cchar_t));
+   memset(clw,0,ll*sizeof(cchar_t));
+   cchar_t *clwp;
+#endif
 
    if(hex)
    {
@@ -595,56 +603,133 @@ void  Redisplay(num line,offs ptr,num limit)
 	 else
 	    col=n.Col()-ScrShift;
 
-	 clp=cl;
+	 if(!mb_mode)
+	 {
+	    clp=cl;
+	    for( ; col<TextWinWidth && !EolAt(ptr); ptr++)
+	    {
+	       if(col>-TabSize)
+		  ca=FindPosAttr(ptr,line,col,hlp);
 
-         for( ; col<TextWinWidth && !EolAt(ptr); ptr++)
-         {
-	    if(col>-TabSize)
-	       ca=FindPosAttr(ptr,line,col,hlp);
-
-	    byte ch=CharAt_NoCheck(ptr);
-            if(ch=='\t')
-            {
-               i=Tabulate(col+ScrShift)-ScrShift;
-               if(i>0)
+	       byte ch=CharAt_NoCheck(ptr);
+	       if(ch=='\t')
 	       {
-		  if(col<0)
-		     col=0;
-		  *clp++ = ca->n_attr|' ';
-		  col++;
-		  while(col<i && col<TextWinWidth)
+		  i=Tabulate(col+ScrShift)-ScrShift;
+		  if(i>0)
 		  {
-		     ca=FindPosAttr(ptr,line,col,hlp);
+		     if(col<0)
+			col=0;
 		     *clp++ = ca->n_attr|' ';
 		     col++;
+		     while(col<i && col<TextWinWidth)
+		     {
+			ca=FindPosAttr(ptr,line,col,hlp);
+			*clp++ = ca->n_attr|' ';
+			col++;
+		     }
 		  }
+		  else
+		     col=i;
 	       }
 	       else
-		  col=i;
-            }
-            else
-            {
-               if(col>=0)
-		  *clp++=visualize(ca,ch|ca->n_attr);
-	       col++;
-            }
-	    if(hlp)
-	       hlp++;
-         }
-	 if(col<0)
-	    col=0;
+	       {
+		  if(col>=0)
+		     *clp++=visualize(ca,ch|ca->n_attr);
+		  col++;
+	       }
+	       if(hlp)
+		  hlp++;
+	    }
+	    if(col<0)
+	       col=0;
 
-	 if(EofAt(ptr))
-	    hlp=0;
+	    if(EofAt(ptr))
+	       hlp=0;
 
-         for( ; col<TextWinWidth; col++)
-	 {
-	    ca=FindPosAttr(ptr,line,col,hlp);
-            *clp++ = ca->n_attr|' ';
+	    for( ; col<TextWinWidth; col++)
+	    {
+	       ca=FindPosAttr(ptr,line,col,hlp);
+	       *clp++ = ca->n_attr|' ';
+	    }
+
+	    attrset(0);
+	    mvaddchnstr(TextWinY+line,TextWinX,cl,TextWinWidth);
 	 }
+#ifdef USE_MULTIBYTE_CHARS
+	 else // mb_mode
+	 {
+	    clwp=clw;
+	    for( ; col<TextWinWidth && !EolAt(ptr); ptr+=MBCharSize)
+	    {
+	       if(col>-TabSize)
+		  ca=FindPosAttr(ptr,line,col,hlp);
 
-	 attrset(0);
-	 mvaddchnstr(TextWinY+line,TextWinX,cl,TextWinWidth);
+	       wchar_t ch=WCharAt(ptr);
+	       if(ch=='\t')
+	       {
+		  i=Tabulate(col+ScrShift)-ScrShift;
+		  if(i>0)
+		  {
+		     if(col<0)
+			col=0;
+		     clwp->attr=ca->n_attr;
+		     clwp->chars[0]=' ';
+		     clwp++;
+		     col++;
+		     while(col<i && col<TextWinWidth)
+		     {
+			ca=FindPosAttr(ptr,line,col,hlp);
+			clwp->attr=ca->n_attr;
+			clwp->chars[0]=' ';
+			clwp++;
+			col++;
+		     }
+		  }
+		  else
+		     col=i;
+	       }
+	       else
+	       {
+		  if(col>=0)
+		  {
+		     if(MBCharWidth==0 && clwp>clw)
+		     {
+			int a=0;
+			while(clwp[-1].chars[a] && a<CCHARW_MAX)
+			   a++;
+			if(a<CCHARW_MAX)
+			   clwp[-1].chars[a]=ch;
+		     }
+		     else
+		     {
+			clwp->attr=ca->n_attr;
+			clwp->chars[0]=ch;
+			clwp++;
+		     }
+		  }
+		  col+=MBCharWidth;
+	       }
+	       if(hlp)
+		  hlp++;
+	    }
+	    if(col<0)
+	       col=0;
+
+	    if(EofAt(ptr))
+	       hlp=0;
+
+	    for( ; col<TextWinWidth; col++)
+	    {
+	       ca=FindPosAttr(ptr,line,col,hlp);
+	       clwp->attr=ca->n_attr;
+	       clwp->chars[0]=' ';
+	       clwp++;
+	    }
+
+	    attrset(0);
+	    mvadd_wchnstr(TextWinY+line,TextWinX,clw,TextWinWidth);
+	 } // end of mb_mode
+#endif
 
 	 if(++line>=limit)
 	    break;

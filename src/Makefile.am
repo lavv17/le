@@ -8,7 +8,8 @@ le_SOURCES = about.cc block.cc calc.cc chset.cc cmd.cc color.cc edit.cc\
  calc.h chset.h cmd.h color.h edit.h file.h history.h inline.h keymap.h\
  menu.h menu1.h options.h rus.h screen.h search.h textpoin.h user.h\
  window.h highli.cc highli.h clipbrd.cc clipbrd.h keynames.h keynames.cc\
- mouse.h mouse.cc getch.h format.h colormnu.cc colormnu.h bm.cc bm.h
+ mouse.h mouse.cc getch.h format.h colormnu.cc colormnu.h bm.cc bm.h\
+ mb.cc mb.h
 
 le_LDADD = $(top_builddir)/lib/liblib.a $(CURSES_LIBS)
 

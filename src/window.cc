@@ -171,27 +171,29 @@ void  DestroyWin(WIN *win)
 }
 void  DisplayWin(WIN *win)
 {
-   chtype   *save;
+   win_cell *save;
    int      x,y;
 
    curs_set(0);
+   attrset(0);
 
    win->prev=Upper;
    Upper=win;
 
-   save = win->buf = (chtype*)malloc((win->h+1)*(win->w+2)*sizeof(chtype));
+   save = win->buf = (win_cell*)malloc((win->h+1)*(win->w+2)*sizeof(win_cell));
 
    for(y=0; y<win->h+1; y++)
    {
       for(x=0; x<win->w+2; x++)
       {
-         *save=mvinch(y+win->y,x+win->x);
+         scr_get_cell(y+win->y,x+win->x,save);
          if(!(y<win->h && x<win->w) && !(win->flags&NOSHADOW) && x>1 && y>0)
          {
             if(y+win->y<LINES && x+win->x<COLS)
             {
-               attrset(SHADOW_ATTR->n_attr);
-               mvaddch(y+win->y,x+win->x,*save&(A_CHARTEXT|A_ALTCHARSET));
+	       win_cell ch=*save;
+	       win_cell_set_attrs(&ch,SHADOW_ATTR->n_attr);
+               scr_put_cell(y+win->y,x+win->x,&ch);
             }
          }
          save++;
@@ -203,7 +205,7 @@ void  DisplayWin(WIN *win)
 }
 void  CloseWin()
 {
-   chtype   *save;
+   win_cell *save;
    int      x,y;
 
    save = Upper->buf;
@@ -215,7 +217,7 @@ void  CloseWin()
       {
 	 if(y+Upper->y<LINES && x+Upper->x<COLS
 	 && x>=0 && y>=0 && (x<Upper->w || !(Upper->flags&NOSHADOW)))
-   	    mvaddch(y+Upper->y,x+Upper->x,*save);
+   	    scr_put_cell(y+Upper->y,x+Upper->x,save);
       }
 
    free(Upper->buf);
