@@ -174,6 +174,9 @@ int   RDelete()
 
    lines_deleted=0;
 
+   CurrentPos=BlockBegin;
+   num oldline=GetLine(),oldcol=GetCol();
+
    if(!MainClipBoard.Copy())
       return 0;
 
@@ -187,8 +190,9 @@ int   RDelete()
 	 if(Char()=='\t')
 	    ExpandTab();
 	 j++;
-	 DeleteChar();
+      	 MoveRight();
       }
+      DeleteBlock(j-BlockBegin.Col(),0);
    }
 
    if(BlockBegin.Col()==oldcol2)
@@ -215,6 +219,8 @@ int   RDelete()
 	    DeleteLine();
       }
    }
+   HardMove(oldline,oldcol);
+   stdcol=oldcol;
 
    hide=TRUE;
    return 1;
