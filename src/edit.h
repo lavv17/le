@@ -16,6 +16,11 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
+#ifndef EDIT_H
+#define EDIT_H
+
 #include    <sys/types.h>
 #include    <time.h>
 
@@ -51,7 +56,8 @@ typedef long            num;
 #include "about.h"
 
 extern  inputmode,editmode,noreg;
-extern  char   bak[5];
+#define BACKUP_SUFFIX_LEN 16
+extern  char   bak[BACKUP_SUFFIX_LEN];
 extern  int    TabSize;
 extern  int    IndentSize;
 extern  int    Scroll,hscroll;
@@ -326,3 +332,5 @@ int   Suffix(const char *,const char *);
 int   isslash(char);
 
 void  ProcessDragMark();
+
+#endif // EDIT_H

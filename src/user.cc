@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #include <config.h>
 #include <ctype.h>
 #ifdef HAVE_UNISTD_H
@@ -1170,13 +1172,18 @@ void  UserInsertControlChar(char ch)
 {
    if(View)
       return;
-   UserInsertChar(ch);
-   if(hex && !insert)
+   if((hex && !insert) || buffer_mmapped)
    {
-      DeleteChar();
-      if(!Bol())
-         flag&=~REDISPLAY_AFTER;
+      PreUserEdit();
+      ReplaceCharMove(ch);
+      if(!hex && Bol())
+	 flag|=REDISPLAY_AFTER;
+      else
+	 flag|=REDISPLAY_LINE;
+      stdcol=GetCol();
    }
+   else
+      UserInsertChar(ch);
 }
 
 void  UserEnterControlChar()
