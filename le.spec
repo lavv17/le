@@ -1,4 +1,4 @@
-%define version 1.11.5
+%define version 1.12.0
 %define release 1
 
 Summary: Terminal text editor LE.

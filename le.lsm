@@ -1,7 +1,7 @@
 Begin3
 Title:		LE text editor
-Version:	1.11.5
-Entered-date:	2005-01-28
+Version:	1.12.0
+Entered-date:	2005-03-04
 Description:	LE has many block operations with stream and
 		rectangular blocks, can edit both unix and dos
 		style files (LF/CRLF), is binary clean, has hex
@@ -15,7 +15,7 @@ Keywords:	text editor, block, color, binary, hex, mmap, undo
 Author:		lav@yars.free.net (Alexander V. Lukyanov)
 Maintained-by:	lav@yars.free.net (Alexander V. Lukyanov)
 Primary-site:	ftp.yars.free.net /pub/software/unix/util/texteditors
-		429 kB le-1.11.5.tar.gz
+		432 kB le-1.12.0.tar.gz
 Alternate-site:	metalab.unc.edu /pub/Linux/apps/editors/terminal
 Platforms:	Unix, C++, ncurses or sysv curses
 Copying-policy:	GNU GPL
