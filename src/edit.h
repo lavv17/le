@@ -25,7 +25,7 @@
 #include    <time.h>
 
 #if !defined(bool)
-# define bool LE_CURSES_BOOL
+# define bool LE_CURSES_BOOL_TYPE
 # define bool_redefined 1
 #endif
 #ifdef USE_NCURSES_H
