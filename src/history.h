@@ -20,7 +20,7 @@
 #undef	cols
 
 #define  HISTORY_LINE_LEN  256
-#define  HISTORY_SIZE      32
+#define  HISTORY_SIZE      128
 
 class HistoryLine
 {

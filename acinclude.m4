@@ -371,17 +371,90 @@ AC_DEFUN(LFTP_NOIMPLEMENTINLINE,
 
 AC_DEFUN([LE_CHECK_REGEX_BUGS],[
    AC_CACHE_CHECK([for good GNU regex in libc], le_cv_good_gnu_regex,
+      le_cv_good_gnu_regex=yes
       AC_TRY_RUN([
 	 #include <stdio.h>
+	 #include <string.h>
 	 #include <regex.h>
 	 int main()
 	 {
-	    static struct re_pattern_buffer rexp;
-	    re_compile_pattern("b",1,&rexp);
-	    return(re_search_2(&rexp,"123abc",6,"",0,0,10,0,10)!=4);
+	    struct re_pattern_buffer rexp_c;
+	    struct re_registers regs;
+	    char *rexp;
+	    char *buf;
+	    int bs;
+
+	    /* check for completely broken re_search_2 in redhat-6.0(?) */
+
+	    memset(&rexp_c,0,sizeof(rexp_c));
+	    memset(&regs,0,sizeof(regs));
+    
+	    rexp="b";
+	    buf="123abc";
+	    bs=strlen(buf);
+
+	    re_compile_pattern(rexp,strlen(rexp),&rexp_c);
+	    if(re_search_2(&rexp_c,buf,bs,"",0,0,bs,0,bs)!=4)
+	       return 1;
+
+
+	    /* check for a segfault in default redhat-8.0 glibc (2.2.93-5) */
+
+	    memset(&rexp_c,0,sizeof(rexp_c));
+	    memset(&regs,0,sizeof(regs));
+    
+	    rexp="/\\\\*([[^*]]|\\\\*[[^/]])*\\\\*/";
+	    buf="/*a\\nb\\nc*/\\n";
+	    bs=strlen(buf);
+
+	    re_syntax_options=RE_NO_BK_VBAR|RE_NO_BK_PARENS;
+	    re_compile_pattern(rexp,strlen(rexp),&rexp_c);
+	    re_search_2(&rexp_c,buf,bs,"",0,0,bs,&regs,bs);
+    
+	    return 0;
 	 }
-      ], le_cv_good_gnu_regex=yes, le_cv_good_gnu_regex=no, le_cv_good_gnu_regex=yes))
-   if test $le_cv_good_gnu_regex = no; then
+      ], , le_cv_good_gnu_regex=no)
+   )
+   if test x$le_cv_good_gnu_regex = xno; then
       am_cv_gnu_regex=no
    fi
+])
+
+# AM_WITH_REGEX
+# -------------
+#
+# The idea is to distribute rx.[hc] and regex.[hc] together, for a
+# while.  The WITH_REGEX symbol is used to decide which of regex.h or
+# rx.h should be included in the application.  If `./configure
+# --with-regex' is given (the default), the package will use gawk's
+# regex.  If `./configure --without-regex', a check is made to see if
+# rx is already installed, as with newer Linux'es.  If not found, the
+# package will use the rx from the distribution.  If found, the
+# package will use the system's rx which, on Linux at least, will
+# result in a smaller executable file.
+#
+# FIXME: This macro seems quite obsolete now since rx doesn't seem to
+# be maintained, while regex is.
+AC_DEFUN([AM_WITH_REGEX],
+[AC_LIBSOURCES([rx.h, rx.c, regex.c, regex.h])dnl
+AC_MSG_CHECKING([which of GNU rx or gawk's regex is wanted])
+AC_ARG_WITH(regex,
+[  --without-regex         use GNU rx in lieu of gawk's regex for matching],
+            [test "$withval" = yes && am_with_regex=1],
+            [am_with_regex=1])
+if test -n "$am_with_regex"; then
+  AC_MSG_RESULT(regex)
+  AC_DEFINE(WITH_REGEX, 1, [Define if using GNU regex])
+  AC_CACHE_CHECK([for GNU regex in libc], am_cv_gnu_regex,
+    [AC_TRY_LINK([],
+                 [extern int re_max_failures; re_max_failures = 1],
+		 [am_cv_gnu_regex=yes],
+                 [am_cv_gnu_regex=no])])
+  if test $am_cv_gnu_regex = no; then
+    AC_LIBOBJ([regex])
+  fi
+else
+  AC_MSG_RESULT(rx)
+  AC_CHECK_FUNC(re_rx_search, , [AC_LIBOBJ([rx])])
+fi
 ])

@@ -44,7 +44,7 @@ c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 |return|sizeof|static|struct|typedef|union|void|volatile\
 |try|catch|class|new|delete|private|public|protected|this|virtual\
 |inline|bool|true|false|operator|overload|template|friend|namespace|using\
-|typeid|dynamic_cast\
+|typeid|dynamic_cast|typename|explicit\
 )([^[:alnum:]_]|$)
 c2,1=\\[|\\]|\\(|\\)|{|}|,
 

@@ -13,7 +13,7 @@ le_SOURCES = about.cc block.cc calc.cc chset.cc cmd.cc color.cc edit.cc\
 le_LDADD = $(top_builddir)/lib/liblib.a $(CURSES_LIBS)
 
 INCLUDES = -I$(top_builddir)/include -I$(top_srcdir)/include $(CURSES_INCLUDES)
-CPPFLAGS = -DPKGDATADIR=\"$(pkgdatadir)\"
+AM_CPPFLAGS = -DPKGDATADIR=\"$(pkgdatadir)\"
 
 EXTRA_DIST = le.hlp
 pkgdata_DATA = le.hlp

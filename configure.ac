@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.9.1], [le@uniyar.ac.ru])
+AC_INIT([le], [1.9.2], [le@uniyar.ac.ru])
 AC_CONFIG_SRCDIR([src/edit.cc])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
@@ -145,6 +145,5 @@ if test x$ac_cv_func_fnmatch_works = xno; then
    AC_CONFIG_LINKS([include/fnmatch.h:lib/fnmatch.h])
 fi
 
-AC_CONFIG_LINKS([$ac_config_links_1])
 AC_CONFIG_FILES([Makefile lib/Makefile include/Makefile src/Makefile misc/Makefile doc/Makefile])
 AC_OUTPUT
