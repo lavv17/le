@@ -33,7 +33,7 @@ void  ShowAbout()
    DisplayWin(about_window);
 
    PutStr(MIDDLE,2,"Text editor LE");
-   PutStr(MIDDLE,3,"Version  " VERSION);
+   PutStr(MIDDLE,3,"Version " VERSION);
    PutStr(MIDDLE,5,copyright);
    PutStr(MIDDLE,6,"E-Mail: " EMAIL);
    PutStr(MIDDLE,8,"This is free software that gives you freedom to use,");

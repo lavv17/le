@@ -1,3 +1,9 @@
+Version 1.11.2 - 2004-06-08
+
+* don't show shortcuts with undefined in terminfo keys.
+* fixed: mark text as modified properly in overstrike mode.
+* fixed null termination of file name in load/save-as dialog.
+
 Version 1.11.1 - 2004-05-20
 
 * fixed a memory allocation error.
