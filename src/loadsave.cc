@@ -1,0 +1,567 @@
+/*
+ * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Library General Public License as published by
+ * the Free Software Foundation; either version 2, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public License
+ * along with this software; see the file COPYING.  If not, write to
+ * the Free Software Foundation, 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* $Id$ */
+
+#include <config.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+#include <errno.h>
+#include <string.h>
+#include <stdlib.h>
+#include "edit.h"
+#include "keymap.h"
+#include "highli.h"
+#include <xalloca.h>
+
+
+#ifndef __MSDOS__
+int    LockFile(int fd)
+{
+   struct  flock   Lock;
+   Lock.l_start=0;
+   Lock.l_len=0;
+   Lock.l_type=F_WRLCK;
+   Lock.l_whence=SEEK_SET;
+
+   if(fcntl(fd,F_SETLK,&Lock)==-1)
+   {
+      if(errno==EACCES || errno==EAGAIN)
+      {
+         struct flock   Lock1;
+         char   msg[100];
+         static  struct menu LockMenu[]={
+         {" &Cancel ",MIDDLE-10,FDOWN-2},
+         {"  &Wait  ",MIDDLE,FDOWN-2},
+         {" &Ignore ",MIDDLE+10,FDOWN-2},
+         {NULL}};
+         static  struct menu LockMenu1[]={
+         {" &Cancel ",MIDDLE-5,FDOWN-2},
+         {"  &Wait  ",MIDDLE+5,FDOWN-2},
+         {NULL}};
+         struct  stat   st;
+         Lock1=Lock;
+         fcntl(fd,F_GETLK,&Lock1);
+         if(Lock1.l_type==F_UNLCK)
+         {
+            return(-2);
+         }
+         fstat(fd,&st);
+
+         sprintf(msg,"This file is already locked by prosess %ld",(long)Lock1.l_pid);
+         switch(ReadMenuBox(LockEnforce(st.st_mode)?
+            LockMenu1:LockMenu,HORIZ,msg," Lock Error ",
+	    VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
+         {
+         case(0):
+         case('C'):
+            return(-1);
+         case('I'):
+            return(0);
+         case('W'):
+            Message("Waiting for unlocking the file... (C-x - cancel)");
+            errno=EACCES;
+            while(fcntl(fd,F_SETLK,&Lock)==-1 && (errno==EACCES || errno==EAGAIN))
+            {
+	       if(WaitForKey(1000)==OK)
+	       {
+	       	  int action=GetNextAction();
+		  if(action==CANCEL)
+                  {
+                     ErrMsg("Interrupted by user");
+                     return(-1);
+                  }
+               }
+            }
+            if(errno!=EACCES && errno!=EAGAIN)
+            {
+               FError(FileName);
+               return(-2);
+            }
+         }
+      }
+      else
+      {
+         FError(FileName);
+         return(-2);
+      }
+   }
+   return(0);
+}
+#else /* __MSDOS__ */
+int   LockFile(int f)
+{
+   (void)f;
+   return 0;
+}
+#endif /* __MSDOS__ */
+
+struct  menu   ConCan4Menu[]={
+{   " C&ontinue ",MIDDLE-6,FDOWN-2  },
+{   "  &Cancel  ",MIDDLE+6,FDOWN-2  },
+{NULL}};
+
+int   LoadFile(char *name)
+{
+   struct stat    st;
+   register num   i;
+   num    act_read;
+   char   msg[256];
+   num    DosLastLine;
+   InodeInfo   *old;
+
+   EmptyText();
+
+   flag=REDISPLAY_ALL;
+
+   errno=0;
+   View&=~2;      /* clear the 'temporarily read-only' bit */
+
+   if(!name[0])
+     return(OK);
+
+   sprintf(msg,"Loading the file \"%.60s\"...",name);
+   Message(msg);
+
+   newfile=0;
+
+   if(stat(name,&st)==-1 && errno==ENOENT)
+   {
+     int f=creat(name,0666);
+     if(f!=-1)
+     {
+       close(f);
+       newfile=1;
+     }
+     else
+     {
+       ErrMsg("Cannot create the file.\nThe directory does not exist or is not accessible\nor does not permit writing");
+       return(ERR);
+     }
+   }
+   else if(errno==0)
+   {
+     FileMode=st.st_mode;
+     if(S_ISBLK(FileMode) || S_ISCHR(FileMode) || S_ISFIFO(FileMode))
+     {
+       ErrMsg("This is a special file or a pipe\nthat I cannot edit.");
+       return(ERR);
+     }
+     if(S_ISDIR(FileMode))
+       View|=2;
+   }
+   file=open(name,(View?O_RDONLY:O_RDWR|O_CREAT)|O_NDELAY,0666);
+   if(file==-1)
+   {
+     View|=2;
+     file=open(name,O_RDONLY|O_NDELAY,0666);
+       /* try to open the file in read-only mode */
+     if(file==-1)
+     {
+       View&=~2;
+       FError(name);
+       return(ERR);
+     }
+   }
+
+   stat(name,&st);
+   FileMode=st.st_mode;
+
+   if(!View)
+   {
+      int lock_res=LockFile(file);
+      if(lock_res==-1)
+      {
+	 View&=~2;
+	 close(file);
+	 file=-1;
+         return(ERR);
+      }
+      if(lock_res==-2)
+	 ErrMsg("Warning: file locking failed");
+   }
+
+   if(ReadBlock(file,st.st_size,&act_read)!=OK)
+   {
+      if(errno)
+	 FError(name);
+      View&=~2;
+      return(ERR);
+   }
+   CheckPoint();
+
+   DosLastLine=0;
+   for(i=Size()-1; i>0; )
+   {
+      if(CharAt_NoCheck(--i)=='\r')
+      {
+         if(CharAt_NoCheck(i+1)=='\n')
+            DosLastLine++;
+      }
+   }
+#ifndef MSDOS
+   if(TextEnd.Line()/2<DosLastLine) /* check if the file has unix or dos format */
+#else
+   if(TextEnd.Line()/2<=DosLastLine)
+#endif
+   {
+     DosEol=1;
+     EolSize=2;
+     EolStr="\r\n";
+     TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
+     TextEnd=TextPoint(Size(),DosLastLine,-1);
+   }
+
+   stdcol=modified=0;
+
+   hide=1;
+   flag=REDISPLAY_ALL;
+
+   stat(name,&st);
+   FileInfo=InodeInfo(&st,GetLine(),GetCol());
+   strcpy(FileName,name);
+
+   CurrentPos=TextBegin;
+   if(SavePos)
+   {
+     old=PositionHistory.FindInode(FileInfo);
+     if(old)
+     {
+       MoveLineCol(old->line,old->col);
+       FileInfo.line=GetLine();
+       FileInfo.col=stdcol=GetCol();
+     }
+   }
+
+   PositionHistory+=FileInfo;
+   LoadHistory+=HistoryLine(name);
+
+   InitHighlight(name);
+
+   ScrShift=0;
+   CenterView();
+
+   alarm(ALARMDELAY); /* set alarm so the file is dumped at regular intervals */
+   return(OK);
+}
+
+void   CreateBak(char *name)
+{
+   char   *buf2,bakname[512];
+   num    buf2size;
+   num    bytesread;
+   struct stat st;
+   int    fd,bfd;
+   char   directory[256];
+   char   *filename;
+   int    namemax;
+
+   filename=strrchr(name,'/');
+   if(filename==NULL)
+   {
+      strcpy(directory,".");
+      filename=name;
+   }
+   else
+   {
+      if(filename==name)
+        strcpy(directory,"/");
+      else
+      {
+        strncpy(directory,name,filename-name);
+        directory[filename-name]=0;
+      }
+      filename++;
+   }
+
+   Message("Creating backup file...");
+
+   namemax=pathconf(directory,_PC_NAME_MAX);
+   if(namemax==-1)
+     namemax=14;
+
+
+   char *bp=BakPath;
+   if(*bp==0)
+      bp=directory;
+   else if(bp[0]=='~' && (bp[1]==0 || isslash(bp[1])))
+   {
+      bp=(char*)alloca(strlen(bp)+strlen(HOME));
+      sprintf(bp,"%s%s",HOME,BakPath+1);
+   }
+
+   sprintf(bakname,bp[strlen(bp)-1]=='/'?"%s%.*s%s":"%s/%.*s%s",
+      bp,namemax-strlen(bak),filename,bak);
+
+   unlink(bakname);
+   errno=0;
+
+   if(stat(name,&st)==-1)
+   {
+      FError(name);
+      return;
+   }
+
+   fd=open(name,O_RDONLY);
+   bfd=open(bakname,O_TRUNC|O_CREAT|O_WRONLY,st.st_mode&~0077);
+
+   if(fd==-1)
+   {
+      FError(name);
+      return;
+   }
+   else if(bfd==-1)
+   {
+      FError(bakname);
+      return;
+   }
+   buf2size=st.st_size;
+   if(buf2size>0x1000)
+      buf2size=0x1000;
+   if((buf2=(char*)malloc(buf2size))==NULL)
+   {
+      NotMemory();
+      errno=TRUE;
+   }
+   else
+   {
+      for(;;)
+      {
+         bytesread=read(fd,buf2,buf2size);
+         if(bytesread==-1)
+         {
+            FError(name);
+            break;
+         }
+         if(bytesread==0)
+            break;
+         if(write(bfd,buf2,bytesread)==-1)
+            FError(bakname);
+      }
+      free(buf2);
+   }
+   close(fd);
+   close(bfd);
+}
+
+int CheckMode(mode_t mode)
+{
+   if((mode&S_IFMT)!=S_IFREG)
+   {
+     ErrMsg("This is not a regular file");
+     return(0);
+   }
+   return(1);
+}
+
+int   SaveFile(char *name)
+{
+   struct stat st;
+   char  msg[256];
+   int   nfile;
+   num   act_written;
+   int   delete_old_file=0;
+
+   if(Text)
+      Optimize();
+
+   sprintf(msg,"Saving the file \"%s\"...",name);
+   Message(msg);
+
+   if(file!=-1)
+   {
+      FileInfo.line=GetLine();
+      FileInfo.col=GetCol();
+      PositionHistory+=FileInfo;
+   }
+   if(stat(name,&st)!=-1)
+   {
+     if(!CheckMode(st.st_mode))
+       return(ERR);
+
+     InodeInfo   NewFileInfo(&st,GetLine(),GetCol());
+
+     if(file!=-1)
+     {
+
+       if(FileInfo.SameFileModified(NewFileInfo))
+       {
+         switch(ReadMenuBox(ConCan4Menu,HORIZ,"The file was changed out of the editor",
+	    " Warning ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
+         {
+         case('C'):
+         case(0):
+            return(ERR);
+         }
+       }
+       else if(!FileInfo.SameFile(NewFileInfo))
+       {
+         switch(ReadMenuBox(ConCan4Menu,HORIZ,"The file already exists and will be overwritten"," Verify ",
+	    VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
+         {
+         case('C'):
+         case(0):
+            errno=1;
+            return(ERR);
+         }
+         delete_old_file=1;
+       }
+     }
+
+     errno=0;
+     if(makebak && !newfile) /* only for 'old' files */
+       CreateBak(name);
+     if(errno)
+     {
+       switch(ReadMenuBox(ConCan4Menu,HORIZ,"Cannot create backup file",
+	 " Warning ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
+       {
+       case('C'):
+       case(0):
+         return(ERR);
+       }
+     }
+   }
+   else
+   {
+     if(errno!=ENOENT)
+     {
+       FError(name);
+       return(ERR);
+     }
+     st.st_mode=FileMode|0600;
+     delete_old_file=1;
+   }
+
+   if(!newfile)
+     delete_old_file=0;
+
+   newfile=0;
+
+   Message(msg);
+
+   errno=0;
+   nfile=open(name,O_CREAT|O_RDWR|O_TRUNC,st.st_mode);
+   if(nfile==-1)
+   {
+     FError(name);
+     return(ERR);
+   }
+
+   int lock_res=LockFile(nfile);
+   if(lock_res==-1)
+   {
+     close(nfile);
+     return(ERR);
+   }
+   if(lock_res==-2)
+      ErrMsg("Warning: file locking failed");
+
+   if(LockEnforce(FileMode))
+   {
+     close(nfile);
+     nfile=open(name,O_CREAT|O_TRUNC|O_RDWR,st.st_mode);
+     if(nfile==-1)
+     {
+       FError(name);
+       return(ERR);
+     }
+     LockFile(nfile);
+   }
+   else
+     close(open(name,O_TRUNC|O_RDONLY));
+
+   /* force new file to be the same mode as source one */
+   chmod(name,st.st_mode);
+
+   /* now, after all that stuff, write the buffer contents */
+   if(WriteBlock(nfile,0,Size(),&act_written)!=OK)
+   {
+     if(errno)
+       FError(name);
+     return(ERR);
+   }
+   if(act_written!=Size())
+   {
+     ErrMsg("Cannot write the file up to end\nPerhaps disk full");
+     return(ERR);
+   }
+
+   modified=0;
+   CheckPoint();
+
+   stat(name,&st);
+   FileInfo=InodeInfo(&st,GetLine(),GetCol());
+   PositionHistory+=FileInfo;
+
+   close(file);
+   file=nfile;
+
+   if(delete_old_file)
+   {
+     if(stat(FileName,&st)!=-1 && st.st_size==0)
+       unlink(FileName);
+   }
+
+   strcpy(FileName,name);
+
+   return(OK);
+}
+
+int   ReopenRW()
+{
+   struct stat st;
+
+   if(View==0)
+      return(OK);
+
+   if(access(FileName,W_OK|R_OK)==-1)
+   {
+      if(stat(FileName,&st)==-1)
+      {
+         FError(FileName);
+         return ERR;
+      }
+
+      if(st.st_uid!=geteuid())
+      {
+	 ErrMsg("You are not the owner of the file,\nso you cannot force read-write open");
+	 return ERR;
+      }
+
+      st.st_mode|=S_IRUSR|S_IWUSR;
+
+      if(chmod(FileName,st.st_mode)==-1)
+      {
+	 FError("chmod() failed");
+	 return ERR;
+      }
+   }
+
+   View=0;
+
+   char	 *name=(char*)alloca(strlen(FileName)+1);
+   strcpy(name,FileName);
+
+   return(LoadFile(name));
+}
