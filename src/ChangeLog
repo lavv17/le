@@ -4,6 +4,10 @@
 	* getstr.cc: remove extra ;
 	* screen.cc: allocate enough space for chr; clear line before filling
           (this fixes wrong display for combining accents).
+	* getstr.cc: use mbtowc consistently to reset internal shift state.
+	* mb.cc: use mbtowc+wcwidth to reduce number of wc calls; handle
+	  wcwidth errors.
+	* textpoin.cc: workaround negative column (due to buggy libc).
 
 2004-03-30  lav
 

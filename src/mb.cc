@@ -66,15 +66,20 @@ bool MBCheckLeftAt(offs o)
       mb_len=MB_LEN_MAX*2-1;
    for(int i=0; i<left_offset; i++)
    {
-      mblen(0,0);
-      MBCharSize=mblen(mb_ptr+i,mb_len-i);
+      mbtowc(0,0,0);
+      wchar_t wc=-1;
+      MBCharSize=mbtowc(&wc,mb_ptr+i,mb_len-i);
+
       if(MBCharSize==left_offset-i)
       {
-	 MBCharWidth=mbsnwidth(mb_ptr+i,MBCharSize,mb_flags);
+	 MBCharWidth=wcwidth(wc);
+	 if(MBCharWidth<0)
+	    MBCharWidth=1;
 	 return true;
       }
       if(MBCharSize>left_offset-i)
       {
+	 MBCharSize=left_offset-i;
 	 MBCharWidth=0;
 	 return true;
       }
@@ -89,15 +94,18 @@ bool MBCheckAt(offs o)
    if(!mb_mode)
       return false;
    MB_Prepare(o);
-   mblen(0,0);
-   MBCharSize=mblen(mb_ptr,mb_len);
+   mbtowc(0,0,0);
+   wchar_t wc=-1;
+   MBCharSize=mbtowc(&wc,mb_ptr,mb_len);
    if(MBCharSize<1)
    {
       MBCharSize=1;
       MBCharWidth=0;
       return false;
    }
-   MBCharWidth=mbsnwidth(mb_ptr,MBCharSize,mb_flags);
+   MBCharWidth=wcwidth(wc);
+   if(MBCharWidth<0)
+      MBCharWidth=1;
    return true;
 }
 wchar_t WCharAt(offs o)

@@ -291,6 +291,8 @@ void  TextPoint::FindLineCol()
          break;
       MBCheckLeft();
       c-=MBCharWidth;
+      if(c<0)  // this would indicate libc bug with mb chars.
+	 break;
       o-=MBCharSize;
    }
    if(o>offset)
