@@ -1,10 +1,12 @@
-Version 1.5.5  1999-??-??
+Version 1.5.5  1999-11-06
 
-* better interaction with new xterms (xterm-120 and later).
+* better interaction with new xterms (xterm-120 and later). You need an
+  improved terminfo.
 * ~F11 (or Esc+F11) to yank block, ~F12 (or Esc+F12) to delete (cut) block.
 * it is now possible to do block marking with shift-arrows on new xterm.
 * help text is now in a separate data file.
 * replace inside the block fixed (the `#' replace mode).
+* replace to string containing \\ fixed.
 
 Version 1.5.4  1999-10-06
 
