@@ -632,8 +632,8 @@ void  UserUnindent()
    {
       if(Text && Eol() && stdcol>GetCol())
       {
-         stdcol--;
-         return;
+         UserLineEnd();
+	 return;
       }
       BackSpace();
    }
@@ -703,10 +703,8 @@ void  UserBackSpace()
       {
 	 if(Text && Eol() && stdcol>GetCol())
 	 {
-	    if(BackspaceUnindents)
-	       stdcol=GetCol();
-	    else
-	       stdcol--;
+	    //UserLineEnd();
+	    stdcol--;
 	    return;
 	 }
          BackSpace();
