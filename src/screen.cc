@@ -46,10 +46,11 @@ int   TextWinHeight;
 int   ScrollBarX;
 int   StatusLineY;
 
-WINDOW *text_w=0;
-
 /* when there_message==1 there is a message on the screen */
 int    there_message=0;
+
+int   range_begin;
+int   range_end;
 
 void  TestPosition()
 {
@@ -76,10 +77,28 @@ void  TestPosition()
       }
       return;
    }
-   if(GetLine()-ScreenTop.Line()>TextWinHeight-1)
+   num oldtop=ScreenTop.Line();
+   num newtop;
+   if(GetLine()-oldtop>TextWinHeight-1)
    {
       ScreenTop=PrevNLines(Offset(),TextWinHeight-Scroll);
+      newtop=ScreenTop.Line();
+#if 0
+      if(flag&(REDISPLAY_RANGE|REDISPLAY_ALL)
+      || newtop-oldtop>TextWinHeight-1)
+	 flag=REDISPLAY_ALL;
+      else
+      {
+	 flag|=REDISPLAY_RANGE;
+	 range_begin=TextWinHeight-(newtop-oldtop);
+	 range_end=TextWinHeight;
+	 scrollok(text_w,1);
+	 wscrl(text_w,newtop-oldtop);
+	 scrollok(text_w,0);
+      }
+#else
       flag=REDISPLAY_ALL;
+#endif
    }
    else if(GetLine()-ScreenTop.Line()<0)
    {
@@ -101,13 +120,39 @@ void  TestPosition()
 
 void  SyncTextWin()
 {
+   int line=TextWinHeight;
+   int lim=-1;
+   offs ptr;
+
    TestPosition();
    if(flag&REDISPLAY_ALL)
-     RedisplayAll();
+   {
+      line=0;
+      lim=TextWinHeight;
+   }
    else if(flag&REDISPLAY_AFTER)
-     RedisplayAfter();
+   {
+      line=GetLine()-ScreenTop.Line()-1;
+      lim=TextWinHeight;
+   }
    else if(flag&REDISPLAY_LINE)
-     RedisplayLine();
+   {
+      line=GetLine()-ScreenTop.Line()-1;
+      lim =GetLine()-ScreenTop.Line()+1;
+   }
+   if(flag&REDISPLAY_RANGE)
+   {
+      if(line>range_begin)
+	 line=range_begin;
+      if(lim<range_end)
+	 lim=range_end;
+   }
+   if(hex)
+      ptr=(ScreenTop&~15)+16*line;
+   else
+      ptr=NextNLines(ScreenTop,line);
+
+   Redisplay(line,ptr,lim);
 }
 
 void  LocateCursor()
@@ -122,7 +167,6 @@ void  ScrollBar(int check)
    int       i;
 
    NewPos=(Size()==0)?0:((Offset()*(TextWinHeight-1)+Size()/2)/Size());
-
 
    if(ShowScrollBar==SHOW_NONE)
    {
@@ -229,28 +273,28 @@ void  StatusLine()
 
    if(FileName[0])
    {
-     bn=le_basename(FileName);
-     l=strlen(bn);
-     if(l>14)
-       sprintf(name,"\"%.*s..%.*s\"",6,bn,6,bn+l-6);
-     else
-       sprintf(name,"\"%s\"",bn);
+      bn=le_basename(FileName);
+      l=strlen(bn);
+      if(l>14)
+         sprintf(name,"\"%.*s..%.*s\"",6,bn,6,bn+l-6);
+      else
+         sprintf(name,"\"%s\"",bn);
    }
    else
-     sprintf(name,"NewFile");
+      sprintf(name,"NewFile");
 
    sprintf(status,
-     "Line=%-5lu Col=%-4lu Size:%-6lu Ch:%3s %s %s Offs:%lu (%d%%)",
+      "Line=%-5lu Col=%-4lu Size:%-6lu Ch:%3s %s %s Offs:%lu (%d%%)",
          GetLine()+1,((Text&&Eol())?stdcol:GetCol())+1,Size(),chr,flags,name,Offset(),
          (int)(Size()?(Offset()*100+Size()/2)/Size():100));
 
    l=strlen(status);
    if(l<COLS)
-     memset(status+l,' ',COLS-l);
+      memset(status+l,' ',COLS-l);
    status[COLS]=0;
 
-   SetAttr(STATUS_LINE_ATTR);
    move(StatusLineY,0);
+   SetAttr(STATUS_LINE_ATTR);
    for(bn=status; *bn; bn++)
       addch_visual((byte)*bn);
 }
@@ -364,31 +408,44 @@ void  Redisplay(num line,offs ptr,num limit)
 	 for(i=TextWinWidth-(clp-cl); i>0; i--)
             *clp++=norm_attr->attr|' ';
 
-	 wmove(text_w,line,0);
+	 move(TextWinY+line,TextWinX+0);
       	 clp=cl;
 	 attrset(0);
 	 for(x=0; x<TextWinWidth; x++)
-	    waddch(text_w,*clp++);
+	    addch(*clp++);
       }
-      touchwin(stdscr);
-      wnoutrefresh(text_w);
    }
    else
    {
-      static byte *hl=0;
       offs  next_line_ptr;
+      static byte *hl;
+
       for(; line<limit; line++,ptr=next_line_ptr)
       {
-	 /* TODO: build highlight map here */
+	 /* build highlight map */
 	 next_line_ptr=NextLine(ptr);
-	 int ll=next_line_ptr-ptr;
-	 hl=(byte*)realloc(hl,ll);
-	 if(!hl)
-	    goto after_hl;
-	 memset(hl,'\0',ll);
-	 if(curr_highlight)
+	 if(hl_option && hl_active)
 	 {
-	    char *buf1="",*buf2="";
+	    int ll=next_line_ptr-ptr;
+	    if(ll==0)
+	       goto after_hl;
+	    if(!hl)
+	       hl=(byte*)malloc(ll);
+	    else
+	    {
+	       byte *ptr=(byte*)realloc(hl,ll);
+	       if(!ptr)
+	       {
+		  free(hl);
+		  hl=0;
+	       }
+	       else
+		  hl=ptr;
+	    }
+	    if(!hl)
+	       goto after_hl;
+
+	    char *buf1=0,*buf2=0;
 	    int	  len1=0,len2=0;
 
 	    if(ptr1<=ptr)
@@ -409,38 +466,27 @@ void  Redisplay(num line,offs ptr,num limit)
 	       len2=ll-len1;
 	    }
 
-	    int pos=0;
-	    for(;;)
-	    {
-	       pos=re_search_2(&hl_compiled,buf1,len1,buf2,len2,pos,ll-pos,
-			       &hl_regs,ll-pos);
-	       if(pos==-1)
-		  break;
-	       for(unsigned r=1; r<hl_regs.num_regs; r++)
-	       {
-		  for(i=hl_regs.start[r]; i<hl_regs.end[r]; i++)
-		     hl[i]=r;
-	       }
-	       pos++;
-	    }
+	    syntax_hl::attrib_line(buf1,len1,buf2,len2,hl);
 	 }
-
       after_hl:
+
 	 clp=cl;
 	 byte *hlp=hl;
 
          for(col=(-ScrShift);
-            col<TextWinWidth && !EolAt(ptr); ptr++,hlp++)
+            col<TextWinWidth && !EolAt(ptr); ptr++)
          {
-	    if(InBlock(ptr,line+ScrLine,col+ScrShift))
-	       ca=blk_attr;
-	    else if(hlp && *hlp)
+	    if(col>=0)
 	    {
-	       ca=blk_attr;
-	    }
-	    else
 	       ca=norm_attr;
-
+	       if(InBlock(ptr,line+ScrLine,col+ScrShift))
+		  ca=blk_attr;
+	       else if(hlp)
+	       {
+		  if(*hlp>0 && *hlp<4)
+		     ca=find_attr(SYNTAX1+*hlp-1);
+	       }
+	    }
 	    byte ch=CharAt_NoCheck(ptr);
             if(ch=='\t')
             {
@@ -461,6 +507,8 @@ void  Redisplay(num line,offs ptr,num limit)
 		  *clp++=visualize(ca,ch|ca->attr);
 	       col++;
             }
+	    if(hlp)
+	       hlp++;
          }
 	 if(col<0)
 	    col=0;
@@ -470,15 +518,18 @@ void  Redisplay(num line,offs ptr,num limit)
             *clp++=ca->attr|' ';
          }
 
-	 wmove(text_w,line,0);
+	 move(TextWinY+line,TextWinX+0);
       	 clp=cl;
 	 attrset(0);
 	 for(x=0; x<TextWinWidth; x++)
-	    waddch(text_w,*clp++);
+	    addch(*clp++);
+      }
+      if(hl)
+      {
+	 free(hl);
+	 hl=0;
       }
    }
-   touchwin(stdscr);
-   wnoutrefresh(text_w);
 }
 void  RedisplayAll()
 {
