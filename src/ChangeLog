@@ -7,6 +7,7 @@
 	  make automatic decision to input a byte or a wchar in
 	  choose-character and insert-char-by-code; add corresponding byte
 	  actions.
+	* edit.cc: remove "no undo" message.
 
 2004-05-18  lav
 
