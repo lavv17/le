@@ -519,13 +519,15 @@ void  Replace()
       flag=REDISPLAY_ALL;
       if(key!='*' && key!='#')
       {
-         int    oldr=rblock;
-         TextPoint   OldBlockBegin=BlockBegin,OldBlockEnd=BlockEnd;
-         int    oldh=hide;
+         int	     oldr=rblock;
+         TextPoint   OldBlockBegin=BlockBegin;
+	 TextPoint   OldBlockEnd  =BlockEnd;
+         int	     oldh=hide;
          BlockBegin=BlockEnd=CurrentPos;
          BlockEnd+=fndlen;
          hide=0;
          rblock=0;
+	 stdcol=GetCol();
          CenterView();
          SyncTextWin();
          StatusLine();

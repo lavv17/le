@@ -1,3 +1,9 @@
+1999-12-25  lav
+
+	* search.cc: set stdcol along with CurrentPos, this fixes random
+	  cursor placement during search/replace when cursor has to be
+	  placed at eol.
+
 1999-11-06  lav
 
 	* about.cc, about.h: export copyright string.
