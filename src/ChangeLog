@@ -1,3 +1,7 @@
+2000-03-21  lav
+
+	* kern.cc: (ToLineEnd) set flag when spaces are truncated in test mode.
+
 2000-03-16  lav
 
 	* search.cc, screen.cc: move screen shifting because of status line

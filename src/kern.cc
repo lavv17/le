@@ -164,9 +164,12 @@ void   ToLineEnd()
    todelete-=ptr;
    CurrentPos=ptr;
    om=modified;
-   DeleteBlock(0,todelete);
    if(todelete>0)
+   {
+      DeleteBlock(0,todelete);
       oldptr2=ptr2;
+      flag|=REDISPLAY_LINE;
+   }
    modified=om;
    stdcol=GetCol();
 }
