@@ -40,7 +40,7 @@ void  FormatPara()
    num   bcol,bcol1,ncol;
    int   i;
 
-   if(hex || View) /* formatting is not allowed in those modes */
+   if(hex || View || buffer_mmapped) /* formatting is not allowed in those modes */
       return;
 
    flag=1;
@@ -53,7 +53,7 @@ void  FormatPara()
    if(Eof())
       return;
 
-   /* ÔÚÊÓğÊÍ ÏÂÓÂÌÓÂË, Õ.Ê. ØıÂŞĞÍ ÚÔÊ ÏÓÎÃÊŞã İÓÎÍÊ ÎığÎÌÎ Ğ ÏÊÓÊÚÎıã ÔÕÓÎİ */
+   /* fold the paragraph, that is delete all spaces but one and all newlines */
    for(;;)
    {
       while(Char()!=' ' && Char()!='\t' && !Eol())
@@ -78,7 +78,7 @@ void  FormatPara()
             break;
          }
          while(i-->0)
-            BackSpace();   /* ØıÂŞĞÕÛ ÔÕÂÓã× ÎÕÔÕØÏ */
+            BackSpace();   /* delete old indentation */
       }
       InsertChar(' ');
    }
@@ -89,7 +89,7 @@ void  FormatPara()
 
    if(LeftAdj)
    {
-      /* ÔÎõıÂıĞÍ ÎÕÔÕØÏ ÏÊÓÚÎ× ÔÕÓÎİĞ */
+      /* create the first line margin */
       for(i=ncol=0; ncol<LeftMargin+FirstLineMargin && isspace(Char()) && !Eol(); i++)
       {
          if(Char()=='\t')
@@ -129,14 +129,14 @@ void  FormatPara()
    {
       if(GetCol()>LineLen+LeftMargin)
       {
-         /* ÊÔŞĞ ÎÊÓÊığÎÊ ÔŞÎÚÎ ÚãŞÊõŞÎ õÂ ÏÓÂÚã× İÓÂ×, ÕÎ ... */
+         /* if the next word is over limit, then ... */
          while(!Bol() && !isspace(CharRel(-1)))
             MoveLeft();
-         while(!Bol() && isspace(CharRel(-1)))   /* ğÂ ÎığÎ ÔŞÎÚÎ ÚŞÊÚÎ */
+         while(!Bol() && isspace(CharRel(-1)))   /* one word right */
             MoveLeft();
          if(Bol())
          {
-            stdcol=0;   /* ÔŞÎÚÎ õÂğĞÍÂÊÕ ÚÔÁ ÔÕÓÎİØ */
+            stdcol=0;   /* the word consumes the whole line */
             while(!Eol() && isspace(Char()))
                MoveRight();
             while(!Eol() && !isspace(Char()))
@@ -157,7 +157,7 @@ void  FormatPara()
 
 	 if(RightAdj && LeftAdj)
          {
-            /* ÓÂÔÕÒğÊÍ ÔÕÓÎİØ ıÎ ğØÙğÎÌÎ ÓÂõÍÊÓÂ */
+            /* insert spaces to extend the line to the width */
 
             int gap_num=0;
             int spaces_to_insert=LineLen+LeftMargin-bcol;
@@ -165,12 +165,14 @@ void  FormatPara()
 
             if(spaces_to_insert>0)
             {
-               while(!Bol())
+               /* To the line beginning, and count spaces */
+	       while(!Bol())
                {
                   MoveLeft();
                   if(isspace(Char()))
                      gap_num++;
                }
+	       /* skip indentation */
                while(isspace(Char()) && GetCol()<bcol)
                {
                   MoveRight();
@@ -231,7 +233,7 @@ void  FormatPara()
       else
       {
 	 if(Eol())
-	    break;   /* İÎğÊÈ ÔÕÓÎİĞ Ğ ÏÂÓÂÌÓÂËÂ */
+	    break;   /* this is the end of line and the paragraph */
          MoveRight();
       }
    }
@@ -313,9 +315,11 @@ void  FormatFunc()
    stdcol=GetCol();
 again:
    CenterView();
-   SetCursor();
+   SyncTextWin();
+   StatusLine();
    Message("Format: F-Format all P-format Paragraph C-Center line R-align Right");
    SetCursor();
+
    action=GetNextAction();
    switch(action)
    {

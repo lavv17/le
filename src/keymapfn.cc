@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -21,6 +21,7 @@
 #include <errno.h>
 #include "edit.h"
 #include "block.h"
+#include "options.h"
 #include "keymap.h"
 
 ActionProcRec  EditorActionProcTable[]=
@@ -116,6 +117,8 @@ ActionProcRec  EditorActionProcTable[]=
    {TERMINAL_OPTIONS,TermOpt},
    {FORMAT_OPTIONS,FormatOptions},
    {APPEARENCE_OPTIONS,AppearOpt},
+   {PROGRAM_OPTIONS,ProgOpt},
+   {COLOR_TUNING,ColorsOpt},
    {SAVE_OPTIONS,UpdtOpt},
    {SAVE_OPTIONS_LOCAL,SaveOpt},
 
@@ -190,9 +193,6 @@ void  EditorReadKeymap()
 
 
 /*   char  filename[1024];
-
-   sprintf(filename,"%s/.le",HOME);
-   mkdir(filename,0755);
 
    errno=0;
    sprintf(filename,"%s/.le/keymap-%s",HOME,TERM);

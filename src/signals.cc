@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <setjmp.h>
 #include "edit.h"
 
 #ifndef __MSDOS__
@@ -32,6 +33,8 @@
 #include <sys/ioctl.h>
 #endif
 #endif
+
+#include "xalloca.h"
 
 int   resize_flag=0;
 
@@ -86,7 +89,7 @@ void  CheckWindowResize()
 	 beep();
          disable_resize=1;
       }
-      clearok(curscr,TRUE);
+      clearok(stdscr,TRUE);
       CorrectParameters();
       flag|=REDISPLAY_ALL;
       CloseWin();
@@ -99,6 +102,12 @@ void  resize_sig(int sig)
 {
    (void)sig;
    resize_flag=1;
+
+   extern bool getch_return_set;
+   extern sigjmp_buf getch_return;
+
+   if(getch_return_set)
+      siglongjmp(getch_return,1);
 }
 
 void    SuspendEditor()
@@ -115,22 +124,55 @@ void    SuspendEditor()
 #endif
 }
 
+static char mem[4000];
+char *TmpFileName()
+{
+#ifndef __MSDOS__
+   sprintf(mem,"%s/.le/tmp/",HOME);
+   char *add=mem+strlen(mem);
+   strcpy(add,FileName);
+   while(*add)
+   {
+      if(isslash(*add))
+	 *add='_';
+      add++;
+   }
+   sprintf(add,".%d",(int)getpid());
+#else
+   sprintf(mem,"le%d.res",(int)getpid());
+#endif
+   return mem;
+}
+char *HupFileName(int sig)
+{
+#ifndef __MSDOS__
+   sprintf(mem,"%s/.le/tmp/DUMP-%d-",HOME,sig);
+   char *add=mem+strlen(mem);
+   strcpy(add,FileName);
+   while(*add)
+   {
+      if(isslash(*add))
+	 *add='_';
+      add++;
+   }
+   sprintf(add,".%d",(int)getpid());
+#else
+   sprintf(mem,"le%d.hup",(int)getpid());
+#endif
+   return mem;
+}
+
 void    hup(int sig)
 {
-   char    s[32];
-   int     fd;
-   num  act_written;
-
    endwin();
 
    if(modified)
    {
-      sprintf(s,"le%ld-%d.hup",(long)getpid(),sig);
+      char *s=HupFileName(sig);
       fprintf(stderr,"le: Caught signal %d, dumping text to %s\n",sig,s);
-      fd=creat(s,0600);
-#ifndef LE_DEMO
+      int fd=creat(s,0600);
+      num act_written;
       WriteBlock(fd,0,Size(),&act_written);
-#endif
       close(fd);
    }
    else
@@ -142,23 +184,58 @@ void    hup(int sig)
 
 void    alarmsave(int a)
 {
-    num  act_written;
-    (void)a;
-    if(modified==1)
-    {
-        char    s[32];
-        int fd;
-        errno=0;
-        sprintf(s,"le%ld.res",(long)getpid());
-        fd=creat(s,0600);
-#ifndef LE_DEMO
-        WriteBlock(fd,0,Size(),&act_written);
-#endif
-        close(fd);
-        if(!errno)
-            modified=2;
-    }
-    alarm(ALARMDELAY);
+   static offs dump_pos=0;
+   static int fd=-1;
+   static int interrupted=0;
+   const chunk=0x20000;
+
+   (void)a;
+
+   // check if the text changed
+   if(modified==1)
+   {
+      // it did - reset dump state
+      dump_pos=0;
+      if(fd!=-1)
+      {
+	 interrupted++;
+	 close(fd);
+      }
+      char *s=TmpFileName();
+      fd=open(s,O_CREAT|O_WRONLY|O_TRUNC,0600);
+      if(fd==-1)
+      {
+	 alarm(ALARMDELAY);
+	 return;
+      }
+      modified=3;
+   }
+   // if the dump is in progress
+   if(modified==3)
+   {
+      num  act_written;
+      if(WriteBlock(fd,dump_pos,(interrupted>5?Size():chunk),&act_written)!=OK)
+      {
+      done:
+	 close(fd);
+	 fd=-1;
+	 // mark it as dumped
+	 modified=2;
+      }
+      else
+      {
+	 dump_pos+=act_written;
+      	 if(dump_pos>=Size())
+	 {
+	    interrupted=0;
+	    goto done;
+	 }
+	 // after a second write next chunk
+      	 alarm(1);
+	 return;
+      }
+   }
+   alarm(ALARMDELAY);
 }
 
 /* This pair of functions is to work

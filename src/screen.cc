@@ -26,9 +26,7 @@
 #include "edit.h"
 #include "block.h"
 #include "highli.h"
-
-#define   HexPos    10
-#define   AsciiPos   (HexPos+3*16+2)
+#include "getch.h"
 
 int       ShowScrollBar=SHOW_NONE;
 int       ShowStatusLine=SHOW_BOTTOM;
@@ -77,22 +75,7 @@ void  TestPosition()
    {
       ScreenTop=PrevNLines(Offset(),TextWinHeight-Scroll);
       newtop=ScreenTop.Line();
-#if 0
-      if(flag&(REDISPLAY_RANGE|REDISPLAY_ALL)
-      || newtop-oldtop>TextWinHeight-1)
-	 flag=REDISPLAY_ALL;
-      else
-      {
-	 flag|=REDISPLAY_RANGE;
-	 range_begin=TextWinHeight-(newtop-oldtop);
-	 range_end=TextWinHeight;
-	 scrollok(text_w,1);
-	 wscrl(text_w,newtop-oldtop);
-	 scrollok(text_w,0);
-      }
-#else
       flag=REDISPLAY_ALL;
-#endif
    }
    else if(GetLine()-ScreenTop.Line()<0)
    {
@@ -168,6 +151,19 @@ void  SyncTextWin()
       if(lim<range_end)
 	 lim=range_end;
    }
+
+   static int accum_lines=0;
+   accum_lines+=lim-line+1;
+   if(accum_lines>2)
+   {
+      if(CheckPending()>0)
+      {
+	 flag=REDISPLAY_ALL;
+	 return;
+      }
+      accum_lines=0;
+   }
+
    if(hex)
       ptr=(ScreenTop&~15)+16*line;
    else
@@ -178,14 +174,9 @@ void  SyncTextWin()
    flag=0;
 }
 
-void  LocateCursor()
-{
-   StatusLine();
-   SetCursor();
-}
+int   ScrollBarPos=0;
 void  ScrollBar(int check)
 {
-   static  int OldPos;
    int       NewPos;
    int       i;
 
@@ -193,13 +184,13 @@ void  ScrollBar(int check)
 
    if(ShowScrollBar==SHOW_NONE)
    {
-      OldPos=NewPos;
+      ScrollBarPos=NewPos;
       return;
    }
 
    attrset(SCROLL_BAR_ATTR->attr);
 
-   if(check && NewPos==OldPos)
+   if(check && NewPos==ScrollBarPos)
    {
       if(!there_message && ShowStatusLine!=SHOW_BOTTOM)
       {
@@ -211,12 +202,11 @@ void  ScrollBar(int check)
 
    for(i=TextWinY; i<TextWinY+TextWinHeight; i++)
       mvaddch(i,ScrollBarX,ACS_CKBOARD);
-   OldPos=NewPos;
+   ScrollBarPos=NewPos;
    mvaddch(NewPos+TextWinY,ScrollBarX,' '|A_REVERSE);
 }
 void  SetCursor()
 {
-   SyncTextWin();
    ScrollBar(TRUE);
    if(hex)
    {
@@ -261,7 +251,7 @@ void  StatusLine()
    char  name[20];
    char  chr[4];
    int   l;
-   char  flags[8];
+   char  flags[16];
 
    ClearMessage();
 
@@ -279,20 +269,32 @@ void  StatusLine()
    }
 
    if(View)
-     sprintf(flags,"R/O %c %c",
-       rblock    ?'B':' ',
-       DosEol    ?'D':' ');
+   {
+      if(buffer_mmapped)
+	 sprintf(flags,"MM R/O %c",
+	    rblock   ?'B':' ');
+      else
+	 sprintf(flags,"R/O %c %c",
+	    rblock   ?'B':' ',
+	    DosEol   ?'D':' ');
+   }
    else
-     sprintf(flags,"%c%c%c%c%c%c%c",
-       modified   ?'*':' ',
-       inputmode   ?(inputmode==2?'G':'R'):' ',
-       insert    ?'I':'O',
-       autoindent  ?'A':' ',
-       rblock    ?'B':' ',
-       (oldptr1>ptr1 || oldptr2<ptr2) ? 'U'
-	 : ( (oldptr1<ptr1 || oldptr2>ptr2) ? 'u':' '),
-       DosEol    ?'D':' ');
-
+   {
+      if(buffer_mmapped)
+	 sprintf(flags,"MM %c%c   ",
+	    inputmode   ?(inputmode==2?'G':'R'):' ',
+	    rblock	?'B':' ');
+      else
+	 sprintf(flags,"%c%c%c%c%c%c%c",
+	    modified	?'*':' ',
+	    inputmode   ?(inputmode==2?'G':'R'):' ',
+	    insert	?'I':'O',
+	    autoindent  ?'A':' ',
+	    rblock	?'B':' ',
+	    (oldptr1>ptr1 || oldptr2<ptr2) ? 'U'
+	       : ( (oldptr1<ptr1 || oldptr2>ptr2) ? 'u':' '),
+	    DosEol	?'D':' ');
+   }
    if(FileName[0])
    {
       bn=le_basename(FileName);
@@ -305,9 +307,16 @@ void  StatusLine()
    else
       sprintf(name,"NewFile");
 
-   sprintf(status,
-      "Line=%-5lu Col=%-4lu Size:%-6lu Ch:%3s %s %s Offs:%lu (%d%%)",
-         GetLine()+1,((Text&&Eol())?stdcol:GetCol())+1,Size(),chr,flags,name,Offset(),
+   if(hex)
+      sprintf(status,"OctOffs:0%-11lo",(unsigned long)(Offset()));
+   else
+      sprintf(status,"Line=%-5lu Col=%-4lu",
+	 (unsigned long)(GetLine()+1),
+	 (unsigned long)(((Text&&Eol())?stdcol:GetCol())+1));
+
+   sprintf(status+strlen(status),
+      " Size:%-6lu Ch:%3s %s %s Offs:%lu (%d%%)",
+         (unsigned long)(Size()),chr,flags,name,(unsigned long)(Offset()),
          (int)(Size()?(Offset()*100+Size()/2)/Size():100));
 
    l=strlen(status);
@@ -329,6 +338,19 @@ static unsigned mkhash(byte *data,int len)
    return res;
 }
 
+static attr *norm_attr,*blk_attr,*syntax[3];
+static inline attr *FindPosAttr(offs ptr,num line,num col,byte *hlp)
+{
+   if(col==TextWinWidth-1 && !EolAt(ptr) && !EolAt(ptr+1))
+      return SHADOW_ATTR;
+   else if(InBlock(ptr,line+ScrLine,col+ScrShift))
+      return blk_attr;
+   else if(hlp && *hlp>0 && *hlp<4)
+      return syntax[*hlp-1];
+   else
+      return norm_attr;
+}
+
 void  Redisplay(num line,offs ptr,num limit)
 {
    extern  ShowMatchPos;
@@ -337,7 +359,11 @@ void  Redisplay(num line,offs ptr,num limit)
    char  s[64],*sp;
    offs  lptr;
 
-   struct attr *norm_attr=NORMAL_TEXT_ATTR,*blk_attr=BLOCK_TEXT_ATTR;
+   norm_attr=NORMAL_TEXT_ATTR;
+   blk_attr=BLOCK_TEXT_ATTR;
+   syntax[0]=find_attr(SYNTAX1);
+   syntax[1]=find_attr(SYNTAX2);
+   syntax[2]=find_attr(SYNTAX3);
 
    if(!hex)
       ScreenTop=LineBegin(ScreenTop);
@@ -362,6 +388,8 @@ void  Redisplay(num line,offs ptr,num limit)
 
    if(limit<=line)
       return;
+   if(ptr<0)
+      ptr=0;
 
    chtype *cl=(chtype*)alloca(TextWinWidth*sizeof(chtype));
    chtype *clp;
@@ -499,27 +527,21 @@ void  Redisplay(num line,offs ptr,num limit)
          for(col=(-ScrShift);
             col<TextWinWidth && !EolAt(ptr); ptr++)
          {
-	    if(col>=0)
-	    {
-	       ca=norm_attr;
-	       if(InBlock(ptr,line+ScrLine,col+ScrShift))
-		  ca=blk_attr;
-	       else if(hlp)
-	       {
-		  if(*hlp>0 && *hlp<4)
-		     ca=find_attr(SYNTAX1+*hlp-1);
-	       }
-	    }
+	    if(col>-TabSize)
+	       ca=FindPosAttr(ptr,line,col,hlp);
+
 	    byte ch=CharAt_NoCheck(ptr);
             if(ch=='\t')
             {
                i=Tabulate(col+ScrShift)-ScrShift;
                if(i>0)
 	       {
+		  *clp++ = ca->attr|' ';
+		  col++;
 		  while(col<i && col<TextWinWidth)
 		  {
-		     ca=(InBlock(ptr,line+ScrLine,col+ScrShift)?blk_attr:norm_attr);
-		     *clp++=ca->attr|' ';
+		     ca=FindPosAttr(ptr,line,col,hlp);
+		     *clp++ = ca->attr|' ';
 		     col++;
 		  }
 	       }
@@ -537,11 +559,15 @@ void  Redisplay(num line,offs ptr,num limit)
          }
 	 if(col<0)
 	    col=0;
+
+	 if(EofAt(ptr))
+	    hlp=0;
+
          for( ; col<TextWinWidth; col++)
-         {
-	    ca=(InBlock(ptr,line+ScrLine,col+ScrShift)?blk_attr:norm_attr);
-            *clp++=ca->attr|' ';
-         }
+	 {
+	    ca=FindPosAttr(ptr,line,col,hlp);
+            *clp++ = ca->attr|' ';
+	 }
 
 	 attrset(0);
 	 mvaddchnstr(TextWinY+line,TextWinX,cl,TextWinWidth);
@@ -585,7 +611,10 @@ void  CenterView()
       if((Offset()-ScreenTop)/16 > TextWinHeight*2/3
       || (Offset()-ScreenTop)/16 < TextWinHeight/3)
       {
-	 ScreenTop=(Offset()-TextWinHeight*16/2)&~15;
+	 offs o=Offset()-TextWinHeight*16/2;
+	 if(o<0)
+	    o=0;
+	 ScreenTop=o&~15;
 	 flag=REDISPLAY_ALL;
       }
       offs max_top=(TextEnd-TextWinHeight*16+15)&~15;
@@ -626,12 +655,7 @@ void  FError(char *s)
    else
       sprintf(msg,"File: %s\n",s);
    if(errno>0)
-   {
-      if(errno==EAGAIN)
-         strcpy(msg,"File is already locked or no more processes.");
-      else
-         strcat(msg,strerror(errno));
-   }
+      strcat(msg,strerror(errno));
    else
       strcat(msg,"The device is full or ulimit is too low,\nI cannot write");
    ErrMsg(msg);

@@ -156,23 +156,23 @@ const attr_name attr_names_table[]=
    {"dim",	  {0,A_DIM}},
    {"ul",	  {0,A_UNDERLINE}},
 
-   {"fg=black",	  {0,0,COLOR_BLACK,0}},
-   {"fg=green",	  {0,0,COLOR_GREEN,0}},
-   {"fg=red",	  {0,0,COLOR_RED,0}},
-   {"fg=yellow",  {0,0,COLOR_YELLOW,0}},
-   {"fg=blue",	  {0,0,COLOR_BLUE,0}},
-   {"fg=cyan",	  {0,0,COLOR_CYAN,0}},
-   {"fg=magenta", {0,0,COLOR_MAGENTA,0}},
-   {"fg=white",	  {0,0,COLOR_WHITE,0}},
+   {"fg:black",	  {0,0,COLOR_BLACK,0}},
+   {"fg:green",	  {0,0,COLOR_GREEN,0}},
+   {"fg:red",	  {0,0,COLOR_RED,0}},
+   {"fg:yellow",  {0,0,COLOR_YELLOW,0}},
+   {"fg:blue",	  {0,0,COLOR_BLUE,0}},
+   {"fg:cyan",	  {0,0,COLOR_CYAN,0}},
+   {"fg:magenta", {0,0,COLOR_MAGENTA,0}},
+   {"fg:white",	  {0,0,COLOR_WHITE,0}},
 
-   {"bg=black",	  {0,0,0,COLOR_BLACK}},
-   {"bg=green",	  {0,0,0,COLOR_GREEN}},
-   {"bg=red",	  {0,0,0,COLOR_RED}},
-   {"bg=yellow",  {0,0,0,COLOR_YELLOW}},
-   {"bg=blue",	  {0,0,0,COLOR_BLUE}},
-   {"bg=cyan",	  {0,0,0,COLOR_CYAN}},
-   {"bg=magenta", {0,0,0,COLOR_MAGENTA}},
-   {"bg=white",	  {0,0,0,COLOR_WHITE}},
+   {"bg:black",	  {0,0,0,COLOR_BLACK}},
+   {"bg:green",	  {0,0,0,COLOR_GREEN}},
+   {"bg:red",	  {0,0,0,COLOR_RED}},
+   {"bg:yellow",  {0,0,0,COLOR_YELLOW}},
+   {"bg:blue",	  {0,0,0,COLOR_BLUE}},
+   {"bg:cyan",	  {0,0,0,COLOR_CYAN}},
+   {"bg:magenta", {0,0,0,COLOR_MAGENTA}},
+   {"bg:white",	  {0,0,0,COLOR_WHITE}},
 
    {NULL},
 };
@@ -206,6 +206,9 @@ void  ParseOneColor(color *pal,const char *desc,int no)
    char *tok=strtok(d,",");
    while(tok)
    {
+      char *eq=strchr(tok,'=');
+      if(eq)
+	 *eq=':';
       for(const attr_name *an=attr_names_table; an->name; an++)
       {
 	 if(!strcmp(an->name,tok))

@@ -28,19 +28,15 @@
 #include <stdlib.h>
 #include "edit.h"
 #include "keymap.h"
-#ifndef __MSDOS__
-#include <term.h>
-#else
-extern "C" {
-char *tigetstr(char *);
-}
-#endif
-#include <poll.h>
+#include "keynames.h"
+#include "getch.h"
 
 char  StringTyped[256];
 int   StringTypedLen;
 
-int     FuncKeysNum=12;
+int   FuncKeysNum=12;
+
+int   MouseCounter=0;
 
 ActionNameRec  ActionNameTable[]=
 {
@@ -180,9 +176,21 @@ enum
    CODE_TOO_MUCH
 };
 
+const MAX_DELAY=30000000;
+const HALF_DELAY=500;
+
+struct KeyTreeNode
+{
+   int maxdelay;
+   int action;
+   struct KeyTreeNode *sibling;
+   int keycode;
+   struct KeyTreeNode *child;
+};
+
 extern   ActionCodeRec  DefaultActionCodeTable[];
 ActionCodeRec  *ActionCodeTable=DefaultActionCodeTable;
-char  *ti_cache[128]={NULL};
+//char  *ti_cache[128]={NULL};
 
 char  *GetActionName(int action)
 {
@@ -234,32 +242,160 @@ ActionProc  GetActionProc(ActionProcRec *table,int action)
    return(NULL);
 }
 
-char  *FindTermString(char *str)
+KeyTreeNode *AddToKeyTree(KeyTreeNode *curr,int key_code,int delay,int action)
 {
-   char  *ti_str;
-   unsigned i;
-
-   for(i=0; i<sizeof(ti_cache) && ti_cache[i]
-                     && strcmp(ti_cache[i],str); i+=2);
-
-   if(i>=sizeof(ti_cache) || ti_cache[i]==NULL)
+   KeyTreeNode *scan;
+   for(scan=curr->child; scan; scan=scan->sibling)
+      if(scan->keycode==key_code)
+	 break;
+   if(!scan)
    {
-      ti_str=tigetstr(str);
-      if(ti_str==NULL || ti_str==(char*)-1)
-         return(NULL);
-      if(i>=sizeof(ti_cache))
-      {
-         free(ti_cache[sizeof(ti_cache)-2]);
-         memmove(ti_cache+2,ti_cache,(sizeof(ti_cache)-2)*sizeof(char*));
-         ti_cache[i=0]=NULL;
-      }
-      else /* ti_cache[i]==NULL */
-      {
-         ti_cache[i]=strdup(str);
-         ti_cache[i+1]=ti_str;
-      }
+      scan=new KeyTreeNode;
+      scan->maxdelay=delay;
+      scan->keycode=key_code;
+      scan->action=action;
+      scan->child=0;
+      scan->sibling=curr->child;
+      curr->child=scan;
    }
-   return(ti_cache[i+1]);
+   else
+   {
+      if(scan->action==NO_ACTION)
+	 scan->action=action;
+   }
+   return(scan);
+}
+
+#define LEFT_BRACE  '{'
+#define RIGHT_BRACE '}'
+
+KeyTreeNode *BuildKeyTree(ActionCodeRec *ac_table)
+{
+   KeyTreeNode *top=0;
+   char  term_name[256];
+   char  *term_str;
+   int   bracket;
+   int   fk;
+
+   top=new KeyTreeNode;
+   top->keycode=-1;
+   top->action=NO_ACTION;
+   top->maxdelay=MAX_DELAY;
+   top->child=0;
+   top->sibling=0;
+
+   while(ac_table->action!=-1)
+   {
+      int fk_mask=0;
+      int fk_num=0;
+      while(fk_mask < (1<<fk_num))
+      {
+	 KeyTreeNode *curr=top;
+
+	 char *code=ac_table->code;
+	 int delay=MAX_DELAY;
+
+	 fk_num=0;
+	 while(*code)
+	 {
+	    int shift=0;
+	    int key_code=0;
+
+	    char code_ch=*code;
+	    switch(code_ch)
+	    {
+	    case('$'):
+	       code_ch=*(++code);
+
+	       if(code_ch==0)
+		  break;
+
+	       bracket=(code_ch==LEFT_BRACE);
+	       code+=bracket;
+
+	       term_str=term_name;
+	       while(*code!=0 && (bracket?*code==RIGHT_BRACE:isalnum(*code)) && term_str-term_name<255)
+		  *term_str++=*code++;
+	       *term_str=0;
+	       if(bracket && *code==RIGHT_BRACE)
+		  code++;
+
+	       if(sscanf(term_name,"%1dkf%d",&shift,&fk)==2)
+		  sprintf(term_name,"kf%d",shift*FuncKeysNum+fk);
+
+	       if((fk_mask&(1<<fk_num))==0)
+	       {
+	       fallback:
+		  key_code=FindKeyCode(term_name);
+	       }
+	       else
+	       {
+		  term_str=tigetstr(term_name);
+		  if(term_str==NULL || term_str==(char*)-1)
+	       	     goto fallback;
+	       	  while(term_str[0] && term_str[1])
+		  {
+		     curr=AddToKeyTree(curr,(unsigned char)term_str[0],delay,NO_ACTION);
+		     delay=HALF_DELAY;
+		     term_str++;
+		  }
+		  key_code=term_str[0];
+		  if(key_code==0)
+		     goto fallback;
+	       }
+	       fk_num++;
+	       break;
+	    case('|'):
+	       delay=MAX_DELAY;
+	       code++;
+	       continue;
+	       break;
+	    case('^'):
+	       if(code[1])
+	       {
+		  code_ch=toupper(*++code)-'@';
+		  if(!code_ch)
+		     code_ch|=0200;
+	       }
+	       goto default_l;
+	    case('\\'):
+	       code_ch=*(++code);
+	    default:
+	    default_l:
+	       key_code=code_ch;
+	       code++;
+	    }
+
+	    // now add the key_code to the tree
+	    curr=AddToKeyTree(curr,key_code,delay,
+			      (*code?NO_ACTION:ac_table->action));
+
+	    delay=HALF_DELAY;
+	 }
+
+      	 fk_mask++;
+      }
+      ac_table++;
+   }
+
+   return top;
+}
+
+KeyTreeNode    *KeyTree=0;
+
+void FreeKeyTree(KeyTreeNode *kt)
+{
+   if(!kt)
+      return;
+   FreeKeyTree(kt->sibling);
+   FreeKeyTree(kt->child);
+   delete kt;
+}
+
+void RebuildKeyTree()
+{
+   FreeKeyTree(KeyTree);
+   KeyTree=BuildKeyTree(ActionCodeTable);
 }
 
 void  ReadActionMap(FILE *f)
@@ -384,217 +520,85 @@ void  ReadActionMap(FILE *f)
    ActionCodeTable=NewTable;
 }
 
-static	string_has_ti;
-
-int   CodeCompare(char *typed,int typedLen, char *code)
-{
-   register byte  code_ch;
-   register byte  typed_ch;
-   char  term_name[256];
-   char  *term_str;
-   int   bracket;
-   int   shift,fk;
-
-   string_has_ti=0;
-
-   for(;;)
-   {
-      code_ch=*code;
-
-      if(typedLen==0)
-      {
-         if(code_ch==0)
-            return(CODE_EQUAL);
-         if(code_ch=='|')
-            return(CODE_PAUSE);
-         return(CODE_PREFIX);
-      }
-      else if(code_ch==0)
-         return(CODE_TOO_MUCH);
-
-      typed_ch=*typed;
-
-      switch(code_ch)
-      {
-      case('$'):
-	 string_has_ti=1;
-
-         code_ch=*(++code);
-
-         if(code_ch==0)
-            return(CODE_NOT_EQUAL);
-
-         bracket=(code_ch=='{');
-         code+=bracket;
-
-	 term_str=term_name;
-	 while(*code!=0 && (bracket?*code=='}':isalnum(*code)) && term_str-term_name<255)
-	    *term_str++=*code++;
-	 *term_str=0;
-	 if(bracket && *code=='}')
-	    code++;
-
-         if(sscanf(term_name,"%1dkf%d",&shift,&fk)==2)
-            sprintf(term_name,"kf%d",shift*FuncKeysNum+fk);
-
-         term_str=FindTermString(term_name);
-         if(term_str==NULL)
-            return(CODE_NOT_EQUAL);
-
-         for(;;)
-         {
-            code_ch=*term_str;
-            if(typedLen==0)
-            {
-               if(code_ch==0)
-               {
-                  if(*code=='|')
-                     return(CODE_PAUSE);
-                  if(*code==0)
-                     return(CODE_EQUAL);
-               }
-               return(CODE_PREFIX);
-            }
-            else if(code_ch==0)
-               break;
-
-            typed_ch=*typed;
-
-            if(typed_ch!=code_ch && (typed_ch || code_ch!=128))
-               return(CODE_NOT_EQUAL);
-
-            typed++;
-            typedLen--;
-            term_str++;
-         }
-         break;
-      case('|'):
-         code++;
-         break;
-      case('^'):
-         if(code[1])
-         {
-            code_ch=toupper(*++code)-'@';
-            if(!code_ch)
-               code_ch|=0200;
-         }
-         goto default_l;
-      case('\\'):
-         code_ch=*(++code);
-      default:
-      default_l:
-         if(code_ch!=typed_ch && (typed_ch || code_ch!=128))
-            return(CODE_NOT_EQUAL);
-         typed++;
-	 typedLen--;
-         code++;
-      }
-   }
-}
-
 int   GetNextAction()
 {
-   static   typeahead_hits=0;
-   const    typeahead_max=8;
-
    char  *store;
-   int   pause=1;
-   int   prefix=0;
-   int   action_found=NO_ACTION;
-   int	 had_ti=0;
    int   key;
-   int   delay;
-   struct pollfd pfd;
 
    extern   resize_flag;
-
-   pfd.fd=0;
-   pfd.events=POLLIN;
-
-   if(!(poll(&pfd,1,0)==1 && (pfd.revents&POLLIN) && typeahead_hits++<typeahead_max))
-   {
-      typeahead_hits=0;
-      refresh();
-      fflush(stdout);
-   }
 
    store=StringTyped;
    StringTypedLen=0;
    *store=0;
-   for(;;)
+
+   KeyTreeNode *kt=KeyTree;
+
+   for(;;)  // loop for a whole key sequence
    {
-      if(pause && action_found==NO_ACTION)
-         delay=-1;
-      else
-         delay=500;
+      int time_passed=0;
 
-      if(resize_flag && prefix==0 && action_found==NO_ACTION)
+      for(;;)  // loop for one key
       {
-	 CheckWindowResize();
-	 return WINDOW_RESIZE;
-      }
+	 int delay=-1;
+	 KeyTreeNode *scan;
 
-      if(WaitForKey_norefresh(delay)==ERR)
-         key=ERR;
-      else
-         key=GetRawKey();
+	 for(scan=kt->child; scan; scan=scan->sibling)
+	    if(delay==-1 ||
+	       (delay>scan->maxdelay && scan->maxdelay<time_passed))
+	       delay=scan->maxdelay;
 
-      if(key==ERR)
-      {
-         if(pause && !prefix)
-            continue;
-         return(action_found);
-      }
+	 if(delay==MAX_DELAY)
+	    key=GetKey();
+	 else if(delay==-1 || time_passed>=delay)
+	    goto return_action;
+	 else
+	    key=GetKey(delay-time_passed);
 
-      *(store++)=key;
-      *store=0;
-      StringTypedLen++;
+	 if(resize_flag && kt==KeyTree)
+	 {
+	    if(key!=ERR)
+	       ungetch(key);
+	    CheckWindowResize();
+	    return WINDOW_RESIZE;
+	 }
 
-scan_again:
-      pause=0;
-      prefix=0;
-      for(int i=0; ActionCodeTable[i].action!=-1; i++)
-      {
-         switch(CodeCompare(StringTyped,StringTypedLen,ActionCodeTable[i].code))
-         {
-         case(CODE_EQUAL):
-	    if(action_found==NO_ACTION || (!had_ti && string_has_ti))
-	    {
-               action_found=ActionCodeTable[i].action;
-	       had_ti=string_has_ti;
-	    }
-            break;
-         case(CODE_PAUSE):
-            pause++;
-            break;
-         case(CODE_PREFIX):
-            prefix++;
-            break;
-         case(CODE_TOO_MUCH):
-            if(ActionCodeTable[i].action==action_found)
-	    {
-               action_found=NO_ACTION;
-	       goto scan_again;
-	    }
-            break;
-         }
-      }
-      if(prefix==0)
-      {
-         if(action_found!=NO_ACTION)
-         {
-            if(action_found==REFRESH_SCREEN)
-               clearok(stdscr,1);
-            return(action_found);
-         }
-         if(pause==0)
-         {
-#ifndef __MSDOS__
-            if(store-StringTyped>1)
-               flushinp();
+	 if(key==ERR)
+	 {  // no key in the time interval
+	    time_passed=delay;
+	    continue;
+	 }
+
+#ifdef WITH_MOUSE
+	 if(key==KEY_MOUSE)
+	 {
+	    if(kt==KeyTree)
+	       return MOUSE_ACTION;
+	    MEVENT mev;
+	    while(getmouse(&mev)==OK)
+	       ;  // flush mouse event queue
+	    continue;
+	 }
 #endif
-            return(action_found);
-         }
+
+	 if(key<256)
+	 {
+	    *(store++)=key;
+	    *store=0;
+	    StringTypedLen++;
+	 }
+
+	 for(scan=kt->child; scan; scan=scan->sibling)
+	    if(scan->keycode==key || (key==0 && scan->keycode==128))
+	       break;
+	 if(!scan)
+	 {
+	 return_action:
+	    if(kt->action==REFRESH_SCREEN)
+               clearok(stdscr,1); // force repaint for next refresh
+	    timeout(-1);
+	    return(kt->action);
+	 }
+	 kt=scan;
       }
    }
 }

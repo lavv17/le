@@ -27,6 +27,7 @@
 #include "keymap.h"
 #include "options.h"
 #include "highli.h"
+#include "getch.h"
 
 extern  LineLen;
 extern  LeftMargin;
@@ -73,12 +74,13 @@ struct  opt
 {"Save positions",   ONE,  (void*)&SavePos,  22,3},
 
 // {"rectangle &Blocks",ONE,  (void*)&rblock,  45,2},
-{"Make backup",      ONE,  (void*)&makebak,  45,2},
-{"No regular expr.", ONE,  (void*)&noreg,   45,3},
-{"Use colors",       ONE,  (void*)&UseColor,   45,4},
-{"Syntax highlight", ONE,  (void*)&hl_option,	45,5},
-{"Use tabs",         ONE,  (void*)&UseTabs,  45,6},
+{"Make backup",      ONE,  (void*)&makebak,	      45,2},
+{"No regular expr.", ONE,  (void*)&noreg,	      45,3},
+{"Use &colors",      ONE,  (void*)&UseColor,	      45,4},
+{"Syntax highlight", ONE,  (void*)&hl_option,	      45,5},
+{"Use tabs",         ONE,  (void*)&UseTabs,	      45,6},
 {"BackSp unindents", ONE,  (void*)&BackspaceUnindents,45,7},
+{"PageUp=PageTop",   ONE,  (void*)&PreferPageTop,     45,8},
 
 {"&Latin",           MANY, (void*)&inputmode,  3,5},
 {"r&Ussian",         MANY, (void*)&inputmode,  3,6},
@@ -94,14 +96,9 @@ struct  opt
 {"Vertical scroll",  NUM,  (void*)&Scroll,  22,9},
 {"Horizontal scroll",NUM,  (void*)&hscroll,   22,10},
 
-{"Backup suffix",    STR,  bak,  45,9,4,sizeof(bak),FRIGHT   },
+{"Backup suffix",    STR,  (void*)bak,	     17,12,8,sizeof(bak)   },
 
-{"&Compile",         STR,  (void*)Compile,   _StrPos,12,_StrLen,sizeof(Compile)  },
-{"&Make",            STR,  (void*)Make,      _StrPos,13,_StrLen,sizeof(Make)     },
-{"&Run",             STR,  (void*)Run,       _StrPos,14,_StrLen,sizeof(Run)      },
-{"&Shell",           STR,  (void*)Shell,     _StrPos,15,_StrLen,sizeof(Shell)    },
-{"Help command",     STR,  (void*)HelpCmd,   _StrPos,16,_StrLen,sizeof(HelpCmd)  },
-{"backup &Path",     STR,  (void*)BakPath,   _StrPos,17,_StrLen,sizeof(BakPath)  },
+{"backup &Path",     STR,  (void*)BakPath,   17,13,48,sizeof(BakPath)  },
 
 /*
 {"  Save  ",   BUTTON, NULL,   MIDDLE-15,FDOWN-2},
@@ -119,9 +116,9 @@ struct  opt
 {"KOI-8-BESTA",      MANY,   (void*)&coding, 3,6},
 {"Main",             MANY,   (void*)&coding, 3,7},
 
-{"IBM coding      ˛ ¿ı√»≥¡„¬˝",MANY, (void*)&grsetno,32,2},
-{"KOI-8 coding 1  Ô•˘ô‹¢Óˇò÷£",MANY, (void*)&grsetno,32,3},
-{"KOI-8 coding 2  ‚Ú≈¨∆Ù‰…®Êˆ",MANY, (void*)&grsetno,32,4},
+{"IBM coding      ≥≈ø⁄¬√¥¿Ÿ¡ƒ",MANY, (void*)&grsetno,32,2},
+{"KOI-8 coding 1  ãùó≤öõåò±ôú",MANY, (void*)&grsetno,32,3},
+{"KOI-8 coding 2  Éïè™íìÑê©ëî",MANY, (void*)&grsetno,32,4},
 {"No graphics     |+++++++++-",MANY, (void*)&grsetno,32,5},
 
 {"Use insert/delete line cap.",ONE, &useidl,32,7},
@@ -146,7 +143,16 @@ struct  opt
 {"Bottom status line",MANY,   &ShowStatusLine,3,6},
 {"No status line",   MANY,   &ShowStatusLine,3,7},
 {"Top status line",  MANY,   &ShowStatusLine,3,8},
-{NULL},
+{NULL}
+},
+   ProgOptTbl[]=
+{
+{"&Compile",         STR,  (void*)Compile,   _StrPos,2,_StrLen,sizeof(Compile)  },
+{"&Make",            STR,  (void*)Make,      _StrPos,3,_StrLen,sizeof(Make)     },
+{"&Run",             STR,  (void*)Run,       _StrPos,4,_StrLen,sizeof(Run)      },
+{"&Shell",           STR,  (void*)Shell,     _StrPos,5,_StrLen,sizeof(Shell)    },
+{"&Help",	     STR,  (void*)HelpCmd,   _StrPos,6,_StrLen,sizeof(HelpCmd)  },
+{NULL}
 };
 
 struct init
@@ -182,6 +188,7 @@ struct init
    { "scrollbar",    NUM,  &ShowScrollBar             },
    { "statusline",   NUM,  &ShowStatusLine            },
    { "backupext",    STR,  bak                        },
+   { "preferpagetop",NUM,  &PreferPageTop	      },
    { NULL }
 },
    term[]=
@@ -946,7 +953,7 @@ int    OptHandleBut(char *n)
 void  Options()
 {
    extern  char   **SetupHelp[];
-   Dialogue(opt,_WinWidth,_WinHeight," Options ",SetupHelp," Setup Help ",OptEatKey,OptHandleBut);
+   Dialogue(opt,68,16," Options ",SetupHelp," Setup Help ",OptEatKey,OptHandleBut);
 }
 
 void  SaveOpt()
@@ -974,6 +981,7 @@ int   TOHandleBut(char *button_name)
 void  TermOpt(void)
 {
    Dialogue(TOpt,70,11," Terminal Options ",NULL,NULL,TOEatKey,TOHandleBut);
+   RebuildKeyTree();
 }
 void  FormatOptions(void)
 {
@@ -982,6 +990,10 @@ void  FormatOptions(void)
 void  AppearOpt(void)
 {
    Dialogue(AppearOptTbl,26,11," Appearence Options ",NULL,NULL,TOEatKey,TOHandleBut);
+}
+void  ProgOpt(void)
+{
+   Dialogue(ProgOptTbl,70,9," External Programs ",NULL,NULL,TOEatKey,TOHandleBut);
 }
 
 static bg,fg,c_bold,c_rev,c_ul,c_dim,b_bold,b_rev,b_ul,b_dim;

@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -204,7 +204,7 @@ void  CloseWin()
       for(x=0; x<Upper->w+2; x++,save++)
       {
 	 if(y+Upper->y<LINES && x+Upper->x<COLS
-	 && x>=0 && y>=0)
+	 && x>=0 && y>=0 && (x<Upper->w || !(Upper->flags&NOSHADOW)))
    	    mvaddch(y+Upper->y,x+Upper->x,*save);
       }
 

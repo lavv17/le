@@ -36,6 +36,8 @@
 #include "keymap.h"
 #include "clipbrd.h"
 
+TextPoint *DragMark=0;
+
 extern  char    **BlockHelp[];
 
 char    BlockFile[256];
@@ -120,6 +122,8 @@ void   ExpandTab()
 
 void    RCopy()
 {
+   Message("Copying...");
+
    ClipBoard cb;
    TextPoint tp=CurrentPos;
 
@@ -164,6 +168,8 @@ static int lines_deleted;
 
 int   RDelete()
 {
+   Message("Deleting...");
+
    num   i,j;
    num   h=BlockEnd.Line()-BlockBegin.Line()+1;
    num   oldcol2=BlockEnd.Col();
@@ -180,15 +186,22 @@ int   RDelete()
    {
       j=BlockBegin.Col();
       HardMove(i,j);
-      while(!Eol() && (BlockBegin.Col()==oldcol2
-		   || j<oldcol2))
+      if(BlockBegin.Col()==oldcol2)
       {
-	 if(Char()=='\t')
-	    ExpandTab();
-	 j++;
-      	 MoveRight();
+      	 DeleteToEOL();
       }
-      DeleteBlock(j-BlockBegin.Col(),0);
+      else
+      {
+	 offs o=CurrentPos;
+	 while(j<oldcol2 && !Eol())
+	 {
+	    if(Char()=='\t')
+	       ExpandTab();
+	    MoveRight();
+	    j++;
+	 }
+	 DeleteBlock(CurrentPos-o,0);
+      }
    }
 
    if(BlockBegin.Col()==oldcol2)
@@ -703,6 +716,13 @@ byte   Inverse(byte ch)
 
 void    BlockFunc()
 {
+   if(DragMark)
+   {
+      UserStopDragMark();
+      beep();
+      return;
+   }
+
    int   h=FALSE;
    int   action;
 next:
@@ -733,6 +753,9 @@ next:
          break;
       switch(toupper(StringTyped[0]))
       {
+      case('V'):
+	 UserStartDragMark();
+	 break;
       case('C'):
          if(!h)
             UserCopyBlock();
@@ -796,7 +819,7 @@ next:
 #ifndef MSDOS
          UserPipeBlock();
 #else
-         Message("Piping is not supported in MS-DOS. Press any key");
+         Message("Piping is not supported on MS-DOS. Press any key");
          GetNextAction();
 #endif
          break;
@@ -816,15 +839,15 @@ void  Transform(byte (*func)(byte))
 
    if(hide || (!rblock && BlockBegin==BlockEnd))
    {
-       while(!Eol())
-          ReplaceChar1(func(Char()));
-       flag|=REDISPLAY_LINE;
+      while(!Eol())
+         ReplaceCharMove(func(Char()));
+      flag|=REDISPLAY_LINE;
    }
    else
    {
       if(rblock)
       {
-         num i,j;
+         num i;
          num line1=BlockBegin.Line();
          num line2=BlockEnd.Line();
          num col1 =BlockBegin.Col();
@@ -832,31 +855,24 @@ void  Transform(byte (*func)(byte))
 
          for(i=line1; i<=line2; i++)
          {
+	    HardMove(i,col1);
             if(col2>col1)
             {
-                for(j=col1; j<col2; j++)
-                {
-                    MoveLineCol(i,j);
-                    if(!isspace(Char()))
-                        ReplaceChar1(func(Char()));
-                }
+	       while(GetCol()<col2 && !Eol())
+                  ReplaceCharMove(func(Char()));
             }
             else
             {
-                GoToLineNum(i);
-                while(!Eol())
-                    ReplaceChar1(func(Char()));
-            }
+               while(!Eol())
+                  ReplaceCharMove(func(Char()));
+	    }
          }
       }
       else
       {
          CurrentPos=BlockBegin;
          while(CurrentPos<BlockEnd)
-	 {
-	    InsertChar(func(Char()));
-	    DeleteChar();
-	 }
+	    ReplaceCharMove(func(Char()));
       }
       flag=REDISPLAY_ALL;
    }

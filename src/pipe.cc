@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,11 +17,18 @@
  */
 
 #include <config.h>
+#include <sys/types.h>
 #include <stdio.h>
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 #include <stdlib.h>
 #include <fcntl.h>
+#ifdef HAVE_SYS_POLL_H
+#include <sys/poll.h>
+#else
 #include <poll.h>
+#endif
 #include <sys/wait.h>
 #include <sys/fcntl.h>
 #include <errno.h>

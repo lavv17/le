@@ -2,19 +2,18 @@
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published by
- * the Free Software Foundation; either version 2, or (at your option)
- * any later version.
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Library General Public License
- * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 #include    <sys/types.h>
@@ -22,7 +21,6 @@
 #include    <curses.h>
 
 #define  EMAIL    "lav@yars.free.net"
-#define  COMPANY  "KARI Ltd, Yaroslavl"
 
 #undef	lines
 #undef	cols
@@ -49,17 +47,18 @@ typedef long            num;
 
 extern  inputmode,editmode,noreg;
 extern  char   bak[5];
-extern  int     TabSize;
-extern  int     IndentSize;
-extern  int     Scroll,hscroll;
-extern  int     insert;
-extern  int     autoindent;
-extern  int     BackspaceUnindents;
-extern  int     makebak;
-extern  int     SavePos,SaveHst;
-extern  int     rblock;
-extern  int     UseColor;
-extern  int     UseTabs;
+extern  int    TabSize;
+extern  int    IndentSize;
+extern  int    Scroll,hscroll;
+extern  int    insert;
+extern  int    autoindent;
+extern  int    BackspaceUnindents;
+extern  int    makebak;
+extern  int    SavePos,SaveHst;
+extern  int    rblock;
+extern  int    UseColor;
+extern  int    UseTabs;
+extern  int    PreferPageTop;
 
 /* When useidl==1 then the editor uses
    insert/delete line capability of a terminal */
@@ -133,13 +132,6 @@ extern   int   TabsInMargin;
 
 #define ALARMDELAY  60  /* one minute */
 
-#ifndef abs
-#define abs(a)      ((a)<0?(-(a)):(a))
-#endif
-#ifndef max
-#define max(a,b)    ((a)<(b)?(b):(a))
-#endif
-
 #define OFF     0
 #define ON      1
 
@@ -175,9 +167,16 @@ void  ReleaseSignalHandlers(void);
 void  SuspendEditor();
 void  BlockSignals();
 void  UnblockSignals();
+char *TmpFileName();
+char *HupFileName(int sig);
 
-void  ReplaceChar(byte);
-void  ReplaceChar1(byte);
+extern bool buffer_mmapped;
+
+int   ReplaceChar(byte);
+int   ReplaceCharMove(byte);
+void  ReplaceCharExt(byte);	 // Replace character under cursor with tab
+				 // expanding, line appending, etc.
+void  ReplaceCharExtMove(byte);	 // Same, but leave cursor after the new char
 
 void        MoveUp(void);
 void        MoveDown(void);
@@ -208,10 +207,6 @@ int         LockFile(int fd);
 int         CheckMode(mode_t);
 int	    file_check(char *);	 /* checks existence or ability to create */
 
-int         Getch();
-int         GetRawKey();
-int         WaitForKey(int delay=-1); /* OK - there is a key, ERR - no key */
-
 void    CenterLine();
 void    DeleteToEOL();
 void    DrawFrames();
@@ -234,8 +229,6 @@ void    mv_addch(int l,int c,chtype ct);
 void    mv_addstr(int l,int c,char *s);
 int   _getch();
 
-//byte  CharAt(offs);
-
 void    _clrtoeol(void);
 
 offs    NextLine(offs);
@@ -250,7 +243,7 @@ void    GoToLineNum(num);
 void  CheckWindowResize();
 
 extern  void    Quit(void),
-                Options(void),Copy(void),Move(void),Delete(void),Read(void),
+                Options(void),
                 Write(void),HideDisplay(void),Indent(void),Unindent(void),
                 FindBlockBegin(void),FindBlockEnd(void),ConvertToLower(void),
                 ConvertToUpper(void),ExchangeCases(void),BlockType(void),
@@ -262,7 +255,7 @@ extern  void    Quit(void),
                 FormatOptions(void),Optimize(void),DOS_UNIX(void);
 
 void  PreModify();
-void  PreUserEdit();
+int   PreUserEdit();
 
 int   choose_ch();
 
@@ -317,8 +310,11 @@ int   Suffix(const char *,const char *);
 #define  REDISPLAY_ALL     1
 #define  REDISPLAY_LINE    2
 #define  REDISPLAY_AFTER   4
+#define  REDISPLAY_RANGE   8
 
 #include "inline.h"
 #include "chset.h"
 
 int   isslash(char);
+
+void  ProcessDragMark();

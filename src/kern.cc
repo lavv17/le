@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -24,6 +24,9 @@
 #include   <fcntl.h>
 #include   <sys/types.h>
 #include   <sys/stat.h>
+#ifdef HAVE_SYS_MMAN_H
+#include   <sys/mman.h>
+#endif
 #include   <unistd.h>
 #include   <time.h>
 #include   <stdlib.h>
@@ -82,6 +85,8 @@ int   TabsInMargin;
 
 char  bak[5];
 
+bool  buffer_mmapped=false;
+
 /*____________________________________________________________________________
 */
 int   StringCompare(offs o,char *str,num len)
@@ -106,15 +111,15 @@ void   PreModify(void)
    num   shift=Offset()-ptr1;
    if(shift>0)
    {
-     memmove(buffer+ptr1,buffer+ptr2,shift);
-     oldptr1=ptr1+=shift;
-     oldptr2=ptr2+=shift;
+      memmove(buffer+ptr1,buffer+ptr2,shift);
+      oldptr1=ptr1+=shift;
+      oldptr2=ptr2+=shift;
    }
    else if(shift<0)
    {
-     memmove(buffer+ptr2+shift,buffer+ptr1+shift,-shift);
-     oldptr1=ptr1+=shift;
-     oldptr2=ptr2+=shift;
+      memmove(buffer+ptr2+shift,buffer+ptr1+shift,-shift);
+      oldptr1=ptr1+=shift;
+      oldptr2=ptr2+=shift;
    }
 }
 
@@ -124,6 +129,7 @@ int PreUserEdit()
    {
       num i=GetCol();
       num j=stdcol;
+      int oldmod=modified;
       if(UseTabs)
    	 for( ; Tabulate(i)<=j; i=Tabulate(i))
             if(InsertChar('\t')!=OK)
@@ -131,6 +137,7 @@ int PreUserEdit()
       while(i++<j)
 	 if(InsertChar(' ')!=OK)
 	    return 0;
+      modified=oldmod;
    }
    return 1;
 }
@@ -196,9 +203,9 @@ void   MoveRightOverEOL()
 void   MoveUp()
 {
    if(CurrentPos.Line()==0)
-     CurrentPos=TextBegin;
+      CurrentPos=TextBegin;
    else
-     CurrentPos=TextPoint(CurrentPos.Line()-1,stdcol);
+      CurrentPos=TextPoint(CurrentPos.Line()-1,stdcol);
 }
 
 void   MoveDown()
@@ -316,6 +323,11 @@ void  CalculateLineCol(num *line,num *col,offs source,offs target)
 
 int   InsertBlock(char *block_left,register num size_left,char *block_right,num size_right)
 {
+   if(buffer_mmapped)
+   {
+      return ERR;
+   }
+
    register num   i;
    register offs  oldoffset;
    num   num_of_lines,num_of_columns,oldline,oldcol;
@@ -427,6 +439,11 @@ int   InsertBlock(char *block_left,register num size_left,char *block_right,num 
 
 int   CopyBlock(offs from,num size)
 {
+   if(buffer_mmapped)
+   {
+      return ERR;
+   }
+
    PreModify();
 
    if(from<0)
@@ -453,7 +470,10 @@ int   CopyBlock(offs from,num size)
 
 int   ReadBlock(int fd,num size,num *act_read)
 {
-   errno=0;
+   if(buffer_mmapped)
+   {
+      return ERR;
+   }
 
    if(size==0)
    {
@@ -477,8 +497,6 @@ int   ReadBlock(int fd,num size,num *act_read)
 int   WriteBlock(int fd,offs from,num size,num *act_written)
 {
    num   leftsize;
-
-   errno=0;
 
    if(from<0)
    {
@@ -536,6 +554,11 @@ int   WriteBlock(int fd,offs from,num size,num *act_written)
 
 int   DeleteBlock(num left,num right)
 {
+   if(buffer_mmapped)
+   {
+      return ERR;
+   }
+
    offs  base;
    num   size;
    num   i;
@@ -570,22 +593,6 @@ int   DeleteBlock(num left,num right)
    newcol=base_point.Col();
 
    num_of_lines=TextPoint(base+size).Line()-newline;
-
-/*   for(i=0; i<left; i++)
-   {
-      if(CharAt_NoCheck(Offset()-i-1)=='\t')
-         newcol=-1;
-      else if(BolAt(Offset()-i))
-         num_of_lines++,newcol=-1;
-      else if(newcol!=-1)
-         newcol--;
-   }
-   newline=GetLine()-num_of_lines;
-   for(i=0; i<right; i++)
-   {
-      if(BolAt(Offset()+i+1))
-         num_of_lines++;
-   }*/
 
    break_at=-1;
    for(i=1; i<EolSize; i++)
@@ -635,6 +642,98 @@ int   DeleteBlock(num left,num right)
    modified=1;
 
    return(OK);
+}
+
+int   ReplaceBlock(char *block,num size)
+{
+}
+
+int   ReplaceChar(byte ch)
+{
+   if(!buffer_mmapped)
+   {
+      int res=ReplaceCharMove(ch);
+      if(res==OK)
+	 MoveLeft();
+      return res;
+   }
+
+   offs base=Offset();
+   offs newline=GetLine();
+   num size=1;
+
+   if(base==Size())
+      return ERR;
+
+   int break_at=-1;
+   int i;
+   for(i=1; i<EolSize; i++)
+   {
+      if(BolAt(base+i))
+      {
+         break_at=i;
+         break;
+      }
+   }
+
+   num num_of_lines=0;
+
+   if(EolAt(base))
+      num_of_lines++;
+
+   buffer[base]=ch;
+
+   int join_at=-1;
+   for(i=1; i<EolSize; i++)
+   {
+     if(BolAt(base+i))
+     {
+       join_at=i;
+       break;
+     }
+   }
+
+   if(EolAt(base))
+      num_of_lines--;
+
+
+   for(TextPoint *scan=TextPoint::base; scan; scan=scan->next)
+   {
+      if(scan->offset>base+size)
+      {
+         scan->offset-=size;
+         if(!(scan->flags&LINEUNDEFINED))
+         {
+            scan->line-=num_of_lines;
+            if(break_at>0 && scan->offset>=base+break_at)
+               scan->line--;
+            if(join_at>0  && scan->offset>=base+join_at)
+               scan->line++;
+            if(scan->line==newline)
+               scan->flags|=COLUNDEFINED;
+         }
+      }
+   }
+
+   return OK;
+}
+
+int   ReplaceCharMove(byte ch)
+{
+   int res;
+   if(!buffer_mmapped)
+   {
+      res=InsertChar(ch);
+      if(res==OK)
+	 DeleteChar();
+   }
+   else
+   {
+      res=ReplaceChar(ch);
+      if(res==OK)
+	 MoveRight();
+   }
+   return res;
 }
 
 int   Undelete()
@@ -735,9 +834,7 @@ void  CheckPoint()
 
 void  EmptyText()
 {
-   char    s[32];
-   sprintf(s,"le%ld.res",(long)getpid());
-   unlink(s);
+   remove(TmpFileName());
 
    if(FileName[0])
       LoadHistory+=HistoryLine(FileName,strlen(FileName));
@@ -750,7 +847,7 @@ void  EmptyText()
       if(stat(FileName,&st)!=-1)
       {
 	 if(newfile && st.st_size==0)
-            unlink(FileName);
+            remove(FileName);
          else
          {
       	    FileInfo=InodeInfo(&st,GetLine(),GetCol());
@@ -763,7 +860,16 @@ void  EmptyText()
 
    if(buffer)
    {
-      free(buffer);
+#ifdef HAVE_MMAP
+      if(buffer_mmapped)
+      {
+	 munmap(buffer,BufferSize);
+      }
+      else
+#endif
+      {
+	 free(buffer);
+      }
       buffer=NULL;
    }
 

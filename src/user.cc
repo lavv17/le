@@ -30,6 +30,7 @@
 #include "block.h"
 #include "keymap.h"
 #include "clipbrd.h"
+#include "getch.h"
 
 void  UserDeleteToEol()
 {
@@ -160,7 +161,7 @@ void  UserCopyFromDown()
          if(insert)
             InsertChar(ch);
          else
-            ReplaceChar1(ch);
+            ReplaceCharExtMove(ch);
          flag|=REDISPLAY_LINE;
          return;
       }
@@ -194,7 +195,7 @@ void  UserCopyFromUp()
          if(insert)
             InsertChar(ch);
          else
-            ReplaceChar1(ch);
+            ReplaceCharExtMove(ch);
          flag|=REDISPLAY_LINE;
          return;
       }
@@ -307,6 +308,22 @@ void  UserDeleteWord()
    flag|=REDISPLAY_LINE;
 }
 
+void  UserMarkWord()
+{
+   offs word_begin=CurrentPos;
+   offs word_end=CurrentPos;
+   while(!BofAt(word_begin) && isalnum(CharAt(word_begin-1)))
+      word_begin--;
+   while(!EofAt(word_end) && isalnum(CharAt(word_end)))
+      word_end++;
+   if(word_end==word_begin)
+      word_end++;
+   BlockBegin=word_begin;
+   BlockEnd=word_end;
+   hide=FALSE;
+   flag=REDISPLAY_ALL;
+}
+
 void  UserMarkLine()
 {
    BlockBegin=LineBegin(Offset());
@@ -315,7 +332,7 @@ void  UserMarkLine()
    else
       BlockEnd=NextLine(Offset());
    hide=FALSE;
-   flag|=REDISPLAY_ALL;
+   flag=REDISPLAY_ALL;
 }
 void  UserMarkToEol()
 {
@@ -323,117 +340,128 @@ void  UserMarkToEol()
    BlockBegin=CurrentPos;
    BlockEnd=LineEnd(CurrentPos.Offset());
    hide=(BlockEnd.Col()<=BlockBegin.Col());
-   flag|=REDISPLAY_ALL;
+   flag=REDISPLAY_ALL;
 }
 
 void  UserPageTop()
 {
-   int   shift,i;
-
    if(hex)
    {
-      if(CurrentPos==ScreenTop)
+      if((CurrentPos&~15)==ScreenTop)
          CurrentPos-=(TextWinHeight-1)*16;
       else
-         CurrentPos=ScreenTop;
+         CurrentPos=ScreenTop+(CurrentPos&15);
    }
    else
    {
-      num oldstdcol=stdcol;
       if(Text)
-         ToLineEnd();
-      stdcol=oldstdcol;
-      shift=(GetLine()==ScrLine)?(TextWinHeight-1)
-                                :(GetLine()-ScrLine);
-      for(i=0;i<shift;i++)
-         MoveUp();
+      {
+	 num oldstdcol=stdcol;
+         ToLineEnd();	// clear spaces at the line end
+	 stdcol=oldstdcol;
+      }
+
+      if(GetLine()==ScreenTop.Line())
+      {
+	 CurrentPos=TextPoint(ScreenTop.Line()-(TextWinHeight-1),stdcol);
+	 ScreenTop=LineBegin(CurrentPos);
+	 flag=REDISPLAY_ALL;
+      }
+      else
+	 CurrentPos=ScreenTop;
    }
 }
 void  UserPageUp()
 {
-   if(Scroll>1)
+   if(PreferPageTop)
    {
-      if(hex)
-      {
-         int page_size=(TextWinHeight*16-16);
-         CurrentPos-=page_size;
-         ScreenTop-=page_size;
-      }
-      else
-      {
-         num   oldstdcol=stdcol;
-         if(Text)
-            ToLineEnd();
-         CurrentPos=PrevNLines(CurrentPos,TextWinHeight-1);
-         ScreenTop=PrevNLines(ScreenTop,TextWinHeight-1);
-         stdcol=oldstdcol;
-      }
-      flag=REDISPLAY_ALL;
+      UserPageTop();
       return;
    }
-   else
-      UserPageTop();
-}
-void  UserPageBottom()
-{
-   int   shift,i;
 
    if(hex)
    {
-      int pgsize=(TextWinHeight-1)*16;
-      shift=(Offset()>=(ScrPtr+pgsize)?pgsize:pgsize+ScrPtr-Offset());
-      CurrentPos+=shift;
+      int page_size=(TextWinHeight-1)*16;
+      CurrentPos-=page_size;
+      ScreenTop-=page_size;
    }
    else
    {
-      num oldstdcol=stdcol;
+      num   oldstdcol=stdcol;
       if(Text)
-         ToLineEnd();
+	 ToLineEnd();
+      CurrentPos=PrevNLines(CurrentPos,TextWinHeight-1);
+      ScreenTop=PrevNLines(ScreenTop,TextWinHeight-1);
       stdcol=oldstdcol;
-      shift=((GetLine()==ScrLine+TextWinHeight-1)
-             ?(TextWinHeight-1)
-             :(ScrLine-GetLine()+TextWinHeight-1));
-      for(i=0; i<shift; i++)
-          MoveDown();
+   }
+   flag=REDISPLAY_ALL;
+}
+void  UserPageBottom()
+{
+   if(hex)
+   {
+      int pgsize=(TextWinHeight-1)*16;
+      if(CurrentPos>=ScreenTop+pgsize)
+	 CurrentPos+=pgsize;
+      else
+	 CurrentPos+=pgsize-((CurrentPos&~15)-ScreenTop);
+   }
+   else
+   {
+      if(Text)
+      {
+	 num oldstdcol=stdcol;
+         ToLineEnd();
+   	 stdcol=oldstdcol;
+      }
+
+      if(GetLine()==ScreenTop.Line()+TextWinHeight-1)
+      {
+	 CurrentPos=TextPoint(GetLine()+TextWinHeight-1,stdcol);
+	 ScreenTop=TextPoint(GetLine()-(TextWinHeight-1),0);
+	 flag=REDISPLAY_ALL;
+      }
+      else
+	 CurrentPos=TextPoint(ScreenTop.Line()+TextWinHeight-1,stdcol);
    }
 }
 void  UserPageDown()
 {
-   if(Scroll>1)
+   if(PreferPageTop)
    {
-      if(hex)
-      {
-         int page_size=(TextWinHeight*16-16);
-         CurrentPos+=page_size;
-         if(TextEnd-ScreenTop>=2*page_size)
-            ScreenTop+=page_size;
-         else if(TextEnd>=page_size)
-            ScreenTop=(TextEnd-page_size)&~15;
-      }
-      else
-      {
-         num   oldstdcol=stdcol;
-
-         if(Text)
-            ToLineEnd();
-
-         CurrentPos=NextNLines(CurrentPos,TextWinHeight-1);
-         if(TextEnd.Line()>=ScreenTop.Line()+2*TextWinHeight-2)
-            ScreenTop=NextNLines(ScreenTop,TextWinHeight-1);
-         else
-	 {
-            offs NewScreenTop=PrevNLines(TextEnd,TextWinHeight-1);
-	    if(NewScreenTop>ScreenTop)
-	       ScreenTop=NewScreenTop;
-	 }
-
-         stdcol=oldstdcol;
-      }
-      flag=REDISPLAY_ALL;
+      UserPageBottom();
       return;
    }
+
+   if(hex)
+   {
+      int page_size=(TextWinHeight*16-16);
+      CurrentPos+=page_size;
+      if(TextEnd-ScreenTop>=2*page_size)
+	 ScreenTop+=page_size;
+      else if(TextEnd>=page_size)
+	 ScreenTop=(TextEnd-page_size)&~15;
+   }
    else
-      UserPageBottom();
+   {
+      num   oldstdcol=stdcol;
+
+      if(Text)
+	 ToLineEnd();
+
+      CurrentPos=NextNLines(CurrentPos,TextWinHeight-1);
+      if(TextEnd.Line()>=ScreenTop.Line()+2*TextWinHeight-2)
+	 ScreenTop=NextNLines(ScreenTop,TextWinHeight-1);
+      else
+      {
+	 offs NewScreenTop=PrevNLines(TextEnd,TextWinHeight-1);
+	 if(NewScreenTop>ScreenTop)
+	    ScreenTop=NewScreenTop;
+      }
+
+      stdcol=oldstdcol;
+   }
+   flag=REDISPLAY_ALL;
 }
 
 void  UserWordLeft()
@@ -651,6 +679,7 @@ void  UserUnindent()
       {
          DeleteBlock(CurrentPos-LineBegin(CurrentPos),0);
          stdcol=newmargin;
+	 flag|=REDISPLAY_LINE;
          return;
       }
       while(GetCol()>newmargin)
@@ -1213,6 +1242,7 @@ void  UserSwitchHexMode()
          editmode=EXACT;
       else
          editmode=base_editmode;
+      stdcol=GetCol();
    }
    else
    {
@@ -1311,4 +1341,23 @@ void  UserYankBlock()
 {
    MainClipBoard.PasteAndMark();
    OptionallyConvertBlockNewLines("yanked");
+}
+
+void  UserStartDragMark()
+{
+   if(DragMark)
+   {
+      UserStopDragMark();
+      return;
+   }
+   DragMark=new TextPoint(CurrentPos);
+   if(hide)
+      UserSetBlockBegin();
+}
+void  UserStopDragMark()
+{
+   if(!DragMark)
+      return;
+   delete DragMark;
+   DragMark=0;
 }

@@ -35,6 +35,9 @@
 #include "edit.h"
 #include "calc.h"
 #include "keymap.h"
+#include "block.h"
+#include "screen.h"
+#include "mouse.h"
 
 #include <getopt.h>
 
@@ -50,26 +53,27 @@ char  Program[256];
 
 extern  const char    MainHelp[];
 
-char    BakPath[256]="";
+char  BakPath[256]="";
 
-char    PosName[256]="";
-char    HstName[256]="";
+char  PosName[256]="";
+char  HstName[256]="";
 
-int     SavePos=1;
-int     SaveHst=1;
+int   SavePos=1;
+int   SaveHst=1;
 
-int     View=FALSE;
+int   View=FALSE;
 
-int     ShowMatchPos=TRUE;
+int   ShowMatchPos=TRUE;
 
-char    *HOME,*TERM,*DISPLAY;
+char  *HOME,*TERM,*DISPLAY;
 
-int     UseColor=1;
-int     UseTabs=1;
-int     IndentSize=8;
-int     BackspaceUnindents=1;
+int   UseColor=1;
+int   UseTabs=1;
+int   IndentSize=8;
+int   BackspaceUnindents=1;
+int   PreferPageTop=1;
 
-void    GoToLineNum(num line_num)
+void  GoToLineNum(num line_num)
 {
    CurrentPos=TextPoint(line_num,0);
    stdcol=GetCol();
@@ -98,169 +102,36 @@ int   getcode()
    return((int)i);
 }
 
+void ProcessDragMark()
+{
+   if(CurrentPos<*DragMark)
+   {
+      if(CurrentPos!=BlockBegin || (Text && stdcol>GetCol()))
+      {
+	 BlockEnd=*DragMark;
+	 UserSetBlockBegin();
+      }
+   }
+   else if(CurrentPos>=*DragMark)
+   {
+      if(CurrentPos!=BlockEnd || (Text && stdcol>GetCol()))
+      {
+	 BlockBegin=*DragMark;
+	 UserSetBlockEnd();
+      }
+   }
+}
+
 void    Edit()
 {
    int      key;
    num      std;
    int      action;
    ActionProc proc;
-   num	 old_num_of_lines=TextEnd.Line();
+   num	 old_num_of_lines=-1;
 
    while(1)
    {
-      if(old_num_of_lines!=TextEnd.Line())
-      {
-         flag|=REDISPLAY_AFTER;
-         old_num_of_lines=TextEnd.Line();
-      }
-
-      CheckWindowResize();
-      StatusLine();
-      SetCursor();
-
-      action=GetNextAction();
-
-      if(action==QUIT_EDITOR)
-      {
-         Quit();
-         continue;
-      }
-
-      if(hex)
-      {
-         ShowMatchPos=0;
-         RedisplayLine();
-         ShowMatchPos=1;
-      }
-
-      switch(action)
-      {
-/*      case(KEY_SHIFT_F(10)):
-      case(KEY_SEXIT):
-         if(modified)
-         {
-            if(UserSave()!=OK)
-               break;
-         }
-         return;*/
-/*      case(SHIFT_UP):
-      case(KEY_SR):
-         if(hex)
-            ScreenTop=Offset()&~15;
-         else
-            ScreenTop=PrevNLines(ScrPtr,TextWinHeight-GetLine()+ScrLine-1);
-         flag=TRUE;
-         break;
-      case(SHIFT_DOWN):
-      case(KEY_SF):
-         if(hex)
-            ScreenTop=(Offset()&~15)+TextWinHeight*16-1;
-         else
-            ScreenTop=NextNLines(ScreenTop.Offset(),(int)(GetLine()-ScreenTop.Line()));
-         flag=TRUE;
-         break;*/
-      default:
-         proc=GetActionProc(EditorActionProcTable,action);
-         if(proc)
-         {
-            proc();
-            break;
-         }
-         if(action!=NO_ACTION)
-            break;
-         if(StringTypedLen>1)
-            break;
-         key=(byte)(StringTyped[0]);
-         if(hex && key=='\t')
-         {
-            ascii=!ascii;
-            break;
-         }
-         if(View)
-            break;
-         if(!ascii && hex)
-         {
-            if(key<0 || key>255)
-               break;
-            if(isdigit(key))
-               key-='0';
-            else
-            {
-               key=toupper(key);
-               if(key>='A' && key<='F')
-                  key-='A'-0x0A;
-               else
-               {
-                  UnrefKey(key);
-                  break;
-               }
-            }
-            if(insert && !right || Eof())
-            {
-               InsertChar(0);
-               MoveLeft();
-               flag|=REDISPLAY_AFTER;
-	    }
-            if(right)
-            {
-               InsertChar((Char()&0xF0)+key);
-               DeleteChar();
-               right=0;
-            }
-            else
-            {
-               InsertChar((Char()&0x0F)+(key<<4));
-               DeleteChar();
-               MoveLeft();
-               right=1;
-            }
-            flag|=REDISPLAY_LINE;
-         }
-         else
-         {
-            if(key>255 || (key>=0 && key<' ' && key!='\n' && key!='\t'))
-            {
-               UnrefKey(key);
-               break;
-            }
-            key=ModifyKey(key);
-            if(hex)
-            {
-               InsertChar(key);
-               if(insert)
-               {
-                  flag|=REDISPLAY_AFTER;
-               }
-               else
-               {
-                  DeleteChar();
-		  flag|=REDISPLAY_LINE;
-               }
-               break;
-            }
-            switch(key)
-            {
-            case('\n'):
-               UserNewLine();
-               break;
-            case('\t'):
-               UserIndent();
-               break;
-            default:   /* not a newline and not a tab */
-               if(insert || Eol() || (Char()=='\t' && Tabulate(GetCol())!=(GetCol()+1)))
-               {
-                  UserInsertChar(key);
-               }
-               else
-               {
-                  InsertChar(key);
-                  DeleteChar();
-               }
-               flag|=REDISPLAY_LINE;
-            }
-         }
-         break;
-      }   /* end of switch */
       std=stdcol;
       if(!hex)
       {
@@ -271,6 +142,156 @@ void    Edit()
       }
       if(hex)
          flag|=REDISPLAY_LINE;
+
+      if(!hex && !View && old_num_of_lines!=TextEnd.Line())
+      {
+         flag|=REDISPLAY_AFTER;
+         old_num_of_lines=TextEnd.Line();
+      }
+
+      CheckWindowResize();
+
+      if(DragMark)
+	 ProcessDragMark();
+
+      SyncTextWin();
+      StatusLine();
+      SetCursor();
+
+      action=GetNextAction();
+
+      if(hex)
+      {
+         ShowMatchPos=0;
+         RedisplayLine();
+         ShowMatchPos=1;
+      }
+
+#ifdef WITH_MOUSE
+      if(action==MOUSE_ACTION)
+      {
+	 MEVENT mev;
+	 if(getmouse(&mev)==ERR)
+	    continue;
+	 if(InTextWin(mev.y,mev.x))
+	    MouseInTextWin(mev);
+	 else if(InScrollBar(mev.y,mev.x))
+	    MouseInScrollBar(mev);
+      }
+#endif // WITH_MOUSE
+
+      if(action==QUIT_EDITOR)
+      {
+         Quit();
+         continue;
+      }
+
+      proc=GetActionProc(EditorActionProcTable,action);
+      if(proc)
+      {
+	 proc();
+	 continue;
+      }
+      if(action!=NO_ACTION)
+	 continue;
+      if(StringTypedLen>1)
+	 continue;
+      key=(byte)(StringTyped[0]);
+      if(hex && key=='\t')
+      {
+	 ascii=!ascii;
+	 continue;
+      }
+      if(View)
+	 continue;
+      if(!ascii && hex)
+      {
+	 if(key<0 || key>255)
+	    continue;
+	 if(isdigit(key))
+	    key-='0';
+	 else
+	 {
+	    key=toupper(key);
+	    if(key>='A' && key<='F')
+	       key-='A'-0x0A;
+	    else
+	    {
+	       UnrefKey(key);
+	       continue;
+	    }
+	 }
+	 if(((insert && !right) || Eof())
+	 && !buffer_mmapped)
+	 {
+	    InsertChar(0);
+	    MoveLeft();
+	    flag|=REDISPLAY_AFTER;
+	 }
+	 if(right)
+	 {
+	    if(ReplaceCharMove((Char()&0xF0)+key)==OK)
+	       right=0;
+	 }
+	 else
+	 {
+	    if(ReplaceChar((Char()&0x0F)+(key<<4))==OK)
+	       right=1;
+	 }
+	 flag|=REDISPLAY_LINE;
+      }
+      else
+      {
+	 if(key>255 || (key>=0 && key<' ' && key!='\n' && key!='\t'))
+	 {
+	    UnrefKey(key);
+	    continue;
+	 }
+	 key=ModifyKey(key);
+	 if(buffer_mmapped)
+	 {
+	    if(Eol())
+	       flag|=REDISPLAY_AFTER;
+	    else
+	       flag|=REDISPLAY_LINE;
+	    ReplaceCharMove(key);
+	    continue;
+	 }
+	 if(hex)
+	 {
+	    if(insert)
+	    {
+	       InsertChar(key);
+	       flag|=REDISPLAY_AFTER;
+	    }
+	    else
+	    {
+	       ReplaceCharMove(key);
+	       flag|=REDISPLAY_LINE;
+	    }
+	    continue;
+	 }
+	 switch(key)
+	 {
+	 case('\n'):
+	    UserNewLine();
+	    break;
+	 case('\t'):
+	    UserIndent();
+	    break;
+	 default:   /* not a newline and not a tab */
+	    if(insert || Eol() || (Char()=='\t' && Tabulate(GetCol())!=(GetCol()+1)))
+	    {
+	       UserInsertChar(key);
+	    }
+	    else
+	    {
+	       InsertChar(key);
+	       DeleteChar();
+	    }
+	    flag|=REDISPLAY_LINE;
+	 }
+      }
    }
 }
 void    Quit()
@@ -318,14 +339,19 @@ void  InitCurses()
    if(le_scr!=NULL)
    {
       endwin();
+#ifdef NCURSES_VERSION
+      doupdate();
+      return;
+#else
       delscreen(le_scr);
       del_curterm(cur_term);
+#endif
    }
 
    le_scr=newterm(NULL,stdout,stdin);
    if(le_scr==NULL)
    {
-      fprintf(stderr,"newterm() failed. Check your $TERM variable.\n");
+      fprintf(stderr,"le: newterm() failed. Check your $TERM variable.\n");
       exit(1);
    }
 
@@ -336,12 +362,15 @@ void  InitCurses()
    nonl();
    meta(stdscr,TRUE);
    raw();
-   typeahead(-1);
    intrflush(stdscr,FALSE);
    keypad(stdscr,TRUE);
 
    idlok(stdscr,useidl);
    scrollok(stdscr,FALSE);
+
+#ifdef WITH_MOUSE
+   mousemask(ALL_MOUSE_EVENTS,0);
+#endif
 }
 void  TermCurses()
 {
@@ -363,7 +392,9 @@ void    Initialize()
 #ifndef MSDOS
    char  *filename=(char*)alloca((strlen(HOME)|15)+17);
    sprintf(filename,"%s/.le",HOME);
-   mkdir(filename,0755);
+   mkdir(filename,0700);
+   strcat(filename,"/tmp");
+   mkdir(filename,0700);
    sprintf(HstName,"%s/.le/history",HOME);
 #else
    sprintf(HstName,"%s/le.hst",HOME);
@@ -397,6 +428,7 @@ void    Initialize()
    }
 
    EditorReadKeymap();
+   RebuildKeyTree();
 }
 void    Terminate()
 {
@@ -471,13 +503,15 @@ void  PrintUsage(int arg)
 int     main(int argc,char **argv)
 {
    int   optView=-1,opteditmode=-1,optWarpLine=0;
+   int	 opt_use_mmap=-1;
    int   opt;
 
    enum {
       DUMP_KEYMAP=1024,
       DUMP_COLORS,
       PRINT_HELP,
-      PRINT_VERSION
+      PRINT_VERSION,
+      USE_MMAP
    };
 
    static struct option le_options[]=
@@ -490,6 +524,9 @@ int     main(int argc,char **argv)
       {"hex-mode",no_argument,0,'h'},
       {"black-white",no_argument,0,'b'},
       {"color",no_argument,0,'c'},
+#ifdef HAVE_MMAP
+      {"mmap",no_argument,0,USE_MMAP},
+#endif
       {0,0,0,0}
    };
 
@@ -536,7 +573,7 @@ int     main(int argc,char **argv)
          optView=1;
          break;
       case('h'):
-         opteditmode=2;
+         opteditmode=HEXM;
          break;
       case('b'):
          optUseColor=0;
@@ -559,6 +596,9 @@ int     main(int argc,char **argv)
       case(PRINT_VERSION):
 	 printf("%s - %s\n",Program,version_string);
 	 exit(0);
+      case(USE_MMAP):
+	 opt_use_mmap=1;
+	 break;
       }
    }
    if(optUseColor!=-1)
@@ -572,6 +612,12 @@ int     main(int argc,char **argv)
       editmode=opteditmode;
    if(optUseColor!=-1)
       UseColor=optUseColor;
+   if(opt_use_mmap!=-1)
+   {
+      buffer_mmapped=opt_use_mmap;
+      if(opteditmode==-1)
+	 editmode=HEXM;
+   }
 
    if(optind<argc-1 && argv[optind][0]=='+' && isdigit(argv[optind][1]))
    {

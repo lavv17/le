@@ -1,20 +1,19 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published by
- * the Free Software Foundation; either version 2, or (at your option)
- * any later version.
- * 
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- * 
- * You should have received a copy of the GNU Library General Public License
- * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330, 
- * Boston, MA 02111-1307, USA. 
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
 static inline
@@ -37,67 +36,69 @@ byte  CharAt_NoCheck(register offs offset)
 static inline
 offs    Size()
 {
-    return(BufferSize-GapSize);
+   return(BufferSize-GapSize);
 }
 static inline
 offs    Offset()
 {
-    return(CurrentPos.Offset());
+   return(CurrentPos.Offset());
 }
 static inline
 int Eof()
 {
-    return(Offset()>=Size());
+   return(Offset()>=Size());
 }
 static inline
 int EofAt(offs o)
 {
-    return(o>=Size());
+   return(o>=Size());
 }
 static inline
 int Bof()
 {
-    return(Offset()<=0);
+   return(Offset()<=0);
 }
 static inline
 int BofAt(offs o)
 {
-    return(o<=0);
+   return(o<=0);
 }
 static inline
 byte    Char()
 {
-    return(CharAt(Offset()));
+   return(CharAt(Offset()));
 }
 static inline
 byte    CharRel(offs sh)
 {
-    return(CharAt(Offset()+sh));
+   return(CharAt(Offset()+sh));
 }
 static inline
 byte    CharRel_NoCheck(offs sh)
 {
-    return(CharAt_NoCheck(Offset()+sh));
+   return(CharAt_NoCheck(Offset()+sh));
 }
 static inline
 void    MoveRight()
 {
-    CurrentPos+=1;
+   CurrentPos+=1;
 }
 static inline
 void    MoveLeft()
 {
-    CurrentPos-=1;
+   CurrentPos-=1;
 }
 static inline
 num     GetCol()
 {
-    return(CurrentPos.Col());
+   if(hex)
+      return 0;
+   return(CurrentPos.Col());
 }
 static inline
 num     GetLine()
 {
-    return(CurrentPos.Line());
+   return(CurrentPos.Line());
 }
 static inline
 void    DeleteChar()
@@ -132,7 +133,7 @@ int Bol()
    return(BolAt(CurrentPos));
 }
 static inline
-void   InsertChar(char ch)
+int  InsertChar(char ch)
 {
-   InsertBlock(&ch,1);
+   return(InsertBlock(&ch,1));
 }

@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -53,7 +53,7 @@ TextPoint::TextPoint(offs o)
    flags=COLUNDEFINED|LINEUNDEFINED;
    line=col=0;
    AddTextPoint();
-   FindLineCol();
+//    FindLineCol();
 }
 TextPoint::TextPoint(offs o,num l,num c)
 {
@@ -76,7 +76,7 @@ TextPoint::TextPoint(offs o,num l,num c)
       col=c;
    }
    AddTextPoint();
-   FindLineCol();
+//    FindLineCol();
 }
 
 TextPoint::TextPoint()
@@ -239,7 +239,7 @@ void  TextPoint::FindOffset()
 
 void  TextPoint::FindLineCol()
 {
-   if(offset<0)
+   if(offset<=0)
    {
       col=line=offset=0;
       flags&=~(COLUNDEFINED|LINEUNDEFINED);
@@ -318,8 +318,14 @@ void  TextPoint::FindLineCol()
 
 TextPoint   TextPoint::operator+=(num shift)
 {
-   TextPoint   res(offset+shift);
-   res.FindLineCol();
+   offs newoffs=offset+shift;
+   if(newoffs<0)
+      newoffs=0;
+   if(newoffs>Size())
+      newoffs=Size();
+   TextPoint res(newoffs);
+   if(!(this->flags&LINEUNDEFINED))
+      res.FindLineCol();
    *this=res;
    return(*this);
 }

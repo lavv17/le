@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -20,7 +20,7 @@
 #include <ctype.h>
 #include "edit.h"
 
-void  ReplaceChar1(byte ch)
+void  ReplaceCharExtMove(byte ch)
 {
    if(Char()=='\t' && ch!='\t')
      ExpandTab();
@@ -28,9 +28,9 @@ void  ReplaceChar1(byte ch)
    if(!Eol() || Bol())
      DeleteChar();
 }
-void  ReplaceChar(byte ch)
+void  ReplaceCharExt(byte ch)
 {
-   ReplaceChar1(ch);
+   ReplaceCharExt(ch);
    MoveLeft();
    stdcol=GetCol();
 }

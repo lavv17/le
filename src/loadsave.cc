@@ -21,19 +21,25 @@
 #include <config.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#ifdef HAVE_SYS_MMAN_H
+# include <sys/mman.h>
+#endif
 #include <fcntl.h>
 #ifdef HAVE_UNISTD_H
-#include <unistd.h>
+# include <unistd.h>
 #endif
+#include <utime.h>
 #include <errno.h>
 #include <string.h>
 #include <stdlib.h>
+
 #include "edit.h"
 #include "keymap.h"
 #include "highli.h"
 #include <xalloca.h>
 #include "block.h"
 #include "clipbrd.h"
+#include "getch.h"
 
 #ifndef __MSDOS__
 int    LockFile(int fd)
@@ -121,6 +127,47 @@ struct  menu   ConCan4Menu[]={
 {   "  &Cancel  ",MIDDLE+6,FDOWN-2  },
 {NULL}};
 
+off_t  GetDevSize(int fd)
+{
+   off_t lower=0;
+   off_t upper=0x10000;
+   char buf[20*512];
+
+   for(;;)
+   {
+      off_t pos=lseek(fd,SEEK_CUR,upper);
+      if(pos!=upper)
+	 break;
+      int res=read(fd,buf,sizeof(buf));
+      if(res<=0)
+	 break;
+      lower=upper;
+      upper*=2;
+   }
+   for(;;)
+   {
+      if(upper==lower)
+	 break;
+      off_t mid=(upper+lower)/2;
+      off_t pos=lseek(fd,SEEK_CUR,mid);
+      if(pos!=mid)
+      {
+	 upper=mid;
+	 continue;
+      }
+      int res=read(fd,buf,sizeof(buf));
+      if(res<=0)
+      {
+	 if(res>0)
+	    lower=mid+res;
+	 else
+	    upper=mid;
+      }
+   }
+
+   return lower;
+}
+
 int   LoadFile(char *name)
 {
    struct stat    st;
@@ -142,7 +189,10 @@ int   LoadFile(char *name)
    View&=~2;      /* clear the 'temporarily read-only' bit */
 
    if(!name[0])
+   {
+      buffer_mmapped=false;
       return(OK);
+   }
 
    sprintf(msg,"Loading the file \"%.60s\"...",name);
    Message(msg);
@@ -151,46 +201,50 @@ int   LoadFile(char *name)
 
    if(stat(name,&st)==-1 && errno==ENOENT)
    {
-     int f=creat(name,0644);
-     if(f!=-1)
-     {
-       close(f);
-       newfile=1;
-     }
-     else
-     {
-       ErrMsg("Cannot create the file.\nThe directory does not exist or is not accessible\nor does not permit writing");
-       EmptyText();
-       return(ERR);
-     }
+      int f=creat(name,0644);
+      if(f!=-1)
+      {
+	 close(f);
+	 newfile=1;
+      }
+      else
+      {
+	 ErrMsg("Cannot create the file.\n"
+		"The directory does not exist or is not accessible\n"
+	        "or does not permit writing");
+	 EmptyText();
+	 return(ERR);
+      }
    }
    else if(errno==0)
    {
-     FileMode=st.st_mode;
-     if(S_ISBLK(FileMode) || S_ISCHR(FileMode) || S_ISFIFO(FileMode))
-     {
-       ErrMsg("This is a special file or a pipe\nthat I cannot edit.");
-       EmptyText();
-       return(ERR);
-     }
-     if(S_ISDIR(FileMode))
-       View|=2;
+      FileMode=st.st_mode;
+      if((!buffer_mmapped && (S_ISBLK(FileMode) || S_ISCHR(FileMode)))
+	 || S_ISFIFO(FileMode))
+      {
+	 ErrMsg("This is a special file or a pipe\nthat I cannot edit.");
+	 EmptyText();
+	 return(ERR);
+      }
+      if(S_ISDIR(FileMode))
+	 View|=2;
    }
    file=open(name,(View?O_RDONLY:O_RDWR|O_CREAT)|O_NDELAY,0644);
    if(file==-1)
    {
-     View|=2;
-     file=open(name,O_RDONLY|O_NDELAY,0666);
-       /* try to open the file in read-only mode */
-     if(file==-1)
-     {
-       FError(name);
-       EmptyText();
-       return(ERR);
-     }
+      View|=2;
+      file=open(name,O_RDONLY|O_NDELAY);
+	 /* try to open the file in read-only mode */
+      if(file==-1)
+      {
+	 FError(name);
+	 EmptyText();
+	 return(ERR);
+      }
    }
 
-   stat(name,&st);
+   // re-stat the file in case it was created
+   fstat(file,&st);
    FileMode=st.st_mode;
 
    if(!View)
@@ -208,35 +262,64 @@ int   LoadFile(char *name)
 	 ErrMsg("Warning: file locking failed");
    }
 
-   if(ReadBlock(file,st.st_size,&act_read)!=OK)
+   if(!buffer_mmapped)
    {
-      if(errno)
-	 FError(name);
-      EmptyText();
-      return(ERR);
-   }
-   CheckPoint();
-
-   DosLastLine=0;
-   for(i=Size()-1; i>0; )
-   {
-      if(CharAt_NoCheck(--i)=='\r')
+      if(ReadBlock(file,st.st_size,&act_read)!=OK)
       {
-         if(CharAt_NoCheck(i+1)=='\n')
-            DosLastLine++;
+	 if(errno)
+	    FError(name);
+	 EmptyText();
+	 return(ERR);
+      }
+      CheckPoint();
+
+      DosLastLine=0;
+      for(i=Size()-1; i>0; )
+      {
+	 if(CharAt_NoCheck(--i)=='\r')
+	 {
+	    if(CharAt_NoCheck(i+1)=='\n')
+	       DosLastLine++;
+	 }
+      }
+#ifndef __MSDOS__
+      if(TextEnd.Line()/2<DosLastLine) /* check if the file has unix or dos format */
+#else
+      if(TextEnd.Line()/2<=DosLastLine)
+#endif
+      {
+	DosEol=1;
+	EolSize=2;
+	EolStr="\r\n";
+	TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
+	TextEnd=TextPoint(Size(),DosLastLine,-1);
       }
    }
-#ifndef MSDOS
-   if(TextEnd.Line()/2<DosLastLine) /* check if the file has unix or dos format */
-#else
-   if(TextEnd.Line()/2<=DosLastLine)
-#endif
+   else /* buffer_mmapped */
    {
-     DosEol=1;
-     EolSize=2;
-     EolStr="\r\n";
-     TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
-     TextEnd=TextPoint(Size(),DosLastLine,-1);
+#ifdef HAVE_MMAP
+      if((S_ISBLK(FileMode) || S_ISCHR(FileMode))
+      && st.st_size==0)
+      {
+	 // try to get device size
+	 st.st_size=GetDevSize(file);
+      }
+      if(st.st_size>0)
+      {
+	 buffer=(char*)mmap(0,st.st_size,PROT_READ|(View?0:PROT_WRITE),
+			    MAP_SHARED,file,0);
+	 if(buffer==MAP_FAILED)
+	 {
+	    FError(name);
+	    EmptyText();
+	    return ERR;
+	 }
+	 BufferSize=st.st_size;
+	 ptr1=ptr2=BufferSize;
+	 GapSize=0;
+	 TextEnd=TextPoint(BufferSize);
+      }
+#endif
    }
 
    stdcol=modified=0;
@@ -244,20 +327,20 @@ int   LoadFile(char *name)
    hide=1;
    flag=REDISPLAY_ALL;
 
-   stat(name,&st);
+   fstat(file,&st);
    FileInfo=InodeInfo(&st,GetLine(),GetCol());
    strcpy(FileName,name);
 
    CurrentPos=TextBegin;
    if(SavePos)
    {
-     old=PositionHistory.FindInode(FileInfo);
-     if(old)
-     {
-       MoveLineCol(old->line,old->col);
-       FileInfo.line=GetLine();
-       FileInfo.col=stdcol=GetCol();
-     }
+      old=PositionHistory.FindInode(FileInfo);
+      if(old)
+      {
+	 MoveLineCol(old->line,old->col);
+	 FileInfo.line=GetLine();
+	 FileInfo.col=stdcol=GetCol();
+      }
    }
 
    PositionHistory+=FileInfo;
@@ -272,16 +355,17 @@ int   LoadFile(char *name)
    return(OK);
 }
 
-void   CreateBak(char *name)
+int   CreateBak(char *name)
 {
-   char   *buf2,bakname[512];
-   num    buf2size;
-   num    bytesread;
+   char  *buf2,bakname[512];
+   num   buf2size;
+   num   bytesread;
    struct stat st;
-   int    fd,bfd;
-   char   directory[256];
-   char   *filename;
-   int    namemax;
+   int   fd,bfd;
+   char  directory[256];
+   char  *filename;
+   int   namemax;
+   int	 res=OK;
 
    filename=strrchr(name,'/');
    if(filename==NULL)
@@ -320,13 +404,12 @@ void   CreateBak(char *name)
    sprintf(bakname,bp[strlen(bp)-1]=='/'?"%s%.*s%s":"%s/%.*s%s",
       bp,namemax-strlen(bak),filename,bak);
 
-   unlink(bakname);
-   errno=0;
+   remove(bakname);
 
    if(stat(name,&st)==-1)
    {
       FError(name);
-      return;
+      return ERR;
    }
 
    fd=open(name,O_RDONLY);
@@ -335,12 +418,12 @@ void   CreateBak(char *name)
    if(fd==-1)
    {
       FError(name);
-      return;
+      return ERR;
    }
    else if(bfd==-1)
    {
       FError(bakname);
-      return;
+      return ERR;
    }
    buf2size=st.st_size;
    if(buf2size>0x1000)
@@ -348,7 +431,7 @@ void   CreateBak(char *name)
    if((buf2=(char*)malloc(buf2size))==NULL)
    {
       NotMemory();
-      errno=TRUE;
+      res=ERR;
    }
    else
    {
@@ -358,17 +441,31 @@ void   CreateBak(char *name)
          if(bytesread==-1)
          {
             FError(name);
-            break;
+            res=ERR;
+	    break;
          }
          if(bytesread==0)
             break;
          if(write(bfd,buf2,bytesread)==-1)
-            FError(bakname);
+	 {
+	    FError(bakname);
+      	    res=ERR;
+	    break;
+	 }
       }
       free(buf2);
    }
    close(fd);
    close(bfd);
+
+   if(res==OK)
+   {
+      struct utimbuf ut;
+      ut.actime=st.st_atime;
+      ut.modtime=st.st_mtime;
+      utime(bakname,&ut);
+   }
+   return res;
 }
 
 int CheckMode(mode_t mode)
@@ -383,6 +480,9 @@ int CheckMode(mode_t mode)
 
 int   SaveFile(char *name)
 {
+   if(buffer_mmapped)
+      return OK;
+
    struct stat st;
    char  msg[256];
    int   nfile;
@@ -403,51 +503,49 @@ int   SaveFile(char *name)
    }
    if(stat(name,&st)!=-1)
    {
-     if(!CheckMode(st.st_mode))
-       return(ERR);
+      if(!CheckMode(st.st_mode))
+         return(ERR);
 
      InodeInfo   NewFileInfo(&st,GetLine(),GetCol());
 
      if(file!=-1)
      {
+        if(FileInfo.SameFileModified(NewFileInfo))
+        {
+           switch(ReadMenuBox(ConCan4Menu,HORIZ,"The file was changed out of the editor",
+		     " Warning ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
+	    {
+	    case('C'):
+	    case(0):
+	       return(ERR);
+	    }
+	 }
+	 else if(!FileInfo.SameFile(NewFileInfo))
+	 {
+	    switch(ReadMenuBox(ConCan4Menu,HORIZ,"The file already exists and will be overwritten",
+		     " Verify ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
+	    {
+	    case('C'):
+	    case(0):
+	       return(ERR);
+	    }
+	    delete_old_file=1;
+	 }
+      }
 
-       if(FileInfo.SameFileModified(NewFileInfo))
-       {
-         switch(ReadMenuBox(ConCan4Menu,HORIZ,"The file was changed out of the editor",
-	    " Warning ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
-         {
-         case('C'):
-         case(0):
-            return(ERR);
-         }
-       }
-       else if(!FileInfo.SameFile(NewFileInfo))
-       {
-         switch(ReadMenuBox(ConCan4Menu,HORIZ,"The file already exists and will be overwritten"," Verify ",
-	    VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
-         {
-         case('C'):
-         case(0):
-            errno=1;
-            return(ERR);
-         }
-         delete_old_file=1;
-       }
-     }
-
-     errno=0;
-     if(makebak && !newfile) /* only for 'old' files */
-       CreateBak(name);
-     if(errno)
-     {
-       switch(ReadMenuBox(ConCan4Menu,HORIZ,"Cannot create backup file",
-	 " Warning ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
-       {
-       case('C'):
-       case(0):
-         return(ERR);
-       }
-     }
+      if(makebak && !newfile) /* only for 'old' files */
+      {
+	 if(CreateBak(name)!=OK)
+	 {
+	    switch(ReadMenuBox(ConCan4Menu,HORIZ,"Cannot create backup file",
+		     " Warning ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
+	    {
+	    case('C'):
+	    case(0):
+	       return(ERR);
+	    }
+      	 }
+      }
    }
    else
    {
@@ -527,7 +625,7 @@ int   SaveFile(char *name)
    if(delete_old_file)
    {
      if(stat(FileName,&st)!=-1 && st.st_size==0)
-       unlink(FileName);
+       remove(FileName);
    }
 
    strcpy(FileName,name);
@@ -570,5 +668,16 @@ int   ReopenRW()
    char	 *name=(char*)alloca(strlen(FileName)+1);
    strcpy(name,FileName);
 
-   return(LoadFile(name));
+   offs oldbb=BlockBegin;
+   offs oldbe=BlockEnd;
+   int oldhide=hide;
+
+   int res=LoadFile(name);
+   if(res==OK)
+   {
+      BlockBegin=oldbb;
+      BlockEnd=oldbe;
+      hide=oldhide;
+   }
+   return res;
 }

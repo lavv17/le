@@ -1,34 +1,36 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU Library General Public License as published by
- * the Free Software Foundation; either version 2, or (at your option)
- * any later version.
- * 
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Library General Public License for more details.
- * 
- * You should have received a copy of the GNU Library General Public License
- * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330, 
- * Boston, MA 02111-1307, USA. 
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-int     InBlock(offs ptr,num line=0,num col=0);
-int     GetBlock(void);
-void    PutOut(num,num);
-extern num block_width,block_height;
-extern char **block;
+static inline int InBlock(offs ptr)
+{
+   return(!hide && ptr>=BlockBegin && ptr<BlockEnd);
+}
 
-void    RCopy(void);
-void    RMove();
-void    RDelete();
+int   rInBlock(num line,num col);
+
+static inline int InBlock(offs ptr,num line,num col)
+{
+   return((rblock && !hex) ? rInBlock(line,col) : InBlock(ptr));
+}
+
 void    Copy();
 void    Move();
-void    Delete();
+int     Delete();
 void    Read();
 void    Write();
 
@@ -55,3 +57,7 @@ void    BlockType();
 void    CheckBlock();
 
 void  PrefixIndent(char *,num);
+
+int OptionallyConvertBlockNewLines(const char *bname);
+
+extern TextPoint *DragMark;

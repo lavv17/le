@@ -25,6 +25,7 @@
 #include <string.h>
 #include "edit.h"
 #include "keymap.h"
+#include "getch.h"
 
 extern "C" {
 #ifdef WITH_REGEX
@@ -73,6 +74,13 @@ char *my_memrchr(const char *mem,char ch,int len)
 
 void  NotFound()
 {
+   if(ShowStatusLine!=SHOW_BOTTOM && GetLine()-ScreenTop.Line()==TextWinHeight-1)
+   {
+      ScreenTop=NextLine(ScreenTop);
+      flag=REDISPLAY_ALL;
+   }
+   SyncTextWin();
+   StatusLine();
    Message("Search string not found.");
    CurrentPos=back_tp;
    stdcol=GetCol();
@@ -339,7 +347,8 @@ void  Replace()
             stdcol=GetCol();
 	    CenterView();
             SyncTextWin();
-            Message(str);
+            StatusLine();
+	    Message(str);
             SetCursor();
             while(WaitForKey()==ERR);
             return;
@@ -363,7 +372,8 @@ void  Replace()
          rblock=0;
          CenterView();
          SyncTextWin();
-         rblock=oldr;
+         StatusLine();
+	 rblock=oldr;
          BlockBegin=OldBlockBegin;
          BlockEnd=OldBlockEnd;
          hide=oldh;

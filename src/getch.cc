@@ -26,22 +26,28 @@
 #include <ctype.h>
 #include <errno.h>
 #include <signal.h>
-#include <poll.h>
 #include <errno.h>
+#include <setjmp.h>
+#ifdef HAVE_SYS_POLL_H
+#include <sys/poll.h>
+#else
+#include <poll.h>
+#endif
 #include "edit.h"
+#include "getch.h"
+
+sigjmp_buf getch_return;
+bool  getch_return_set=false;
 
 void    UnrefKey(int key) // ???
 {
     if(iscntrl(key))
     {
-        poll(NULL,0L,100);
+        napms(100);
         flushinp();
     }
 }
 
-#ifdef __MSDOS__
-static DosMultiByteKey=0;
-#endif
 
 int   GetRawKey()
 {
@@ -49,74 +55,62 @@ int   GetRawKey()
 
    UnblockSignals();
 
-#ifndef __MSDOS__
-   byte  ch;
-   if(read(0,&ch,1)!=1)
-      key=ERR;
-   else
-      key=ch;
-#else
-   key=bdos(7,0,0)&255;
-   if(key==0 && DosMultiByteKey==0)
-      DosMultiByteKey=1;
-   else
-      DosMultiByteKey=0;
-#endif
+   timeout(-1);
+   keypad(stdscr,0);
+   key=getch();
+   keypad(stdscr,1);
 
    BlockSignals();
 
    return(key);
 }
 
-int   WaitForKey_norefresh(int delay)
+int   CheckPending()
 {
-   int   res;
-
-#ifdef __MSDOS__
-   if(DosMultiByteKey>0)
-      return(OK);
-#endif
-
-   UnblockSignals();
-
-   errno=0;
-
-   struct pollfd  pfd;
+   struct pollfd pfd;
    pfd.fd=0;
    pfd.events=POLLIN;
-
-   res=poll(&pfd,1,delay);
-
-   res=(res!=1 || !(pfd.revents&POLLIN))?ERR:OK;
-
-   BlockSignals();
-
-   return(res);
+   return poll(&pfd,1,0);
 }
 
 int   WaitForKey(int delay)
 {
-   int   res;
+   int key=GetKey(delay);
 
-#ifdef __MSDOS__
-   if(DosMultiByteKey>0)
-      return(OK);
-#endif
-
-   errno=0;
-
-   struct pollfd  pfd;
-   pfd.fd=0;
-   pfd.events=POLLIN;
-
-   res=poll(&pfd,1,0);
-
-   res=(res!=1 || !(pfd.revents&POLLIN))?ERR:OK;
-   if(res==ERR && errno!=EINTR)
+#ifdef WITH_MOUSE
+   if(key==KEY_MOUSE)
    {
-      refresh();
-      res=WaitForKey_norefresh(delay);
+      MEVENT mev;
+      if(getmouse(&mev)==OK)
+	 ungetmouse(&mev);
    }
+   else
+#endif
+   if(key!=ERR)
+      ungetch(key);
 
-   return(res);
+   return(key);
+}
+
+int   GetKey(int delay)
+{
+   if(sigsetjmp(getch_return,1)==0)
+   {
+      getch_return_set=true;
+      UnblockSignals();
+
+      timeout(delay);
+      int key=getch();
+      timeout(-1);
+
+      BlockSignals();
+      getch_return_set=false;
+
+      return key;
+   }
+   else
+   {
+      getch_return_set=false;
+      return ERR;
+   }
 }
