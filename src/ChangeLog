@@ -1,3 +1,7 @@
+2001-04-11  lav
+
+	* user.cc: stop drag mark on block operations.
+
 2001-04-09  lav
 
 	* keymap.cc: fix several sign-expansion bugs.

@@ -225,6 +225,9 @@ void  UserCopyFromUp()
 
 void  UserDeleteBlock()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    if(View)
       return;
    CheckBlock();
@@ -236,6 +239,9 @@ void  UserDeleteBlock()
 }
 void  UserCopyBlock()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    if(View)
       return;
    CheckBlock();
@@ -248,6 +254,9 @@ void  UserCopyBlock()
 }
 void  UserMoveBlock()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    if(View)
        return;
    CheckBlock();
@@ -331,6 +340,9 @@ void  UserDeleteWord()
 
 void  UserMarkWord()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    offs word_begin=CurrentPos;
    offs word_end=CurrentPos;
    while(!BofAt(word_begin) && isalnum(CharAt(word_begin-1)))
@@ -346,6 +358,9 @@ void  UserMarkWord()
 }
 void  UserMarkLine()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    BlockBegin=LineBegin(Offset());
    if(rblock)
       BlockEnd=BlockBegin;
@@ -356,6 +371,9 @@ void  UserMarkLine()
 }
 void  UserMarkToEol()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    stdcol=GetCol();
    BlockBegin=CurrentPos;
    BlockEnd=LineEnd(CurrentPos.Offset());
@@ -364,6 +382,9 @@ void  UserMarkToEol()
 }
 void  UserMarkAll()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    BlockBegin=TextBegin;
    if(rblock)
       BlockEnd=LineBegin(TextEnd);
@@ -1365,6 +1386,9 @@ void  UserSwitchAutoindentMode()
 
 void  UserBlockPrefixIndent()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    static char str[256];
    static int  len=0;
 
@@ -1386,6 +1410,9 @@ void  UserShellCommand()
 
 void  UserPipeBlock()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    static char filter[256];
 
    CheckBlock();
@@ -1403,6 +1430,9 @@ void  UserPipeBlock()
 
 void  UserYankBlock()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    if(View)
       return;
    MainClipBoard.PasteAndMark();
@@ -1574,5 +1604,8 @@ void UserOptimizeText()
 
 void UserRememberBlock()
 {
+   if(DragMark)
+      UserStopDragMark();
+
    MainClipBoard.Copy();
 }
