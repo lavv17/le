@@ -300,7 +300,7 @@ search_again:
 			 buf2,len2,srchpos,offslim-srchpos);
    else
       res=re_search_2(&rexp,buf1,len1,buf2,len2,
-		      srchpos,offslim-srchpos,&regs,len1+len2);
+		      srchpos,offslim-srchpos,&regs,offslim);
    if(res==-1)
       return FALSE;
 
@@ -367,6 +367,7 @@ void  ReplaceFound()
       InsertBlock((char*)replace,replen);
    }
    DeleteBlock(0,fndlen);   /* delete found substitute */
+   flag=REDISPLAY_ALL;
 }
 
 void  Replace()
@@ -383,9 +384,18 @@ void  Replace()
 
    back_tp=CurrentPos;
 
+   offs block_end=rblock
+      ?(BlockEnd.Col()==BlockBegin.Col()?NextLine(BlockEnd):BlockEnd.Offset())
+      :BlockEnd.Offset();
+
    do
    {
-      if(!Search(FORWARD,(key!='#'?TextEnd:BlockEnd)))
+      if(key!='*' && key!='#')
+      {
+	 StatusLine();
+	 SyncTextWin(); // before possible long search
+      }
+      if(!Search(FORWARD,(key!='#'?TextEnd.Offset():block_end)))
       {
          if(first)
             NotFound();

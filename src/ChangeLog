@@ -1,3 +1,8 @@
+1999-07-12  lav
+
+	* search.cc: specify correct search limit in block replace (#) mode;
+	  refresh screen before searching for next string.
+
 1999-07-11  lav
 
 	* user.cc: fix UserIndent when !insert.
