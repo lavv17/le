@@ -261,9 +261,8 @@ ActionCodeRec  DefaultActionCodeTable[]=
 //   {SAVE_OPTIONS_LOCAL,SaveOpt,"save-options-local"},
 
    {ENTER_CONTROL_CHAR,"\020"},
-//   {ENTER_CHAR_CODE,UserEnterCharCode},
-   {ENTER_WCHAR_CODE,"\033|w"},
-   {ENTER_WCHAR_CODE,"\033|W"},
+   {ENTER_CHAR_CODE,"\033|w"},
+   {ENTER_CHAR_CODE,"\033|W"},
 
 //   WINDOW_RESIZE,
 

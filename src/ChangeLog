@@ -3,6 +3,10 @@
 	* undo.h, undo.cc: (GroupHead) new class; save block positions there.
 	* kern.cc: clear undo when emptying text buffer.
 	* mainmenu.cc: leave bare minimum - the menu is loaded from file.
+	* keymap.cc, keymap.h, keymapfn.cc, keymapdf.cc, user.cc, user.h:
+	  make automatic decision to input a byte or a wchar in
+	  choose-character and insert-char-by-code; add corresponding byte
+	  actions.
 
 2004-05-18  lav
 

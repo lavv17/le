@@ -154,6 +154,7 @@ ActionNameRec  ActionNameTable[]=
    {TEXT_OPTIMIZE,"optimize-text"},
    {CHOOSE_CHAR,"choose-character"},
    {CHOOSE_WCHAR,"choose-wide-character"},
+   {CHOOSE_BYTE,"choose-byte"},
    {UNIX_DOS_TRANSFORM,"change-text-type"},
 
 // Options
@@ -167,6 +168,7 @@ ActionNameRec  ActionNameTable[]=
    {ENTER_CONTROL_CHAR,"quoted-insert"},
    {ENTER_CHAR_CODE,"insert-char-by-code"},
    {ENTER_WCHAR_CODE,"insert-wchar-by-code"},
+   {ENTER_BYTE_CODE,"insert-byte-by-code"},
 
 //   WINDOW_RESIZE,
 

@@ -1353,6 +1353,13 @@ void  UserRefreshScreen()
 
 void  UserChooseChar()
 {
+   if(mb_mode && !hex)
+      UserChooseWChar();
+   else
+      UserChooseByte();
+}
+void  UserChooseByte()
+{
    int   ch=choose_ch();
    if(ch!=-1)
       UserInsertControlChar(ch);
@@ -1365,6 +1372,13 @@ void  UserChooseWChar()
 }
 
 void  UserInsertCharCode()
+{
+   if(mb_mode && !hex)
+      UserInsertWCharCode();
+   else
+      UserInsertByteCode();
+}
+void  UserInsertByteCode()
 {
    if(View)
       return;

@@ -143,6 +143,7 @@ ActionProcRec  EditorActionProcTable[]=
    {TEXT_OPTIMIZE,UserOptimizeText},
    {CHOOSE_CHAR,UserChooseChar},
    {CHOOSE_WCHAR,UserChooseWChar},
+   {CHOOSE_BYTE,UserChooseByte},
    {UNIX_DOS_TRANSFORM,DOS_UNIX},
 
 // Options
@@ -159,6 +160,7 @@ ActionProcRec  EditorActionProcTable[]=
    {ENTER_CONTROL_CHAR,UserEnterControlChar},
    {ENTER_CHAR_CODE,UserInsertCharCode},
    {ENTER_WCHAR_CODE,UserInsertWCharCode},
+   {ENTER_BYTE_CODE,UserInsertByteCode},
 
 //   WINDOW_RESIZE,
 

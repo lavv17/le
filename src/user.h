@@ -113,8 +113,10 @@ void  UserRefreshScreen();
 
 void  UserChooseChar();
 void  UserChooseWChar();
+void  UserChooseByte();
 void  UserInsertCharCode();
 void  UserInsertWCharCode();
+void  UserInsertByteCode();
 
 void  UserInsertChar(char ch);
 void  UserInsertControlChar(char ch);
