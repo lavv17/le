@@ -205,10 +205,12 @@ void  StatusLine()
    if(Eof())
      strcpy(chr,"EOF");
    else
-     if(Eol())
-       strcpy(chr,"EOL");
-     else
-       sprintf(chr,"%-3d",Char());
+   {
+      if(Eol())
+	 strcpy(chr,"EOL");
+      else
+	 sprintf(chr,"%-3d",Char());
+   }
 
    if(View)
      sprintf(flags,"R/O %c %c",
@@ -373,16 +375,72 @@ void  Redisplay(num line,offs ptr,num limit)
    }
    else
    {
-      for(; line<limit; line++,ptr=NextLine(ptr))
+      static byte *hl=0;
+      offs  next_line_ptr;
+      for(; line<limit; line++,ptr=next_line_ptr)
       {
 	 /* TODO: build highlight map here */
+	 next_line_ptr=NextLine(ptr);
+	 int ll=next_line_ptr-ptr;
+	 hl=(byte*)realloc(hl,ll);
+	 if(!hl)
+	    goto after_hl;
+	 memset(hl,'\0',ll);
+	 if(curr_highlight)
+	 {
+	    char *buf1="",*buf2="";
+	    int	  len1=0,len2=0;
 
+	    if(ptr1<=ptr)
+	    {
+	       buf1=buffer+ptr2+ptr-ptr1;
+	       len1=ll;
+	    }
+	    else if(ptr1>=ptr+ll)
+	    {
+	       buf1=buffer+ptr;
+	       len1=ll;
+	    }
+	    else
+	    {
+	       buf1=buffer+ptr;
+	       len1=ptr1-ptr;
+	       buf2=buffer+ptr2;
+	       len2=ll-len1;
+	    }
+
+	    int pos=0;
+	    for(;;)
+	    {
+	       pos=re_search_2(&hl_compiled,buf1,len1,buf2,len2,pos,ll-pos,
+			       &hl_regs,ll-pos);
+	       if(pos==-1)
+		  break;
+	       for(unsigned r=1; r<hl_regs.num_regs; r++)
+	       {
+		  for(i=hl_regs.start[r]; i<hl_regs.end[r]; i++)
+		     hl[i]=r;
+	       }
+	       pos++;
+	    }
+	 }
+
+      after_hl:
 	 clp=cl;
+	 byte *hlp=hl;
 
          for(col=(-ScrShift);
-            col<TextWinWidth && !EolAt(ptr); ptr++)
+            col<TextWinWidth && !EolAt(ptr); ptr++,hlp++)
          {
-            ca=(InBlock(ptr,line+ScrLine,col+ScrShift)?blk_attr:norm_attr);
+	    if(InBlock(ptr,line+ScrLine,col+ScrShift))
+	       ca=blk_attr;
+	    else if(hlp && *hlp)
+	    {
+	       ca=blk_attr;
+	    }
+	    else
+	       ca=norm_attr;
+
 	    byte ch=CharAt_NoCheck(ptr);
             if(ch=='\t')
             {
