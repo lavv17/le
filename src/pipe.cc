@@ -1,20 +1,20 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330, 
- * Boston, MA 02111-1307, USA. 
+ * the Free Software Foundation, 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #include <config.h>
@@ -28,6 +28,7 @@
 #include <errno.h>
 #include "edit.h"
 #include "block.h"
+#include "clipbrd.h"
 
 int   PipeBlock(char *filter,int in,int out)
 {
@@ -45,7 +46,7 @@ int   PipeBlock(char *filter,int in,int out)
    int   nfd;
    char  *block_buf=0;
    char  *block_ptr=0;
-   num   block_size=0;
+   int   block_size=0;
 
    CheckBlock();
    if(hide)
@@ -57,34 +58,18 @@ int   PipeBlock(char *filter,int in,int out)
    if(View && in)
       return ERR;
 
+   ClipBoard cb;
    if(rblock)
    {
-      if(!GetBlock())
+      if(!cb.Copy())
 	 return ERR;
-      block_buf=(char*)malloc((block_width+1)*block_height);
-      if(!block_buf)
-      {
-	 NotMemory();
+      if(!cb.Linearize(&block_buf,&block_size))
 	 return ERR;
-      }
+      block_ptr=block_buf;
       if(out && in)
 	 Delete();
-      int l,c;
-      for(l=0,block_ptr=block_buf,block_size=0; l<block_height; l++)
-      {
-	 int cm;
-	 for(cm=block_width; cm>0 && block[l][cm-1]==' '; cm--);
-	 for(c=0; c<cm; c++)
-	 {
-	    *(block_ptr++)=block[l][c];
-	    block_size++;
-	 }
-	 *(block_ptr++)='\n';
-	 block_size++;
-      }
-      block_ptr=block_buf;
    }
-   
+
    if(in && !out)
    {
       BlockBegin=CurrentPos;
@@ -287,7 +272,7 @@ not_memory:
 	    rblock=0;
 	    Delete();
 	    rblock=1;
-	    PutOut(GetLine(),GetCol());
+	    cb.Paste();
 	    CurrentPos=oldpos;
 	 }
 	 else

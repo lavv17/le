@@ -78,8 +78,8 @@ void  NotFound()
 
 int   CompilePattern()
 {
-   if(rexp_compiled)
-      regfree(&rexp);
+//    if(rexp_compiled)
+//       regfree(&rexp);
 
    re_syntax_options=RE_SYNTAX_EMACS;
    const char *err=re_compile_pattern((char*)pattern,patlen,&rexp);
@@ -89,7 +89,6 @@ int   CompilePattern()
       return 0;
    }
    rexp_compiled=true;
-   rexp.newline_anchor=1;
    rexp.fastmap=fastmap;
    return 1;
 }

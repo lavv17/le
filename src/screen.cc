@@ -36,7 +36,7 @@
 #define   HexPos    10
 #define   AsciiPos   (HexPos+3*16+2)
 
-int       ShowScrollBar=SHOW_RIGHT;
+int       ShowScrollBar=SHOW_NONE;
 int       ShowStatusLine=SHOW_BOTTOM;
 
 int   TextWinX;

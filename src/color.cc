@@ -22,12 +22,13 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <assert.h>
 
 #include <xalloca.h>
 #include "edit.h"
 #include "options.h"
 
-struct attr attr_table[24];
+struct attr attr_table[MAX_COLOR_NO];
 int   attr_num;
 
 int   next_pair;
@@ -44,50 +45,45 @@ static int find_pair(int fg,int bg)
    return next_pair++;
 }
 
-struct attr *find_attr(int no)
-{
-   for(int i=0; i<attr_num; i++)
-      if(attr_table[i].no==no)
-	 return(attr_table+i);
-   return(attr_table);
-}
-
 void  init_attr_table(struct color *pal)
 {
    int i;
    int pair;
 
    next_pair=1;
-   attr_num=0;
+   memset(attr_table,0,sizeof(attr_table));
    for(i=0; pal[i].no!=-1; i++)
    {
-      attr_table[i].attr=0;
+      int an=pal[i].no;
+      assert(an>=0 && an<MAX_COLOR_NO);
+      attr_table[an].attr=0;
       if(pal[i].fg || pal[i].bg)
       {
 	 pair=find_pair(pal[i].fg,pal[i].bg);
-	 attr_table[i].attr|=COLOR_PAIR(pair);
+	 attr_table[an].attr|=COLOR_PAIR(pair);
       }
-      attr_table[i].attr|=pal[i].attr;
-      attr_table[i].no=pal[i].no;
-      attr_num++;
+      attr_table[an].attr|=pal[i].attr;
    }
 
    /* make standout attributes */
-   for(i=0; i<attr_num; i++)
+   for(i=0; i<MAX_COLOR_NO; i++)
    {
-      if(attr_table[i].no==DISABLED_ITEM || attr_table[i].no==SHADOWED)
+      if(i==DISABLED_ITEM || i==SHADOWED)
       {
 	 attr_table[i].so_attr=attr_table[i].attr;
 	 continue;
       }
-      if(pal[i].fg || pal[i].bg)
+      int p=0;
+      while(pal[p].no!=i && pal[p].no!=-1)
+	 p++;
+      if(pal[p].fg || pal[p].bg)
       {
-	 if(pal[i].fg==COLOR_YELLOW)
+	 if(pal[p].fg==COLOR_YELLOW)
 	    attr_table[i].so_attr=attr_table[i].attr^A_BOLD;
 	 else
 	 {
 	    attr_table[i].so_attr=(attr_table[i].attr|A_BOLD)&~A_COLOR;
-	    pair=find_pair(COLOR_YELLOW,pal[i].bg);
+	    pair=find_pair(COLOR_YELLOW,pal[p].bg);
 	    attr_table[i].so_attr|=COLOR_PAIR(pair);
 	 }
       }
@@ -135,8 +131,8 @@ struct color default_bw_pal[]=
    {-1}
 };
 
-struct color color_pal[24];
-struct color bw_pal[24];
+struct color color_pal[MAX_COLOR_NO+1];
+struct color bw_pal[MAX_COLOR_NO+1];
 
 void  init_attrs()
 {
@@ -248,31 +244,32 @@ void  ParseColors()
 
 }
 
-void  DescribeOneColor(char *const desc,color *c)
+void  DescribeOneColor(char *const desc,color *cp)
 {
+   color c=*cp;
    const attr_name *a;
    char *d=desc;
 
    a=attr_names_table;
    while(a->name)
    {
-      if(c->fg && a->value.fg==c->fg)
+      if(c.fg && a->value.fg==c.fg)
       {
 	 sprintf(d,",%s",a->name);
 	 d+=strlen(d);
-	 c->fg=0;
+	 c.fg=0;
       }
-      if(c->bg && a->value.bg==c->bg)
+      if(c.bg && a->value.bg==c.bg)
       {
 	 sprintf(d,",%s",a->name);
 	 d+=strlen(d);
-	 c->bg=0;
+	 c.bg=0;
       }
-      if(c->attr&a->value.attr)
+      if(c.attr&a->value.attr)
       {
 	 sprintf(d,",%s",a->name);
 	 d+=strlen(d);
-	 c->attr&=~a->value.attr;
+	 c.attr&=~a->value.attr;
       }
       a++;
    }

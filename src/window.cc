@@ -50,7 +50,7 @@ void  Clear()
 {
    int      x,y;
 
-   SetAttr(&Upper->a);
+   SetAttr(Upper->a);
 
    for(y=0; y<Upper->h; y++)
       for(x=0; x<Upper->w; x++)
@@ -149,7 +149,7 @@ WIN   *CreateWin(int x,int y,unsigned w,unsigned h,struct attr *a,
    win->y=y;
    win->w=w;
    win->h=h;
-   win->a=*a;
+   win->a=a;
    win->title=title;
    win->buf=NULL;
    win->flags=flags;
@@ -188,7 +188,7 @@ void  DisplayWin(WIN *win)
          save++;
       }
    }
-   SetAttr(&win->a);
+   SetAttr(win->a);
 
    Clear();
 }
@@ -213,5 +213,5 @@ void  CloseWin()
    Upper->buf=0;
    Upper=Upper->prev;
    if(Upper)
-      SetAttr(&Upper->a);
+      SetAttr(Upper->a);
 }

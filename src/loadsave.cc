@@ -33,7 +33,8 @@
 #include "keymap.h"
 #include "highli.h"
 #include <xalloca.h>
-
+#include "block.h"
+#include "clipbrd.h"
 
 #ifndef __MSDOS__
 int    LockFile(int fd)
@@ -130,6 +131,10 @@ int   LoadFile(char *name)
    num    DosLastLine;
    InodeInfo   *old;
 
+   CheckBlock();
+   if(!hide)
+      MainClipBoard.Copy();
+
    EmptyText();
 
    flag=REDISPLAY_ALL;
@@ -147,7 +152,7 @@ int   LoadFile(char *name)
 
    if(stat(name,&st)==-1 && errno==ENOENT)
    {
-     int f=creat(name,0666);
+     int f=creat(name,0644);
      if(f!=-1)
      {
        close(f);
@@ -156,6 +161,7 @@ int   LoadFile(char *name)
      else
      {
        ErrMsg("Cannot create the file.\nThe directory does not exist or is not accessible\nor does not permit writing");
+       EmptyText();
        return(ERR);
      }
    }
@@ -165,6 +171,7 @@ int   LoadFile(char *name)
      if(S_ISBLK(FileMode) || S_ISCHR(FileMode) || S_ISFIFO(FileMode))
      {
        ErrMsg("This is a special file or a pipe\nthat I cannot edit.");
+       EmptyText();
        return(ERR);
      }
      if(S_ISDIR(FileMode))
@@ -178,8 +185,8 @@ int   LoadFile(char *name)
        /* try to open the file in read-only mode */
      if(file==-1)
      {
-       View&=~2;
        FError(name);
+       EmptyText();
        return(ERR);
      }
    }
@@ -195,6 +202,7 @@ int   LoadFile(char *name)
 	 View&=~2;
 	 close(file);
 	 file=-1;
+	 EmptyText();
          return(ERR);
       }
       if(lock_res==-2)
@@ -205,7 +213,7 @@ int   LoadFile(char *name)
    {
       if(errno)
 	 FError(name);
-      View&=~2;
+      EmptyText();
       return(ERR);
    }
    CheckPoint();

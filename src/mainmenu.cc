@@ -1,26 +1,28 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330, 
- * Boston, MA 02111-1307, USA. 
+ * the Free Software Foundation, 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #include <config.h>
 #include <signal.h>
 #include "edit.h"
 #include "menu1.h"
+#include "block.h"
+#include "options.h"
 
 Menu1 MainMenu[]={
 {" &File ",SUBM},
@@ -46,7 +48,7 @@ Menu1 MainMenu[]={
    {" set &End          F6 ",FUNC+HIDE,UserSetBlockEnd         },
    {" &Copy            F11 ",FUNC+HIDE,Copy,       &View,&hide },
    {" &Move            F12 ",FUNC+HIDE,Move,       &View,&hide },
-   {" &Delete         F4 D ",FUNC+HIDE,Delete,        &View,&hide },
+   {" &Delete         F4 D ",FUNC+HIDE,(void(*)())Delete, &View,&hide },
    {" &Read           F4 R ",FUNC+HIDE,Read,       &View       },
    {" &Write          F4 W ",FUNC+HIDE,Write,         &hide    },
 #ifndef __MSDOS__
@@ -56,6 +58,7 @@ Menu1 MainMenu[]={
    {" &Indent         F4 I ",FUNC+HIDE,Indent,        &View,&hide },
    {" &Unindent       F4 U ",FUNC+HIDE,Unindent,      &View,&hide },
    {" Insert prefix  F4 &> ",FUNC+HIDE,UserBlockPrefixIndent,&View,&hide },
+   {" &Yank old       F4 Y ",FUNC+HIDE,UserYankBlock, &View,&hide },
    {"---"},
    {" to &Lower case  F4 L ",FUNC+HIDE,ConvertToLower,   &View },
    {" to u&Pper case  F4 P ",FUNC+HIDE,ConvertToUpper,   &View },
@@ -95,8 +98,8 @@ Menu1 MainMenu[]={
    {" &Unix<->Dos         ",FUNC+HIDE,DOS_UNIX,      &View },
    {NULL},
 {" &Options ",SUBM},
-   {" &Editor                      ",FUNC+HIDE,Options},
-   {" &Format                      ",FUNC+HIDE,FormatOptions},
+   {" &Editor                      ",FUNC,Options},
+   {" &Format                      ",FUNC,FormatOptions},
    {" &Terminal                    ",SUBM},
       {" coding, &Graphics, etc...    ",FUNC,TermOpt},
       {" &Character set visualization ",FUNC,edit_chset},
@@ -104,7 +107,8 @@ Menu1 MainMenu[]={
       {" Full 8-bit, no ctrl chars   ", FUNC+HIDE,set_chset_8bit_noctrl},
       {" &Save terminal options       ",FUNC+HIDE,SaveTermOpt},
       {NULL},
-    {" &Appearence                  ",FUNC,AppearOpt},
+   {" &Appearence                  ",FUNC,AppearOpt},
+   {" &Colors                      ",FUNC+HIDE,ColorsOpt},
    {" &Save to current directory   ",FUNC+HIDE,SaveOpt},
    {" &Update current options file ",FUNC+HIDE,UpdtOpt},
    {NULL},
@@ -114,4 +118,3 @@ Menu1 MainMenu[]={
    {" &About              ",FUNC+HIDE,UserAbout},
    {NULL},
 {NULL}};
-

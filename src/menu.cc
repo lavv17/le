@@ -42,6 +42,14 @@ int   ItemLen(char *i)
 void  DisplayItem(int x,int y,char *i,attr *a)
 {
    Absolute(&x,ItemLen(i),Upper->w);
+   if(!strcmp(i,"---"))
+   {
+      int w=Upper->w;
+      SetAttr(a);
+      while(x<w-2)
+	 PutCh(x++,y,ACS_HLINE);
+      return;
+   }
    attr r=*a;
    r.attr=a->so_attr;
    for(; *i; i++)
@@ -65,9 +73,8 @@ void  display(struct menu *mi,attr *a)
    DisplayItem(mi->x,mi->y,mi->text,a);
 }
 
-int   ReadMenu(struct menu *m,int dir,attr *a,attr *ca)
+int   ReadMenu(struct menu *m,int dir,attr *a,attr *ca,int curr)
 {
-   int   curr = 0;
    int   i,action,key;
 
    curs_set(0);
@@ -104,24 +111,37 @@ right:         curr++;
       case(LINE_UP):
          if(dir==VERT)
          {
-            if(curr==0)
-               while(m[curr].text)
-                  curr++;
-            curr--;
-         }
+	    for(;;)
+	    {
+	       if(curr==0)
+		  while(m[curr].text)
+		     curr++;
+	       curr--;
+	       if(strcmp(m[curr].text,"---"))
+	       	  break;
+	    }
+	 }
          break;
       case(LINE_DOWN):
          if(dir==VERT)
          {
-            curr++;
-            if(m[curr].text==NULL)
-               curr=0;
-         }
+	    for(;;)
+	    {
+	       curr++;
+	       if(m[curr].text==NULL)
+		  curr=0;
+	       if(strcmp(m[curr].text,"---"))
+	       	  break;
+	    }
+	 }
          break;
       case(CANCEL):
          return(0);
       case(NEWLINE):
-         return(ItemChar(m[curr].text));
+	 i=ItemChar(m[curr].text);
+	 if(i)
+	    return i;
+         return(-1-curr);
       default:
          if(StringTypedLen!=1)
             break;

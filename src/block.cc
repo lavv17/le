@@ -1,20 +1,20 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330, 
- * Boston, MA 02111-1307, USA. 
+ * the Free Software Foundation, 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 /* block.cc : block operations */
@@ -34,14 +34,9 @@
 #include "edit.h"
 #include "block.h"
 #include "keymap.h"
-
-#ifndef O_NDELAY
-#define O_NDELAY 0
-#endif
+#include "clipbrd.h"
 
 extern  char    **BlockHelp[];
-
-enum {OKAY,FAULT} result;
 
 char    BlockFile[256];
 
@@ -93,9 +88,7 @@ char    CharAtLC(num l,num c)
 }
 void    NewLine()
 {
-    if(DosEol)
-        InsertChar('\r');
-    InsertChar('\n');
+    InsertBlock(EolStr,EolSize);
 }
 
 /* Moves exactly to specified line/column, edits the text as needed */
@@ -130,93 +123,28 @@ void    ExpandTab()
     CurrentPos-=size;
 }
 
-char    **block;
-num     block_width;
-num     block_height;
-int     GetBlock()
-{
-   num     i,j;
-   num     line1=BlockBegin.Line();
-   num     line2=BlockEnd.Line();
-   num     col1=BlockBegin.Col();
-   num     col2=BlockEnd.Col();
-
-   if(col1==col2)
-   {
-      for(i=line1; i<=line2; i++)
-      {
-	 GoToLineNum(i);
-	 ToLineEnd();
-	 if(GetCol()>col2)
-	    col2=GetCol();
-      }
-   }
-   block_width=col2-col1;
-   block_height=line2-line1+1;
-   if(block)
-   {
-      free(*block);
-      free(block);
-   }
-   block=(char**)malloc(block_height*sizeof(char*));
-   if(!block)
-   {
-      NotMemory();
-      return(FALSE);
-   }
-   *block=(char*)malloc(block_width*block_height);
-   if(!*block)
-   {
-      free(block);
-      block=0;
-      NotMemory();
-      return(FALSE);
-   }
-   for(i=1; i<block_height; i++)
-      block[i]=block[i-1]+block_width;
-   for(j=0; j<block_height; j++)
-   {
-      for(i=0; i<block_width; i++)
-      {
-	 block[j][i]=CharAtLC(line1+j,col1+i);
-	 if(block[j][i]=='\t')
-	    block[j][i]=' ';
-      }
-   }
-   return(TRUE);
-}
-void  PutOut(num l,num c)
-{
-   num	 i;
-   for(i=0; i<block_height; i++)
-   {
-      HardMove(l+i,c);
-      InsertBlock(block[i],block_width);
-      ToLineEnd();
-   }
-   free(*block);
-   free(block);
-   block=0;
-}
 void    RCopy()
 {
-    num     oldcol=GetCol(),oldline=GetLine();
-    num     i;
-    num     h=BlockEnd.Line()-BlockBegin.Line()+1;
+   num     oldcol=GetCol(),oldline=GetLine();
+   num     i;
+   num     h=BlockEnd.Line()-BlockBegin.Line()+1;
 
-    if(!GetBlock())
-        return;
+   ClipBoard cb;
 
-    if(BlockBegin.Col()==BlockEnd.Col())
-    {
-        GoToLineNum(oldline);
-        for(i=0; i<h; i++)
-            NewLine();
-    }
+   if(!cb.Copy())
+      return;
 
-    PutOut(oldline,oldcol);
-    MoveLineCol(oldline,oldcol);
-    stdcol=GetCol();
+   if(BlockBegin.Col()==BlockEnd.Col())
+   {
+      GoToLineNum(oldline);
+      for(i=0; i<h; i++)
+         NewLine();
+   }
+
+   HardMove(oldline,oldcol);
+   cb.Paste();
+   MoveLineCol(oldline,oldcol);
+   stdcol=oldcol;
 }
 
 void    Copy()
@@ -224,6 +152,8 @@ void    Copy()
     CheckBlock();
     if(View || hide)
         return;
+
+    PreUserEdit();
 
     if(rblock)
     {
@@ -247,111 +177,114 @@ void    Copy()
 /* when lines_deleted!=0 then last RDelete deleted block lines */
 int lines_deleted;
 
-void    RDelete()
+int   RDelete()
 {
-    num     i,j;
-    num     h=BlockEnd.Line()-BlockBegin.Line()+1;
-    num     oldcol2=BlockEnd.Col();
+   num   i,j;
+   num   h=BlockEnd.Line()-BlockBegin.Line()+1;
+   num   oldcol2=BlockEnd.Col();
 
-    lines_deleted=0;
+   lines_deleted=0;
 
-    for(i=BlockBegin.Line(); i<=BlockEnd.Line(); i++)
-    {
-        j=BlockBegin.Col();
-        HardMove(i,j);
-        while(!Eol() && (BlockBegin.Col()==oldcol2
-                         || j<oldcol2))
-        {
-            if(Char()=='\t')
-                j=Tabulate(j);
-            else
-                j++;
-            DeleteChar();
-        }
-    }
-    if(BlockBegin.Col()==oldcol2)
-    {
-        int space=1;
-        GoToLineNum(BlockBegin.Line());
-        while(GetLine()<=BlockEnd.Line() && !Eof() && space)
-        {
-            if(!isspace(Char()))
-                space=0;
-            MoveRight();
-        }
-        if(space)
-        {
-            lines_deleted=1;
-            CurrentPos=BlockBegin;
-            for(i=0; i<h; i++)
-                DeleteLine();
-        }
-    }
-    hide=TRUE;
+   if(!MainClipBoard.Copy())
+      return 0;
+
+   for(i=BlockBegin.Line(); i<=BlockEnd.Line(); i++)
+   {
+      j=BlockBegin.Col();
+      HardMove(i,j);
+      while(!Eol() && (BlockBegin.Col()==oldcol2
+                   || j<oldcol2))
+      {
+         if(Char()=='\t')
+            j=Tabulate(j);
+         else
+            j++;
+         DeleteChar();
+      }
+   }
+   if(BlockBegin.Col()==oldcol2)
+   {
+      int space=1;
+      GoToLineNum(BlockBegin.Line());
+      while(GetLine()<=BlockEnd.Line() && !Eof() && space)
+      {
+         if(!isspace(Char()))
+            space=0;
+         MoveRight();
+      }
+      if(space)
+      {
+         lines_deleted=1;
+         CurrentPos=BlockBegin;
+         for(i=0; i<h; i++)
+            DeleteLine();
+      }
+   }
+   hide=TRUE;
+   return 1;
 }
-void    Delete()
+int   Delete()
 {
    CheckBlock();
    if(View || hide)
-       return;
+      return 1;
    flag=REDISPLAY_ALL;
    if(rblock)
-   {
-      RDelete();
-      return;
-   }
+      return RDelete();
+   if(!MainClipBoard.Copy())
+      return 0;
    if(!InBlock(Offset(),GetLine(),GetCol()))
       CurrentPos=BlockBegin;
    DeleteBlock(CurrentPos-BlockBegin,BlockEnd-CurrentPos);
    stdcol=GetCol();
    hide=TRUE;
+   return 1;
 }
 void    RMove()
 {
-    num     oldcol,oldline;
-    num     oldcol1=BlockBegin.Col();
-    num     oldcol2=BlockEnd.Col();
-    num     oldline2=BlockEnd.Line();
-    num     i;
-    num     h=BlockEnd.Line()-BlockBegin.Line()+1;
-                /* height of the block */
+   num    oldcol,oldline;
+   num    oldcol1=BlockBegin.Col();
+   num    oldcol2=BlockEnd.Col();
+   num    oldline2=BlockEnd.Line();
+   num    i;
+   num    h=BlockEnd.Line()-BlockBegin.Line()+1;
+            /* height of the block */
 
-    if(GetCol()==BlockBegin.Col() && GetLine()==BlockBegin.Line())
-        return;
-    if(BlockBegin.Col()==BlockEnd.Col()
-    && GetLine()>=BlockBegin.Line() && GetLine()<=BlockEnd.Line())
-    {
-        if(GetCol()==BlockBegin.Col())
-            return;
-        MoveLineCol(BlockBegin.Line(),GetCol());
-    }
+   if(GetCol()==BlockBegin.Col() && GetLine()==BlockBegin.Line())
+      return;
+   if(BlockBegin.Col()==BlockEnd.Col()
+   && GetLine()>=BlockBegin.Line() && GetLine()<=BlockEnd.Line())
+   {
+      if(GetCol()==BlockBegin.Col())
+         return;
+      MoveLineCol(BlockBegin.Line(),GetCol());
+   }
 
-    oldline=GetLine();
-    oldcol=GetCol();
+   oldline=GetLine();
+   oldcol=GetCol();
 
-    if(!GetBlock())
-        return;
+   if(!RDelete())
+     return;
 
-    RDelete();
+   if(lines_deleted && oldline>oldline2)
+      oldline-=h;
 
-    if(lines_deleted && oldline>oldline2)
-        oldline-=h;
+   if(oldcol1==oldcol2)
+   {
+      GoToLineNum(oldline);
+      for(i=0; i<h; i++)
+         NewLine();
+   }
 
-    if(oldcol1==oldcol2)
-    {
-        GoToLineNum(oldline);
-        for(i=0; i<h; i++)
-            NewLine();
-    }
+   HardMove(oldline,oldcol);
+   MainClipBoard.Paste();
+   MoveLineCol(oldline,oldcol);
+   stdcol=oldcol;
 
-    PutOut(oldline,oldcol);
-    MoveLineCol(oldline,oldcol);
+   BlockBegin=CurrentPos;
+   BlockEnd=TextPoint(oldline+h-1,oldcol+oldcol2-oldcol1);
+   hide=0;
 
-    BlockBegin=CurrentPos;
-    BlockEnd=TextPoint(oldline+h-1,oldcol+oldcol2-oldcol1);
-    hide=0;
-
-    stdcol=GetCol();
 }
 void    Move()
 {
@@ -368,7 +301,7 @@ void    Move()
         RMove();
         return;
     }
-    if(BlockBegin<=CurrentPos && CurrentPos<=BlockEnd)
+    if(InBlock(CurrentPos))
         return;
 
     TextPoint tp=CurrentPos;
@@ -451,43 +384,28 @@ void    Write()
        case(0):
            return;
        case('O'):
-           fd=open(BlockFile,O_WRONLY|O_TRUNC|O_NDELAY);
+           fd=open(BlockFile,O_WRONLY|O_TRUNC);
            break;
        case('A'):
-           fd=open(BlockFile,O_WRONLY|O_APPEND|O_NDELAY);
+           fd=open(BlockFile,O_WRONLY|O_APPEND);
        }
    }
    if(fd==-1)
    {
-       FError(BlockFile);
-       return;
+      FError(BlockFile);
+      return;
    }
    errno=0;
    Message("Writing...");
    if(rblock)
    {
-       num     oldcol2=BlockEnd.Col();
-       num     i;
-       if(!GetBlock())
-       {
-           close(fd);
-           return;
-       }
-       for(i=0; i<block_height; i++)
-       {
-           num len=block_width;
-           for( ; len>0; len--)
-               if(block[i][len-1]!=' ')
-                   break;
-           write(fd,block[i],len);
-           if(!DosEol)
-               write(fd,"\n",1);
-           else
-               write(fd,"\r\n",2);
-       }
-       free(*block);
-       free(block);
-       BlockEnd=TextPoint(BlockEnd.Line(),oldcol2);
+      ClipBoard cb;
+      if(!cb.Copy())
+      {
+         close(fd);
+         return;
+      }
+      cb.Write(fd);
    }
    else
    {
@@ -521,7 +439,7 @@ void    Read()
       return;
    LoadHistory.Push();
 
-   fd=open(BlockFile,O_RDONLY|O_NDELAY);
+   fd=open(BlockFile,O_RDONLY);
    if(fd==-1)
    {
        FError(BlockFile);
@@ -867,6 +785,9 @@ next:
       case('X'):
          ExchangeCases();
          break;
+      case('Y'):
+	 UserYankBlock();
+	 break;
       case('|'):
 #ifndef MSDOS
          UserPipeBlock();
@@ -888,7 +809,7 @@ next:
 void  Transform(byte (*func)(byte))
 {
    TextPoint oldpos=CurrentPos;
-   
+
    if(hide || (!rblock && BlockBegin==BlockEnd))
    {
        while(!Eol())

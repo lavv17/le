@@ -45,6 +45,7 @@ syntax_hl::syntax_hl(int color,int mask)
    }
    this->color=color;
    this->mask=mask;
+   memset(&rexp_c,0,sizeof(rexp_c));
 }
 
 syntax_hl::~syntax_hl()
@@ -80,16 +81,11 @@ const char *syntax_hl::set_rexp(const char *nr)
    }
    re_syntax_options=RE_NO_BK_VBAR|RE_NO_BK_PARENS|RE_INTERVALS|
 		     RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS;
-   rexp_c.translate=0;
-   rexp_c.fastmap=0;
-   rexp_c.buffer=0;
-   rexp_c.allocated=0;
    const char *err=re_compile_pattern(nr,strlen(nr),&rexp_c);
    if(err)
       return err;
    rexp=new char[strlen(nr)+1];
    strcpy(rexp,nr);
-   rexp_c.newline_anchor=1;
    return 0;
 }
 
@@ -155,7 +151,7 @@ void InitHighlight()
    if(!f)
       f=fopen(fn=fn2,"r");
    if(!f)
-      f=fopen(fn1,"r");
+      f=fopen(fn=fn1,"r");
    if(!f)
       return;
 
@@ -190,6 +186,23 @@ void InitHighlight()
 	 s=strtok(str,"|");
 	 while(s)
 	 {
+	    if(s[0]=='/')
+	    {
+	       // it is a regex for file contents
+	       s++;
+	       static re_pattern_buffer rexp;
+	       re_syntax_options=0;
+	       if(!re_compile_pattern(s,strlen(s),&rexp))
+	       {
+		  int pos=re_search_2(&rexp,buffer,ptr1,buffer+ptr2,BufferSize-ptr2,
+				      0,1024,NULL,1024);
+		  if(pos!=-1)
+		  {
+		     match=1;
+		     break;
+		  }
+	       }
+	    }
 	    if(fnmatch(s,FileName,0)==0)
 	    {
 	       match=1;
@@ -281,20 +294,6 @@ void InitHighlight()
       }
    }
 }
-
-#if 0
-   curr_hl[0]="([^a-zA-Z_]|^)(else|if|switch|case|while|for|goto|break"
-	      "|continue|char|short|int|long|unsigned|signed|auto"
-	      "|const|default|do|double|enum|extern|float|register"
-	      "|return|sizeof|static|struct|typedef|union|void|volatile)[^a-zA-Z_]";
-   mask_hl[0]=4;
-
-   curr_hl[1]="\\[|\\]|\\(|\\)|{|}|,";
-   mask_hl[1]=1;
-
-   curr_hl[2]="^[ \t]*(#.*$)|(/\\*.*\\*/)";
-   mask_hl[2]=6;
-#endif
 
 void syntax_hl::attrib_line(const char *buf1,int len1,
 			    const char *buf2,int len2,unsigned char *line)
