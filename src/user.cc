@@ -33,6 +33,7 @@
 #include "keymap.h"
 #include "clipbrd.h"
 #include "getch.h"
+#include "format.h"
 
 void  UserDeleteToEol()
 {
@@ -1161,6 +1162,10 @@ void  UserInsertChar(char ch)
       return;
    PreUserEdit();
    InsertChar(ch);
+
+   if(wordwrap)
+      WordWrapInsertHook();
+
    if(hex || Bol())
       flag|=REDISPLAY_AFTER;
    else
@@ -1172,18 +1177,26 @@ void  UserInsertControlChar(char ch)
 {
    if(View)
       return;
+   PreUserEdit();
    if((hex && !insert) || buffer_mmapped)
    {
-      PreUserEdit();
+      if(!hex && (Eol() || Char()=='\n'))
+      	 flag|=REDISPLAY_AFTER;
       ReplaceCharMove(ch);
       if(!hex && Bol())
 	 flag|=REDISPLAY_AFTER;
       else
 	 flag|=REDISPLAY_LINE;
-      stdcol=GetCol();
    }
    else
-      UserInsertChar(ch);
+   {
+      InsertChar(ch);
+      if(hex || Bol())
+	 flag|=REDISPLAY_AFTER;
+      else
+	 flag|=REDISPLAY_LINE;
+   }
+   stdcol=GetCol();
 }
 
 void  UserEnterControlChar()
