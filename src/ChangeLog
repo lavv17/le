@@ -9,6 +9,8 @@
 	* getstr.cc: check mb_mode var.
 	* mb.cc, mb.h: use visualize_wchar when getting char width;
 	  (InsertWChar) new function.
+	* kern.cc: (InsertAutoindent) new function.
+	* user.cc: use InsertAutoindent to save block marking in UserLineEnd.
 
 2004-04-08  lav
 

@@ -269,6 +269,7 @@ int   GetBlock(char *copy,offs from,num size);
 int   Undelete();
 void  CheckPoint();
 offs  ScanForCharForward(offs start,byte ch);
+void  InsertAutoindent(num oldcol);
 
 void  Help(const char *help,const char *title);
 /*void  Help(char ***help,char *title);*/

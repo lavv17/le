@@ -702,8 +702,7 @@ void  UserLineEnd()
    if(autoindent && Text && Bol() && !Bof())
    {
       bool old_modified=modified;
-      UserBackSpace();
-      UserAutoindent();
+      InsertAutoindent(TextPoint(CurrentPos-EolSize).Col());
       modified=old_modified;
    }
 }
@@ -1154,6 +1153,7 @@ void  UserNewLine()
 {
    if(View)
       return;
+
    if(autoindent)
       UserAutoindent();
    else
@@ -1166,75 +1166,33 @@ void  UserNewLine()
 
 void  UserAutoindent()
 {
-   int   UseTabsNow=UseTabs;
-   offs  ptr;
-   num   cnt;
-   num   oldcol;
-   num   oldmargin;
-   num   newmargin=0;
-
    if(View)
       return;
 
-   oldcol=GetCol();
+   num oldcol=GetCol();
    if(Text && Eol() && oldcol<stdcol)
       oldcol=stdcol;
 
-   offs o=Offset();
-   for(;;)
-   {
-      oldmargin=MarginSizeAt(o);
-      if(BofAt(o) || oldmargin!=-1)
-	 break;
-      o=PrevLine(o);
-   }
-   if(TabsInMargin)
-      UseTabsNow=1;
+   bool do_indent=true;
 
-   if(oldmargin==oldcol)
-      newmargin=oldmargin;
-   else if(oldcol==0)
-      newmargin=0;
-   else if(oldmargin==-1)
-   {
+   if(MarginSizeAt(Offset())==-1)
       DeleteBlock(Offset()-LineBegin(Offset()),0);
-      newmargin=oldcol/IndentSize*IndentSize;
-   }
    else
    {
-      for(ptr=Offset(); !EolAt(ptr) && (CharAt(ptr)==' ' || CharAt(ptr)=='\t'); ptr++);
+      offs ptr;
+      for(ptr=Offset(); !EolAt(ptr) && (CharAt(ptr)==' ' || CharAt(ptr)=='\t'); ptr++)
+	 ;
       if(EolAt(ptr))
-      {
          DeleteToEOL();
-         newmargin=oldmargin;
-      }
       else
-         newmargin=0;
+         do_indent=false;
    }
 
    NewLine();
-   flag|=REDISPLAY_AFTER;
-
-   cnt=newmargin;
-   if(Text && Eol() && !(!UseTabs && UseTabsNow))
-   {
-      stdcol=cnt;
-      return;
-   }
-   if(UseTabsNow)
-   {
-       while(cnt>=TabSize)
-       {
-           cnt-=TabSize;
-           InsertChar('\t');
-       }
-   }
-   while(cnt>0)
-   {
-       cnt--;
-       InsertChar(' ');
-   }
    stdcol=GetCol();
+   flag|=REDISPLAY_AFTER;
+   if(do_indent)
+      InsertAutoindent(oldcol);
 }
 
 void  UserUndelete()

@@ -1137,3 +1137,56 @@ offs  ScanForCharForward(offs start,byte ch)
    }
    return -1;
 }
+
+void  InsertAutoindent(num oldcol)
+{
+   int   UseTabsNow=UseTabs;
+   offs  ptr;
+   num   cnt;
+   num   oldmargin;
+   num   newmargin=0;
+
+   if(View || !Bol())
+      return;
+
+   offs o=Offset()-EolSize;
+   for(;;)
+   {
+      oldmargin=MarginSizeAt(o);
+      if(BofAt(o) || oldmargin!=-1)
+	 break;
+      o=PrevLine(o);
+   }
+   if(TabsInMargin)
+      UseTabsNow=1;
+
+   if(oldmargin==oldcol)
+      newmargin=oldmargin;
+   else if(oldcol==0)
+      newmargin=0;
+   else if(oldmargin==-1)
+      newmargin=oldcol/IndentSize*IndentSize;
+   else
+      newmargin=oldmargin;
+
+   cnt=newmargin;
+   if(Text && Eol() && !(!UseTabs && UseTabsNow))
+   {
+      stdcol=cnt;
+      return;
+   }
+   if(UseTabsNow)
+   {
+       while(cnt>=TabSize)
+       {
+           cnt-=TabSize;
+           InsertChar('\t');
+       }
+   }
+   while(cnt>0)
+   {
+       cnt--;
+       InsertChar(' ');
+   }
+   stdcol=GetCol();
+}
