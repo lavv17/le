@@ -158,6 +158,7 @@ escape                  ^X|^C
 escape                  $kext
 escape                  $kcan
 escape			^G
+suspend-editor		$kspd
 suspend-editor		^Z
 compile                 $3kf9
 compile                 \e|$kf9

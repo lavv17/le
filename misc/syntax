@@ -323,7 +323,7 @@ c1,4=([^[:alnum:]_\$@#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |srand|stat|study|substr|symlink|syscall|sysread|system|syswrite|tell|telldir\
 |tie|time|times|truncate|uc|ucfirst|umask|undef|unlink|unpack|untie|unshift\
 |use|utime|values|vec|wait|waitpid|wantarray|warn|while|write|else|elsif\
-|package|sub|BEGIN|END|INIT|CHECK|socket\
+|package|sub|BEGIN|END|INIT|CHECK|socket|defined\
 )([^[:alnum:]/_]|$)
 c2,1={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.| not | and | or | xor |\
 <=>| eq | ne | cmp | lt | gt | le | ge |&|^|->
