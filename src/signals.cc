@@ -62,7 +62,7 @@ void  CheckWindowResize()
 {
 #if !defined(__MSDOS__) && defined(TIOCGWINSZ)
    struct winsize winsz;
-   static disable_resize=0;
+   static bool disable_resize=false;
 
    resize_flag=0;
 
@@ -82,7 +82,7 @@ void  CheckWindowResize()
       if(winsz.ws_col!=COLS || winsz.ws_row!=LINES)
       {
 	 beep();
-         disable_resize=1;
+         disable_resize=true;
       }
       clearok(stdscr,TRUE);
       CorrectParameters();
