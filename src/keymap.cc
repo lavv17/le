@@ -349,10 +349,14 @@ static int PrettyCodeScore(const char *c)
 	       score+=4*shift;
 	    else
 	       score+=2;
+	    if(shift)
+	       sprintf(term_name,"kf%d",shift*FuncKeysNum+fk);
 	 }
 	 else
 	    score+=8;
-
+	 term_str=tigetstr(term_name);
+	 if(!term_str || !*term_str)
+	    return 1000000;
 	 break;
       case('|'):
 	 score+=5;

@@ -1,3 +1,8 @@
+2004-06-08  lav
+
+	* keymap.cc: don't show shortcut if corresponding key in terminfo
+	  is not defined.
+
 2004-06-04  lav
 
 	* user.cc: initialize newname in load and save-as.
