@@ -18,12 +18,7 @@
 
 #include <config.h>
 #include <stdlib.h>
-#ifdef USE_NCURSES_H
-# include <ncurses.h>
-#else
-# include <curses.h>
-#endif
-
+#include "edit.h"
 #include "keynames.h"
 
 static const struct CodeName

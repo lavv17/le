@@ -1,3 +1,10 @@
+2000-01-21  lav
+
+	* edit.h: define bool even if LE_CURSES_BOOL is undefined.
+	* getstr.cc, screen.cc: cast off const for addstr.
+	* keymap.cc: include term.h.
+	* keynames.cc: include edit.h to get curses.h
+
 1999-12-25  lav
 
 	* search.cc: set stdcol along with CurrentPos, this fixes random

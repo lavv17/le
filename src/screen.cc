@@ -251,7 +251,7 @@ void  AddMessage(const char *s)
 {
    message_sp++;
    attrset(STATUS_LINE_ATTR->n_attr);
-   mvaddstr(LINES-message_sp,0,s);
+   mvaddstr(LINES-message_sp,0,(char*)s);
    for(int x=strlen(s); x<COLS; x++)
       addch(' ');
    refresh();

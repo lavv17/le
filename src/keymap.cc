@@ -30,6 +30,7 @@
 #include "keymap.h"
 #include "keynames.h"
 #include "getch.h"
+#include <term.h>
 
 char  StringTyped[256];
 int   StringTypedLen;

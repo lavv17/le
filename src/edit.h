@@ -24,8 +24,8 @@
 #include    <sys/types.h>
 #include    <time.h>
 
-#if defined(CURSES_BOOL) && !defined(bool)
-# define bool CURSES_BOOL
+#if !defined(bool)
+# define bool LE_CURSES_BOOL
 # define bool_redefined 1
 #endif
 #ifdef USE_NCURSES_H

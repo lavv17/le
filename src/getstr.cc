@@ -63,7 +63,7 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
       if(pos-shift<0)
          shift=pos;
       SetAttr(STATUS_LINE_ATTR);
-      mvaddstr(LINES-1,0,pr);
+      mvaddstr(LINES-1,0,(char*)pr);
       for(i=0; i<width && i+shift<(*len); i++)
       {
          addch_visual((byte)buf[i+shift]);
