@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -87,7 +87,7 @@ const char  *MainHelp=
    "\n"
    "           Search & Replace\n"
    "F7 | ^F          - search forwards\n"
-   "~^F7 | ^N        - search backwards\n"
+   "~^F7 | ^B        - search backwards\n"
    "~F7 | ^C         - cont. search/replace\n"
    "^F7 | ^R         - start replace\n"
    "Ctrl-]           - find matching bracket\n"
@@ -112,7 +112,7 @@ const char  *MainHelp=
    "  Space          - change item\n"
    "  F1             - help\n"
    "\n"
-   " F10 - enter main menu\n"
+   " F10 | ^N  - enter main menu\n"
    "\n"
    "                Others\n"
    "^P               - put control character\n"
