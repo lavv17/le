@@ -1,20 +1,20 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330, 
- * Boston, MA 02111-1307, USA. 
+ * the Free Software Foundation, 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #include <config.h>
@@ -119,7 +119,7 @@ void   PreModify(void)
    }
 }
 
-void  PreUserEdit()
+int PreUserEdit()
 {
    if(Text && Eol() && !hex)
    {
@@ -127,10 +127,13 @@ void  PreUserEdit()
       num j=stdcol;
       if(UseTabs)
    	 for( ; Tabulate(i)<=j; i=Tabulate(i))
-            InsertChar('\t');
+            if(InsertChar('\t')!=OK)
+	       return 0;
       while(i++<j)
-         InsertChar(' ');
+	 if(InsertChar(' ')!=OK)
+	    return 0;
    }
+   return 1;
 }
 
 offs   LineBegin(offs ptr)
@@ -361,7 +364,7 @@ int   InsertBlock(char *block_left,register num size_left,char *block_right,num 
       {
          break_at=i;
          break;
-      } 
+      }
    }
    num_of_lines=0;
    oldcol=num_of_columns=GetCol();
@@ -382,7 +385,7 @@ int   InsertBlock(char *block_left,register num size_left,char *block_right,num 
       {
          join_at=i;
          break;
-      } 
+      }
    }
    for(register TextPoint *scan=TextPoint::base; scan; scan=scan->next)
    {
@@ -833,7 +836,7 @@ int   CountNewLines(offs start,num size,num *unix_nl,num *dos_nl)
       start=Size();
    if(start+size>=Size())
       size=Size()-start;
-   
+
    if(!unix_nl)
       unix_nl=&unix_nl_store;
    if(!dos_nl)
