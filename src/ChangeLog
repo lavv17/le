@@ -1,3 +1,7 @@
+2004-12-08  lav
+
+	* edit.cc: initialize newname properly.
+
 2004-10-14  lav
 
 	* user.cc: add .cpp and .cxx extensions for line commenting.

@@ -591,6 +591,7 @@ int     main(int argc,char **argv)
 
    HistoryLine    *hl=0;
    char  newname[256];
+   newname[0]=0;
 
    strcpy(Program,le_basename(argv[0]));
 
