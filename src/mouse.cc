@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #include <config.h>
 
 #ifdef WITH_MOUSE
@@ -24,6 +26,8 @@
 #include "screen.h"
 #include "mouse.h"
 #include "block.h"
+
+int UseMouse=true;
 
 bool InTextWin(int line,int col)
 {
@@ -132,6 +136,14 @@ void MouseInScrollBar(MEVENT &mev)
 	 UserPageUp();
       break;
    }
+}
+
+void SetupMouse()
+{
+   if(UseMouse)
+      mousemask(ALL_MOUSE_EVENTS,0);
+   else
+      mousemask(0,0);
 }
 
 #endif//WITH_MOUSE
