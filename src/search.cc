@@ -48,6 +48,7 @@ num   fndlen=0;
 
 struct re_registers regs;
 struct re_pattern_buffer rexp;
+bool rexp_compiled=flase;
 
 int   LastOp=0;
 int   LastDir=FORWARD;
@@ -75,6 +76,9 @@ void  NotFound()
 
 int   CompilePattern()
 {
+   if(rexp_compiled)
+      regfree(&rexp);
+
    re_syntax_options=RE_SYNTAX_EMACS;
    const char *err=re_compile_pattern((char*)pattern,patlen,&rexp);
    if(err)
@@ -82,6 +86,7 @@ int   CompilePattern()
       ErrMsg(err);
       return 0;
    }
+   rexp_compiled=true;
    rexp.newline_anchor=1;
    return 1;
 }
