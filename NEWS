@@ -1,3 +1,8 @@
+Version 1.6.2  2001-01-17
+
+* fix: redisplay correctly after reading block from pipe.
+* fix: configure on alpha.
+
 Version 1.6.1  2000-12-20
 
 * add mark-all action.

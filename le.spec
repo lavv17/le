@@ -1,10 +1,13 @@
-Summary: This is terminal text editor: LE.
+%define version 1.6.2
+%define release 1
+
+Summary: Terminal text editor LE.
 Name: le
-Version: 1.6.1
-Release: 1
-Copyright: GPL
+Version: %{version}
+Release: %{release}
+Copyright: GNU GPL
 Group: Applications/Editors
-Source: ftp://ftp.yars.free.net/pub/software/unix/util/texteditors/le-%{PACKAGE_VERSION}.tar.gz
+Source: ftp://ftp.yars.free.net/pub/software/unix/util/texteditors/le-%{version}.tar.gz
 #Vendor: Alexander V. Lukyanov <lav@yars.free.net>
 #Packager: Peter Soos <sp@osb.hu>
 BuildRoot: /var/tmp/le-root
