@@ -430,8 +430,11 @@ void  ReadActionMap(FILE *f)
 
       /* is the action found in the table ? */
       if(ActionNameTable[action_no].action==-1)
+      {
          while(ch!='\n' && ch!=EOF)
             ch=fgetc(f);
+	 continue;
+      }
 
       /* skip spaces between action name and action code */
       while(ch!='\n' && ch!=EOF && isspace(ch))
@@ -601,6 +604,13 @@ int   GetNextAction()
 	       break;
 	 if(!scan)
 	 {
+	    if(StringTypedLen>1) {
+	    // We've got an unknown sequence.
+	    // It is likely that it is a bit longer that we've already got,
+	    // so try to flush it.
+	       napms(10);
+	       flushinp();
+	    }
 	 return_action:
 	    if(kt->action==REFRESH_SCREEN)
                clearok(stdscr,1); // force repaint for next refresh
