@@ -24,6 +24,7 @@
 #include "options.h"
 #include "clipbrd.h"
 #include "format.h"
+#include "colormnu.h"
 
 static bool RW() { return !View; }
 static bool BLK() { return !hide; }
@@ -120,7 +121,17 @@ Menu1 MainMenu[]={
       {" &Save terminal options       ",FUNC+HIDE,SaveTermOpt},
       {NULL},
    {" &Appearence                  ",FUNC,AppearOpt},
-   {" &Colors                      ",FUNC+HIDE,ColorsOpt},
+   {" &Colors                      ",SUBM},
+      {" &Edit                       ",FUNC+HIDE,ColorsOpt},
+      {" &Save                       ",FUNC+HIDE,ColorsSave},
+      {" Save as &terminal specific  ",FUNC+HIDE,ColorsSaveForTerminal},
+      {"---"},
+      {" &Default                    ",FUNC+HIDE,LoadColorDefault},
+      {" Load default-background    ",FUNC+HIDE,LoadColorDefaultBG},
+      {" Load black                 ",FUNC+HIDE,LoadColorBlack},
+      {" Load blue                  ",FUNC+HIDE,LoadColorBlue},
+      {" Load white                 ",FUNC+HIDE,LoadColorWhite},
+      {NULL},
    {" &Programs                    ",FUNC,ProgOpt},
    {" &Save to current directory   ",FUNC+HIDE,SaveOpt},
    {" &Update current options file ",FUNC+HIDE,UpdtOpt},
