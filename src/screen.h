@@ -36,12 +36,24 @@ void  ErrMsg(const char *msg);
 
 void  TestPosition();
 
-extern WINDOW *text_w;
-extern WINDOW *status_w;
-
 #define   HexPos    11
 #define   AsciiPos   (HexPos+3*16+2)
 
-extern ScrollBarPos;
+extern int ScrollBarPos;
+
+extern int TextWinX,TextWinY,TextWinWidth,TextWinHeight,ScrollBarX,StatusLineY;
+
+extern int ShowScrollBar;
+extern int ShowStatusLine;
+
+enum {
+    SHOW_RIGHT=0,
+    SHOW_NONE=1,
+    SHOW_LEFT=2,
+    SHOW_BOTTOM=0,
+    SHOW_TOP=2
+};
+
+extern num ScrShift;
 
 #endif//SCREEN_H
