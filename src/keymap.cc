@@ -208,6 +208,29 @@ ActionNameRec  ActionNameTable[]=
    {SAVE_KEYMAP,"save-keymap"},
    {SAVE_KEYMAP_FOR_TERM,"save-keymap-for-terminal"},
 
+   {SET_BOOKMARK,"set-bookmark"},
+   {SET_BOOKMARK_0,"set-bookmark-0"},
+   {SET_BOOKMARK_1,"set-bookmark-1"},
+   {SET_BOOKMARK_2,"set-bookmark-2"},
+   {SET_BOOKMARK_3,"set-bookmark-3"},
+   {SET_BOOKMARK_4,"set-bookmark-4"},
+   {SET_BOOKMARK_5,"set-bookmark-5"},
+   {SET_BOOKMARK_6,"set-bookmark-6"},
+   {SET_BOOKMARK_7,"set-bookmark-7"},
+   {SET_BOOKMARK_8,"set-bookmark-8"},
+   {SET_BOOKMARK_9,"set-bookmark-9"},
+   {GO_BOOKMARK,"go-bookmark"},
+   {GO_BOOKMARK_0,"go-bookmark-0"},
+   {GO_BOOKMARK_1,"go-bookmark-1"},
+   {GO_BOOKMARK_2,"go-bookmark-2"},
+   {GO_BOOKMARK_3,"go-bookmark-3"},
+   {GO_BOOKMARK_4,"go-bookmark-4"},
+   {GO_BOOKMARK_5,"go-bookmark-5"},
+   {GO_BOOKMARK_6,"go-bookmark-6"},
+   {GO_BOOKMARK_7,"go-bookmark-7"},
+   {GO_BOOKMARK_8,"go-bookmark-8"},
+   {GO_BOOKMARK_9,"go-bookmark-9"},
+
    {-1,NULL}
 };
 

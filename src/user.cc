@@ -35,6 +35,7 @@
 #include "getch.h"
 #include "format.h"
 #include "about.h"
+#include "bm.h"
 
 void  UserDeleteToEol()
 {
@@ -1609,3 +1610,40 @@ void UserRememberBlock()
 
    MainClipBoard.Copy();
 }
+
+void UserSetBookmark()
+{
+   Message("Mark: ");
+   move(LINES-1,6);
+   curs_set(1);
+   int key=getch();
+   if(key<256 && key>=0)
+      SetBookmark(key);
+   else
+      beep();
+   ClearMessage();
+}
+
+void UserGoBookmark()
+{
+   Message("Go to mark: ");
+   move(LINES-1,12);
+   curs_set(1);
+   int key=getch();
+   if(key<256 && key>=0)
+   {
+      GoBookmark(key);
+      ClearMessage();
+      CenterView();
+   }
+   else
+   {
+      beep();
+      ClearMessage();
+   }
+}
+
+#define S(n) void UserSetBookmark##n() { SetBookmark('0'+n); }
+S(0) S(1) S(2) S(3) S(4) S(5) S(6) S(7) S(8) S(9)
+#define G(n) void UserGoBookmark##n() { GoBookmark('0'+n); }
+G(0) G(1) G(2) G(3) G(4) G(5) G(6) G(7) G(8) G(9)

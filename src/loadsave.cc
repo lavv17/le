@@ -40,6 +40,7 @@
 #include "block.h"
 #include "clipbrd.h"
 #include "getch.h"
+#include "bm.h"
 
 #ifndef MAP_FAILED
 # define MAP_FAILED ((void*)-1)
@@ -182,6 +183,7 @@ int   LoadFile(char *name)
       MainClipBoard.Copy();
 
    EmptyText();
+   ResetBookmarks();
 
    flag=REDISPLAY_ALL;
 

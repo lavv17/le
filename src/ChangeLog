@@ -1,3 +1,9 @@
+2001-05-14  lav
+
+	* bm.cc, bm.h: new files.
+	* keymap.cc, keymap.h, keymapfn.cc, keymapdf.cc, loadsave.cc, user.cc,
+	  user.h: bookmark support.
+
 2001-04-28  lav
 
 	* keymap.cc: (ActionCodePrettyPrint) print 8-bit chars and ^@ correctly.

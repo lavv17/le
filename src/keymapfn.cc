@@ -198,6 +198,29 @@ ActionProcRec  EditorActionProcTable[]=
    {SAVE_KEYMAP,SaveKeymap},
    {SAVE_KEYMAP_FOR_TERM,SaveKeymapForTerminal},
 
+   {SET_BOOKMARK,UserSetBookmark},
+   {SET_BOOKMARK_0,UserSetBookmark0},
+   {SET_BOOKMARK_1,UserSetBookmark1},
+   {SET_BOOKMARK_2,UserSetBookmark2},
+   {SET_BOOKMARK_3,UserSetBookmark3},
+   {SET_BOOKMARK_4,UserSetBookmark4},
+   {SET_BOOKMARK_5,UserSetBookmark5},
+   {SET_BOOKMARK_6,UserSetBookmark6},
+   {SET_BOOKMARK_7,UserSetBookmark7},
+   {SET_BOOKMARK_8,UserSetBookmark8},
+   {SET_BOOKMARK_9,UserSetBookmark9},
+   {GO_BOOKMARK,UserGoBookmark},
+   {GO_BOOKMARK_0,UserGoBookmark0},
+   {GO_BOOKMARK_1,UserGoBookmark1},
+   {GO_BOOKMARK_2,UserGoBookmark2},
+   {GO_BOOKMARK_3,UserGoBookmark3},
+   {GO_BOOKMARK_4,UserGoBookmark4},
+   {GO_BOOKMARK_5,UserGoBookmark5},
+   {GO_BOOKMARK_6,UserGoBookmark6},
+   {GO_BOOKMARK_7,UserGoBookmark7},
+   {GO_BOOKMARK_8,UserGoBookmark8},
+   {GO_BOOKMARK_9,UserGoBookmark9},
+
    {-1,NULL}
 };
 

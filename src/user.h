@@ -130,3 +130,13 @@ void  UserStartDragMark();
 void  UserStopDragMark();
 
 void  UserOptimizeText();
+
+void  UserSetBookmark();
+void  UserGoBookmark();
+
+#define S(n) void UserSetBookmark##n();
+S(0) S(1) S(2) S(3) S(4) S(5) S(6) S(7) S(8) S(9)
+#undef S
+#define G(n) void UserGoBookmark##n();
+G(0) G(1) G(2) G(3) G(4) G(5) G(6) G(7) G(8) G(9)
+#undef G
