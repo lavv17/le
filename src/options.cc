@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #include <config.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -36,6 +38,8 @@ extern char ContextHelpNames[];
 extern int RightAdj,LeftAdj;
 
 extern int MaxBackup;
+
+extern int le_use_default_colors;
 
 int useidl=0;
 
@@ -208,6 +212,7 @@ struct init
 },
    colors[]=
 {
+   { "default_colors",	NUM,  &le_use_default_colors			   },
    { "status_line",	STR,  color_descriptions[STATUS_LINE]		   },
    { "status_line_bw",	STR,  color_descriptions[STATUS_LINE+MAX_COLOR_NO] },
    { "normal_text",	STR,  color_descriptions[NORMAL_TEXT]		   },
@@ -310,8 +315,23 @@ void  ReadConfFromOpenFile(FILE *f,struct init *init)
    char  str[256];
    char  *s;
 
-   while(fscanf(f,"%[^=]=",str)==1)
+   for(;;)
    {
+      if(fscanf(f,"%[^=\n]=",str)!=1)
+      {
+	 fskip(f);
+	 if(feof(f))
+	    break;
+	 continue;
+      }
+      for(i=0; str[i]; i++)
+	 if(!isspace(str[i]))
+	    break;
+      memmove(str,str+i,strlen(str+i)+1);
+      for(i=strlen(str); i>0; i--)
+	 if(!isspace(str[i-1]))
+	    break;
+      str[i]=0;
       for(i=strlen(str); i>0; i--)
          str[i-1]=tolower(str[i-1]);
       for(ptr=init; ptr->name; ptr++)
@@ -996,25 +1016,27 @@ static bg,fg,c_bold,c_rev,c_ul,c_dim,b_bold,b_rev,b_ul,b_dim;
 
 void  EditColor(color *cp,color *bp)
 {
-   struct opt color_opt[]=
+   static struct opt color_opt[]=
    {
-      {"Black",	  MANY,&fg,4,3},
-      {"Green",	  MANY,&fg,4,4},
-      {"Red",	  MANY,&fg,4,5},
-      {"Yellow",  MANY,&fg,4,6},
-      {"Blue",	  MANY,&fg,4,7},
-      {"Cyan",	  MANY,&fg,4,8},
-      {"Magenta", MANY,&fg,4,9},
-      {"White",	  MANY,&fg,4,10},
+      {"None",	  MANY,&fg,4,3},
+      {"Black",	  MANY,&fg,4,4},
+      {"Green",	  MANY,&fg,4,5},
+      {"Red",	  MANY,&fg,4,6},
+      {"Yellow",  MANY,&fg,4,7},
+      {"Blue",	  MANY,&fg,4,8},
+      {"Cyan",	  MANY,&fg,4,9},
+      {"Magenta", MANY,&fg,4,10},
+      {"White",	  MANY,&fg,4,11},
 
-      {"Black",	  MANY,&bg,19,3},
-      {"Green",	  MANY,&bg,19,4},
-      {"Red",	  MANY,&bg,19,5},
-      {"Yellow",  MANY,&bg,19,6},
-      {"Blue",	  MANY,&bg,19,7},
-      {"Cyan",	  MANY,&bg,19,8},
-      {"Magenta", MANY,&bg,19,9},
-      {"White",	  MANY,&bg,19,10},
+      {"None",	  MANY,&bg,19,3},
+      {"Black",	  MANY,&bg,19,4},
+      {"Green",	  MANY,&bg,19,5},
+      {"Red",	  MANY,&bg,19,6},
+      {"Yellow",  MANY,&bg,19,7},
+      {"Blue",	  MANY,&bg,19,8},
+      {"Cyan",	  MANY,&bg,19,9},
+      {"Magenta", MANY,&bg,19,10},
+      {"White",	  MANY,&bg,19,11},
 
       {"Bold",	  ONE,&c_bold,	 34,3},
       {"Reverse", ONE,&c_rev, 	 34,4},
@@ -1029,11 +1051,13 @@ void  EditColor(color *cp,color *bp)
       {NULL}
    };
 
-   static int color_xlat[]={COLOR_BLACK,COLOR_GREEN,COLOR_RED,COLOR_YELLOW,
+   static int color_xlat[]={NO_COLOR,COLOR_BLACK,COLOR_GREEN,COLOR_RED,COLOR_YELLOW,
 			    COLOR_BLUE,COLOR_CYAN,COLOR_MAGENTA,COLOR_WHITE};
 
-   for(bg=0; bg<8 && bg!=color_xlat[cp->bg]; bg++);
-   for(fg=0; fg<8 && fg!=color_xlat[cp->fg]; fg++);
+   for(bg=0; bg<9 && color_xlat[bg]!=cp->bg; bg++);
+   for(fg=0; fg<9 && color_xlat[fg]!=cp->fg; fg++);
+   if(bg==9) bg=0;
+   if(fg==9) fg=0;
 
    c_bold=!!(cp->attr&A_BOLD);
    c_rev =!!(cp->attr&A_REVERSE);
@@ -1044,7 +1068,7 @@ void  EditColor(color *cp,color *bp)
    b_ul  =!!(bp->attr&A_UNDERLINE);
    b_dim =!!(bp->attr&A_DIM);
 
-   WIN *w=CreateWin(MIDDLE,MIDDLE+4,66,13,DIALOGUE_WIN_ATTR," Edit color ");
+   WIN *w=CreateWin(MIDDLE,MIDDLE+4,66,14,DIALOGUE_WIN_ATTR," Edit color ");
    DisplayWin(w);
    PutStr(3,2, "Foreground");
    PutStr(18,2,"Background");

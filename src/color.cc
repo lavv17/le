@@ -30,9 +30,18 @@
 struct attr attr_table[MAX_COLOR_NO];
 int   attr_num;
 
+int   can_use_default_colors;
+
 int   next_pair;
 static int find_pair(int fg,int bg)
 {
+   if(!can_use_default_colors)
+   {
+      if(fg==NO_COLOR)
+	 fg=COLOR_WHITE;
+      if(bg==NO_COLOR)
+	 bg=COLOR_BLACK;
+   }
    for(int i=1; i<next_pair; i++)
    {
       short fg1,bg1;
@@ -56,7 +65,7 @@ void  init_attr_table(struct color *pal)
       int an=pal[i].no;
       assert(an>=0 && an<MAX_COLOR_NO);
       attr_table[an].attr=0;
-      if(pal[i].fg || pal[i].bg)
+      if(pal[i].fg!=NO_COLOR || pal[i].bg!=NO_COLOR)
       {
 	 pair=find_pair(pal[i].fg,pal[i].bg);
 	 attr_table[an].attr|=COLOR_PAIR(pair);
@@ -65,7 +74,7 @@ void  init_attr_table(struct color *pal)
    }
 
    color *hl=FindColor(pal,HIGHLIGHT);
-   bool hl_bw=(hl->fg || hl->bg);
+   bool hl_bw=(hl->fg==NO_COLOR && hl->bg==NO_COLOR);
 
    /* make standout attributes */
    for(i=0; i<MAX_COLOR_NO; i++)
@@ -78,9 +87,9 @@ void  init_attr_table(struct color *pal)
       int p=0;
       while(pal[p].no!=i && pal[p].no!=-1)
 	 p++;
-      if(pal[p].fg || pal[p].bg)
+      if(pal[p].fg!=NO_COLOR || pal[p].bg!=NO_COLOR)
       {
-	 if(hl_bw && pal[p].fg==hl->fg)
+	 if(hl_bw || pal[p].fg==hl->fg)
 	    attr_table[i].so_attr=attr_table[i].attr^hl->attr;
 	 else
 	 {
@@ -116,22 +125,22 @@ struct color default_color_pal[]=
 };
 struct color default_bw_pal[]=
 {
-   {STATUS_LINE,  A_REVERSE|A_DIM   },
-   {NORMAL_TEXT,  A_NORMAL	    },
-   {BLOCK_TEXT,	  A_REVERSE	    },
-   {ERROR_WIN,	  A_BOLD|A_REVERSE  },
-   {VERIFY_WIN,	  A_REVERSE	    },
-   {CURR_BUTTON,  A_NORMAL	    },
-   {HELP_WIN,	  A_REVERSE	    },
-   {DIALOGUE_WIN, A_REVERSE	    },
-   {MENU_WIN,	  A_REVERSE	    },
-   {DISABLED_ITEM,A_REVERSE	    },
-   {SCROLL_BAR,	  A_DIM		    },
-   {SHADOWED,	  A_DIM		    },
-   {SYNTAX1,	  A_BOLD	    },
-   {SYNTAX2,	  A_BOLD	    },
-   {SYNTAX3,	  A_DIM		    },
-   {HIGHLIGHT,	  A_BOLD	    },
+   {STATUS_LINE,  A_REVERSE|A_DIM,  NO_COLOR,NO_COLOR},
+   {NORMAL_TEXT,  A_NORMAL,	    NO_COLOR,NO_COLOR},
+   {BLOCK_TEXT,	  A_REVERSE,	    NO_COLOR,NO_COLOR},
+   {ERROR_WIN,	  A_BOLD|A_REVERSE, NO_COLOR,NO_COLOR},
+   {VERIFY_WIN,	  A_REVERSE,	    NO_COLOR,NO_COLOR},
+   {CURR_BUTTON,  A_NORMAL,	    NO_COLOR,NO_COLOR},
+   {HELP_WIN,	  A_REVERSE,	    NO_COLOR,NO_COLOR},
+   {DIALOGUE_WIN, A_REVERSE,	    NO_COLOR,NO_COLOR},
+   {MENU_WIN,	  A_REVERSE,	    NO_COLOR,NO_COLOR},
+   {DISABLED_ITEM,A_REVERSE,	    NO_COLOR,NO_COLOR},
+   {SCROLL_BAR,	  A_DIM,	    NO_COLOR,NO_COLOR},
+   {SHADOWED,	  A_DIM,	    NO_COLOR,NO_COLOR},
+   {SYNTAX1,	  A_BOLD,	    NO_COLOR,NO_COLOR},
+   {SYNTAX2,	  A_BOLD,	    NO_COLOR,NO_COLOR},
+   {SYNTAX3,	  A_DIM,	    NO_COLOR,NO_COLOR},
+   {HIGHLIGHT,	  A_BOLD,	    NO_COLOR,NO_COLOR},
    {-1}
 };
 
@@ -146,6 +155,7 @@ void  init_attrs()
       init_attr_table(bw_pal);
 }
 
+int le_use_default_colors=0;
 char color_descriptions[MAX_COLOR_NO*2][256];
 
 struct attr_name
@@ -156,28 +166,29 @@ struct attr_name
 
 const attr_name attr_names_table[]=
 {
-   {"rev",	  {0,A_REVERSE}},
-   {"bold",	  {0,A_BOLD}},
-   {"dim",	  {0,A_DIM}},
-   {"ul",	  {0,A_UNDERLINE}},
+   {"normal",	  {0,A_NORMAL,	 NO_COLOR,NO_COLOR}},
+   {"rev",	  {0,A_REVERSE,	 NO_COLOR,NO_COLOR}},
+   {"bold",	  {0,A_BOLD,	 NO_COLOR,NO_COLOR}},
+   {"dim",	  {0,A_DIM,	 NO_COLOR,NO_COLOR}},
+   {"ul",	  {0,A_UNDERLINE,NO_COLOR,NO_COLOR}},
 
-   {"fg:black",	  {0,0,COLOR_BLACK,0}},
-   {"fg:green",	  {0,0,COLOR_GREEN,0}},
-   {"fg:red",	  {0,0,COLOR_RED,0}},
-   {"fg:yellow",  {0,0,COLOR_YELLOW,0}},
-   {"fg:blue",	  {0,0,COLOR_BLUE,0}},
-   {"fg:cyan",	  {0,0,COLOR_CYAN,0}},
-   {"fg:magenta", {0,0,COLOR_MAGENTA,0}},
-   {"fg:white",	  {0,0,COLOR_WHITE,0}},
+   {"fg:black",	  {0,0,COLOR_BLACK, NO_COLOR}},
+   {"fg:green",	  {0,0,COLOR_GREEN, NO_COLOR}},
+   {"fg:red",	  {0,0,COLOR_RED,   NO_COLOR}},
+   {"fg:yellow",  {0,0,COLOR_YELLOW,NO_COLOR}},
+   {"fg:blue",	  {0,0,COLOR_BLUE,  NO_COLOR}},
+   {"fg:cyan",	  {0,0,COLOR_CYAN,  NO_COLOR}},
+   {"fg:magenta", {0,0,COLOR_MAGENTA,NO_COLOR}},
+   {"fg:white",	  {0,0,COLOR_WHITE, NO_COLOR}},
 
-   {"bg:black",	  {0,0,0,COLOR_BLACK}},
-   {"bg:green",	  {0,0,0,COLOR_GREEN}},
-   {"bg:red",	  {0,0,0,COLOR_RED}},
-   {"bg:yellow",  {0,0,0,COLOR_YELLOW}},
-   {"bg:blue",	  {0,0,0,COLOR_BLUE}},
-   {"bg:cyan",	  {0,0,0,COLOR_CYAN}},
-   {"bg:magenta", {0,0,0,COLOR_MAGENTA}},
-   {"bg:white",	  {0,0,0,COLOR_WHITE}},
+   {"bg:black",	  {0,0,NO_COLOR,COLOR_BLACK}},
+   {"bg:green",	  {0,0,NO_COLOR,COLOR_GREEN}},
+   {"bg:red",	  {0,0,NO_COLOR,COLOR_RED}},
+   {"bg:yellow",  {0,0,NO_COLOR,COLOR_YELLOW}},
+   {"bg:blue",	  {0,0,NO_COLOR,COLOR_BLUE}},
+   {"bg:cyan",	  {0,0,NO_COLOR,COLOR_CYAN}},
+   {"bg:magenta", {0,0,NO_COLOR,COLOR_MAGENTA}},
+   {"bg:white",	  {0,0,NO_COLOR,COLOR_WHITE}},
 
    {NULL},
 };
@@ -198,15 +209,13 @@ void  ParseOneColor(color *pal,const char *desc,int no)
 {
    color c;
    char	 *d=(char*)alloca(strlen(desc)+1);
-   int	 good=0;
+   bool good=false;
 
    strcpy(d,desc);
 
-   c.attr=c.fg=c.bg=0;
+   c.attr=0;
+   c.fg=c.bg=NO_COLOR;
    c.no=no;
-
-   while(*d && isspace(*d))
-      d++;
 
    char *tok=strtok(d,",");
    while(tok)
@@ -214,25 +223,35 @@ void  ParseOneColor(color *pal,const char *desc,int no)
       char *eq=strchr(tok,'=');
       if(eq)
 	 *eq=':';
+      while(*tok && isspace(*tok))
+	 tok++;
+      eq=tok+strlen(tok);
+      while(eq>tok && isspace(*--eq))
+	 *eq=0;
       for(const attr_name *an=attr_names_table; an->name; an++)
       {
 	 if(!strcmp(an->name,tok))
 	 {
-	    good=1;
+	    good=true;
 	    c.attr|=an->value.attr;
-	    if(c.fg==0)
+	    if(c.fg==NO_COLOR)
 	       c.fg=an->value.fg;
-	    if(c.bg==0)
+	    if(c.bg==NO_COLOR)
 	       c.bg=an->value.bg;
 	    break;
 	 }
       }
       tok=strtok(NULL,",");
    }
-   if(good)
+   if(!le_use_default_colors && (c.fg!=NO_COLOR || c.bg!=NO_COLOR))
    {
-      *FindColor(pal,no)=c;
+      if(c.fg==NO_COLOR)
+	 c.fg=COLOR_BLACK;
+      if(c.bg==NO_COLOR)
+	 c.bg=COLOR_BLACK;
    }
+   if(good)
+      *FindColor(pal,no)=c;
 }
 
 void  ParseColors()
@@ -260,19 +279,19 @@ void  DescribeOneColor(char *const desc,color *cp)
    a=attr_names_table;
    while(a->name)
    {
-      if(c.fg && a->value.fg==c.fg)
+      if(c.fg!=NO_COLOR && a->value.fg==c.fg)
       {
 	 sprintf(d,",%s",a->name);
 	 d+=strlen(d);
-	 c.fg=0;
+	 c.fg=NO_COLOR;
       }
-      if(c.bg && a->value.bg==c.bg)
+      if(c.bg!=NO_COLOR && a->value.bg==c.bg)
       {
 	 sprintf(d,",%s",a->name);
 	 d+=strlen(d);
-	 c.bg=0;
+	 c.bg=NO_COLOR;
       }
-      if(c.attr&a->value.attr)
+      if(c.attr & a->value.attr)
       {
 	 sprintf(d,",%s",a->name);
 	 d+=strlen(d);
@@ -284,10 +303,17 @@ void  DescribeOneColor(char *const desc,color *cp)
    {
       memmove(desc,desc+1,strlen(desc));
    }
+   if(desc[0]==0)
+   {
+      // empty description is not accepted
+      strcpy(desc,"normal");
+   }
 }
 
 void  DescribeColors(color *bw,color *co)
 {
+   le_use_default_colors=1;
+
    int i=0;
    for( ; i<MAX_COLOR_NO; i++)
       DescribeOneColor(color_descriptions[i],FindColor(co,i));

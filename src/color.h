@@ -69,3 +69,5 @@ void  DumpDefaultColors(FILE *);
 
 extern color color_pal[MAX_COLOR_NO+1];
 extern color bw_pal[MAX_COLOR_NO+1];
+
+#define NO_COLOR (-1)

@@ -378,6 +378,10 @@ void  InitCurses()
 #endif
 
    start_color();
+#ifdef NCURSES_VERSION_MAJOR
+   extern int can_use_default_colors;
+   can_use_default_colors = (use_default_colors()==OK);
+#endif
 
    cbreak();
    noecho();
@@ -519,10 +523,12 @@ void  PrintUsage(int arg)
 	  "    --mmap         load file using mmap (read only)\n"
 	  "    --mmap-rw      mmap read-write. Use with extreme caution,\n"
 	  "                   expecially on your hard disk! No undo, all\n"
-	  "                   changes go directly to file/disk. You're warned.\n"
+	  "                   changes go directly to file/disk.\n"
+	  "    --help         this description\n"
+	  "    --version      print LE version\n"
 	  "\n"
-	  "The last file will be loaded. If no files specified, last file from history\n"
-	  "will be loaded if it's not read-only or read-only mode selected.\n");
+	  "The last file will be loaded. If no files specified, last readable file\n"
+	  "from history will be loaded if the path is relative or it is the last.\n");
    exit(1);
 }
 
