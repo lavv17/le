@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #ifndef SCREEN_H
 #define SCREEN_H
 
@@ -37,7 +39,7 @@ void  TestPosition();
 extern WINDOW *text_w;
 extern WINDOW *status_w;
 
-#define   HexPos    10
+#define   HexPos    11
 #define   AsciiPos   (HexPos+3*16+2)
 
 extern ScrollBarPos;
