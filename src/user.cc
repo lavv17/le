@@ -1371,6 +1371,8 @@ void  UserPipeBlock()
 
 void  UserYankBlock()
 {
+   if(View)
+      return;
    MainClipBoard.PasteAndMark();
    OptionallyConvertBlockNewLines("yanked");
 }
