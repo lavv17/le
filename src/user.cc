@@ -690,7 +690,10 @@ void  UserUnindent()
       if(Text && Eol())
       {
          DeleteBlock(CurrentPos-LineBegin(CurrentPos),0);
-         stdcol=newmargin;
+         if(newmargin<curpos)
+	    stdcol=newmargin;
+	 else
+	    stdcol=0;
 	 flag|=REDISPLAY_LINE;
          return;
       }
@@ -721,7 +724,7 @@ void  UserBackSpace()
 {
    if(View)
       return;
-   if(Bof())
+   if(Bof() && (!Text || stdcol==0))
       return;
    if(hex)
    {
