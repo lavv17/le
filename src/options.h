@@ -29,6 +29,7 @@ void ReadConfFromFile(const char *file,const struct init *init,bool mine);
 
 void ColorsOpt();
 void ProgOpt();
+void UndoOpt();
 
 extern const struct init colors[];
 

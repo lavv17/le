@@ -84,8 +84,8 @@ ActionProcRec  EditorActionProcTable[]=
 // Undo/redo
    {UNDO,UserUndo},
    {REDO,UserRedo},
-//    {UNDO_STEP,"undo-step"},
-//    {REDO_STEP,"redo-step"},
+   {UNDO_STEP,UserUndoStep},
+   {REDO_STEP,UserUndoStep},
 
 // File ops
    {LOAD_FILE,UserLoad},
@@ -151,6 +151,7 @@ ActionProcRec  EditorActionProcTable[]=
    {FORMAT_OPTIONS,FormatOptions},
    {APPEARENCE_OPTIONS,AppearOpt},
    {PROGRAM_OPTIONS,ProgOpt},
+   {UNDO_OPTIONS,UndoOpt},
    {COLOR_TUNING,ColorsOpt},
    {SAVE_OPTIONS,UpdtOpt},
    {SAVE_OPTIONS_LOCAL,SaveOpt},

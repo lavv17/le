@@ -31,6 +31,7 @@ class Undo
       num  group_stdcol;
       Change *next;
       Change *prev;
+      bool Join(const Change *);
    protected:
       enum type_t { INSERT, DELETE, REPLACE } type;
       offs pos;
@@ -58,10 +59,10 @@ class Undo
    bool locked;
    bool enabled;
 
+   bool glue_changes;
    num max_size;
    int min_groups;
 
-   void GlueGroup();
    void CheckSize();
 
 public:
@@ -78,13 +79,21 @@ public:
 
    void UndoGroup();
    void RedoGroup();
+   void UndoOne();
+   void RedoOne();
+
+   void Clear();
 
    Undo();
    ~Undo();
 
    bool Enabled() { return enabled&&!locked; }
+   bool Locked()  { return locked; }
+
    void SetMaxSize(num ms) { max_size=ms; }
    void SetMinGroups(int mg) { min_groups=mg; }
+   void SetEnable(bool en) { if(enabled!=en) Clear(); enabled=en; }
+   void SetGlue(bool g) { glue_changes=g; }
 };
 
 extern Undo undo;

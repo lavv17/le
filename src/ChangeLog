@@ -1,3 +1,16 @@
+2004-05-06  lav
+
+	* edit.cc: use UserReplaceChar.
+	* kern.cc: use low level ReplaceBlock if undo is enabled; allow replace
+	  if new block extends file; re-do ReplaceCharMove.
+	* keymap.cc: undo-options; initialize shift in PrettyCodeScore properly.
+	* keymap.h: UNDO_OPTIONS.
+	* keymapdf.cc: add redo.
+	* keymapfn.cc: add undo-step and redo-step.
+	* options.cc, options.h: add undo options; fix number label positioning.
+	* undo.cc, undo.h: (UndoOne, RedoOne, Change::Join, Clear) new methods.
+	* user.cc, user.h: (UserUndoStep, UserRedoStep, UserReplaceChar) new functions.
+
 2004-05-05  lav
 
 	* Makefile.am: (undo.cc, undo.h) new files.

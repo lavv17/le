@@ -100,6 +100,8 @@ void  UserNewLine();
 void  UserUndelete();
 void  UserUndo();
 void  UserRedo();
+void  UserUndoStep();
+void  UserRedoStep();
 
 void  UserEnterControlChar();
 
@@ -116,6 +118,7 @@ void  UserInsertWCharCode();
 
 void  UserInsertChar(char ch);
 void  UserInsertControlChar(char ch);
+void  UserReplaceChar(char ch);
 
 void  UserSwitchHexMode();
 void  UserSwitchTextMode();

@@ -210,6 +210,7 @@ ActionNameRec  ActionNameTable[]=
    {LOAD_COLOR_GREEN,"load-color-green"},
    {LOAD_COLOR_WHITE,"load-color-white"},
    {PROGRAMS_OPTIONS,"programs-options"},
+   {UNDO_OPTIONS,"undo-options"},
    {ABOUT,"about"},
    {LOAD_KEYMAP_DEFAULT,"load-keymap-default"},
    {LOAD_KEYMAP_EMACS,  "load-keymap-emacs"},
@@ -338,6 +339,7 @@ static int PrettyCodeScore(const char *c)
 	 if(!(bracket && *c==RIGHT_BRACE))
 	    c--;
 
+	 shift=0;
 	 if(sscanf(term_name,"%1dkf%d",&shift,&fk)==2
 	 || sscanf(term_name,"kf%d",&fk)==1)
 	 {

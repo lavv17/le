@@ -783,7 +783,7 @@ int   DeleteBlock(num left,num right)
 
 int   ReplaceBlock(char *block,num size)
 {
-   if(!buffer_mmapped)
+   if(!buffer_mmapped && !undo.Enabled() && !undo.Locked())
    {
       int res=InsertBlock(block,size);
       if(res==OK)
@@ -797,12 +797,23 @@ int   ReplaceBlock(char *block,num size)
    offs base=Offset();
    offs newline=GetLine();
 
-   if(base>Size()-size)
+   num oldsize=size;
+   if(base>Size()-oldsize)
+      oldsize=Size()-base;
+
+   if(buffer_mmapped)
    {
-      size=Size()-base;
+      if(size>oldsize)
+	 size=oldsize;
       if(size<=0)
 	 return ERR;
    }
+   else
+   {
+      if(size>oldsize && GetSpace(size-oldsize)!=OK)
+	 return ERR;
+   }
+   PreModify();
 
    int break_at=-1;
    int i;
@@ -817,13 +828,16 @@ int   ReplaceBlock(char *block,num size)
 
    num num_of_lines=0;
    offs o;
-   for(o=base+1; o<=base+size; o++)
+   for(o=base+1; o<=base+oldsize; o++)
       if(BolAt(o))
 	 num_of_lines++;
 
    if(undo.Enabled())
-      undo.AddChange(new Undo::Replace(buffer+base,size,block,size));
-   memmove(buffer+base,block,size);
+      undo.AddChange(new Undo::Replace(buffer+ptr2,oldsize,block,size));
+
+   memmove(buffer+ptr2-(size-oldsize),block,size);
+   oldptr2=ptr2;
+   ptr2-=(size-oldsize);
 
    for(o=base; o<base+size; o++)
       if(EolAt(o))
@@ -866,20 +880,11 @@ int   ReplaceBlock(char *block,num size)
 
 int   ReplaceCharMove(byte ch)
 {
-   int res;
-   if(!buffer_mmapped)
-   {
-      res=InsertChar(ch);
-      if(res==OK)
-	 DeleteChar();
-   }
-   else
-   {
-      res=ReplaceChar(ch);
-      if(res==OK)
-	 MoveRight();
-   }
-   return res;
+   int res=ReplaceChar(ch);
+   if(res!=OK)
+      return res;
+   MoveRight();
+   return OK;
 }
 
 int   Undelete()

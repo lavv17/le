@@ -307,14 +307,9 @@ void    Edit()
 	    break;
 	 default:   /* not a newline and not a tab */
 	    if(insert || Eol() || (Char()=='\t' && Tabulate(GetCol())!=(GetCol()+1)))
-	    {
 	       UserInsertChar(key);
-	    }
 	    else
-	    {
-	       InsertChar(key);
-	       DeleteChar();
-	    }
+	       UserReplaceChar(key);
 	    flag|=REDISPLAY_LINE;
 	 }
 	 undo.EndUndoGroup();

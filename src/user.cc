@@ -1219,6 +1219,21 @@ void  UserRedo()
    flag=REDISPLAY_ALL;
    stdcol=GetCol();
 }
+void  UserUndoStep()
+{
+   if(View)
+      return;
+   undo.UndoOne();
+   flag=REDISPLAY_ALL;
+}
+void  UserRedoStep()
+{
+   if(View)
+      return;
+   undo.RedoOne();
+   flag=REDISPLAY_ALL;
+   stdcol=GetCol();
+}
 
 void  UserInsertChar(char ch)
 {
@@ -1231,6 +1246,23 @@ void  UserInsertChar(char ch)
       WordWrapInsertHook();
 
    if(hex || Bol())
+      flag|=REDISPLAY_AFTER;
+   else
+      flag|=REDISPLAY_LINE;
+   stdcol=GetCol();
+}
+void  UserReplaceChar(char ch)
+{
+   if(View)
+      return;
+   PreUserEdit();
+
+   if(!hex && Eol())
+      flag|=REDISPLAY_AFTER;
+
+   ReplaceCharMove(ch);
+
+   if(!hex && Bol())
       flag|=REDISPLAY_AFTER;
    else
       flag|=REDISPLAY_LINE;

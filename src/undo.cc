@@ -32,10 +32,12 @@ Undo::Undo()
    current_group=0;
    enabled=true;
    locked=false;
+
+   glue_changes=true;
    min_groups=4;
    max_size=0x10000000;
 }
-Undo::~Undo()
+void Undo::Clear()
 {
    while(chain_head)
    {
@@ -43,6 +45,13 @@ Undo::~Undo()
       chain_head=chain_head->next;
       delete to_delete;
    }
+   chain_tail=chain_ptr=0;
+   current_group=0;
+   group_open=0;
+}
+Undo::~Undo()
+{
+   Clear();
 }
 
 void Undo::BeginUndoGroup()
@@ -60,6 +69,7 @@ void Undo::AddChange(Change *c)
       delete c;
       return;
    }
+   // cut undo list at current position, so redo is not possible.
    while(chain_ptr)
    {
       if(chain_ptr==chain_tail)
@@ -83,6 +93,11 @@ void Undo::AddChange(Change *c)
    c->group=current_group;
    c->group_pos=group_pos;
    c->group_stdcol=group_stdcol;
+   if(glue_changes && chain_tail && chain_tail->Join(c))
+   {
+      delete c;
+      return;
+   }
    c->prev=chain_tail;
    c->next=0;
    if(chain_tail)
@@ -99,7 +114,6 @@ void Undo::EndUndoGroup()
       return;
    group_open--;
    CheckSize();
-   GlueGroup();
 }
 
 Undo::Change::Change(type_t t,const char *l,num ls,const char *r,num rs)
@@ -166,6 +180,38 @@ void Undo::RedoGroup()
    }
    locked=false;
 }
+void Undo::UndoOne()
+{
+   if(!chain_tail)
+      return;
+   if(!chain_ptr)
+      chain_ptr=chain_tail;
+   else
+   {
+      if(!chain_ptr->prev)
+	 return;
+      chain_ptr=chain_ptr->prev;
+   }
+   locked=true;
+   chain_ptr->Undo();
+   if(chain_ptr->group_pos!=-1)
+   {
+      CurrentPos=chain_ptr->group_pos;
+      stdcol=chain_ptr->group_stdcol;
+   }
+   else
+      stdcol=GetCol();
+   locked=false;
+}
+void Undo::RedoOne()
+{
+   if(!chain_ptr)
+      return;
+   locked=true;
+   chain_ptr->Redo();
+   chain_ptr=chain_ptr->next;
+   locked=false;
+}
 
 void Undo::Change::Undo()
 {
@@ -199,8 +245,74 @@ void Undo::Change::Redo()
       break;
    case REPLACE:
       ReplaceBlock(right,right_size);
+      CurrentPos+=right_size;
       break;
    }
+}
+static bool mappend(char **buf,num *size,const char *add,num add_size)
+{
+   char *newbuf=(char*)realloc(*buf,*size+add_size);
+   if(!newbuf)
+      return false;
+   *buf=newbuf;
+   memmove(*buf+*size,add,add_size);
+   *size+=add_size;
+   return true;
+}
+static bool mprepend(char **buf,num *size,const char *add,num add_size)
+{
+   char *newbuf=(char*)realloc(*buf,*size+add_size);
+   if(!newbuf)
+      return false;
+   *buf=newbuf;
+   memmove(*buf+add_size,*buf,*size);
+   memmove(*buf,add,add_size);
+   *size+=add_size;
+   return true;
+}
+bool Undo::Change::Join(const Change *c)
+{
+   if(c->type!=type)
+      return false;
+   if(c->group_pos!=-1 && c->group_pos!=c->pos)
+      return false;
+   switch(type)
+   {
+   case DELETE:
+      if(pos-left_size!=c->pos)
+	 return false;
+      if(!mappend(&right,&right_size,c->right,c->right_size))
+	 return false;
+      if(!mprepend(&left,&left_size,c->left,c->left_size))
+      {
+	 right_size-=c->right_size;
+	 return false;
+      }
+      break;
+   case INSERT:
+      if(pos+left_size!=c->pos)
+	 return false;
+      if(!mappend(&left,&left_size,c->left,c->left_size))
+	 return false;
+      if(!mprepend(&right,&right_size,c->right,c->right_size))
+      {
+	 left_size-=c->left_size;
+	 return false;
+      }
+      break;
+   case REPLACE:
+      if(pos+right_size!=c->pos)
+	 return false;
+      if(!mappend(&right,&right_size,c->right,c->right_size))
+	 return false;
+      if(!mappend(&left,&left_size,c->left,c->left_size))
+      {
+	 right_size-=c->right_size;
+	 return false;
+      }
+      break;
+   }
+   return true;
 }
 
 void Undo::CheckSize()
@@ -240,39 +352,4 @@ void Undo::CheckSize()
 	 }
       }
    }
-}
-
-/* Check if previous group was the same type and position, e.g. when typing
- * letters or deleting several characters at the same position. Glue the
- * two groups together if they match. */
-void Undo::GlueGroup()
-{
-#if 0 // NOT DONE YET
-   Change *scan=chain_tail;
-   if(!scan)
-      return;
-   unsigned g=scan->group;
-   Change::type_t t=scan->type;
-   offs pos=scan->pos;
-   while(scan && scan->group==g)
-   {
-      if(scan->type!=t && scan->type!=Change::POSITION)
-	 return;
-      scan=scan->prev;
-      // check if pos glues together
-      ...
-   }
-   if(!scan)
-      return;
-   Change *to_glue=scan->next;
-   unsigned g=scan->group;
-   while(scan && scan->group==g)
-   {
-      if(scan->type!=t && scan->type!=Change::POSITION)
-	 return;
-      scan=scan->prev;
-      // check if pos glues together
-      ...
-   }
-#endif
 }

@@ -35,6 +35,7 @@
 #include "format.h"
 #include "colormnu.h"
 #include "mouse.h"
+#include "undo.h"
 
 bool ExplicitInitName=false;
 char InitName[256];
@@ -44,6 +45,10 @@ extern int MaxBackup;
 extern int le_use_default_colors;
 
 int useidl=0;
+int min_undo_levels=4;
+int max_undo_memory=128;
+int glue_small_changes=1;
+int undo_enable=1;
 
 extern int grsetno;
 
@@ -165,6 +170,14 @@ struct  opt
 {"&Shell",           STR,  (void*)Shell,     _StrPos,5,_StrLen,sizeof(Shell)    },
 {"&Help",	     STR,  (void*)HelpCmd,   _StrPos,6,_StrLen,sizeof(HelpCmd)  },
 {NULL}
+},
+   UndoOptTbl[]=
+{
+{"Enable undo", ONE, &undo_enable, 3,2},
+{"Glue small changes together", ONE, &glue_small_changes, 3,3},
+{"Mininum undo levels", NUM, (void*)&min_undo_levels,     3,4,3},
+{"Maximum undo memory (Mb)", NUM, (void*)&max_undo_memory,3,5,4},
+{NULL}
 };
 
 const struct init init[]=
@@ -203,6 +216,10 @@ const struct init init[]=
    { "preferpagetop",NUM,  &PreferPageTop	      },
    { "wordwrap",     NUM,  &wordwrap		      },
    { "syntaxhl",     NUM,  &hl_option		      },
+   { "undo_enable",  NUM,  &undo_enable		      },
+   { "undo_min_levels",NUM,&min_undo_levels	      },
+   { "undo_max_memory",NUM,&max_undo_memory	      },
+   { "undo_glue",    NUM,  &glue_small_changes	      },
 #ifdef WITH_MOUSE
    { "usemouse",     NUM,  &UseMouse		      },
 #endif
@@ -513,6 +530,10 @@ void  CorrectParameters()
       MaxBackup=1;
    if(MaxBackup>99)
       MaxBackup=99;
+   if(min_undo_levels<1)
+      min_undo_levels=1;
+   if(max_undo_memory<1)
+      max_undo_memory=1;
 
    switch(ShowScrollBar)
    {
@@ -554,6 +575,10 @@ void  CorrectParameters()
    }
 
    idlok(stdscr,useidl);
+   undo.SetMinGroups(min_undo_levels);
+   undo.SetMaxSize(max_undo_memory*1024*1024);
+   undo.SetEnable(undo_enable);
+   undo.SetGlue(glue_small_changes);
 
    if(buffer)
    {
@@ -700,7 +725,7 @@ void  W_Dialogue(struct opt *opt,
       case(NUM):
          PutStr(p->x-1,p->y,"[");
 	 PutStr(p->x+(p->len?p->len:2),p->y,"]");
-         DisplayItem(p->x+4,p->y,p->name,DIALOGUE_WIN_ATTR);
+         DisplayItem(p->x+2+(p->len?p->len:2),p->y,p->name,DIALOGUE_WIN_ATTR);
          break;
       }
    }
@@ -1118,6 +1143,10 @@ void  AppearOpt(void)
 void  ProgOpt(void)
 {
    Dialogue(ProgOptTbl,70,9," External Programs ",NULL,NULL,TOEatKey,TOHandleBut);
+}
+void  UndoOpt(void)
+{
+   Dialogue(UndoOptTbl,40,8," Undo Options ",NULL,NULL,TOEatKey,TOHandleBut);
 }
 
 static int bg,fg,c_bold,c_rev,c_ul,c_dim,b_bold,b_rev,b_ul,b_dim;
