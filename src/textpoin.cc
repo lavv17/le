@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #include <config.h>
 #include <limits.h>
 #include <stdlib.h>
@@ -49,8 +51,8 @@ void  TextPoint::DeleteTextPoint()
 
 TextPoint::TextPoint(offs o)
 {
+   Init();
    offset=o;
-   line=col=0;
    if(offset<=0)
    {
       offset=0;
@@ -58,13 +60,11 @@ TextPoint::TextPoint(offs o)
    }
    else
       flags|=COLUNDEFINED|LINEUNDEFINED;
-/*   if(offset>Size())
-      offset=Size();*/
    AddTextPoint();
-//    FindLineCol();
 }
 TextPoint::TextPoint(offs o,num l,num c)
 {
+   Init();
    offset=o;
    if(l==-1)
    {
@@ -84,25 +84,30 @@ TextPoint::TextPoint(offs o,num l,num c)
       col=c;
    }
    AddTextPoint();
-//    FindLineCol();
 }
 
-TextPoint::TextPoint()
+void TextPoint::Init()
 {
    offset=line=col=flags=0;
+   cached=false;
+   next=0;
+}
+TextPoint::TextPoint()
+{
+   Init();
    AddTextPoint();
 }
 TextPoint::TextPoint(num l,num c)
 {
-   offset=0;
+   Init();
    line=l;
    col=c;
-   flags=0;
    FindOffset();
    AddTextPoint();
 }
 TextPoint::TextPoint(const TextPoint& tp)
 {
+   Init();
    offset=tp.offset;
    line=tp.line;
    col=tp.col;
@@ -110,13 +115,32 @@ TextPoint::TextPoint(const TextPoint& tp)
    AddTextPoint();
 }
 
-TextPoint   TextPoint::operator=(const TextPoint& tp)
+TextPoint::~TextPoint()
 {
-   offset=tp.offset;
-   line=tp.line;
-   col=tp.col;
-   flags=tp.flags;
-   return(*this);
+   DeleteTextPoint();
+   if(!cached)
+      CacheTextPoint(new TextPoint(*this));
+}
+
+void TextPoint::CacheTextPoint(TextPoint *tp)
+{
+//   tp->DeleteTextPoint();
+//   tp->AddTextPoint();
+   tp->cached=true;
+
+   TextPoint *scan=base;
+   TextPoint *found=0;
+   int count=0;
+   for( ; scan; scan=scan->next)
+   {
+      if(scan->cached)
+      {
+	 found=scan;
+	 count++;
+      }
+   }
+   if(count>16)
+       delete found;
 }
 
 void  TextPoint::FindOffset()
@@ -318,7 +342,7 @@ void  TextPoint::FindLineCol()
    flags&=~(COLUNDEFINED|LINEUNDEFINED);
 }
 
-TextPoint   TextPoint::operator+=(num shift)
+const TextPoint& TextPoint::operator+=(num shift)
 {
    offs newoffs=offset+shift;
    if(newoffs<0)
@@ -335,7 +359,10 @@ TextPoint   TextPoint::operator+=(num shift)
 void  TextPoint::ResetTextPoints()
 {
    for(TextPoint *scan=TextPoint::base; scan; scan=scan->next)
-      scan->line=scan->col=scan->offset=scan->flags=0;
+   {
+      scan->line=scan->col=scan->offset=0;
+      scan->flags&=~(LINEUNDEFINED|COLUNDEFINED);
+   }
 }
 void  TextPoint::OrFlags(int mask)
 {

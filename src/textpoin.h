@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #define  COLUNDEFINED      1
 #define  LINEUNDEFINED     2
 
@@ -24,16 +26,18 @@ class TextPoint
    offs  offset;
    num   line,col;
    int   flags;
+   bool	 cached;
 
    TextPoint   *next;
-   static
-   TextPoint   *base;
+   static TextPoint   *base;
 
    void  AddTextPoint();
    void  DeleteTextPoint();
 
    void  FindOffset();
    void  FindLineCol();
+
+   void  Init();
 
 public:
    offs  Offset()
@@ -71,14 +75,20 @@ public:
    TextPoint(const TextPoint&);
    TextPoint(offs,num,num);
 
-   ~TextPoint()
-   {
-      DeleteTextPoint();
-   }
+   static void CacheTextPoint(TextPoint *);
 
-   TextPoint   operator=(const TextPoint& tp);
-   TextPoint   operator+=(num shift);
-   TextPoint   operator-=(num shift)
+   ~TextPoint();
+
+   const TextPoint& operator=(const TextPoint& tp)
+   {
+      offset=tp.offset;
+      line=tp.line;
+      col=tp.col;
+      flags=tp.flags;
+      return(*this);
+   }
+   const TextPoint& operator+=(num shift);
+   const TextPoint& operator-=(num shift)
    {
       return(*this+=-shift);
    }
