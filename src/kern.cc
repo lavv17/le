@@ -615,7 +615,7 @@ int   DeleteBlock(num left,num right)
    offs  base;
    num   size;
    num   i;
-   num   newcol,newline;
+   num   newline;
    num   num_of_lines;
    int   join_at;
    int   break_at;
@@ -643,7 +643,6 @@ int   DeleteBlock(num left,num right)
 
    TextPoint base_point(base);
    newline=base_point.Line();
-   newcol=base_point.Col();
 
    num_of_lines=TextPoint(base+size).Line()-newline;
 
