@@ -40,7 +40,8 @@ enum
 
 struct attr
 {
-   chtype attr,so_attr;
+   chtype n_attr;    // normal
+   chtype so_attr;   // stand-out
 };
 
 struct color

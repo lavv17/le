@@ -64,13 +64,13 @@ void  init_attr_table(struct color *pal)
    {
       int an=pal[i].no;
       assert(an>=0 && an<MAX_COLOR_NO);
-      attr_table[an].attr=0;
+      attr_table[an].n_attr=0;
       if(pal[i].fg!=NO_COLOR || pal[i].bg!=NO_COLOR)
       {
 	 pair=find_pair(pal[i].fg,pal[i].bg);
-	 attr_table[an].attr|=COLOR_PAIR(pair);
+	 attr_table[an].n_attr|=COLOR_PAIR(pair);
       }
-      attr_table[an].attr|=pal[i].attr;
+      attr_table[an].n_attr|=pal[i].attr;
    }
 
    color *hl=FindColor(pal,HIGHLIGHT);
@@ -81,7 +81,7 @@ void  init_attr_table(struct color *pal)
    {
       if(i==DISABLED_ITEM || i==SHADOWED || i==HIGHLIGHT)
       {
-	 attr_table[i].so_attr=attr_table[i].attr;
+	 attr_table[i].so_attr=attr_table[i].n_attr;
 	 continue;
       }
       int p=0;
@@ -90,16 +90,16 @@ void  init_attr_table(struct color *pal)
       if(pal[p].fg!=NO_COLOR || pal[p].bg!=NO_COLOR)
       {
 	 if(hl_bw || pal[p].fg==hl->fg)
-	    attr_table[i].so_attr=attr_table[i].attr^hl->attr;
+	    attr_table[i].so_attr=attr_table[i].n_attr^hl->attr;
 	 else
 	 {
-	    attr_table[i].so_attr=(attr_table[i].attr|hl->attr)&~A_COLOR;
+	    attr_table[i].so_attr=(attr_table[i].n_attr|hl->attr)&~A_COLOR;
 	    pair=find_pair(hl->fg,pal[p].bg);
 	    attr_table[i].so_attr|=COLOR_PAIR(pair);
 	 }
       }
       else
-	 attr_table[i].so_attr=attr_table[i].attr^hl->attr;
+	 attr_table[i].so_attr=attr_table[i].n_attr^hl->attr;
    }
 }
 

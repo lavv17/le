@@ -217,7 +217,7 @@ void    DrawFrames(void)
    {
       SyncTextWin();
       StatusLine();
-      attrset(STATUS_LINE_ATTR->attr);
+      attrset(STATUS_LINE_ATTR->n_attr);
       sprintf(sign," $%d",curr_frame);
       mvaddstr(StatusLineY,COLS-4,sign);
       SetCursor();

@@ -110,7 +110,7 @@ int   GetKey(int delay)
       getch_return_set=true;
       UnblockSignals();
 
-      bkgdset(NORMAL_TEXT_ATTR->attr|' ');   // recent ncurses uses bkgd for default clearing
+      bkgdset(NORMAL_TEXT_ATTR->n_attr|' ');   // recent ncurses uses bkgd for default clearing
       timeout(delay);
       int key=getch();
       if(key==ERR)

@@ -225,7 +225,7 @@ done:
 }
 void  addch_visual(chtype ch)
 {
-   attrset(curr_attr->attr);
+   attrset(curr_attr->n_attr);
    if(ch&A_ALTCHARSET)
       addch(ch);
    else
@@ -241,7 +241,7 @@ void  addch_visual(chtype ch)
 	    ct='.';
 	 attrset(curr_attr->so_attr);
 	 addch(ct);
-	 attrset(curr_attr->attr);
+	 attrset(curr_attr->n_attr);
       }
       else
 	 addch(ch);
