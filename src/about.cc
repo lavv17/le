@@ -21,18 +21,24 @@
 
 WIN   *about_window;
 
+const char copyright[]="Copyright (C) 1993-98 by Alexander V. Lukyanov";
+
 void  ShowAbout()
 {
    if(about_window)
       return;
 
-   about_window=CreateWin(MIDDLE,MIDDLE,60,12,DIALOGUE_WIN_ATTR," About ",0);
+   about_window=CreateWin(MIDDLE,MIDDLE,60,14,DIALOGUE_WIN_ATTR," About ",0);
    DisplayWin(about_window);
 
    PutStr(MIDDLE,2,"Text editor LE");
    PutStr(MIDDLE,3,"Version  " VERSION);
-   PutStr(MIDDLE,5,"Copyright (C) 1993-97 by Alexander V. Lukyanov");
+   PutStr(MIDDLE,5,copyright);
    PutStr(MIDDLE,6,"E-Mail: " EMAIL);
+   PutStr(MIDDLE,8,"This is free software that gives you freedom to use,");
+   PutStr(MIDDLE,9,"modify and redistribute it under certain conditions.");
+   PutStr(MIDDLE,10,"See the file `COPYING' in the distribution of LE for");
+   PutStr(MIDDLE,11,"more information.   There is ABSOLUTELY NO WARRANTY.");
 }
 
 void  HideAbout()
@@ -42,11 +48,4 @@ void  HideAbout()
    CloseWin();
    DestroyWin(about_window);
    about_window=NULL;
-}
-
-void  PrintAbout()
-{
-   printf("Text editor LE | Vesion " VERSION "\n"
-          "Copyright (C) 1993-97 by Alexander V. Lukyanov\n"
-          "E-Mail: " EMAIL "\n");
 }
