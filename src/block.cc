@@ -545,10 +545,10 @@ void    Read()
       return;
    BlockBegin=BlockEnd=CurrentPos;
    BlockBegin-=act_read;
-   flag=REDISPLAY_ALL;
    rblock=hide=FALSE;
 
 after_read:
+   flag=REDISPLAY_ALL;
    OptionallyConvertBlockNewLines("read");
    CurrentPos=BlockEnd;
    stdcol=GetCol();

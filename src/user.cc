@@ -1381,7 +1381,7 @@ void  UserPipeBlock()
    MessageSync("Piping...");
 
    PipeBlock(filter,TRUE,TRUE);
-
+   flag=REDISPLAY_ALL;
 }
 
 void  UserYankBlock()
