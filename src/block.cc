@@ -277,14 +277,9 @@ void    RMove()
    }
 
    HardMove(oldline,oldcol);
-   MainClipBoard.Paste();
+   MainClipBoard.PasteAndMark();
    MoveLineCol(oldline,oldcol);
    stdcol=oldcol;
-
-   BlockBegin=CurrentPos;
-   BlockEnd=TextPoint(oldline+h-1,oldcol+oldcol2-oldcol1);
-   hide=0;
-
 }
 void    Move()
 {
