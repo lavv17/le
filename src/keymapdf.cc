@@ -296,6 +296,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {SWITCH_GRAPH_MODE,"^A|g"},
 
    {SET_BOOKMARK,"\033|m"},
+   {SET_BOOKMARK,"\033|M"},
    {GO_BOOKMARK,"\033|'"},
 
 #ifdef __MSDOS__
