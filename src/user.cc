@@ -78,9 +78,12 @@ void  UserLineDown()
       {
 	 if(Text)
 	 {
-	    num old_stdcol=stdcol;
-	    InsertChar('\n');
-	    stdcol=old_stdcol;
+	    if(!Bol())
+	    {
+	       num old_stdcol=stdcol;
+	       InsertChar('\n');
+	       stdcol=old_stdcol;
+	    }
 	 }
 	 else
 	    stdcol=GetCol();
