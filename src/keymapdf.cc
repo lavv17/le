@@ -198,6 +198,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {QUIT_EDITOR,"\033|\033"},
 
    {COMPILE_CMD,"$3kf9"},
+   {COMPILE_CMD,"\033|$kf9"},
    {MAKE_CMD,"$kf9"},
    {MAKE_CMD,"\033|9"},
    {RUN_CMD,"$2kf9"},
