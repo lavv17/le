@@ -32,6 +32,7 @@
 #include "getch.h"
 #include "format.h"
 #include "colormnu.h"
+#include "mouse.h"
 
 extern char ContextHelpNames[];
 extern int MaxBackup;
@@ -55,9 +56,6 @@ static   OldTabSize;
 #define _StrPos 16
 #define _StrLen 49
 
-#define _WinWidth   (_StrPos+_StrLen+3)
-#define _WinHeight  20
-
 struct  opt
 {
    char  *name;
@@ -80,13 +78,15 @@ struct  opt
 {"Save positions",   ONE,  (void*)&SavePos,  22,3},
 
 // {"rectangle &Blocks",ONE,  (void*)&rblock,  45,2},
-{"Make backup",      ONE,  (void*)&makebak,	      45,2},
-{"No regular expr.", ONE,  (void*)&noreg,	      45,3},
-{"Use &colors",      ONE,  (void*)&UseColor,	      45,4},
-{"&Syntax highlight",ONE,  (void*)&hl_option,	      45,5},
-{"Use tabs",         ONE,  (void*)&UseTabs,	      45,6},
-{"BackSp unindents", ONE,  (void*)&BackspaceUnindents,45,7},
-{"Lazy page scroll", ONE,  (void*)&PreferPageTop,     45,8},
+{"No regular expr.", ONE,  (void*)&noreg,	      45,2},
+{"Use &colors",      ONE,  (void*)&UseColor,	      45,3},
+{"&Syntax highlight",ONE,  (void*)&hl_option,	      45,4},
+{"Use tabs",         ONE,  (void*)&UseTabs,	      45,5},
+{"BackSp unindents", ONE,  (void*)&BackspaceUnindents,45,6},
+{"Lazy page scroll", ONE,  (void*)&PreferPageTop,     45,7},
+#ifdef WITH_MOUSE
+{"Use mouse",	     ONE,  (void*)&UseMouse,	      45,8},
+#endif
 
 {"&Latin",           MANY, (void*)&inputmode,	3,5},
 {"r&Ussian",         MANY, (void*)&inputmode,	3,6},
@@ -102,10 +102,10 @@ struct  opt
 {"Vertical scroll",  NUM,  (void*)&Scroll,	22,9},
 {"Horizontal scroll",NUM,  (void*)&hscroll,	22,10},
 
-{"Backup suffix",    STR,  (void*)bak,		17,12,8,sizeof(bak)   },
-{"Backup number",    NUM,  (void*)&MaxBackup,	29,12},
-
-{"backup &Path",     STR,  (void*)BakPath,	17,13,48,sizeof(BakPath)  },
+{"Make backup",      ONE,  (void*)&makebak,	3,12},
+{"Number of backups",NUM,  (void*)&MaxBackup,	22,12},
+{"Backup suffix",    STR,  (void*)bak,		17,13,8,sizeof(bak)   },
+{"backup &Path",     STR,  (void*)BakPath,	17,14,48,sizeof(BakPath)  },
 
 /*
 {"  Save  ",   BUTTON, NULL,   MIDDLE-15,FDOWN-2},
@@ -521,6 +521,10 @@ void  CorrectParameters()
    }
 
    init_attrs();
+
+#ifdef WITH_MOUSE
+   SetupMouse();
+#endif
 }
 
 int GetNo(const struct opt *p,const struct opt *p1)
@@ -1019,7 +1023,7 @@ int    OptHandleBut(char *,int)
 void  Options()
 {
    extern const char OptionsHelp[];
-   Dialogue(opt,68,16," Options ",OptionsHelp," Setup Help ",OptEatKey,OptHandleBut);
+   Dialogue(opt,68,17," Options ",OptionsHelp," Setup Help ",OptEatKey,OptHandleBut);
 }
 
 void  SaveOpt()
