@@ -1,3 +1,7 @@
+2000-12-20  lav
+
+	* block.cc: fix block end setting in DoUnindent/DoIndent.
+
 2000-12-18  lav
 
 	* block.cc: (DoUnindent) break loop if no next line found (fixes
