@@ -1,3 +1,16 @@
+Version 1.12.0 - 2005-03-03
+
+* new syntax descriptions (Ada, GNU Assembler, Oracle PL/SQL, SNMP MIB,
+  Texinfo, TeX, PHP, Tcl, Metafont, Patch (diff output), Generic config files
+  (by Serge Vakulenko).
+* don't glue changes together in undo if there was a pause.
+* improved handling of unprintable wide characters.
+* compilation fixes.
+* made wide character selection available in string input dialog.
+* fixed search pattern corruption when searching for $x ...
+* added .cpp and .cxx extension for comment-line function.
+* fixed compilation on systems without wide characters.
+
 Version 1.11.3 - 2004-08-11
 
 * fixed input of long lines when prompted.

@@ -1,8 +1,8 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.11.3], [le@uniyar.ac.ru])
+AC_INIT([le], [1.12.0], [le@uniyar.ac.ru])
 AC_CONFIG_SRCDIR([src/edit.cc])
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER(config.h)
+AM_CONFIG_HEADER([config.h])
 
 AC_ARG_ENABLE(file-locks, [  --disable-file-locks    disable file locking],
    [enable_file_locks=$enableval],[enable_file_locks=yes])
