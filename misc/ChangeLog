@@ -1,3 +1,7 @@
+2001-09-05	lav
+
+	* syntax: perl patterns improved.
+
 2001-07-05	lav
 
 	* keymap-emacs: add suspend-editor $kspd.
