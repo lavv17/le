@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -341,7 +341,6 @@ void  InitCurses()
    keypad(stdscr,TRUE);
 
    idlok(stdscr,useidl);
-   idcok(stdscr,TRUE);
    scrollok(stdscr,FALSE);
 }
 void  TermCurses()
@@ -498,6 +497,14 @@ int     main(int argc,char **argv)
    char  newname[256];
 
    strcpy(Program,le_basename(argv[0]));
+
+#ifdef CXX_TYPE_OF_BOOL
+   if(sizeof(bool) != sizeof(CXX_TYPE_OF_BOOL))
+   {
+      fprintf(stderr,"%s: ncurses misconfigured - wrong CXX_TYPE_OF_BOOL\n",Program);
+      exit(1);
+   }
+#endif
 
 #ifdef __MSDOS__
     HOME=".";
