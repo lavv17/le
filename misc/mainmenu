@@ -53,6 +53,8 @@ submenu "&Move"
    function "&End of the file"	    end-of-file		 hide
    function "&Offset"		    to-offset		 hide
    function "&Previous edit"	    to-previous-edit	 hide rw
+   function "&Set bookmark"	    set-bookmark	 hide
+   function "&Go bookmark"          go-bookmark          hide
    function "Block begin"	    find-block-begin	 hide block
    function "Block end"		    find-block-end	 hide block
    end
