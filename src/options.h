@@ -31,3 +31,6 @@ void ColorsOpt();
 void ProgOpt();
 
 extern const struct init colors[];
+
+extern bool ExplicitInitName;
+extern char InitName[256];

@@ -82,8 +82,7 @@ extern   History        LoadHistory;
 extern int FuncKeysNum;
 
 extern  char    Make[256],Shell[256],Run[256],Compile[256],HelpCmd[256],BakPath[256];
-extern  char    InitName[];
-extern  char    FileName[];
+extern  char    FileName[256];
 
 extern  mode_t	  FileMode;
 extern  int	  file;

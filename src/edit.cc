@@ -38,6 +38,7 @@
 #include "keymap.h"
 #include "block.h"
 #include "screen.h"
+#include "options.h"
 #ifdef WITH_MOUSE
 # include "mouse.h"
 #endif
@@ -539,6 +540,7 @@ int     main(int argc,char **argv)
       DUMP_COLORS,
       PRINT_HELP,
       PRINT_VERSION,
+      CONFIG_FILE,
       USE_MMAP,
       USE_MMAP_RW
    };
@@ -553,6 +555,7 @@ int     main(int argc,char **argv)
       {"hex-mode",no_argument,0,'h'},
       {"black-white",no_argument,0,'b'},
       {"color",no_argument,0,'c'},
+      {"config",required_argument,0,CONFIG_FILE},
 #ifdef HAVE_MMAP
       {"mmap",no_argument,0,USE_MMAP},
       {"mmap-rw",no_argument,0,USE_MMAP_RW},
@@ -635,6 +638,10 @@ int     main(int argc,char **argv)
 	    optView&=~2;
 	 opteditmode=HEXM;
       	 break;
+      case(CONFIG_FILE):
+	 ExplicitInitName=true;
+	 strncpy(InitName,optarg,sizeof(InitName)-1);
+	 break;
       }
    }
    if(optUseColor!=-1)

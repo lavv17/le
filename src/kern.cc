@@ -65,7 +65,6 @@ mode_t   FileMode;
 int       file=(-1);  /* file descriptor */
 
 char      FileName[256];
-char      InitName[256];
 
 int       TabSize=8;
 int       autoindent=TRUE;

@@ -1,3 +1,8 @@
+1999-08-26  lav
+
+	* edit.cc, edit.h, kern.cc, options.cc, options.h: add --config
+	  option to specify ini file explicitly.
+
 1999-07-20  lav
 
 	* search.cc: fix backward search.

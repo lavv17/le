@@ -36,6 +36,9 @@
 #include "colormnu.h"
 #include "mouse.h"
 
+bool ExplicitInitName=false;
+char InitName[256];
+
 extern char ContextHelpNames[];
 extern int MaxBackup;
 
@@ -446,15 +449,19 @@ void  ReadConf()
    ReadConfFromFile(t,colors,false);
    ParseColors();
 
-   strcpy(InitName,".le.ini");
-   if(!ConfOK(InitName,mine=true))
+   mine=false;
+   if(!ExplicitInitName)
    {
-      sprintf(InitName,"%s/.le/le.ini",HOME);
-      if(!ConfOK(InitName,mine=false))
+      strcpy(InitName,".le.ini");
+      if(!ConfOK(InitName,mine=true))
       {
-	 sprintf(t,"%s/le.ini",PKGDATADIR);
-	 ReadConfFromFile(t,init,false);
-	 goto ini_done;
+	 sprintf(InitName,"%s/.le/le.ini",HOME);
+	 if(!ConfOK(InitName,mine=false))
+	 {
+	    sprintf(t,"%s/le.ini",PKGDATADIR);
+	    ReadConfFromFile(t,init,false);
+	    goto ini_done;
+	 }
       }
    }
    ReadConfFromFile(InitName,init,mine);
