@@ -23,6 +23,7 @@
 #include "block.h"
 #include "options.h"
 #include "clipbrd.h"
+#include "format.h"
 
 static bool RW() { return !View; }
 static bool BLK() { return !hide; }
@@ -94,9 +95,10 @@ Menu1 MainMenu[]={
    {" Block end             ^F6 ",FUNC+HIDE,UserFindBlockEnd,	BLK},
    {NULL},
 {" Fo&rmat ",SUBM,NULL, RW},
-   {" &Format one paragraph   ",FUNC+HIDE,FormatPara, RW_noMM  },
-   {" &Center line            ",FUNC+HIDE,CenterLine, RW_noMM  },
-   {" format &All             ",FUNC+HIDE,FormatAll,  RW_noMM  },
+   {" &Format one paragraph   ",FUNC+HIDE,FormatPara,	 RW_noMM  },
+   {" &Center line            ",FUNC+HIDE,CenterLine,	 RW_noMM  },
+   {" ajust &Right line       ",FUNC+HIDE,ShiftRightLine,RW_noMM  },
+   {" format &All             ",FUNC+HIDE,FormatAll,	 RW_noMM  },
    {NULL},
 {" O&thers ",SUBM},
    {" &Calculator         ",FUNC+HIDE,editcalc		       },
