@@ -17,7 +17,7 @@ AC_DEFUN([LE_FUNC_WCWIDTH_REPLACE],[
 		   }
 	   ],[],[enable_wcwidth_replecement=yes])
 	])
-	if test x$enable_wcwidth_replecement = xyes; then
+	if test x$enable_wcwidth_replecement = xyes -a x$ac_cv_header_wchar_h = xyes; then
 		AC_LIBOBJ([wcwidth])
 		AC_LIBOBJ([wcwidth1])
 		AC_MSG_RESULT([Replacing wcwidth function...])
