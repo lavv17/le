@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -126,7 +126,7 @@ struct color default_bw_pal[]=
    {SHADOWED,	  A_DIM		    },
    {SYNTAX1,	  A_BOLD	    },
    {SYNTAX2,	  A_BOLD	    },
-   {SYNTAX3,	  A_UNDERLINE	    },
+   {SYNTAX3,	  A_DIM		    },
    {-1}
 };
 
