@@ -569,14 +569,6 @@ int     main(int argc,char **argv)
 
    strcpy(Program,le_basename(argv[0]));
 
-#ifdef CXX_TYPE_OF_BOOL
-   if(sizeof(bool) != sizeof(CXX_TYPE_OF_BOOL))
-   {
-      fprintf(stderr,"%s: ncurses misconfigured - wrong CXX_TYPE_OF_BOOL\n",Program);
-      exit(1);
-   }
-#endif
-
 #ifdef __MSDOS__
     HOME=".";
     TERM="ansi";
@@ -605,6 +597,9 @@ int     main(int argc,char **argv)
       {
       case('r'):
          optView=1;
+#ifdef HAVE_MMAP
+	 opt_use_mmap=1;
+#endif
          break;
       case('h'):
          opteditmode=HEXM;
@@ -636,11 +631,13 @@ int     main(int argc,char **argv)
 	    optView=2;
 	 else
 	    optView|=2;
+	 opteditmode=HEXM;
 	 break;
       case(USE_MMAP_RW):
 	 opt_use_mmap=1;
 	 if(optView!=-1)
 	    optView&=~2;
+	 opteditmode=HEXM;
       	 break;
       }
    }
@@ -656,11 +653,7 @@ int     main(int argc,char **argv)
    if(optUseColor!=-1)
       UseColor=optUseColor;
    if(opt_use_mmap!=-1)
-   {
       buffer_mmapped=opt_use_mmap;
-      if(opteditmode==-1)
-	 editmode=HEXM;
-   }
 
    if(optind<argc-1 && argv[optind][0]=='+' && isdigit(argv[optind][1]))
    {
