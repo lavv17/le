@@ -4,7 +4,7 @@
 .ns
 .TP \\$1
 ..
-.TH LE 1 "30 Jun 1997"
+.TH LE 1 "12 Aug 1998"
 .SH LE
 .B le
 \- full screen text editor
@@ -88,19 +88,21 @@ where SIG is the signal number.
 .SH OPTIONS
 .TP
 .B \-r, \-\-read\-only
-Work as viewer, don't allow changes
+Work as viewer, don't allow changes. If your system supports mmap(2),
+it will be used to get file contents to memory.
 .TP
 .B \-h, \-\-hex\-mode
 Start in hex mode
 .TP
 .B \-\-mmap
 Use mmap(2) to load file read-only. Can be used to view very large files
-or even devices.
+or even devices. This implies -h.
 .TP
 .B \-\-mmap\-rw
 Use mmap(2) to load file read-write in MAP_SHARED mode. Use with caution --
 the changes go directly to file or disk, no undo. In this mode only replace
 can be used, but it allows editing of very large files or even devices.
+This implies -h.
 .TP
 .B \-b, \-\-black\-white
 Start in black & white mode
