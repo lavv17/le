@@ -1,3 +1,9 @@
+Version 1.7.1  2001-03-21
+
+* don't insert many newline characters at end of file in text mode on
+  next-line action.
+* html syntax patterns updated (Vladislav V. Zhuk <admin@dru.skif.net>)
+
 Version 1.7.0  2001-03-17
 
 * evil hack for linux console to allow marking text with shift-arrows.
