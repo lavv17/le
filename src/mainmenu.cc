@@ -130,6 +130,7 @@ Menu1 MainMenu[]={
       {" Load default-background    ",FUNC+HIDE,LoadColorDefaultBG},
       {" Load black                 ",FUNC+HIDE,LoadColorBlack},
       {" Load blue                  ",FUNC+HIDE,LoadColorBlue},
+      {" Load green                 ",FUNC+HIDE,LoadColorGreen},
       {" Load white                 ",FUNC+HIDE,LoadColorWhite},
       {NULL},
    {" &Programs                    ",FUNC,ProgOpt},
