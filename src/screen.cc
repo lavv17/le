@@ -120,7 +120,32 @@ void  SyncTextWin()
    int lim=-1;
    offs ptr;
 
+   static  num   OldBlockBeginLine=-1,OldBlockBeginCol=-1,
+                 OldBlockEndLine=-1,OldBlockEndCol=-1;
+
    TestPosition();
+
+   if(rblock && !hide)
+   {
+      /* This is a dirty trick, but it works */
+      /* The need for it is that editing of single line can change
+	    block marking on several lines, when the block is a rectangle */
+      if(BlockBegin.Col()!=OldBlockBeginCol
+      || BlockBegin.Line()!=OldBlockBeginLine)
+      {
+         OldBlockBeginLine=BlockBegin.Line();
+         OldBlockBeginCol =BlockBegin.Col();
+         flag=REDISPLAY_ALL;
+      }
+      if(BlockEnd.Col() !=OldBlockEndCol
+      || BlockEnd.Line()!=OldBlockEndLine)
+      {
+         OldBlockEndLine=BlockEnd.Line();
+         OldBlockEndCol =BlockEnd.Col();
+         flag=REDISPLAY_ALL;
+      }
+   }
+
    if(flag&REDISPLAY_ALL)
    {
       line=0;
@@ -148,7 +173,8 @@ void  SyncTextWin()
    else
       ptr=NextNLines(ScreenTop,line);
 
-   Redisplay(line,ptr,lim);
+   if(lim>=line)
+      Redisplay(line,ptr,lim);
    flag=0;
 }
 
@@ -204,7 +230,6 @@ void  SetCursor()
       move(GetLine()-ScrLine+TextWinY,
           ((Text&&Eol())?stdcol:GetCol())-ScrShift+TextWinX);
    }
-//    curs_set(1);
    curs_set(insert?1:2);
 }
 
@@ -241,10 +266,10 @@ void  StatusLine()
    ClearMessage();
 
    if(ShowStatusLine==SHOW_NONE)
-     return;
+      return;
 
    if(Eof())
-     strcpy(chr,"EOF");
+      strcpy(chr,"EOF");
    else
    {
       if(Eol())
@@ -296,6 +321,14 @@ void  StatusLine()
       addch_visual((byte)*bn);
 }
 
+static unsigned mkhash(byte *data,int len)
+{
+   unsigned res=0;
+   while(len-->0)
+      res+=(res<<5)+*data++;
+   return res;
+}
+
 void  Redisplay(num line,offs ptr,num limit)
 {
    extern  ShowMatchPos;
@@ -303,12 +336,8 @@ void  Redisplay(num line,offs ptr,num limit)
    int    i;
    char  s[64],*sp;
    offs  lptr;
-   int    x;
 
    struct attr *norm_attr=NORMAL_TEXT_ATTR,*blk_attr=BLOCK_TEXT_ATTR;
-
-   static  num   OldBlockBeginLine=-1,OldBlockBeginCol=-1,
-                 OldBlockEndLine=-1,OldBlockEndCol=-1;
 
    if(!hex)
       ScreenTop=LineBegin(ScreenTop);
@@ -323,29 +352,6 @@ void  Redisplay(num line,offs ptr,num limit)
    if(limit>TextWinHeight)
       limit=TextWinHeight;
 
-   TestPosition();
-
-   if(rblock && !hide)
-   {
-      /* This is a dirty trick, but it works */
-      /* The need for it is that editing of single line can change
-	    block marking on several lines, when the block is a rectangle */
-      if(BlockBegin.Col()!=OldBlockBeginCol
-      || BlockBegin.Line()!=OldBlockBeginLine)
-      {
-         OldBlockBeginLine=BlockBegin.Line();
-         OldBlockBeginCol =BlockBegin.Col();
-         flag=REDISPLAY_ALL;
-      }
-      if(BlockEnd.Col() !=OldBlockEndCol
-      || BlockEnd.Line()!=OldBlockEndLine)
-      {
-         OldBlockEndLine=BlockEnd.Line();
-         OldBlockEndCol =BlockEnd.Col();
-         flag=REDISPLAY_ALL;
-      }
-   }
-
    if(flag&REDISPLAY_ALL)
    {
       ScrollBar(FALSE);	/* redraw all the scrollbar */
@@ -354,8 +360,11 @@ void  Redisplay(num line,offs ptr,num limit)
       limit=TextWinHeight;
    }
 
+   if(limit<=line)
+      return;
+
    chtype *cl=(chtype*)alloca(TextWinWidth*sizeof(chtype));
-   chtype *clp=cl;
+   chtype *clp;
    struct attr *ca=norm_attr;
 
    if(hex)
@@ -404,70 +413,88 @@ void  Redisplay(num line,offs ptr,num limit)
 	 for(i=TextWinWidth-(clp-cl); i>0; i--)
             *clp++=norm_attr->attr|' ';
 
-	 move(TextWinY+line,TextWinX+0);
-      	 clp=cl;
 	 attrset(0);
-	 for(x=0; x<TextWinWidth; x++)
-	    addch(*clp++);
+	 mvaddchnstr(TextWinY+line,TextWinX,cl,TextWinWidth);
       }
    }
    else /* !hex */
    {
       offs  next_line_ptr;
-      static byte *hl;
+
+      offs  start=0,end=0;
+      byte *hl=0;
+      byte *hlp=0;
+
+      /* build highlight map */
+      if(hl_option && hl_active)
+      {
+	 start=PrevNLines(ScreenTop,hl_lines-1);
+	 end=NextNLines(ScreenTop,TextWinHeight+hl_lines);
+	 int ll=end-start;
+	 if(ll==0)
+	    goto after_hl;
+	 hl=(byte*)malloc(ll);
+	 if(!hl)
+	    goto after_hl;
+
+	 char *buf1=0,*buf2=0;
+	 int   len1=0,len2=0;
+
+	 if(ptr1<=start)
+	 {
+	    buf1=buffer+ptr2+start-ptr1;
+	    len1=ll;
+	 }
+	 else if(ptr1>=end)
+	 {
+	    buf1=buffer+start;
+	    len1=ll;
+	 }
+	 else
+	 {
+	    buf1=buffer+start;
+	    len1=ptr1-start;
+	    buf2=buffer+ptr2;
+	    len2=ll-len1;
+	 }
+
+	 syntax_hl::attrib_line(buf1,len1,buf2,len2,hl);
+
+	 // try to find difference in highlight
+	 static unsigned oldhash[1024];
+	 unsigned newhash;
+
+	 offs p=ScreenTop;
+	 hlp=hl+(p-start);
+	 int l;
+	 for(l=0; l<TextWinHeight && l<1024; l++)
+	 {
+	    next_line_ptr=NextLine(p);
+	    newhash=mkhash(hlp,next_line_ptr-p);
+
+	    if(p<ptr && newhash!=oldhash[l])
+	    {
+	       ptr=p;
+	       line=l;
+	    }
+	    else if(l>=limit && newhash!=oldhash[l])
+	    {
+	       limit=l+1;
+	    }
+
+	    oldhash[l]=newhash;
+	    hlp+=next_line_ptr-p;
+	    p=next_line_ptr;
+	 }
+
+	 hlp=hl+(ptr-start);
+      }
+   after_hl:
 
       for(; line<limit; line++,ptr=next_line_ptr)
       {
-	 /* build highlight map */
 	 next_line_ptr=NextLine(ptr);
-	 if(hl_option && hl_active)
-	 {
-	    int ll=next_line_ptr-ptr;
-	    if(ll==0)
-	       goto after_hl;
-	    if(!hl)
-	       hl=(byte*)malloc(ll);
-	    else
-	    {
-	       byte *ptr=(byte*)realloc(hl,ll);
-	       if(!ptr)
-	       {
-		  free(hl);
-		  hl=0;
-	       }
-	       else
-		  hl=ptr;
-	    }
-	    if(!hl)
-	       goto after_hl;
-
-	    char *buf1=0,*buf2=0;
-	    int	  len1=0,len2=0;
-
-	    if(ptr1<=ptr)
-	    {
-	       buf1=buffer+ptr2+ptr-ptr1;
-	       len1=ll;
-	    }
-	    else if(ptr1>=ptr+ll)
-	    {
-	       buf1=buffer+ptr;
-	       len1=ll;
-	    }
-	    else
-	    {
-	       buf1=buffer+ptr;
-	       len1=ptr1-ptr;
-	       buf2=buffer+ptr2;
-	       len2=ll-len1;
-	    }
-
-	    syntax_hl::attrib_line(buf1,len1,buf2,len2,hl);
-	 }
-      after_hl:
-
 	 clp=cl;
-	 byte *hlp=hl;
 
          for(col=(-ScrShift);
             col<TextWinWidth && !EolAt(ptr); ptr++)
@@ -516,19 +543,17 @@ void  Redisplay(num line,offs ptr,num limit)
             *clp++=ca->attr|' ';
          }
 
-	 move(TextWinY+line,TextWinX+0);
-      	 clp=cl;
 	 attrset(0);
-	 for(x=0; x<TextWinWidth; x++)
-	    addch(*clp++);
+	 mvaddchnstr(TextWinY+line,TextWinX,cl,TextWinWidth);
+
+	 if(hlp)
+	    hlp+=next_line_ptr-ptr;
       }
       if(hl)
-      {
 	 free(hl);
-	 hl=0;
-      }
    }
 }
+
 void  RedisplayAll()
 {
    ScrollBar(FALSE);
