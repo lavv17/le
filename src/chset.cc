@@ -190,7 +190,7 @@ int  choose_ch()
       else
       {
 #if USE_MULTIBYTE_CHARS
-	 if(mb_mode)
+	 if(0&&mb_mode)
 	 {
 	    int w=wcwidth(curr);
 	    if(w==0)
@@ -213,7 +213,7 @@ int  choose_ch()
             SetAttr((i<<4)+j==curr?CURR_BUTTON_ATTR:DIALOGUE_WIN_ATTR);
             PutCh(i*3+2,j+4,' ');
 #ifdef USE_MULTIBYTE_CHARS
-	    if(mb_mode)
+	    if(0&&mb_mode)
 	       PutWCh(i*3+3,j+4,(i<<4)+j);
 	    else // note the next line
 #endif
@@ -409,6 +409,18 @@ chtype visualize(struct attr *a,chtype ch)
 #if USE_MULTIBYTE_CHARS
 wchar_t visualize_wchar(wchar_t wc)
 {
+   unsigned char mbch[MB_CUR_MAX];
+   wctomb(0,0);
+   int mbch_len=wctomb((char*)mbch,wc);
+   if(mbch_len==1 && !chset_isprint(mbch[0]))
+   {
+      if(mbch[0]<32)
+	 return mbch[0]+'@';
+      else if(mbch[0]==127)
+	 return '?';
+      else
+	 return '.';
+   }
    if(iswprint(wc))
       return wc;
    if(wc>=0 && wc<256 && chset_isprint(wc))

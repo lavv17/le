@@ -52,7 +52,8 @@ int    message_sp=0; // number of messages on bottom of screen
 int   range_begin;
 int   range_end;
 
-#if defined(__NCURSES_H) && !defined(mvaddchnstr)
+#if defined(__NCURSES_H) && (!defined(mvaddchnstr) || defined(mvadd_wchnstr))
+#undef mvaddchnstr
 #define mvaddchnstr le_mvaddchnstr
 
 int le_mvaddchnstr(int line, int col, chtype *s, int n)
@@ -779,8 +780,10 @@ void  Redisplay(num line,offs ptr,num limit)
 		     else if(MBCharWidth>0)
 		     {
 			clwp->attr=ca->n_attr;
-			clwp->chars[0]=ch;
-			if(MBCharSize==1 && !chset_isprint(ch))
+			clwp->chars[0]=visualize_wchar(ch);
+			if(clwp->chars[0]!=ch)
+			   clwp->attr=ca->so_attr;
+			else if(MBCharSize==1 && !chset_isprint(ch))
 			{
 			   chtype v=visualize(ca,CharAt(ptr)|ca->n_attr);
 			   clwp->chars[0]=v&A_CHARTEXT;
