@@ -134,13 +134,13 @@ void  SyncTextWin()
    }
    else if(flag&REDISPLAY_AFTER)
    {
-      line=GetLine()-ScreenTop.Line()-1;
+      line=hex ? (CurrentPos-ScreenTop)/16-1 : GetLine()-ScreenTop.Line()-1;
       lim=TextWinHeight;
    }
    else if(flag&REDISPLAY_LINE)
    {
-      line=GetLine()-ScreenTop.Line()-1;
-      lim =GetLine()-ScreenTop.Line()+1;
+      line=hex ? (CurrentPos-ScreenTop)/16-1 : GetLine()-ScreenTop.Line()-1;
+      lim =line+2;
    }
    if(flag&REDISPLAY_RANGE)
    {
