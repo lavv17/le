@@ -25,6 +25,7 @@ void  FormatAll();
 void  FormatFunc();
 void  FormatPara();
 void  CenterLine();
+void  ShiftRightLine();
 void  WordWrapInsertHook();
 
 extern int LineLen;

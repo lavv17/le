@@ -65,7 +65,7 @@ void  FormatPara()
       if(Eol())
       {
          DeleteEOL();
-         for(i=ncol=0; ncol<LeftMargin && isspace(Char()) && !Eol(); i++)
+         for(i=ncol=0; !Eol() && (Char()==' ' || Char()=='\t'); i++)
          {
             if(Char()=='\t')
                ncol=Tabulate(ncol);
@@ -73,7 +73,10 @@ void  FormatPara()
                ncol++;
             MoveRight();
          }
-         if(Eol() || ((isspace(Char()) || ncol>LeftMargin) && LeftAdj))
+	 // end of paragraph condition:
+	 //    empty line, or
+	 //    large left margin (in case we ajust left)
+         if(Eol() || (ncol>LeftMargin && LeftAdj))
          {
             while(i-->0)
                MoveLeft();
@@ -288,9 +291,9 @@ void  CenterLine()
    num shift;
    if(hex || View)
       return;
-   flag=1;
+   flag=REDISPLAY_LINE;
    ToLineBegin();
-   while(Char()==' ' || Char()=='\t' && !Eol())
+   while((Char()==' ' || Char()=='\t') && !Eol())
       DeleteChar();
    if(Eol())
       return; /* nothing to center */
@@ -298,11 +301,37 @@ void  CenterLine()
    while(isspace(CharRel(-1)))
       BackSpace();
    shift=(LineLen-GetCol())/2+LeftMargin;
-   if(shift<=0)
-      return; /* too long line */
+   if(shift>0) /* not too long line */
+   {
+      ToLineBegin();
+      while(shift--)
+	 InsertChar(' ');
+   }
    ToLineBegin();
-   while(shift--)
-      InsertChar(' ');
+   stdcol=GetCol();
+}
+
+void  ShiftRightLine()
+{
+   num shift;
+   if(hex || View)
+      return;
+   flag=REDISPLAY_LINE;
+   ToLineBegin();
+   while((Char()==' ' || Char()=='\t') && !Eol())
+      DeleteChar();
+   if(Eol())
+      return; /* nothing to shift */
+   ToLineEnd();
+   while(isspace(CharRel(-1)))
+      BackSpace();
+   shift=(LineLen-GetCol())+LeftMargin;
+   if(shift>0) /* not too long line */
+   {
+      ToLineBegin();
+      while(shift--)
+	 InsertChar(' ');
+   }
    ToLineBegin();
    stdcol=GetCol();
 }
@@ -348,22 +377,18 @@ again:
       case('R'):
       case('r'):
       {
-	 int oldL=LeftAdj,oldR=RightAdj;
-	 LeftAdj=0;
-	 RightAdj=1;
-         Message("Formatting one paragraph (aligned to right)...");
-         FormatPara();
-         RedisplayAll();
-	 LeftAdj=oldL;
-	 RightAdj=oldR;
+         Message("Shifting right...");
+	 ShiftRightLine();
+	 UserLineDown();
+         RedisplayLine();
          goto again;
       }
       case('C'):
       case('c'):
          Message("Centering...");
          CenterLine();
-         RedisplayLine();
          UserLineDown();
+         RedisplayLine();
          goto again;
       case('F'):
       case('f'):
