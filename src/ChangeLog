@@ -1,3 +1,7 @@
+2004-12-30  lav
+
+	* getch.cc: workaround KEY_F definition from linux/keyboard.h
+
 2004-12-22  lav
 
 	* block.cc, chset.cc, edit.cc, edit.h, mb.h, window.h, kern.cc: fix compilation

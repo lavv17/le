@@ -173,9 +173,9 @@ int linux_process_key(int key)
 	 add=24;
       if(alt || (shift && ctrl))
 	 add=36;
-      if(shift && key>=KEY_F(11) && key<=KEY_F(20))
+      if(shift && key>=KEY_F0+11 && key<=KEY_F0+20)
 	 return key+add-10;	// ~F11 and ~F12 lose
-      else if(key>=KEY_F(1)  && key<=KEY_F(12))
+      else if(key>=KEY_F0+1 && key<=KEY_F0+12)
 	 return key+add;
    }
    // some xterm key sequences are used below.
