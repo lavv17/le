@@ -28,6 +28,7 @@
 extern   Menu1 MainMenu[];
 
 static   Menu1 *m=MainMenu;
+static   bool  free_m=false;
 
 WIN   *RootWin;
 
@@ -288,6 +289,8 @@ void  InitMenu()
 {
    int   n,pos;
 
+   if(RootWin)
+      DestroyWin(RootWin);
    RootWin=CreateWin(0,0,COLS,1,MENU_ATTR,"",NOSHADOW);
    n=0;
    pos=2;
@@ -514,12 +517,37 @@ void LoadMainMenu()
       return;
 
 read_it:
+
+   if(m && free_m)
+   {
+      for(int i=0; ; i++)
+      {
+	 if(m[i].fl==SUBM)
+	 {
+	    level++;
+	    DestroyWin((WIN*)m[i].func);
+	 }
+	 if(m[i].text==0)
+	 {
+	    if(level==0)
+	       break;
+	    level--;
+	 }
+	 else
+	 {
+	    free(m[i].text);
+	 }
+      }
+      free(m);
+   }
+
    m=(Menu1*)calloc(1024,sizeof(Menu1));
    if(!m)
    {
       fclose(f);
       return;
    }
+   free_m=true;
 
    for(;;)
    {
@@ -628,7 +656,7 @@ read_it:
       }
       else if(!strcmp(func,"hline"))
       {
-	 m[mi++].text="---";
+	 m[mi++].text=strdup("---");
 	 fskip(f);
       }
       else if(!strcmp(func,"end"))

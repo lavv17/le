@@ -1,3 +1,8 @@
+Version 1.8.1  2001-04-28
+
+* update menu key hints after keymap loading.
+* fix key hints in menu in case of 8-bit characters and ^@.
+
 Version 1.8.0  2001-04-16
 
 * sped up file loading.

@@ -248,12 +248,14 @@ void LoadKeymapEmacs()
    ReadActionMap(f);
    fclose(f);
    RebuildKeyTree();
+   LoadMainMenu();
 }
 void LoadKeymapDefault()
 {
    FreeActionCodeTable();
    ActionCodeTable=DefaultActionCodeTable;
    RebuildKeyTree();
+   LoadMainMenu();
 }
 void SaveKeymap()
 {
