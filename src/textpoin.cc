@@ -19,9 +19,8 @@
 
 #include <config.h>
 #include <limits.h>
+#include <stdlib.h>
 #include "edit.h"
-
-#define abs(a)      ((a)<0?(-(a)):(a))
 
 TextPoint   CurrentPos;
 TextPoint   ScreenTop;
