@@ -325,6 +325,5 @@ void  DumpDefaultColors(FILE *f)
 {
    DescribeColors(default_bw_pal,default_color_pal);
 
-   extern struct init colors[];
    SaveConfToOpenFile(f,colors);
 }
