@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #include <config.h>
 #include   <stdio.h>
 #include   <ctype.h>
@@ -83,28 +85,12 @@ int   FileTypeDetect=1;
 
 int   TabsInMargin;
 
-char  bak[5]="~%d~";
+char  bak[BACKUP_SUFFIX_LEN]=".~%d~";
 
 bool  buffer_mmapped=false;
 
 /*____________________________________________________________________________
 */
-int   StringCompare(offs o,char *str,num len)
-{
-/* this works only for len<=2 */
-   return(CharAt(o)==str[0] && (len<2 || CharAt(o+1)==str[1]));
-/* ... and this for any len, but it is slooower :-) */
-/*   if(o<0 || o+len>Size())
-      return(0);
-
-   num   left=ptr1-o;
-   if(left<=0)
-      return(!memcmp(buffer+ptr2-left,str,len));
-   num   right=len-left;
-   if(right<=0)
-      return(!memcmp(buffer+o,str,len));
-   return(!memcmp(buffer+o,str,left) && !memcmp(buffer+ptr2,str+left,right));*/
-}
 
 void   PreModify(void)
 {
