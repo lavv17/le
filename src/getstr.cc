@@ -50,16 +50,21 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
    if(len==NULL)
    {
       len=(&stuff);
-      if(history)
-         buf[(*len)=0]='\0';
-      else
-         (*len)=strlen(buf);
+      (*len)=strlen(buf);
    }
-   else
+
+   if(history)
    {
-      if(history)
-         buf[(*len)=0]='\0';
+      for(;;)
+      {
+	 hl=history->Prev();
+	 if(!hl)
+	    break;
+	 if(*len==hl->len && !memcmp(buf,hl->line,*len))
+	    break;
+      }
    }
+
    do
    {
       if(col==-1)
@@ -179,14 +184,28 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
             ch=choose_ch();
             if(ch==-1)
                break;
+	    StringTyped[0]=ch;
+	    StringTypedLen=1;
             goto ins;
          case(ENTER_CHAR_CODE):
-            ch=getcode();
+            ch=getcode_char();
             if(ch==-1)
                break;
+	    StringTyped[0]=ch;
+	    StringTypedLen=1;
+            goto ins;
+         case(ENTER_WCHAR_CODE):
+            ch=getcode_wchar();
+            if(ch==-1)
+               break;
+	    StringTypedLen=wctomb((char*)StringTyped,ch);
+	    if(StringTypedLen<1)
+	       break;
             goto ins;
          case(ENTER_CONTROL_CHAR):
-            ch=GetRawKey();
+	    ch=GetRawKey();
+	    StringTyped[0]=ch;
+	    StringTypedLen=1;
             goto ins;
          default:
             if(StringTypedLen!=1)
@@ -202,12 +221,13 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
                   history->Open();  // reopen history so it seeks to the begin
             }
             start=FALSE;
-            if((*len)==maxlen)
+            if((*len)+StringTypedLen>maxlen)
                break;
             for(i=(*len); i>=pos; i--)
-               buf[i+1]=buf[i];
-            (*len)++;
-            buf[pos++]=ModifyKey(ch);
+               buf[i+StringTypedLen]=buf[i];
+            (*len)+=StringTypedLen;
+	    for(i=0; i<StringTypedLen; i++)
+	       buf[pos++]=ModifyKey(StringTyped[i]);
 	    col=-1;
       }
    }

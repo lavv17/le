@@ -158,7 +158,8 @@ ActionNameRec  ActionNameTable[]=
    {SAVE_OPTIONS_LOCAL,"save-options-local"},
 
    {ENTER_CONTROL_CHAR,"quoted-insert"},
-//   {ENTER_CHAR_CODE,UserEnterCharCode},
+   {ENTER_CHAR_CODE,"insert-char-by-code"},
+   {ENTER_WCHAR_CODE,"insert-wchar-by-code"},
 
 //   WINDOW_RESIZE,
 

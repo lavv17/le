@@ -258,6 +258,8 @@ ActionCodeRec  DefaultActionCodeTable[]=
 
    {ENTER_CONTROL_CHAR,"\020"},
 //   {ENTER_CHAR_CODE,UserEnterCharCode},
+   {ENTER_WCHAR_CODE,"\033|w"},
+   {ENTER_WCHAR_CODE,"\033|W"},
 
 //   WINDOW_RESIZE,
 

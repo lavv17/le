@@ -778,7 +778,7 @@ void  Redisplay(num line,offs ptr,num limit)
 			if(a<CCHARW_MAX)
 			   clwp[-1].chars[a]=ch;
 		     }
-		     else
+		     else if(MBCharWidth>0)
 		     {
 			clwp->attr=ca->n_attr;
 			clwp->chars[0]=ch;

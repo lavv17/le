@@ -1,3 +1,18 @@
+2004-04-08  lav
+
+	* edit.cc, edit.h: (getcode) use prompt arg, use history; (getcode_char,
+	  getcode_wchar) new functions.
+	* getstr.cc: better history handling; show old value even if history
+	  is supplied; support insert-wchar-by-code action.
+	* keymap.cc, keymap.h: insert-wchar-by-code action; ENTER_WCHAR_CODE
+	  action number;
+	* keymapdf.cc: binding for insert-wchar-by-code.
+	* keymapfn.cc: functions for ENTER_WCHAR_CODE and ENTER_CHAR_CODE.
+	* mb.cc: L'\0' is width 1 in le, shown as bold @.
+	* screen.cc: don't show combining chars (width==0) in the line
+	  beginning as it confuses ncurses.
+	* user.cc, user.h: implement UserInsertWCharCode function.
+
 2004-04-02  lav
 
 	* mb.cc: use 0xfffd as replacement character for invalid mb sequences.

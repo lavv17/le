@@ -1288,6 +1288,11 @@ void  UserInsertControlChar(char ch)
    }
    stdcol=GetCol();
 }
+void  UserInsertString(const char *s,int len)
+{
+   while(len-->0)
+      UserInsertControlChar(*s++);
+}
 
 void  UserEnterControlChar()
 {
@@ -1341,9 +1346,23 @@ void  UserChooseChar()
 
 void  UserInsertCharCode()
 {
-   int   ch=getcode();
+   if(View)
+      return;
+   int ch=getcode_char();
    if(ch!=-1)
       UserInsertControlChar(ch);
+}
+void  UserInsertWCharCode()
+{
+   wchar_t ch=getcode_wchar();
+   if(ch!=-1)
+   {
+      char buf[MB_CUR_MAX+1];
+      int len=wctomb(buf,ch);
+      if(len<=0)
+	 return;
+      UserInsertString(buf,len);
+   }
 }
 
 static int base_editmode=-1;

@@ -75,9 +75,14 @@ bool MBCheckLeftAt(offs o)
 	 MBCharSize=1;
       if(MBCharSize==left_offset-i)
       {
-	 MBCharWidth=wcwidth(wc);
-	 if(MBCharWidth<0)
+	 if(wc==0)
 	    MBCharWidth=1;
+	 else
+	 {
+	    MBCharWidth=wcwidth(wc);
+	    if(MBCharWidth<0)
+	       MBCharWidth=1;
+	 }
 	 return true;
       }
       if(MBCharSize>left_offset-i)
@@ -106,9 +111,14 @@ bool MBCheckAt(offs o)
       MBCharWidth=1;
       return false;
    }
-   MBCharWidth=wcwidth(wc);
-   if(MBCharWidth<0)
+   if(wc==0)
       MBCharWidth=1;
+   else
+   {
+      MBCharWidth=wcwidth(wc);
+      if(MBCharWidth<0)
+	 MBCharWidth=1;
+   }
    return true;
 }
 wchar_t WCharAt(offs o)

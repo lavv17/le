@@ -969,7 +969,7 @@ use_key:
             ((char*)(curr->var))[pos]=0;
             break;
          case(ENTER_CHAR_CODE):
-            key=getcode();
+            key=getcode_char();
             goto do_insert;
          case(CHOOSE_CHAR):
             key=choose_ch();

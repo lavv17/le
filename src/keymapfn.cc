@@ -149,7 +149,8 @@ ActionProcRec  EditorActionProcTable[]=
    {SAVE_OPTIONS_LOCAL,SaveOpt},
 
    {ENTER_CONTROL_CHAR,UserEnterControlChar},
-//   {ENTER_CHAR_CODE,UserEnterCharCode},
+   {ENTER_CHAR_CODE,UserInsertCharCode},
+   {ENTER_WCHAR_CODE,UserInsertWCharCode},
 
 //   WINDOW_RESIZE,
 

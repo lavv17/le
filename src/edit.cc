@@ -83,7 +83,8 @@ void  GoToLineNum(num line_num)
    stdcol=GetCol();
 }
 
-int   getcode()
+History CodeHistory;
+long getcode(const char *prompt)
 {
    long  i;
    static char ch[10];
@@ -94,16 +95,28 @@ int   getcode()
 
    getcode_active=true;
 
-   if(getstring("Char: ",ch,sizeof(ch)-1)<1)
+   if(getstring(prompt,ch,sizeof(ch)-1,&CodeHistory)<1)
    {
       getcode_active=false;
       return(-1);
    }
    getcode_active=false;
    i=strtol(ch,0,0);
-   if(i<0 || i>255)
-      return(-1);
    return((int)i);
+}
+int getcode_char()
+{
+   long ch=getcode("Char: ");
+   if(ch<0 || ch>=256)
+      return -1;
+   return (int)ch;
+}
+wchar_t getcode_wchar()
+{
+   long ch=getcode("Wide Char: ");
+   if(ch<0)
+      return -1;
+   return (wchar_t)ch;
 }
 
 void ProcessDragMark()

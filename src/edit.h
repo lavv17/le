@@ -157,7 +157,9 @@ void  HardMove(num,num);
 void  ExpandTab(void);
 bool  IsAlNumAt(offs);
 
-int   getcode();
+long  getcode(const char *prompt);
+int   getcode_char();
+wchar_t getcode_wchar();
 int   AskToSave();
 void  Quit(void);
 
