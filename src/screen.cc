@@ -16,6 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/* $Id$ */
+
 #include <config.h>
 #include <string.h>
 #include <ctype.h>
@@ -425,7 +427,7 @@ void  Redisplay(num line,offs ptr,num limit)
 
 	 if(!EofAt(ptr) || line==(Size()-ScreenTop.Offset()+15)/16)
          {
-            sprintf(s,"%07lX   ",ptr);
+            sprintf(s,"%08lX   ",(unsigned long)ptr);
             for(sp=s; *sp; sp++)
 	       *clp++=norm_attr->attr|*sp;
          }
