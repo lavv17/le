@@ -335,8 +335,13 @@ search_again:
       res=no_re_search_2((char*)pattern,patlen,buf1,len1,
 			 buf2,len2,srchpos,offslim-srchpos);
    else
+   {
+      offs stop=len1+len2;
+      if(dir==FORWARD)
+	 stop=offslim;
       res=re_search_2(&rexp,buf1,len1,buf2,len2,
-		      srchpos,offslim-srchpos,&regs,offslim);
+		      srchpos,offslim-srchpos,&regs,stop);
+   }
    if(res==-1)
       return FALSE;
 
