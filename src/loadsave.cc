@@ -314,7 +314,7 @@ int   LoadFile(char *name)
       {
 	 buffer=(char*)mmap(0,st.st_size,PROT_READ|(View?0:PROT_WRITE),
 			    MAP_SHARED,file,0);
-	 if(buffer==MAP_FAILED)
+	 if(buffer==(char*)MAP_FAILED)
 	 {
 	    FError(name);
 	    EmptyText();
