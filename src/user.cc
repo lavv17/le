@@ -572,6 +572,13 @@ void  UserCommentLine()
    }
    else if(Suffix(FileName,".c") || Suffix(FileName,".h"))
    {
+      if(Char()=='/' && CharRel(1)=='/')
+      {
+	 DeleteBlock(0,2);
+	 if(Char()==' ')
+	    DeleteBlock(0,1);
+	 goto done;
+      }
       if(Char()=='/' && CharRel(1)=='*')
       {
 	 unc=1;
@@ -590,6 +597,20 @@ void  UserCommentLine()
 	 InsertBlock("/*",2);
       }
    }
+   else // default
+   {
+      if(Char()=='#')
+      {
+	 DeleteChar();
+	 if(Char()==' ')
+	    DeleteChar();
+      }
+      else
+      {
+	 InsertBlock("# ",2);
+      }
+   }
+done:
    CurrentPos=op;
    stdcol=GetCol();
    flag|=REDISPLAY_LINE;
@@ -674,6 +695,13 @@ void  UserLineEnd()
 {
    ToLineEnd();
    stdcol=GetCol();
+   if(autoindent && Text && Bol() && !Bof())
+   {
+      bool old_modified=modified;
+      UserBackSpace();
+      UserAutoindent();
+      modified=old_modified;
+   }
 }
 void  UserFileBegin()
 {

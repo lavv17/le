@@ -1,3 +1,11 @@
+2003-10-21  lav
+
+	* user.cc: (UserLineEnd) position on previous line indent if in text
+	  mode and the line is empty; (UserCommentLine) add default case,
+	  uncomment // in c files.
+	* loadsave.cc: (GetDevSize) use BLKGETSIZE if available; fix
+	  comparisions, so that looping is not possible.
+
 2002-10-03  lav
 
 	* options.cc: save hl_option in le.ini.

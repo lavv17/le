@@ -21,6 +21,10 @@
 #include <config.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
+#ifdef HAVE_SYS_MOUNT_H
+# include <sys/mount.h>
+#endif
 #ifdef HAVE_SYS_MMAN_H
 # include <sys/mman.h>
 #endif
@@ -134,6 +138,12 @@ struct  menu   ConCan4Menu[]={
 
 off_t  GetDevSize(int fd)
 {
+#ifdef BLKGETSIZE
+   unsigned long sect=0;
+   if(ioctl(fd,BLKGETSIZE,&sect)==0)
+      return ((off_t)sect)<<9;
+#endif
+
    off_t lower=0;
    off_t upper=0x10000;
    char buf[1024];
@@ -151,7 +161,7 @@ off_t  GetDevSize(int fd)
    }
    for(;;)
    {
-      if(upper==lower)
+      if(upper<=lower)
 	 break;
       off_t mid=(upper+lower)/2;
       off_t pos=lseek(fd,mid,SEEK_SET);
@@ -167,7 +177,7 @@ off_t  GetDevSize(int fd)
 	 upper=mid;
    }
 
-   return lower;
+   return upper;
 }
 
 int   LoadFile(char *name)
@@ -307,7 +317,7 @@ int   LoadFile(char *name)
    {
 #ifdef HAVE_MMAP
       if((S_ISBLK(FileMode) || S_ISCHR(FileMode))
-      && st.st_size==0)
+      && st.st_size<=0)
       {
 	 // try to get device size
 	 st.st_size=GetDevSize(file);
