@@ -431,7 +431,17 @@ void  Replace()
          hide=oldh;
          Message("Replace? Y,R-replace L-Last replace N,D-do not replace *-replace all #-in block");
          SetCursor();
+      next_action:
          action=GetNextAction();
+	 switch(action)
+	 {
+	 case REFRESH_SCREEN:
+	    refresh();
+	    goto next_action;
+	 default:
+	    if(StringTypedLen!=1)
+	       goto ret;
+	 }
          key=toupper((byte)(StringTyped[0]));
       }
       if(key=='Y' || key=='R' || action==NEWLINE || key=='*' || key=='L')

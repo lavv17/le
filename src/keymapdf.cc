@@ -42,6 +42,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {LINE_BEGIN,"\033|A"},
    {LINE_END,"$kend"},
    {LINE_END,"$kc1"},
+   {LINE_END,"$kll"},
    {LINE_END,"\033|\\$"},
    {LINE_END,"\033|e"},
    {LINE_END,"\033|E"},

@@ -32,6 +32,9 @@ void  SetCursor();
 void  SyncTextWin();
 
 void  Message(const char *msg);
+void  AddMessage(const char *msg);
+void  ClearMessage();
+
 void  ErrMsg(const char *msg);
 
 void  TestPosition();
@@ -45,6 +48,8 @@ extern int TextWinX,TextWinY,TextWinWidth,TextWinHeight,ScrollBarX,StatusLineY;
 
 extern int ShowScrollBar;
 extern int ShowStatusLine;
+
+extern int ShowMatchPos; // for hex mode
 
 enum {
     SHOW_RIGHT=0,

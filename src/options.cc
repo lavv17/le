@@ -41,7 +41,7 @@ extern int le_use_default_colors;
 
 int useidl=0;
 
-extern  grsetno;
+extern int grsetno;
 
 #define STR    0
 #define ONE    1
@@ -51,7 +51,7 @@ extern  grsetno;
 
 int fx,fy;
 
-static   OldTabSize;
+static int OldTabSize;
 
 #define _StrPos 16
 #define _StrLen 49
@@ -582,6 +582,7 @@ int GetDist(const struct opt *to,int action)
    return(d);
 }
 
+#ifdef WITH_MOUSE
 static bool InOptField(int y,int x,struct opt *o)
 {
    int oy=o->y;
@@ -604,6 +605,7 @@ static bool InOptField(int y,int x,struct opt *o)
 
    return (y==oy && x>=ox && x<ox+w);
 }
+#endif /* WITH_MOUSE */
 
 void  W_Dialogue(struct opt *opt,
              const char *SetupHelp,const char *SetupTitle,
@@ -1065,7 +1067,7 @@ void  ProgOpt(void)
    Dialogue(ProgOptTbl,70,9," External Programs ",NULL,NULL,TOEatKey,TOHandleBut);
 }
 
-static bg,fg,c_bold,c_rev,c_ul,c_dim,b_bold,b_rev,b_ul,b_dim;
+static int bg,fg,c_bold,c_rev,c_ul,c_dim,b_bold,b_rev,b_ul,b_dim;
 
 void  EditColor(color *cp,color *bp)
 {

@@ -33,6 +33,8 @@
 int       ShowScrollBar=SHOW_NONE;
 int       ShowStatusLine=SHOW_BOTTOM;
 
+int   ShowMatchPos=TRUE;
+
 int   TextWinX;
 int   TextWinY;
 int   TextWinWidth;
@@ -40,8 +42,7 @@ int   TextWinHeight;
 int   ScrollBarX;
 int   StatusLineY;
 
-/* when there_message==1 there is a message on the screen */
-int    there_message=0;
+int    message_sp=0; // number of messages on bottom of screen
 
 int   range_begin;
 int   range_end;
@@ -173,6 +174,7 @@ void  SyncTextWin()
    {
       if(++skipped<5)
       {
+	 leaveok(stdscr,TRUE);
 	 flag=REDISPLAY_ALL;
 	 return;
       }
@@ -206,14 +208,7 @@ void  ScrollBar(int check)
    attrset(SCROLL_BAR_ATTR->attr);
 
    if(check && NewPos==ScrollBarPos)
-   {
-      if(!there_message && ShowStatusLine!=SHOW_BOTTOM)
-      {
-         mvaddch(TextWinY+TextWinHeight-1,ScrollBarX,
-            (NewPos==(TextWinHeight-1)?' '|A_REVERSE:ACS_CKBOARD));
-      }
       return;
-   }
 
    for(i=TextWinY; i<TextWinY+TextWinHeight; i++)
       mvaddch(i,ScrollBarX,ACS_CKBOARD);
@@ -238,33 +233,40 @@ void  SetCursor()
       move(GetLine()-ScrLine+TextWinY,
           ((Text&&Eol())?stdcol:GetCol())-ScrShift+TextWinX);
    }
+   leaveok(stdscr,FALSE);
    if(insert)
       curs_set(1);
    else
    {
       if(curs_set(2)==ERR)
-	 curs_set(1);
+	 curs_set(1); /* in case it was invisible */
    }
 }
 
-void  Message(const char *s)
+void  AddMessage(const char *s)
 {
+   message_sp++;
    attrset(STATUS_LINE_ATTR->attr);
-   mvaddstr(LINES-1,0,s);
+   mvaddstr(LINES-message_sp,0,s);
    for(int x=strlen(s); x<COLS; x++)
       addch(' ');
    refresh();
-   there_message=1;
+}
+void  Message(const char *s)
+{
+   ClearMessage();
+   AddMessage(s);
 }
 void  ClearMessage()
 {
-   if(there_message && ShowStatusLine!=SHOW_BOTTOM)
+   if(message_sp>0 && (ShowStatusLine!=SHOW_BOTTOM || message_sp>1))
    {
-      Redisplay(TextWinHeight-1,
-              hex?ScreenTop.Offset()+16*(TextWinHeight-1)
-                :NextNLines(ScreenTop.Offset(),TextWinHeight-1),
+      Redisplay(TextWinHeight-message_sp,
+              hex?ScreenTop.Offset()+16*(TextWinHeight-message_sp)
+                :NextNLines(ScreenTop.Offset(),TextWinHeight-message_sp),
               TextWinHeight);
-      there_message=0;
+      ScrollBar(false);
+      message_sp=0;
    }
 }
 
@@ -377,7 +379,6 @@ static inline attr *FindPosAttr(offs ptr,num line,num col,byte *hlp)
 
 void  Redisplay(num line,offs ptr,num limit)
 {
-   extern  ShowMatchPos;
    num    col;
    int    i;
    char  s[64],*sp;
