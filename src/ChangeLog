@@ -1,3 +1,8 @@
+2001-05-16  lav
+
+	* bm.cc, user.cc: remember/restore also screen top and shift; set
+	  stdcol.
+
 2001-05-14  lav
 
 	* bm.cc, bm.h: new files.

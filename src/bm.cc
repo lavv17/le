@@ -26,14 +26,23 @@
 #define N 256
 
 static TextPoint *bm[N];
+static TextPoint *bm_scrtop[N];
+static num bm_scrshift[N];
 
 void SetBookmark(int n)
 {
    assert(n>=0 && n<N);
    if(bm[n])
+   {
       *bm[n]=CurrentPos;
+      *bm_scrtop[n]=ScreenTop;
+   }
    else
+   {
       bm[n]=new TextPoint(CurrentPos);
+      bm_scrtop[n]=new TextPoint(ScreenTop);
+   }
+   bm_scrshift[n]=ScrShift;
 }
 
 void ClearBookmark(int n)
@@ -43,6 +52,8 @@ void ClearBookmark(int n)
    {
       delete bm[n];
       bm[n]=0;
+      delete bm_scrtop[n];
+      bm_scrtop[n]=0;
    }
 }
 
@@ -50,7 +61,13 @@ void GoBookmark(int n)
 {
    assert(n>=0 && n<N);
    if(bm[n])
+   {
       CurrentPos=*bm[n];
+      stdcol=GetCol();
+      ScreenTop=*bm_scrtop[n];
+      ScrShift=bm_scrshift[n];
+      flag=REDISPLAY_ALL;
+   }
 }
 
 void ResetBookmarks()

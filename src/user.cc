@@ -1631,16 +1631,10 @@ void UserGoBookmark()
    curs_set(1);
    int key=getch();
    if(key<256 && key>=0)
-   {
       GoBookmark(key);
-      ClearMessage();
-      CenterView();
-   }
    else
-   {
       beep();
-      ClearMessage();
-   }
+   ClearMessage();
 }
 
 #define S(n) void UserSetBookmark##n() { SetBookmark('0'+n); }
