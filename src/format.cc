@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -152,9 +152,9 @@ void  FormatPara()
          else
             DeleteChar();
          bcol1=bcol=GetCol();
-	 
+
 	 assert(GetCol()<=LeftMargin+LineLen);
-         
+
 	 if(RightAdj && LeftAdj)
          {
             /* ÓÂÔÕÒðÊÍ ÔÕÓÎÝØ ýÎ ðØÙðÎÌÎ ÓÂõÍÊÓÂ */
@@ -314,7 +314,7 @@ void  FormatFunc()
 again:
    CenterView();
    SetCursor();
-   Message("Format: F-Format all P-format Paragraph C-Center line");
+   Message("Format: F-Format all P-format Paragraph C-Center line R-align Right");
    SetCursor();
    action=GetNextAction();
    switch(action)
@@ -339,6 +339,19 @@ again:
          FormatPara();
          RedisplayAll();
          goto again;
+      case('R'):
+      case('r'):
+      {
+	 int oldL=LeftAdj,oldR=RightAdj;
+	 LeftAdj=0;
+	 RightAdj=1;
+         Message("Formatting one paragraph (aligned to right)...");
+         FormatPara();
+         RedisplayAll();
+	 LeftAdj=oldL;
+	 RightAdj=oldR;
+         goto again;
+      }
       case('C'):
       case('c'):
          Message("Centering...");
