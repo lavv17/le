@@ -125,26 +125,14 @@ void    ExpandTab()
 
 void    RCopy()
 {
-   num     oldcol=GetCol(),oldline=GetLine();
-   num     i;
-   num     h=BlockEnd.Line()-BlockBegin.Line()+1;
-
    ClipBoard cb;
 
    if(!cb.Copy())
       return;
 
-   if(BlockBegin.Col()==BlockEnd.Col())
-   {
-      GoToLineNum(oldline);
-      for(i=0; i<h; i++)
-         NewLine();
-   }
-
-   HardMove(oldline,oldcol);
-   cb.Paste();
-   MoveLineCol(oldline,oldcol);
-   stdcol=oldcol;
+   cb.PasteAndMark();
+   CurrentPos=BlockBegin;
+   stdcol=GetCol();
 }
 
 void    Copy()
@@ -175,7 +163,7 @@ void    Copy()
 }
 
 /* when lines_deleted!=0 then last RDelete deleted block lines */
-int lines_deleted;
+static int lines_deleted;
 
 int   RDelete()
 {
@@ -193,33 +181,40 @@ int   RDelete()
       j=BlockBegin.Col();
       HardMove(i,j);
       while(!Eol() && (BlockBegin.Col()==oldcol2
-                   || j<oldcol2))
+		   || j<oldcol2))
       {
-         if(Char()=='\t')
-            j=Tabulate(j);
-         else
-            j++;
-         DeleteChar();
+	 if(Char()=='\t')
+	    ExpandTab();
+	 j++;
+	 DeleteChar();
       }
    }
+
    if(BlockBegin.Col()==oldcol2)
    {
-      int space=1;
+      bool space=true;
       GoToLineNum(BlockBegin.Line());
-      while(GetLine()<=BlockEnd.Line() && !Eof() && space)
+      while(GetLine()<=BlockEnd.Line() && !Eof())
       {
-         if(!isspace(Char()))
-            space=0;
-         MoveRight();
+	 if(Eol())
+	    MoveRightOverEOL();
+	 else if(Char()==' ' || Char()=='\t')
+	    MoveRight();
+	 else
+	 {
+	    space=false;
+	    break;
+	 }
       }
       if(space)
       {
-         lines_deleted=1;
-         CurrentPos=BlockBegin;
-         for(i=0; i<h; i++)
-            DeleteLine();
+	 lines_deleted=1;
+	 CurrentPos=BlockBegin;
+	 for(i=0; i<h; i++)
+	    DeleteLine();
       }
    }
+
    hide=TRUE;
    return 1;
 }
@@ -269,17 +264,12 @@ void    RMove()
    if(lines_deleted && oldline>oldline2)
       oldline-=h;
 
-   if(oldcol1==oldcol2)
-   {
-      GoToLineNum(oldline);
-      for(i=0; i<h; i++)
-         NewLine();
-   }
-
    HardMove(oldline,oldcol);
    MainClipBoard.PasteAndMark();
-   MoveLineCol(oldline,oldcol);
-   stdcol=oldcol;
+
+   CurrentPos=BlockBegin;
+   stdcol=GetCol();
+   hide=0;
 }
 void    Move()
 {
