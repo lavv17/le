@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,6 +18,8 @@
 
 /* $Id$ */
 
+#include <config.h>
+
 #include "highli.h"
 #include "edit.h"
 #include "screen.h"
@@ -27,6 +29,8 @@
 
 int hl_option=1;
 int hl_active=0;
+
+int hl_lines=20; // maximum height of highlighted constructs
 
 syntax_hl *syntax_hl::chain=0;
 
@@ -83,6 +87,8 @@ const char *syntax_hl::set_rexp(const char *nr)
    const char *err=re_compile_pattern(nr,strlen(nr),&rexp_c);
    if(err)
       return err;
+   rexp_c.fastmap=(char*)malloc(256);
+   re_compile_fastmap(&rexp_c);
    rexp=new char[strlen(nr)+1];
    strcpy(rexp,nr);
    return 0;
@@ -197,8 +203,22 @@ void InitHighlight()
 	       re_syntax_options=0;
 	       if(!re_compile_pattern(s,strlen(s),&rexp))
 	       {
-		  int pos=re_search_2(&rexp,buffer,ptr1,buffer+ptr2,BufferSize-ptr2,
-				      0,1024,NULL,1024);
+		  int s1=ptr1;
+		  int s2=BufferSize-ptr2;
+		  char *p1=s1?buffer:0;
+		  char *p2=s2?buffer+ptr2:0;
+		  if(p2 && !p1)
+		  {
+		     p1=p2;
+		     s1=s2;
+		     p2=0;
+		     s2=0;
+		  }
+		  int pos=-1;
+
+		  if(p1)
+		     pos=re_search_2(&rexp,p1,s1,p2,s2,
+				     0,1024,NULL,1024);
 		  if(pos!=-1)
 		  {
 		     match=1;
@@ -290,6 +310,12 @@ void InitHighlight()
 	 hl_active=1;
 	 break;
       }
+      case('h'):
+	 fscanf(f,"%d",&hl_lines);
+	 if(hl_lines<1)
+	    hl_lines=1;
+	 fskip(f);
+	 break;
       default:
 	 fskip(f);
       case('\n'):
@@ -298,14 +324,76 @@ void InitHighlight()
    }
 }
 
+class element
+{
+   static element *pool;
+   static element *hunk;
+   static int hunk_size;
+public:
+   int begin,end;
+   struct element *next;
+   byte color;
+
+   static element *New();
+   static void Free(element *);
+   static void FreeChain(element *);
+};
+
+element *element::pool=0;
+element *element::hunk=0;
+int	 element::hunk_size=0;
+
+element *element::New()
+{
+   element *res;
+   if(pool)
+   {
+      res=pool;
+      pool=pool->next;
+      return res;
+   }
+   if(!hunk || hunk_size==0)
+      hunk=new element[hunk_size=128];
+   res=hunk;
+   hunk++;
+   hunk_size--;
+   return res;
+}
+
+void element::Free(element *el)
+{
+   el->next=pool;
+   pool=el;
+}
+void element::FreeChain(element *el)
+{
+   if(!el)
+      return;
+
+   element *tmp=el;
+   while(tmp->next)
+      tmp=tmp->next;
+   tmp->next=pool;
+   pool=el;
+}
+
 void syntax_hl::attrib_line(const char *buf1,int len1,
 			    const char *buf2,int len2,unsigned char *line)
 {
    int ll=len1+len2;
+   if(ll==0)
+      return;
+
    memset(line,'\0',ll);
+
+   element *els=0;
+   element *el;
+   element **elpp;
+
    for(syntax_hl *scan=chain; scan; scan=scan->next)
    {
       int pos=0;
+      elpp=&els;
       for(;;)
       {
 	 pos=re_search_2(&scan->rexp_c,buf1,len1,buf2,len2,
@@ -316,15 +404,41 @@ void syntax_hl::attrib_line(const char *buf1,int len1,
 	 unsigned m;
 	 for(r=0,m=1; r<scan->regs.num_regs; r++,m=m<<1)
 	 {
-	    if(scan->regs.start[r]==-1 || !(scan->mask & m))
+	    if(scan->regs.start[r]==-1 || scan->regs.start[r]==scan->regs.end[r]
+	    || !(scan->mask & m))
 	       continue;
-	    if(pos<scan->regs.end[r]-1)
-	       pos=scan->regs.end[r]-1;
-	    for(int i=scan->regs.start[r]; i<scan->regs.end[r]; i++)
-	       if(line[i]==0)
-		  line[i]=scan->color;
+
+	    el=element::New();
+	    el->begin=scan->regs.start[r];
+	    el->end=scan->regs.end[r];
+	    el->color=scan->color;
+
+	    while(*elpp && (*elpp)->begin<=el->begin)
+	       elpp=&(*elpp)->next;
+
+	    el->next=*elpp;
+	    *elpp=el;
 	 }
 	 pos++;
       }
    }
+   for(el=els; el; el=el->next)
+   {
+      elpp=&el->next;
+      while(*elpp)
+      {
+	 if((*elpp)->begin<el->end)
+	 {
+	    element *tmp=*elpp;
+	    *elpp=tmp->next;
+	    element::Free(tmp);
+	 }
+	 else
+	    elpp=&(*elpp)->next;
+      }
+
+      for(int i=el->begin; i<el->end; i++)
+	 line[i]=el->color;
+   }
+   element::FreeChain(els);
 }
