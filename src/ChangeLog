@@ -1,3 +1,8 @@
+2005-01-28  lav
+
+	* chset.cc: (set_chset_no8bit) new function.
+	* undo.cc, undo.h: don't glue changes together after a pause.
+
 2005-01-04  lav
 
 	* chset.cc, screen.cc: better check for wc printability; don't use

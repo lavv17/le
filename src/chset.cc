@@ -66,6 +66,15 @@ void  set_chset_8bit_noctrl()
    for(i=127; i<128+32; i++)
       set_chset_bit(i);
 }
+void  set_chset_no8bit()
+{
+   int i;
+   clear_chset();
+   for(i=0; i<32; i++)
+      set_chset_bit(i);
+   for(i=127; i<256; i++)
+      set_chset_bit(i);
+}
 
 void  edit_chset()
 {

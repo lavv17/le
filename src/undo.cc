@@ -33,8 +33,10 @@ Undo::Undo()
    group_head=0;
    enabled=true;
    locked=false;
+   last_change_time=0;
 
    glue_changes=true;
+   glue_max_time=5;
    min_groups=4;
    max_size=0x10000000;
 }
@@ -96,11 +98,21 @@ void Undo::AddChange(Change *c)
    c->group=current_group;
    c->group_head=group_head;
    group_head=0;
-   if(glue_changes && chain_tail && chain_tail->Join(c))
+
+   bool joined=false;
+
+   time_t now=time(0);
+   if(glue_changes && chain_tail
+   && now>=last_change_time && now-last_change_time<=glue_max_time)
+      joined=chain_tail->Join(c);
+   last_change_time=now;
+
+   if(joined)
    {
       delete c;
       return;
    }
+
    c->prev=chain_tail;
    c->next=0;
    if(chain_tail)

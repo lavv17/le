@@ -74,7 +74,10 @@ class Undo
    bool locked;
    bool enabled;
 
+   time_t last_change_time;
+
    bool glue_changes;
+   int glue_max_time;
    num max_size;
    int min_groups;
 
