@@ -21,6 +21,7 @@
 #include <config.h>
 #include   <stdio.h>
 #include   <ctype.h>
+#include   <wctype.h>
 #include   <string.h>
 #include   <errno.h>
 #include   <fcntl.h>

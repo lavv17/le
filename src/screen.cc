@@ -307,7 +307,7 @@ void  StatusLine()
 #if USE_MULTIBYTE_CHARS
    wchar_t *wname=0;
 #endif
-   char  chr[4];
+   char  chr[8];
    int   l;
    char  flags[16];
 
@@ -533,7 +533,6 @@ void  Redisplay(num line,offs ptr,num limit)
 
 #ifdef USE_MULTIBYTE_CHARS
    cchar_t *clw=(cchar_t*)alloca(ll*sizeof(cchar_t));
-   memset(clw,0,ll*sizeof(cchar_t));
    cchar_t *clwp;
 #endif
 
@@ -736,6 +735,7 @@ void  Redisplay(num line,offs ptr,num limit)
 #ifdef USE_MULTIBYTE_CHARS
 	 else // mb_mode
 	 {
+	    memset(clw,0,ll*sizeof(cchar_t));
 	    clwp=clw;
 	    for( ; col<TextWinWidth && !EolAt(ptr); ptr+=MBCharSize)
 	    {

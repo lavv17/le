@@ -1,3 +1,10 @@
+2004-03-31  lav
+
+	* chset.cc, kern.cc: include wctype.h
+	* getstr.cc: remove extra ;
+	* screen.cc: allocate enough space for chr; clear line before filling
+          (this fixes wrong display for combining accents).
+
 2004-03-30  lav
 
 	* chset.cc, chset.h: (visualize_wchar) new function.

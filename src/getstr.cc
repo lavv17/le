@@ -45,7 +45,7 @@ void mb_get_col(const char *buf,int pos,int *col,int len)
    }
 #else
    *col=pos;
-#endif;
+#endif
 }
 void mb_char_left(const char *buf,int *pos,int *col,int len)
 {

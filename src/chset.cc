@@ -18,6 +18,7 @@
 
 #include <config.h>
 #include <ctype.h>
+#include <wctype.h>
 #include <string.h>
 #include "edit.h"
 #include "keymap.h"
