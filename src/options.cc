@@ -417,7 +417,7 @@ void  ReadConf()
    bool mine;
 
    sprintf(t,"%s/.le/term-%s",HOME,TERM);
-   if(ConfOK(t,false))
+   if(!ConfOK(t,false))
    {
       sprintf(t,"%s/term-%s",PKGDATADIR,TERM);
       if(!ConfOK(t,false))
