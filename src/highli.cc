@@ -461,6 +461,9 @@ void syntax_hl::attrib_line(const char *buf1,int len1,
 	 pos++;
 
 #ifdef HAVE_TIMES
+# ifndef CLOCKS_PER_SEC
+#  define CLOCKS_PER_SEC CLK_TCK
+# endif
 	 times(&tms);
 	 clock_t clock1=tms.tms_utime;
 	 if(clock1-clock>CLOCKS_PER_SEC/5)

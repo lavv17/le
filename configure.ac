@@ -1,6 +1,7 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(src/edit.cc)
-AM_INIT_AUTOMAKE(le, 1.9.1)
+AC_INIT([le], [1.9.1], [le@uniyar.ac.ru])
+AC_CONFIG_SRCDIR([src/edit.cc])
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h)
 
 AC_ARG_ENABLE(file-locks, [  --disable-file-locks    disable file locking],
@@ -131,22 +132,19 @@ LE_CHECK_REGEX_BUGS
 
 AM_WITH_REGEX
 if test x$am_cv_gnu_regex = xno; then
-   LINK_SRC="$LINK_SRC lib/regex.h"
-   LINK_DST="$LINK_DST include/regex.h"
+   AC_CONFIG_LINKS([include/regex.h:lib/regex.h])
 else
-   LINK_SRC="$LINK_SRC lib/rx.h"
-   LINK_DST="$LINK_DST include/rx.h"
+   AC_CONFIG_LINKS([include/rx.h:lib/rx.h])
 fi
 if test x$ac_cv_func_poll = xno; then
    AC_LIBOBJ(poll)
-   LINK_SRC="$LINK_SRC lib/poll.h"
-   LINK_DST="$LINK_DST include/poll.h"
+   AC_CONFIG_LINKS([include/poll.h:lib/poll.h])
 fi
 if test x$ac_cv_func_fnmatch_works = xno; then
    AC_LIBOBJ(fnmatch)
-   LINK_SRC="$LINK_SRC lib/fnmatch.h"
-   LINK_DST="$LINK_DST include/fnmatch.h"
+   AC_CONFIG_LINKS([include/fnmatch.h:lib/fnmatch.h])
 fi
 
-AC_LINK_FILES($LINK_SRC, $LINK_DST)
-AC_OUTPUT(Makefile lib/Makefile include/Makefile src/Makefile misc/Makefile doc/Makefile)
+AC_CONFIG_LINKS([$ac_config_links_1])
+AC_CONFIG_FILES([Makefile lib/Makefile include/Makefile src/Makefile misc/Makefile doc/Makefile])
+AC_OUTPUT
