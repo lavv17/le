@@ -29,6 +29,8 @@
 #include <ctype.h>
 #include "keymap.h"
 #include "format.h"
+#include "undo.h"
+#include <xalloca.h>
 
 int   LineLen=63;
 int   LeftMargin=0;
@@ -271,7 +273,12 @@ void  FormatAll()
    if(hex || View)
       return;
 
-   switch(ReadMenuBox(FAmenu,HORIZ,"ALL text will be formatted (no undo)",
+   char *message=(char*)alloca(80);
+   strcpy(message,"ALL text will be formatted");
+   if(!undo.Enabled())
+      strcat(message," (no undo)");
+
+   switch(ReadMenuBox(FAmenu,HORIZ,message,
       " Verify ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
    {
    case(0):
