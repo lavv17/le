@@ -144,7 +144,11 @@ ActionCodeRec  DefaultActionCodeTable[]=
 
 // Block ops
    {COPY_BLOCK,"$kf11"},
+   {COPY_BLOCK,"${kf4}C"},
+   {COPY_BLOCK,"${kf4}c"},
    {MOVE_BLOCK,"$kf12"},
+   {MOVE_BLOCK,"${kf4}M"},
+   {MOVE_BLOCK,"${kf4}m"},
    {DELETE_BLOCK,"${kf4}D"},
    {DELETE_BLOCK,"${kf4}d"},
    {DELETE_BLOCK,"$1kf12"},
@@ -167,7 +171,9 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {INDENT_BLOCK,"${kf4}i"},
    {UNINDENT_BLOCK,"${kf4}U"},
    {UNINDENT_BLOCK,"${kf4}u"},
+   {INSERT_PREFIX,"${kf4}>"},
    {INSERT_PREFIX,"\033|>"},
+   {INSERT_PREFIX,"\033|."},
    {TO_UPPER,"${kf4}P"},
    {TO_UPPER,"${kf4}p"},
    {TO_LOWER,"${kf4}L"},
