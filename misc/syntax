@@ -234,9 +234,9 @@ c1,2=@(Abbreviations|Abstract|AL|AlignedDisplay|AlphaList\
 
 # Perl mode, by Vladislav Zhuk <admin@dru.dn.ua>
 /*.pl|/^#![ \t]*/.*/\perl\|-\*- *perl *-\*-
-c3,1=#.*$
+c3,4=(^|[^$])(#.*)$
 c3,2=[^\\]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
-c1,4=([^[:alnum:]_\$@]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
+c1,4=([^[:alnum:]_\$@#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |chdir|chmod|chomp|chop|chown|chr|chroot|close|closedir|connect|cos|crypt\
 |dbmclose|dbmopen|define|delete|die|do|dump|each|eof|eval|exec|exists|exit|exp\
 |fcntl|fileno|flock|fock|for|foreach|format|formline|getc|getlogin|getpeername\
@@ -251,8 +251,7 @@ c1,4=([^[:alnum:]_\$@]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |srand|stat|study|substr|symlink|syscall|sysread|system|syswrite|tell|telldir\
 |tie|time|times|truncate|uc|ucfirst|umask|undef|unlink|unpack|untie|unshift\
 |use|utime|values|vec|wait|waitpid|wantarray|warn|while|write|else|elsif\
-|package|sub|BEGIN|END\
+|package|sub|BEGIN|END|INIT|CHECK\
 )([^[:alnum:]/_]|$)
-c2,1={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.| not | and | or | xor |\||->
 c2,1={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.| not | and | or | xor |\
 <=>| eq | ne | cmp | lt | gt | le | ge |&|^|->
