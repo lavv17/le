@@ -353,12 +353,12 @@ void  ReadConf()
    sprintf(t,"%s/.le/term-%s",HOME,TERM);
    if(access(t,R_OK)==-1)
    {
-      sprintf(t,"%s/term-%s",PKGLIBDIR,TERM);
+      sprintf(t,"%s/term-%s",PKGDATADIR,TERM);
       if(access(t,R_OK)==-1)
       {
 	 sprintf(t,"%s/.le/term",HOME);
 	 if(access(t,R_OK)==-1)
-            sprintf(t,"%s/term",PKGLIBDIR);
+            sprintf(t,"%s/term",PKGDATADIR);
       }
    }
    ReadConfFromFile(t,term);
@@ -369,12 +369,12 @@ void  ReadConf()
    sprintf(t,"%s/.le/colors-%s",HOME,TERM);
    if(access(t,R_OK)==-1)
    {
-      sprintf(t,"%s/colors-%s",PKGLIBDIR,TERM);
+      sprintf(t,"%s/colors-%s",PKGDATADIR,TERM);
       if(access(t,R_OK)==-1)
       {
 	 sprintf(t,"%s/.le/colors",HOME);
 	 if(access(t,R_OK)==-1)
-	    sprintf(t,"%s/colors",PKGLIBDIR);
+	    sprintf(t,"%s/colors",PKGDATADIR);
       }
    }
    ReadConfFromFile(t,colors);
@@ -386,7 +386,7 @@ void  ReadConf()
       sprintf(InitName,"%s/.le/le.ini",HOME);
       if(access(InitName,R_OK)==-1)
       {
-	 sprintf(t,"%s/le.ini",PKGLIBDIR);
+	 sprintf(t,"%s/le.ini",PKGDATADIR);
 	 ReadConfFromFile(t,init);
       }
       else
