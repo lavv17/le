@@ -1,20 +1,20 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330, 
- * Boston, MA 02111-1307, USA. 
+ * the Free Software Foundation, 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #include <config.h>
@@ -56,7 +56,7 @@ void  init_attr_table(struct color *pal)
 {
    int i;
    int pair;
-   
+
    next_pair=1;
    attr_num=0;
    for(i=0; pal[i].no!=-1; i++)
@@ -71,7 +71,7 @@ void  init_attr_table(struct color *pal)
       attr_table[i].no=pal[i].no;
       attr_num++;
    }
-   
+
    /* make standout attributes */
    for(i=0; i<attr_num; i++)
    {
@@ -110,6 +110,9 @@ struct color default_color_pal[]=
    {DISABLED_ITEM,A_NORMAL,   COLOR_BLACK,   COLOR_CYAN},
    {SCROLL_BAR,	  A_NORMAL,   COLOR_CYAN,    COLOR_BLACK},
    {SHADOWED,	  A_NORMAL,   COLOR_WHITE,   COLOR_BLACK},
+   {SYNTAX1,	  A_BOLD,     COLOR_YELLOW,  COLOR_BLUE},
+   {SYNTAX2,	  A_BOLD,     COLOR_CYAN,    COLOR_BLUE},
+   {SYNTAX3,	  A_BOLD,     COLOR_GREEN,   COLOR_BLUE},
    {-1}
 };
 struct color default_bw_pal[]=
@@ -126,6 +129,9 @@ struct color default_bw_pal[]=
    {DISABLED_ITEM,A_REVERSE	    },
    {SCROLL_BAR,	  A_DIM		    },
    {SHADOWED,	  A_DIM		    },
+   {SYNTAX1,	  A_BOLD	    },
+   {SYNTAX2,	  A_BOLD	    },
+   {SYNTAX3,	  A_UNDERLINE	    },
    {-1}
 };
 
@@ -153,7 +159,8 @@ const attr_name attr_names_table[]=
    {"rev",	  {0,A_REVERSE}},
    {"bold",	  {0,A_BOLD}},
    {"dim",	  {0,A_DIM}},
-   
+   {"ul",	  {0,A_UNDERLINE}},
+
    {"fg=black",	  {0,0,COLOR_BLACK,0}},
    {"fg=green",	  {0,0,COLOR_GREEN,0}},
    {"fg=red",	  {0,0,COLOR_RED,0}},
@@ -192,7 +199,7 @@ void  ParseOneColor(color *pal,const char *desc,int no)
    color c;
    char	 *d=(char*)alloca(strlen(desc)+1);
    int	 good=0;
-   
+
    strcpy(d,desc);
 
    c.attr=c.fg=c.bg=0;
@@ -287,7 +294,7 @@ void  DescribeColors(color *bw,color *co)
 void  DumpDefaultColors(FILE *f)
 {
    DescribeColors(default_bw_pal,default_color_pal);
-   
+
    extern struct init colors[];
    SaveConfToOpenFile(f,colors);
 }
