@@ -22,13 +22,23 @@ In the editor the following key description is used:
 Some of ^Fx, ~Fx, ^~Fx can be typed as ESC+Fx
 
 
-   There are two  mailing lists for LE.  le@uniyar.ac.ru is for
-general  discussions and  for  announcements  of "official"  le
-versions. le-devel@uniyar.ac.ru is for  development of le, that
-is  patches  and  announcements of  development  snapshots  are
-posted there. The lists are managed by majordomo; to subscribe,
-send mail  with "subscribe" in body  to le-request@uniyar.ac.ru
-or le-devel-request@uniyar.ac.ru.
+LE can be downloaded from the following locations:
+   ftp://ftp.yars.free.net/pub/software/unix/util/texteditors/
+   ftp://metalab.unc.edu/pub/Linux/apps/editors/terminal/
+   http://ftp.yars.free.net/pub/software/unix/util/texteditors/
+   http://metalab.unc.edu/pub/Linux/apps/editors/terminal/
+There is anonymous CVS server:
+   cvs -z9 -d :pserver:anonymous@swing.yars.free.net:/home/lav/cvsroot login
+   (empty password)
+   cvs -z9 -d :pserver:anonymous@swing.yars.free.net:/home/lav/cvsroot co le
+
+
+There are two very quiet mailing lists for LE. le@uniyar.ac.ru is for
+general discussions and for announcements of "official" le versions.
+le-devel@uniyar.ac.ru is for development of le, that is patches and
+announcements of development snapshots are posted there. The lists are
+managed by majordomo; to subscribe, send mail with "subscribe" in body to
+le-request@uniyar.ac.ru or le-devel-request@uniyar.ac.ru.
 
 
 Author: Alexander V. Lukyanov <lav@yars.free.net>

@@ -1,0 +1,7 @@
+Makefile
+*.tar.gz
+config.*
+bak
+config.h
+stamp-h
+.le.ini
