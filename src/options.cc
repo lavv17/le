@@ -31,6 +31,7 @@
 #include "highli.h"
 #include "getch.h"
 #include "format.h"
+#include "colormnu.h"
 
 extern char ContextHelpNames[];
 extern int MaxBackup;
@@ -261,7 +262,7 @@ void  SaveConfToOpenFile(FILE *f,const struct init *init)
    }
 }
 
-void  SaveConfToFile(char *f,const struct init *init)
+void  SaveConfToFile(const char *f,const struct init *init)
 {
    FILE  *conf;
 
@@ -367,7 +368,7 @@ void  ReadConfFromOpenFile(FILE *f,const struct init *init)
    }
 }
 
-void  ReadConfFromFile(char *ini,const struct init *init)
+void  ReadConfFromFile(const char *ini,const struct init *init)
 {
    FILE  *f;
    f=fopen(ini,"r");
@@ -577,10 +578,32 @@ int GetDist(const struct opt *to,int action)
    return(d);
 }
 
+static bool InOptField(int y,int x,struct opt *o)
+{
+   int oy=o->y;
+   int ox=o->x;
+
+   int w=3;
+   if(o->type==NUM)
+   {
+      w=o->len;
+      if(w==0)
+	 w=4;
+   }
+   else if(o->type==STR)
+      w=o->len;
+   else if(o->type==BUTTON)
+      w=ItemLen(o->name);
+
+   Absolute(&ox,w,Upper->w);
+   Absolute(&oy,1,Upper->h);
+
+   return (y==oy && x>=ox && x<ox+w);
+}
 
 void  W_Dialogue(struct opt *opt,
              const char *SetupHelp,const char *SetupTitle,
-             int (*EatKey)(int),int (*HandleButton)(char *))
+             int (*EatKey)(int),int (*HandleButton)(char *,int))
 {
    int newitem=0;
    int first=1;
@@ -699,6 +722,30 @@ use_key:
          continue;
       switch(action)
       {
+#ifdef WITH_MOUSE
+      case(MOUSE_ACTION):
+      {
+	 MEVENT mev;
+	 if(getmouse(&mev)==ERR)
+	    continue;
+	 if(mev.bstate!=BUTTON1_CLICKED && mev.bstate!=BUTTON1_DOUBLE_CLICKED)
+	    continue;
+	 for(p=opt; p->name; p++)
+	 {
+	    if(InOptField(mev.y-Upper->y,mev.x-Upper->x,p))
+	    {
+	       curr=p;
+	       if((curr->type==ONE || curr->type==MANY || curr->type==BUTTON)
+	       && mev.bstate==BUTTON1_DOUBLE_CLICKED)
+	       {
+		  ungetch(' ');
+	       }
+	       continue;
+	    }
+	 }
+	 continue;
+      }
+#endif // WITH_MOUSE
       case(NEWLINE):
       case(CANCEL):
          goto leave_cycle;
@@ -772,6 +819,9 @@ use_key:
             case(MANY):
                *(int*)(curr->var)=GetNo(curr,opt);
                break;
+	    case(BUTTON):
+	       action=HandleButton(curr->name,curr-opt);
+	       goto use_key;
             }
             break;
          }
@@ -899,7 +949,7 @@ use_key:
 leave_cycle:
    if(action==CANCEL)
    {
-esc:  for(p=opt; p->name; p++)
+      for(p=opt; p->name; p++)
       {
          if(p->type==STR)
 	 {
@@ -916,8 +966,8 @@ esc:  for(p=opt; p->name; p++)
       stdcol=GetCol();
       if(curr->type==BUTTON)
       {
-         if(HandleButton(curr->name)==CANCEL)
-            goto esc;
+         action=HandleButton(curr->name,curr-opt);
+	 goto use_key;
       }
    }
    for(p=opt; p->name; p++)
@@ -935,7 +985,7 @@ esc:  for(p=opt; p->name; p++)
 
 void  Dialogue(struct opt *opt,int WinWidth,int WinHeight,char *WinTitle,
              const char *SetupHelp,const char *SetupTitle,
-             int (*EatKey)(int),int (*HandleButton)(char *))
+             int (*EatKey)(int),int (*HandleButton)(char *,int))
 {
    WIN *optw;
    optw=CreateWin(MIDDLE,MIDDLE,WinWidth,WinHeight,DIALOGUE_WIN_ATTR,WinTitle,0);
@@ -962,9 +1012,8 @@ int    OptEatKey(int k)
    return(-1);
 }
 
-int    OptHandleBut(char *n)
+int    OptHandleBut(char *,int)
 {
-   (void)n;
    return(0);
 }
 
@@ -991,9 +1040,8 @@ int   TOEatKey(int k)
    (void)k;
    return(-1);
 }
-int   TOHandleBut(char *button_name)
+int   TOHandleBut(char *,int)
 {
-   (void)button_name;
    return(0);
 }
 void  TermOpt(void)
@@ -1088,84 +1136,75 @@ void  EditColor(color *cp,color *bp)
    bp->attr=(b_bold?A_BOLD:0)|(b_rev?A_REVERSE:0)|(b_ul?A_UNDERLINE:0)|(b_dim?A_DIM:0);
 }
 
+static color new_color_pal[MAX_COLOR_NO+1];
+static color new_bw_pal[MAX_COLOR_NO+1];
+static bool color_applied;
+
+int ColorHandleBut(char *button,int index)
+{
+   static int color_xlat[]={
+      NORMAL_TEXT,BLOCK_TEXT,STATUS_LINE,SCROLL_BAR,ERROR_WIN,VERIFY_WIN,
+      HELP_WIN,DIALOGUE_WIN,MENU_WIN,CURR_BUTTON,DISABLED_ITEM,SHADOWED,
+      SYNTAX1,SYNTAX2,SYNTAX3};
+   if(index<(int)(sizeof(color_xlat)/sizeof(*color_xlat)))
+   {
+      int color_no=color_xlat[index];
+      EditColor(FindColor(new_color_pal,color_no),
+                FindColor(new_bw_pal,color_no));
+      return -1;
+   }
+   char *l=strchr(button,'&');
+   if(!l)
+      return -1;
+   char res=toupper(l[1]);
+   if(res=='S' || res=='U' || res=='T' || res=='O')
+   {
+      memcpy(color_pal,new_color_pal,sizeof(new_color_pal));
+      memcpy(bw_pal,new_bw_pal,sizeof(new_bw_pal));
+      init_attrs();
+      color_applied=true;
+   }
+   if(res=='S')
+      ColorsSave();
+   else if(res=='T')
+      ColorsSaveForTerminal();
+   return CANCEL;
+}
+
 void  ColorsOpt()
 {
-   color new_color_pal[MAX_COLOR_NO+1];
-   color new_bw_pal[MAX_COLOR_NO+1];
-
    memcpy(new_color_pal,color_pal,sizeof(new_color_pal));
    memcpy(new_bw_pal,bw_pal,sizeof(new_bw_pal));
 
-   WIN *color_win=CreateWin(MIDDLE,MIDDLE,40,22,MENU_ATTR," Select color to tune ");
-   DisplayWin(color_win);
+   static struct opt m[]={
+      {" Normal text                        ",BUTTON,NULL,2,2},
+      {" Block text                         ",BUTTON,NULL,2,3},
+      {" Status line                        ",BUTTON,NULL,2,4},
+      {" Scroll bar                         ",BUTTON,NULL,2,5},
+      {" Error window                       ",BUTTON,NULL,2,6},
+      {" Verify window                      ",BUTTON,NULL,2,7},
+      {" Help window                        ",BUTTON,NULL,2,8},
+      {" Dialogue window                    ",BUTTON,NULL,2,9},
+      {" Menu                               ",BUTTON,NULL,2,10},
+      {" Current button                     ",BUTTON,NULL,2,11},
+      {" Disabled button                    ",BUTTON,NULL,2,12},
+      {" Shadow                             ",BUTTON,NULL,2,13},
+      {" Syntax 1                           ",BUTTON,NULL,2,14},
+      {" Syntax 2                           ",BUTTON,NULL,2,15},
+      {" Syntax 3                           ",BUTTON,NULL,2,16},
+//       {"[&Save]",			      BUTTON,NULL,MIDDLE-15,FDOWN-2},
+//       {"[Save for &tty]",                     BUTTON,NULL,MIDDLE-4, FDOWN-2},
+//       {"[&Use]",                              BUTTON,NULL,MIDDLE+7, FDOWN-2},
+//       {"[&Cancel]",			      BUTTON,NULL,MIDDLE+14,FDOWN-2},
+      {"[   &Ok   ]",                         BUTTON,NULL,MIDDLE-8,FDOWN-2},
+      {"[ &Cancel ]",			      BUTTON,NULL,MIDDLE+8,FDOWN-2},
+      {NULL}};
 
-   static struct menu m[]=
-   {
-      {"Normal text                         ",2,1},
-      {"Block text                          ",2,2},
-      {"Status line                         ",2,3},
-      {"Scroll bar                          ",2,4},
-      {"Error window                        ",2,5},
-      {"Verify window                       ",2,6},
-      {"Help window                         ",2,7},
-      {"Dialogue window                     ",2,8},
-      {"Menu                                ",2,9},
-      {"Current button                      ",2,10},
-      {"Disabled button                     ",2,11},
-      {"Shadow                              ",2,12},
-      {"Syntax 1                            ",2,13},
-      {"Syntax 2                            ",2,14},
-      {"Syntax 3                            ",2,15},
-      {"---",2,FDOWN-5},
-      {"&Save colors                         ",2,FDOWN-4},
-      {"Save as &terminal specific           ",2,FDOWN-3},
-      {"&Use colors for this session         ",2,FDOWN-2},
-      {"&Cancel                            ^X",2,FDOWN-1},
-      {0}
-   };
+   color_applied=false;
 
-   bool applied=false;
-   int curr=0;
-   for(;;)
-   {
-      int res=ReadMenu(m,VERT,MENU_ATTR,CURR_BUTTON_ATTR,curr);
-      if(res<0)
-      {
-	 curr=-res-1;
-	 static int color_xlat[]={
-	    NORMAL_TEXT,BLOCK_TEXT,STATUS_LINE,SCROLL_BAR,ERROR_WIN,VERIFY_WIN,
-	    HELP_WIN,DIALOGUE_WIN,MENU_WIN,CURR_BUTTON,DISABLED_ITEM,SHADOWED,
-	    SYNTAX1,SYNTAX2,SYNTAX3};
-	 assert(unsigned(curr)<sizeof(color_xlat)/sizeof(color_xlat[0]));
-	 int color_no=color_xlat[curr];
-	 EditColor(FindColor(new_color_pal,color_no),
-		   FindColor(new_bw_pal,color_no));
-	 continue;
-      }
-      if(res=='S' || res=='U' || res=='T')
-      {
-	 memcpy(color_pal,new_color_pal,sizeof(new_color_pal));
-	 memcpy(bw_pal,new_bw_pal,sizeof(new_bw_pal));
-	 init_attrs();
-      	 applied=true;
-      }
-      if(res=='S' || res=='T')
-      {
-	 DescribeColors(bw_pal,color_pal);
-	 const char *const n="/.le/colors";
-	 char *f=(char*)alloca(strlen(HOME)+strlen(n)+1+strlen(TERM)+1);
-	 if(res=='S')
-	    sprintf(f,"%s%s",HOME,n);
-	 else
-	    sprintf(f,"%s%s-%s",HOME,n,TERM);
-	 SaveConfToFile(f,colors);
-      }
-      break;
-   }
+   Dialogue(m,40,21," Select color to tune ",NULL,NULL,TOEatKey,ColorHandleBut);
 
-   CloseWin();
-   DestroyWin(color_win);
-   if(applied)
+   if(color_applied)
    {
       clearok(stdscr,1);
       flag=REDISPLAY_ALL;
