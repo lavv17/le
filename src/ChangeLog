@@ -1,3 +1,7 @@
+2004-08-19  lav
+
+	* search.cc: prevent original pattern being corrupted by strtok.
+
 2004-08-11  lav
 
 	* getstr.cc: fixed display of long input lines.

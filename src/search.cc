@@ -127,7 +127,8 @@ static bool CompilePattern()
    numeric_search=false;
    no_regex=false;
 
-   unsigned char *p=pattern;
+   unsigned char *p=(unsigned char *)alloca(patlen+1);
+   memcpy(p,pattern,patlen);
    int len=patlen;
    if(*p=='$') // search options
    {
