@@ -145,6 +145,8 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {COPY_FROM_UP,"^T"},
    {COPY_FROM_DOWN,"^V"},
 
+   {UNDO,"^Z"},
+
 // File ops
    {LOAD_FILE,"$kf3"},
    {LOAD_FILE,"\033|3"},

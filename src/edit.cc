@@ -44,6 +44,7 @@
 #include "options.h"
 #include "about.h"
 #include "search.h"
+#include "undo.h"
 #ifdef WITH_MOUSE
 # include "mouse.h"
 #endif
@@ -207,7 +208,9 @@ void    Edit()
       proc=GetActionProc(EditorActionProcTable,action);
       if(proc)
       {
+	 undo.BeginUndoGroup();
 	 proc();
+	 undo.EndUndoGroup();
 	 continue;
       }
       if(action!=NO_ACTION)
@@ -239,6 +242,7 @@ void    Edit()
 	       continue;
 	    }
 	 }
+	 undo.BeginUndoGroup();
 	 if(((insert && !right) || Eof())
 	 && !buffer_mmapped)
 	 {
@@ -257,6 +261,7 @@ void    Edit()
 	       right=1;
 	 }
 	 flag|=REDISPLAY_LINE;
+	 undo.EndUndoGroup();
       }
       else
       {
@@ -291,6 +296,7 @@ void    Edit()
 	    }
 	    continue;
 	 }
+	 undo.BeginUndoGroup();
 	 switch(key)
 	 {
 	 case('\n'):
@@ -311,6 +317,7 @@ void    Edit()
 	    }
 	    flag|=REDISPLAY_LINE;
 	 }
+	 undo.EndUndoGroup();
       }
    }
 }

@@ -1,3 +1,9 @@
+2004-05-05  lav
+
+	* Makefile.am: (undo.cc, undo.h) new files.
+	* edit.cc, kern.cc, user.cc, user.h: add undo support.
+	* keymap.cc, keymap.h, keymapfn.cc, keymapdf.cc: add undo/redo actions.
+
 2004-04-29  lav
 
 	* chset.cc: (choose_wch) new function to choose a wide char.

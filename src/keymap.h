@@ -74,6 +74,12 @@ enum  Action
    COPY_FROM_UP,
    COPY_FROM_DOWN,
 
+// Undo/redo
+   UNDO,
+   REDO,
+   UNDO_STEP,
+   REDO_STEP,
+
 // File ops
    LOAD_FILE,
    SWITCH_FILE,

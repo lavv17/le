@@ -98,6 +98,8 @@ void  UserAutoindent();
 void  UserNewLine();
 
 void  UserUndelete();
+void  UserUndo();
+void  UserRedo();
 
 void  UserEnterControlChar();
 

@@ -92,6 +92,12 @@ ActionNameRec  ActionNameTable[]=
    {COPY_FROM_UP,"copy-from-up"},
    {COPY_FROM_DOWN,"copy-from-down"},
 
+// Undo/redo
+   {UNDO,"undo"},
+   {REDO,"redo"},
+   {UNDO_STEP,"undo-step"},
+   {REDO_STEP,"redo-step"},
+
 // File ops
    {LOAD_FILE,"load-file"},
    {SWITCH_FILE,"switch-file"},

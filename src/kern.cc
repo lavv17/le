@@ -37,6 +37,7 @@
 #include   "keymap.h"
 #include   "edit.h"
 #include   "mb.h"
+#include   "undo.h"
 
 #ifndef O_NDELAY
 #define O_NDELAY 0
@@ -330,15 +331,15 @@ void  CalculateLineCol(num *line,num *col,offs source,offs target)
    }
 }
 
-int   InsertBlock(char *block_left,register num size_left,char *block_right,num size_right)
+int   InsertBlock(char *block_left,num size_left,char *block_right,num size_right)
 {
    if(buffer_mmapped)
    {
       return ERR;
    }
 
-   register num   i;
-   register offs  oldoffset;
+   num   i;
+   offs  oldoffset;
    num   num_of_lines,num_of_columns,oldline,oldcol;
    num	 num_of_lines_curr,num_of_columns_curr;
    int   break_at;
@@ -352,7 +353,6 @@ int   InsertBlock(char *block_left,register num size_left,char *block_right,num 
       return(OK);
 
    PreModify();
-
    if(size_left>0)
    {
       if(oldptr1>ptr1)
@@ -371,6 +371,9 @@ int   InsertBlock(char *block_left,register num size_left,char *block_right,num 
       new_oldmodified=modified;
    else
       new_oldmodified=oldmodified;
+
+   if(undo.Enabled())
+      undo.AddChange(new Undo::Insert(block_left,size_left,block_right,size_right));
 
    memmove(buffer+ptr1,block_left,size_left);
    memmove(buffer+ptr2-size_right,block_right,size_right);
@@ -714,9 +717,11 @@ int   DeleteBlock(num left,num right)
       oldptr1=ptr1;
    if(oldptr2>ptr2 && right>0)
       oldptr2=ptr2;
-
    if(oldptr1==ptr1 && oldptr2==ptr2)
       oldmodified=modified;
+
+   if(undo.Enabled())
+      undo.AddChange(new Undo::Delete(buffer+ptr1-left,left,buffer+ptr2,right));
 
    size=left+right;
    base=Offset()-left;
@@ -816,6 +821,8 @@ int   ReplaceBlock(char *block,num size)
       if(BolAt(o))
 	 num_of_lines++;
 
+   if(undo.Enabled())
+      undo.AddChange(new Undo::Replace(buffer+base,size,block,size));
    memmove(buffer+base,block,size);
 
    for(o=base; o<base+size; o++)
@@ -1141,7 +1148,6 @@ offs  ScanForCharForward(offs start,byte ch)
 void  InsertAutoindent(num oldcol)
 {
    int   UseTabsNow=UseTabs;
-   offs  ptr;
    num   cnt;
    num   oldmargin;
    num   newmargin=0;

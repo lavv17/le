@@ -81,6 +81,12 @@ ActionProcRec  EditorActionProcTable[]=
    {COPY_FROM_UP,UserCopyFromUp},
    {COPY_FROM_DOWN,UserCopyFromDown},
 
+// Undo/redo
+   {UNDO,UserUndo},
+   {REDO,UserRedo},
+//    {UNDO_STEP,"undo-step"},
+//    {REDO_STEP,"redo-step"},
+
 // File ops
    {LOAD_FILE,UserLoad},
    {SWITCH_FILE,UserSwitch},

@@ -36,6 +36,7 @@
 #include "format.h"
 #include "about.h"
 #include "bm.h"
+#include "undo.h"
 
 void  UserDeleteToEol()
 {
@@ -1200,6 +1201,21 @@ void  UserUndelete()
    if(View)
       return;
    Undelete();
+   flag=REDISPLAY_ALL;
+   stdcol=GetCol();
+}
+void  UserUndo()
+{
+   if(View)
+      return;
+   undo.UndoGroup();
+   flag=REDISPLAY_ALL;
+}
+void  UserRedo()
+{
+   if(View)
+      return;
+   undo.RedoGroup();
    flag=REDISPLAY_ALL;
    stdcol=GetCol();
 }
