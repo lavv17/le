@@ -210,7 +210,8 @@ void    alarmsave(int a)
    if(modified==3)
    {
       num  act_written;
-      if(WriteBlock(fd,dump_pos,(interrupted>5?Size():chunk),&act_written)!=OK)
+      if(WriteBlock(fd,dump_pos,(interrupted>5?Size()-dump_pos:chunk),
+		     &act_written)!=OK)
       {
       done:
 	 close(fd);
