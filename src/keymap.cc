@@ -346,7 +346,7 @@ static int PrettyCodeScore(const char *c)
 	 || sscanf(term_name,"kf%d",&fk)==1)
 	 {
 	    if(shift)
-	       score+=4*shift;
+	       score+=2+2*shift;
 	    else
 	       score+=2;
 	    if(shift)
@@ -355,7 +355,7 @@ static int PrettyCodeScore(const char *c)
 	 else
 	    score+=8;
 	 term_str=tigetstr(term_name);
-	 if(!term_str || !*term_str)
+	 if(term_str==(char*)-1 || !term_str || !*term_str)
 	    return 1000000;
 	 break;
       case('|'):

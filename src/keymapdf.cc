@@ -272,7 +272,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {CONTEXT_HELP,"\033|$kf1"},
    {CONTEXT_HELP,"$2kf1"},
 
-//    {SUSPEND_EDITOR,"$ksusp"},
+   {SUSPEND_EDITOR,"$kspd"},
    {QUIT_EDITOR,"\030"},
    {QUIT_EDITOR,"$kext"},
    {QUIT_EDITOR,"$kcan"},
