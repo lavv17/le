@@ -703,8 +703,6 @@ int     main(int argc,char **argv)
       for(; optind<argc; optind++)
          LoadHistory+=argv[optind];
       sprintf(newname,"%.255s",argv[argc-1]);
-      if(ChooseFileName(newname)<0)
-	 newname[0]=0;
    }
    if(newname[0] && file_check(newname)==ERR)
    {

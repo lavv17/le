@@ -1,3 +1,7 @@
+2001-06-08  lav
+
+	* edit.cc: don't call ChooseFile for file from command line.
+
 2001-05-22  lav
 
 	* user.cc: disable IndentPrefix in r/o mode.
