@@ -243,3 +243,19 @@ AC_DEFUN(CXX_DYNAMIC_INITIALIZERS,
    fi
    AC_LANG_RESTORE
 ])
+
+AC_DEFUN(LFTP_PROG_CXXLINK,
+[
+   AC_MSG_CHECKING(how to link simple c++ programs)
+   if test "$GCC" = yes -a "$GXX" = yes; then
+      old_CXX="$CXX"
+      CXX="$CC"
+      AC_LANG_SAVE
+      AC_LANG_CPLUSPLUS
+      AC_TRY_COMPILE([],[char *a=new char[10]; exit(0);],
+	 [],[CXX="$old_CXX";])
+      AC_LANG_RESTORE
+   fi
+   AC_MSG_RESULT(using $CXX)
+])
+

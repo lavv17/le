@@ -1,0 +1,5 @@
+1999-08-26  lav
+
+	* configure.in, acinclude.m4: test if gcc can be used to link simple
+	  c++ programs to avoid libstdc++ linkage.
+
