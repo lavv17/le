@@ -27,6 +27,7 @@
 #include "rus.h"
 #include "keymap.h"
 #include "options.h"
+#include "highli.h"
 
 extern  LineLen;
 extern  LeftMargin;
@@ -72,10 +73,11 @@ struct  opt
 {"Save history",     ONE,  (void*)&SaveHst,  22,2},
 {"Save positions",   ONE,  (void*)&SavePos,  22,3},
 
-{"rectangle &Blocks",ONE,  (void*)&rblock,  45,2},
-{"Make backup",      ONE,  (void*)&makebak,  45,3},
-{"No regular expr.", ONE,  (void*)&noreg,   45,4},
-{"Use colors",       ONE,  (void*)&UseColor,   45,5},
+// {"rectangle &Blocks",ONE,  (void*)&rblock,  45,2},
+{"Make backup",      ONE,  (void*)&makebak,  45,2},
+{"No regular expr.", ONE,  (void*)&noreg,   45,3},
+{"Use colors",       ONE,  (void*)&UseColor,   45,4},
+{"Syntax highlight", ONE,  (void*)&hl_option,	45,5},
 {"Use tabs",         ONE,  (void*)&UseTabs,  45,6},
 {"BackSp unindents", ONE,  (void*)&BackspaceUnindents,45,7},
 
@@ -218,6 +220,12 @@ struct init
    { "scroll_bar_bw",	STR,  color_descriptions[SCROLL_BAR+MAX_COLOR_NO]  },
    { "shadowed",	STR,  color_descriptions[SHADOWED]  		   },
    { "shadowed_bw",	STR,  color_descriptions[SHADOWED+MAX_COLOR_NO]    },
+   { "syntax1",		STR,  color_descriptions[SYNTAX1]		   },
+   { "syntax1_bw",	STR,  color_descriptions[SYNTAX1+MAX_COLOR_NO]	   },
+   { "syntax2",		STR,  color_descriptions[SYNTAX2]		   },
+   { "syntax2_bw",	STR,  color_descriptions[SYNTAX2+MAX_COLOR_NO]	   },
+   { "syntax3",		STR,  color_descriptions[SYNTAX3]		   },
+   { "syntax3_bw",	STR,  color_descriptions[SYNTAX3+MAX_COLOR_NO]	   },
    { NULL }
 };
 
@@ -462,10 +470,16 @@ void  CorrectParameters()
      StatusLineY=-1;
      break;
    }
+#if 0
    if(text_w)
       delwin(text_w);
    text_w=subwin(stdscr,TextWinHeight,TextWinWidth,TextWinY,TextWinX);
    assert(text_w!=NULL);
+   if(status_w)
+      delwin(status_w);
+   status_w=subwin(stdscr,1,0,StatusLineY,0);
+   assert(status_w!=NULL);
+#endif
 
    idlok(stdscr,useidl);
 
