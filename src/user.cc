@@ -1316,5 +1316,5 @@ void  UserPipeBlock()
 
 void  UserYankBlock()
 {
-   MainClipBoard.Paste();
+   MainClipBoard.PasteAndMark();
 }
