@@ -14,6 +14,8 @@
 
 #undef USE_NCURSES_H
 
+#undef CURSES_BOOL
+
 @BOTTOM@
 
 #ifndef HAVE_STRERROR

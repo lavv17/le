@@ -219,6 +219,56 @@ AC_DEFUN(LE_NCURSES_BUGS,
    fi
 ])
 
+dnl determine curses' bool actual type
+AC_DEFUN(LE_CURSES_BOOL,
+[
+   AC_MSG_CHECKING(for curses bool type)
+   AC_CACHE_VAL(ac_cv_curses_bool,
+   [
+      old_LIBS="$LIBS"
+      old_CFLAGS="$CFLAGS"
+      LIBS="$LIBS $CURSES_LIBS"
+      CFLAGS="$CFLAGS $CURSES_INCLUDES"
+      AC_TRY_RUN([
+	    #ifdef USE_NCURSES_H
+	    # include <ncurses.h>
+	    #else
+	    # include <curses.h>
+	    #endif
+	    int main()
+	    {
+	       FILE *fp = fopen("cf_test.out", "w");
+	       if (fp != 0) {
+		  bool x = TRUE;
+		  if ((-x) >= 0)
+		     fputs("unsigned ", fp);
+		  if (sizeof(x) == sizeof(int))       fputs("int",  fp);
+		  else if (sizeof(x) == sizeof(char)) fputs("char", fp);
+		  else if (sizeof(x) == sizeof(short))fputs("short",fp);
+		  else if (sizeof(x) == sizeof(long)) fputs("long", fp);
+		  else fputs("unknown",fp);
+		  fclose(fp);
+	       }
+	       exit(0);
+	    }
+	 ],
+	 [ac_cv_curses_bool="`cat cf_test.out`"
+	  case "$ac_cv_curses_bool" in
+	    *unknown*) ac_cv_curses_bool=unknown;;
+	  esac
+	 ],
+	 [ac_cv_curses_bool=unknown]
+	 [ac_cv_curses_bool=unknown])
+      rm -f cf_test.out
+      LIBS="$old_LIBS"
+      CFLAGS="$old_CFLAGS"
+   ])
+   AC_MSG_RESULT($ac_cv_curses_bool)
+   if test x$ac_cv_curses_bool != xunknown; then
+      AC_DEFINE_UNQUOTED(CURSES_BOOL,$ac_cv_curses_bool)
+   fi
+])
+
 dnl check if c++ compiler can use dynamic initializers for static variables
 AC_DEFUN(CXX_DYNAMIC_INITIALIZERS,
 [
