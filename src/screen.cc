@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2004 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -704,7 +704,7 @@ void  Redisplay(num line,offs ptr,num limit)
 		     {
 			clwp->attr=ca->n_attr;
 			clwp->chars[0]=ch;
-			if(MBCharSize==1 && ch<32)
+			if(MBCharSize==1 && !chset_isprint(ch))
 			{
 			   chtype v=visualize(ca,CharAt(ptr)|ca->n_attr);
 			   clwp->chars[0]=v&A_CHARTEXT;
@@ -716,7 +716,7 @@ void  Redisplay(num line,offs ptr,num limit)
 		  col+=MBCharWidth;
 	       }
 	       if(hlp)
-		  hlp++;
+		  hlp+=MBCharSize;
 	    }
 	    if(col<0)
 	       col=0;

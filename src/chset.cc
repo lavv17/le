@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2004 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -248,10 +248,17 @@ void  addch_visual(chtype ch)
    }
 }
 
+bool chset_isprint(int c)
+{
+   if(c>=256 || c<0)
+      return true;
+   return !(chset[c/CHSET_BITS_PER_BYTE]&(1<<(c%CHSET_BITS_PER_BYTE)));
+}
+
 chtype visualize(struct attr *a,chtype ch)
 {
    unsigned char ct=ch&A_CHARTEXT;
-   if(chset[ct/CHSET_BITS_PER_BYTE]&(1<<(ct%CHSET_BITS_PER_BYTE)))
+   if(!chset_isprint(ct))
    {
       if(ct<32)
 	 ct+='@';

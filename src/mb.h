@@ -40,7 +40,7 @@ static inline int CharSize()  { return CharSizeAt(Offset()); }
 static inline int CharWidth() { return CharWidthAt(Offset()); }
 
 #else
-# define mb_mode false
+# define mb_mode	(false)
 # define MBCheckLeft()	(false)
 # define MBCheckLeftAt(o) (false)
 # define MBCheckAt(o)	(false)

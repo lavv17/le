@@ -1,3 +1,10 @@
+2004-03-29  lav
+
+	* chset.cc, chset.h: (chset_isprint) new function.
+	* edit.h: don't redefine _XOPEN_SOURCE_EXTENDED.
+	* mb.cc: make mb_ptr const.
+	* screen.cc: use chset_isprint; fix highlight in mb_mode.
+
 2004-03-23  lav
 
 	* edit.h: define _XOPEN_SOURCE_EXTENDED; prototype for IsAlNumAt.

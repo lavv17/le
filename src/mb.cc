@@ -31,7 +31,7 @@ int   MBCharSize=1;
 int   MBCharWidth=1;
 
 static int mb_flags=MBSW_ACCEPT_UNPRINTABLE|MBSW_ACCEPT_INVALID;
-static char *mb_ptr;
+static const char *mb_ptr;
 static int mb_len;
 
 static void MB_Prepare(offs o)
