@@ -80,6 +80,7 @@ const char *syntax_hl::set_rexp(const char *nr)
    {
       delete rexp;
       regfree(&rexp_c);
+      memset(&rexp_c,0,sizeof(rexp_c));
       rexp=0;
    }
    re_syntax_options=RE_NO_BK_VBAR|RE_NO_BK_PARENS|RE_INTERVALS|

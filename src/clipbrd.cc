@@ -21,6 +21,7 @@
 #include <config.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include "edit.h"
 #include "clipbrd.h"
 
@@ -81,16 +82,76 @@ int ClipBoard::Copy()
 	 NotMemory();
 	 return(false);
       }
+      TextPoint bb(line1,col1);
+      num c=bb.Col();
+      num l=bb.Line();
+      offs o=bb.Offset();
+      char *text_ptr=text;
       for(j=0; j<height; j++)
       {
-	 for(i=0; i<width; i++)
+	 i=0;
+	 while(l<line1+j)
 	 {
-	    byte ch=CharAtLC(line1+j,col1+i);
+	    if(EofAt(o))
+	       goto fill_space;
+	    o=NextLine(o);
+	    if(!BolAt(o))
+	       goto fill_space;
+	    l++;
+	    c=0;
+	 }
+	 while(c<col1)
+	 {
+	    if(EolAt(o))
+	       goto next_line;
+	    if(CharAt_NoCheck(o)=='\t')
+	    {
+	       num c1=Tabulate(c);
+	       if(c1>col1)
+	       	  break;
+	       c=c1;
+	    }
+	    else
+	       c++;
+	    o++;
+	 }
+	 while(i<width)
+	 {
+	    if(EolAt(o))
+	       goto next_line;
+	    byte ch=CharAt_NoCheck(o);
 	    if(ch=='\t')
-	       ch=' ';
-	    text[j*width+i]=ch;
+	    {
+	       num c1=Tabulate(c);
+	       int k=c1-c;
+	       if(c<col1)
+		  k-=(col1-c);
+	       if(k>(width-i))
+		  k=(width-i);
+	       i+=k;
+	       while(k-->0)
+		  *text_ptr++=' ';
+	       c=c1;
+	       o++;
+	       continue;
+	    }
+	    c++;
+	    o++;
+	    i++;
+	    *text_ptr++=ch;
+	 }
+      next_line:;
+	 while(i<width)
+	 {
+	    i++;
+	    *text_ptr++=' ';
 	 }
       }
+   fill_space:
+      // fill the rest with spaces
+      int rest=width*height-(text_ptr-text);
+      if(rest>0)
+	 memset(text_ptr,' ',rest);
    }
    else /* !rblock */
    {
@@ -105,9 +166,7 @@ int ClipBoard::Copy()
 	 NotMemory();
 	 return(false);
       }
-      char *s=text;
-      while(i<end)
-	 *s++=CharAt_NoCheck(i++);
+      GetBlock(text,BlockBegin,width);
    }
    return(true);
 }

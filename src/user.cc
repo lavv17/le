@@ -1001,6 +1001,7 @@ void  UserToOffset()
 
 void  UserIndent()
 {
+   /* #### what exactly needs to be done when !insert ? */
    if(Text && stdcol>=GetCol() && Eol())
    {
       stdcol=(stdcol/IndentSize+1)*IndentSize;
@@ -1027,8 +1028,11 @@ void  UserIndent()
       return;
    }
    PreUserEdit();
-   while(!Bol() && (CharRel(-1)==' ' || CharRel(-1)=='\t'))
-      BackSpace();
+   if(insert)
+   {
+      while(!Bol() && (CharRel(-1)==' ' || CharRel(-1)=='\t'))
+	 BackSpace();
+   }
    while(GetCol()<newcol)
    {
       if(insert || Eol())

@@ -211,6 +211,7 @@ void    alarmsave(int a)
    alarmsaveaction.sa_handler=(SA_HANDLER_TYPE)alarmsave;
    alarmsaveaction.sa_flags=SA_RESTART;
    sigemptyset(&alarmsaveaction.sa_mask);
+   sigaction(SIGALRM,&alarmsaveaction,NULL);
 
    static offs dump_pos=0;
    static int fd=-1;
@@ -332,7 +333,7 @@ void    InstallSignalHandlers()
 #ifdef SIGTSTP
    sigaction(SIGTSTP,&suspend_action,&OldSIGTSTP);
 #endif
-#ifdef SIGVTALARM
+#ifdef SIGVTALRM
    sigaction(SIGVTALRM,&ign_action,NULL);
 #endif
 #ifdef SIGPIPE
