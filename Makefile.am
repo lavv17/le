@@ -1,4 +1,4 @@
-SUBDIRS = lib include src misc
+SUBDIRS = doc lib include src misc doc
 EXTRA_DIST = le.lsm FEATURES HISTORY le.spec
 AUTOMAKE_OPTIONS = foreign
 

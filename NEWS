@@ -1,3 +1,10 @@
+Version 1.7.0  2001-03-17
+
+* evil hack for linux console to allow marking text with shift-arrows.
+* bind cut/copy/paste to shift-del/ctrl-ins/shift-ins (works on certain
+  terminals only - xterm and linux console)
+* make it compile with gcc-3.0 prerelease.
+
 Version 1.6.3  2001-01-31
 
 * fix search/replace when replace string ends with a backslash.

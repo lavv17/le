@@ -275,7 +275,7 @@ AC_DEFUN(LE_CURSES_BOOL,
 		  else fputs("unknown",fp);
 		  fclose(fp);
 	       }
-	       exit(0);
+	       return(0);
 	    }
 	 ],
 	 [ac_cv_curses_bool="`cat cf_test.out`"
@@ -308,7 +308,7 @@ AC_DEFUN(CXX_DYNAMIC_INITIALIZERS,
       int a=f();
       int main()
       {
-	 exit(1-a);
+	 return(1-a);
       }
    ],
    [cxx_dynamic_init=yes],
@@ -329,7 +329,7 @@ AC_DEFUN(LFTP_PROG_CXXLINK,
       CXX="$CC"
       AC_LANG_SAVE
       AC_LANG_CPLUSPLUS
-      AC_TRY_COMPILE([],[char *a=new char[10]; exit(0);],
+      AC_TRY_LINK([],[char *a=new char[10];delete[] a;],
 	 [],[CXX="$old_CXX";])
       AC_LANG_RESTORE
    fi

@@ -1,4 +1,4 @@
-%define version 1.6.3
+%define version 1.7.0
 %define release 1
 
 Summary: Terminal text editor LE.
@@ -8,67 +8,32 @@ Release: %{release}
 Copyright: GNU GPL
 Group: Applications/Editors
 Source: ftp://ftp.yars.free.net/pub/software/unix/util/texteditors/le-%{version}.tar.gz
-#Vendor: Alexander V. Lukyanov <lav@yars.free.net>
-#Packager: Peter Soos <sp@osb.hu>
-BuildRoot: /var/tmp/le-root
-
-%changelog
-
-* Mon Nov 08 1999 Peter Soos <sp@osb.hu>
-- Moved to version 1.5.5
-
-* Thu Jul 01 1999 Peter Soos <sp@osb.hu>
-- Moved to version 1.5.2
-
-* Thu May 13 1999 Peter Soos <sp@osb.hu>
-- Moved to version 1.5.1
-- Corrected the file and directory attributes to rebuild the package
-  under RedHat Linux 6.0
-
-* Tue Feb 23 1999 Peter Soos <sp@osb.hu>
-- Moved to version 1.5.0
-
-* Fri Dec 25 1998 Peter Soos <sp@osb.hu>
-- Corrected the file and directory attributes
-- Recompiled under RedHat Linux 5.2
-
-* Mon Jun 22 1998 Peter Soos <sp@osb.hu>
-- Using %attr
-
-* Thu Mar 18 1998 Peter Soos <sp@osb.hu>
-- moved to 1.4.2
-
-* Fri Dec 12 1997 Peter Soos <sp@osb.hu>
-- moved to 1.4.1 from 1.4.0
-
-* Sun Dec 7 1997 Peter Soos <sp@osb.hu>
-- Recompiled under RedHat Linux 5.0
-- Added BuildRoot
+BuildRoot: %{_tmppath}/%{name}-buildroot
 
 %description
 LE has many block operations with stream and rectangular blocks, can edit
 both unix and dos style files (LF/CRLF), is binary clean, has hex mode,
-tunable syntax highlighting, tunable color scheme, tunable key map.
+tunable syntax highlighting, tunable color scheme, tunable key map and some
+more useful features. It is slightly similar to Norton Editor from DOS.
 
 %prep
 %setup
 
 %build
-CFLAGS="$RPM_OPT_FLAGS" CXXFLAGS="$RPM_OPT_FLAGS" LDFLAGS=-s \
-   ./configure --prefix=/usr --with-regex
+%define __libtoolize :
+%configure
 make
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make "DESTDIR=$RPM_BUILD_ROOT" install
-#strip $RPM_BUILD_ROOT/usr/bin/le
+rm -rf %{buildroot}
+make install DESTDIR=%{buildroot}
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+rm -rf %{buildroot}
 
 %files
-%defattr(0644, root, root, 0755)
-%doc FEATURES HISTORY NEWS README 
-%attr(0755, root, root) /usr/bin/le
-/usr/man/man1/le.1*
-/usr/share/le
+%defattr(0644 root root 0755)
+%doc FEATURES HISTORY NEWS README doc/README.keymap.ru
+%attr(0755 root root) %{_bindir}/le
+%attr(0644 root man) %{_mandir}/man*/*
+%{_datadir}/le
