@@ -24,7 +24,6 @@
 #include <errno.h>
 #include <unistd.h>
 #include <sys/stat.h>
-#include <signal.h>
 #include <stdlib.h>
 #include <limits.h>
 #include "edit.h"

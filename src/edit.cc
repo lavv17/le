@@ -21,7 +21,6 @@
 /* edit.c : main editor loop */
 
 #include <config.h>
-#include <signal.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <fcntl.h>

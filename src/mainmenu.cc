@@ -17,7 +17,6 @@
  */
 
 #include <config.h>
-#include <signal.h>
 #include "edit.h"
 #include "menu1.h"
 #include "block.h"
