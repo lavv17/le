@@ -511,6 +511,8 @@ void  ContReplace()
 
 void  StartReplace()
 {
+   if(View)
+      return;
    if(getstring("Search: ",(char*)pattern,sizeof(pattern)-1,&SearchHistory,&patlen,NULL)<1)
       return;
    if(getstring("Replace: ",(char*)replace,sizeof(replace)-1,&SearchHistory,&replen,NULL)<0)
