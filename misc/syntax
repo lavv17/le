@@ -140,3 +140,46 @@ ISINDEX|TABLE|TR|TD( WIDTH| VALIGN)?|TH|CAPTION|COL(GROUP)?|MULTICOL|\
 (I|NO)?LAYER|ABOVE|BGSOUND|ARRAY|COMMENT|EMBED|FIG|MARQUEE|NEXTID|NOBR|\
 RANGE|ROOT|SOUND|SPACER|SQRT|TEXT|WBR|XMP\
 )[\n\r\t >=]
+
+##########################################################################
+# Lout mode by Abel Morabito <abelmora@crosswinds.net>
+#
+# language lout
+# extension .lout
+# Most standard tags for Lout 3.13
+/*.lout
+## comments
+c3,1=#.*$
+## other special characters
+c2,1=(&|/|@|\^|{|}|\||~|"|\\\|``|'')
+## tags
+c1,2=@(AL|Abstract|AbstractDisplay|AbstractTitle|AlphaList|Appendix\
+|Appendix|AtEnd|Author\
+|B|BI|BL|Begin|BeginSections|BeginSubSections|BeginSubSubSections\
+|Box|BulletList\
+|CD|CL|CNP|Caption|CenteredDisplay|CenteredList|CentredList|Col\
+|Color|Colour|ColumnNumber|ContentsSeparate|CoverSheet|CurveBox\
+|D|Diag|Display|DL|DP|DashList|Date|DateLine|Doc|Document\
+|Ellipse|End|EndList|EndNote|EndSections|EndSubSections\
+|EndSubSubSections|Eq\
+|F|Figure|FirstPageNumber|Fmta|Font|FootNote\
+|Heading\
+|I|ID|IL|IncludeGraphic|IndentedDisplay|IndentedList|InitialBreak\
+|InitialFont|InitialLanguage|InitialSpace|InnerNote|Institution\
+|L|LI|LD|Link|LL|LLP|LP|Language|LeftList|LeftNote|List|ListItem\
+|NL|NP|NumberOf|NumberedList\
+|OuterNote|OptimizePages\
+|PAL|PNL|PP|PRL|PUCAL|PUCRL\
+|PageHeaders|PageMark|PageOf|PageOrientation|ParenAlphaList\
+|ParenNumberedList|ParenRomanList|ParenUCAlphaList|ParenUCRomanList\
+|QD|QL|QuotedDisplay|QuotedList\
+|R|RL|Report|RightDisplay|RightNote|RomanList|Rotate|Rowa\
+|RunningTitle\
+|S|SL|Scale|Section|ShadowBox|StarList|SubAppendix|SubSection\
+|SubSubAppendix|SubSubSection|SysInclude\
+|TL|Tab|Table|Tag|TagItem|TaggedList\
+|Text|Time|Title\
+|UCAL|UCAlphaList|UCRL|UCRomanList|Underline\
+|VWTL|VeryWideTaggedList\
+|WTL|WideTaggedList)[\ |\n|\t|{]
+#
