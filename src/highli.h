@@ -50,7 +50,7 @@ struct syntax_hl
 
    syntax_hl(int color,int mask);
    ~syntax_hl();
-   const char *set_rexp(const char *rexp);
+   const char *set_rexp(const char *rexp,bool icase);
 };
 
 #endif//HIGHLI_H

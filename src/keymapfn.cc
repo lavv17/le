@@ -24,6 +24,7 @@
 #include "options.h"
 #include "keymap.h"
 #include "format.h"
+#include "search.h"
 
 ActionProcRec  EditorActionProcTable[]=
 {

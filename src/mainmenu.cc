@@ -25,6 +25,7 @@
 #include "format.h"
 #include "colormnu.h"
 #include "about.h"
+#include "search.h"
 
 static bool RW() { return !View; }
 static bool BLK() { return !hide; }

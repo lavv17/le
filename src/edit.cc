@@ -40,6 +40,7 @@
 #include "screen.h"
 #include "options.h"
 #include "about.h"
+#include "search.h"
 #ifdef WITH_MOUSE
 # include "mouse.h"
 #endif

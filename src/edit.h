@@ -58,7 +58,6 @@ typedef long            num;
 #include "menu1.h"
 #include "cmd.h"
 #include "history.h"
-#include "search.h"
 #include "file.h"
 
 extern  int inputmode,editmode,noreg;

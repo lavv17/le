@@ -1,3 +1,9 @@
+2000-02-17  lav
+
+	* edit.cc, edit.h, highli.cc, highli.h, keymapfn.cc, mainmenu.cc,
+	  search.cc, search.h: don't include search.h in edit.h;
+	  support ignore case option in highlightling patterns.
+
 2000-02-11  lav
 
 	* user.cc: (UserMarkMove*) handle LineEnd in text mode properly.

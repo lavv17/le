@@ -27,6 +27,7 @@
 #include "edit.h"
 #include "keymap.h"
 #include "getch.h"
+#include "search.h"
 
 extern "C" {
 #ifdef WITH_REGEX
@@ -93,8 +94,8 @@ void  NotFound()
    WaitForKey();
 }
 
-static unsigned char map_to_lower[256];
-static void map_to_lower_init()
+unsigned char map_to_lower[256];
+void map_to_lower_init()
 {
    if(map_to_lower[' '])  // assumes tolower(' ')!='\0' :-)
       return;

@@ -23,6 +23,7 @@
 #include "highli.h"
 #include "edit.h"
 #include "screen.h"
+#include "search.h"
 #include <fnmatch.h>
 #include <string.h>
 #include <stdlib.h>
@@ -55,7 +56,7 @@ syntax_hl::~syntax_hl()
 {
    if(rexp)
    {
-      delete rexp;
+      free(rexp);
       regfree(&rexp_c);
    }
    for(syntax_hl **scan=&chain; ; scan=&(**scan).next)
@@ -74,24 +75,30 @@ void syntax_hl::free_chain()
       delete chain;
 }
 
-const char *syntax_hl::set_rexp(const char *nr)
+const char *syntax_hl::set_rexp(const char *nr,bool ignore_case)
 {
    if(rexp)
    {
-      delete rexp;
+      free(rexp);
       regfree(&rexp_c);
       memset(&rexp_c,0,sizeof(rexp_c));
       rexp=0;
    }
+   rexp=strdup(nr);
+   if(rexp==0)
+      return 0;
+   if(ignore_case)
+   {
+      map_to_lower_init();
+      rexp_c.translate=map_to_lower;
+   }
    re_syntax_options=RE_NO_BK_VBAR|RE_NO_BK_PARENS|RE_INTERVALS|
 		     RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS;
-   const char *err=re_compile_pattern(nr,strlen(nr),&rexp_c);
+   const char *err=re_compile_pattern(rexp,strlen(rexp),&rexp_c);
    if(err)
       return err;
    rexp_c.fastmap=(char*)malloc(256);
    re_compile_fastmap(&rexp_c);
-   rexp=new char[strlen(nr)+1];
-   strcpy(rexp,nr);
    return 0;
 }
 
@@ -246,6 +253,12 @@ void InitHighlight()
 	    fskip(f);
 	    continue;
 	 }
+	 bool ignore_case=false;
+	 int c=fgetc(f);
+	 if(c=='i')
+	    ignore_case=true;
+	 else
+	    ungetc(c,f);
 	 res=fscanf(f,"%d,%i=",&color,&mask);
 	 if(res!=2)
 	 {
@@ -303,7 +316,7 @@ void InitHighlight()
 	 }
 	 c_string_interpret(accum);
 	 syntax_hl *hl=new syntax_hl(color,mask);
-	 const char *err=hl->set_rexp(accum);
+	 const char *err=hl->set_rexp(accum,ignore_case);
 	 if(err)
 	 {
 	    ErrMsg(err);
