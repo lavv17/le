@@ -21,7 +21,6 @@
 #include <config.h>
 #include   <stdio.h>
 #include   <ctype.h>
-#include   <wctype.h>
 #include   <string.h>
 #include   <errno.h>
 #include   <fcntl.h>
@@ -1040,8 +1039,10 @@ void  EmptyText()
 
 bool IsAlNumAt(num o)
 {
+#if USE_MULTIBYTE_CHARS
    if(mb_mode)
       return iswalnum(WCharAt(o));
+#endif
    return isalnum(CharAt(o)) || isrussian(CharAt(o));
 }
 
