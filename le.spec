@@ -1,6 +1,6 @@
 Summary: This is terminal text editor: LE.
 Name: le
-Version: 1.6.0
+Version: 1.6.1
 Release: 1
 Copyright: GPL
 Group: Applications/Editors

@@ -1,3 +1,9 @@
+Version 1.6.1  2000-12-20
+
+* add mark-all action.
+* fix spinning in block [un]indent when last line of block lacks EOL.
+* fix: enable file locks by default.
+
 Version 1.6.0  2000-09-28
 
 * tunable main menu support (.../share/le/mainmenu).
