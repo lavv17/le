@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -182,7 +182,7 @@ enum
 
 extern   ActionCodeRec  DefaultActionCodeTable[];
 ActionCodeRec  *ActionCodeTable=DefaultActionCodeTable;
-char  *ti_cache[1024]={NULL};
+char  *ti_cache[128]={NULL};
 
 char  *GetActionName(int action)
 {
@@ -534,7 +534,7 @@ int   GetNextAction()
 	 return WINDOW_RESIZE;
       }
 
-      if(WaitForKey(delay)==ERR)
+      if(WaitForKey_norefresh(delay)==ERR)
          key=ERR;
       else
          key=GetRawKey();
@@ -584,7 +584,7 @@ scan_again:
          if(action_found!=NO_ACTION)
          {
             if(action_found==REFRESH_SCREEN)
-               clearok(curscr,1);
+               clearok(stdscr,1);
             return(action_found);
          }
          if(pause==0)
