@@ -1,20 +1,20 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Library General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
  * any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Library General Public License
  * along with this software; see the file COPYING.  If not, write to
- * the Free Software Foundation, 59 Temple Place - Suite 330, 
- * Boston, MA 02111-1307, USA. 
+ * the Free Software Foundation, 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 /*_________________________________________________________________________
@@ -71,6 +71,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {TO_LINE_NUMBER,"\007|l"},
    {TO_LINE_NUMBER,"\007|L"},
    {TO_LINE_NUMBER,"$kf8"},
+   {TO_LINE_NUMBER,"\033|8"},
    {TO_OFFSET,"\007|\017"},
    {TO_OFFSET,"\007|O"},
    {TO_OFFSET,"\007|o"},
@@ -108,9 +109,11 @@ ActionCodeRec  DefaultActionCodeTable[]=
 
 // File ops
    {LOAD_FILE,"$kf3"},
+   {LOAD_FILE,"\033|3"},
    {SWITCH_FILE,"\033|$kf3"},
    {SWITCH_FILE,"$1kf3"},
    {SAVE_FILE,"$kf2"},
+   {SAVE_FILE,"\033|2"},
    {SAVE_FILE_AS,"\033|$kf2"},
    {SAVE_FILE_AS,"$1kf2"},
 //   {FILE_INFO,"file-info"},
@@ -120,7 +123,9 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {MOVE_BLOCK,"$kf12"},
 //   {DELETE_BLOCK,"delete-block"},
    {SET_BLOCK_END,"$kf6"},
+   {SET_BLOCK_END,"\033|6"},
    {SET_BLOCK_BEGIN,"$kf5"},
+   {SET_BLOCK_BEGIN,"\033|5"},
 //   {READ_BLOCK,"read-block"},
 //   {WRITE_BLOCK,"write-block"},
    {PIPE_BLOCK,"\033|\\|"},
@@ -133,6 +138,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
 //   {BLOCK_HIDE,"hide-block"},
 //   {BLOCK_TYPE,"change-block-type"},
    {BLOCK_FUNC_BAR,"$kf4"},
+   {BLOCK_FUNC_BAR,"\033|4"},
    {MARK_LINE,"\033|$kf5"},
    {MARK_LINE,"$1kf5"},
    {MARK_TO_EOL,"\033|$kf6"},
@@ -140,6 +146,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
 
 // Search
    {SEARCH_FORWARD,"$kf7"},
+   {SEARCH_FORWARD,"\033|7"},
    {SEARCH_FORWARD,"^F"},
    {SEARCH_BACKWARD,"$3kf7"},
    {SEARCH_BACKWARD,"^B"},
@@ -180,6 +187,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
 //   WINDOW_RESIZE,
 
    {EDITOR_HELP,"$kf1"},
+   {EDITOR_HELP,"\033|1"},
    {CONTEXT_HELP,"\033|$kf1"},
    {CONTEXT_HELP,"$2kf1"},
 
@@ -191,6 +199,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
 
    {COMPILE_CMD,"$3kf9"},
    {MAKE_CMD,"$kf9"},
+   {MAKE_CMD,"\033|9"},
    {RUN_CMD,"$2kf9"},
    {SHELL_CMD,"$1kf9"},
    {ONE_SHELL_CMD,"\033!"},
@@ -201,6 +210,7 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {REFRESH_SCREEN,"$krfr"},
 
    {ENTER_MENU,"$kf10"},
+   {ENTER_MENU,"\033|0"},
    {ENTER_MENU,"^N"},
 
    {SWITCH_INSERT_MODE,"$kich1"},
