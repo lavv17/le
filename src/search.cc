@@ -80,10 +80,10 @@ void  NotFound()
       ScreenTop=NextLine(ScreenTop);
       flag=REDISPLAY_ALL;
    }
+   CurrentPos=back_tp;
    SyncTextWin();
    StatusLine();
    Message("Search string not found.");
-   CurrentPos=back_tp;
    stdcol=GetCol();
    SetCursor();
    WaitForKey();
@@ -315,7 +315,10 @@ search_again:
    {
       if(isalnum(CharRel(-1)) || isalnum(CharRel(fndlen)))
       {
-	 srchpos=CurrentPos+1;
+	 if(dir==FORWARD)
+	    srchpos=CurrentPos+1;
+	 else // dir==BACKWARD
+	    srchpos=CurrentPos-1;
 	 goto search_again;
       }
    }
