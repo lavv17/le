@@ -21,6 +21,8 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
+#ifdef WITH_MOUSE
+
 bool InTextWin(int line,int col);
 bool InScrollBar(int line,int col);
 void MoveToScreenLC(int line,int col);
@@ -30,5 +32,7 @@ void MouseInScrollBar(MEVENT &mev);
 extern int UseMouse;
 
 void SetupMouse();
+
+#endif
 
 #endif // MOUSE_H
