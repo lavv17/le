@@ -28,12 +28,14 @@
 #include "edit.h"
 #include <ctype.h>
 #include "keymap.h"
+#include "format.h"
 
-int    LineLen=63;
-int    LeftMargin=0;
-int    FirstLineMargin=3;
-int    LeftAdj=1;
-int    RightAdj=0;
+int   LineLen=63;
+int   LeftMargin=0;
+int   FirstLineMargin=3;
+int   LeftAdj=1;
+int   RightAdj=0;
+int   wordwrap=0;
 
 void  FormatPara()
 {
@@ -370,4 +372,28 @@ again:
          break;
       }
    }
+}
+
+void WordWrapInsertHook()
+{
+   if(GetCol()<LineLen+LeftMargin)
+      return;
+   offs pos=CurrentPos;
+   while(!BolAt(pos) && !(CharAt(pos-1)==' ' || CharAt(pos-1)=='\t'))
+      pos--;
+   if(pos==CurrentPos)
+      return;
+   offs word_begin=pos;
+   while(!BolAt(pos) && (CharAt(pos-1)==' ' || CharAt(pos-1)=='\t'))
+      pos--;
+   if(BolAt(pos))
+      return;
+   TextPoint old(CurrentPos);
+   CurrentPos=word_begin;
+   DeleteBlock(word_begin-pos,0);
+   NewLine();
+   for(int i=LeftMargin; i>0; i--)
+      InsertChar(' ');
+   CurrentPos=old;
+   stdcol=GetCol();
 }
