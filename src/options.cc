@@ -30,13 +30,9 @@
 #include "options.h"
 #include "highli.h"
 #include "getch.h"
+#include "format.h"
 
-extern int LineLen;
-extern int LeftMargin;
-extern int FirstLineMargin;
 extern char ContextHelpNames[];
-extern int RightAdj,LeftAdj;
-
 extern int MaxBackup;
 
 extern int le_use_default_colors;
@@ -142,6 +138,7 @@ struct  opt
 {"First line margin",NUM, (void*)&FirstLineMargin,3,4},
 {"Left adjustment",  ONE, &LeftAdj,               3,6},
 {"Right adjustment", ONE, &RightAdj,              3,7},
+{"Auto word wrap",   ONE, &wordwrap, 	      	  3,9},
 {NULL}
 },
    AppearOptTbl[]=
@@ -199,6 +196,7 @@ struct init
    { "statusline",   NUM,  &ShowStatusLine            },
    { "backupext",    STR,  bak                        },
    { "preferpagetop",NUM,  &PreferPageTop	      },
+   { "wordwrap",     NUM,  &wordwrap		      },
    { NULL }
 },
    term[]=
@@ -1001,7 +999,7 @@ void  TermOpt(void)
 }
 void  FormatOptions(void)
 {
-   Dialogue(FormatOpt,30,10," Format Options ",NULL,NULL,TOEatKey,TOHandleBut);
+   Dialogue(FormatOpt,30,12," Format Options ",NULL,NULL,TOEatKey,TOHandleBut);
 }
 void  AppearOpt(void)
 {
