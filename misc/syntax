@@ -149,7 +149,7 @@ RANGE|ROOT|SOUND|SPACER|SQRT|TEXT|WBR|XMP\
 # Most standard tags for Lout 3.13
 /*.lout
 ## comments and literals
-c3,1=(#.*$)|(".*")
+c3,1=#.*$|"([^"\n\\]|\\\\(.|\n))*"
 ## other special characters
 c2,1=(&|/|@|\^|{|}|\||~|"|\\\|``|'')
 ## tags
