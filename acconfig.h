@@ -14,7 +14,7 @@
 
 #undef USE_NCURSES_H
 
-#undef CURSES_BOOL
+#undef LE_CURSES_BOOL_TYPE
 
 @BOTTOM@
 

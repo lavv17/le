@@ -41,3 +41,6 @@ edit as you wish.
 You can also edit and save color palette with color editing form available
 from Options menu. There are several color maps in misc/ subdirectory.
 There are also several predefined palettes which can be chosen from menu.
+
+   On new xterms (v120 and later) and appropriate terminfo some extra keys
+are recognized. E.g. Shift-Arrows do text selection.

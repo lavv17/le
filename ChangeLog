@@ -1,3 +1,8 @@
+2000-01-21  lav
+
+	* acinclude.m4: check if curses.h tries to declare bool in C++.
+	* acconfig.h: rename CURSES_BOOL to LE_CURSES_BOOL_TYPE.
+
 1999-10-06  lav
 
 	* acinclude.m4: LE_CURSES_BOOL test for curses' bool type.

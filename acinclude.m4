@@ -222,6 +222,31 @@ AC_DEFUN(LE_NCURSES_BUGS,
 dnl determine curses' bool actual type
 AC_DEFUN(LE_CURSES_BOOL,
 [
+   AC_MSG_CHECKING(whether curses defines bool type in C++)
+   AC_CACHE_VAL(ac_cv_curses_bool_defined,
+   [
+      old_LIBS="$LIBS"
+      old_CXXFLAGS="$CXXFLAGS"
+      LIBS="$LIBS $CURSES_LIBS"
+      CXXFLAGS="$CXXFLAGS $CURSES_INCLUDES"
+      AC_LANG_SAVE
+      AC_LANG_CPLUSPLUS
+      AC_TRY_COMPILE([
+	    #define bool LE_CURSES_BOOL
+	    #ifdef USE_NCURSES_H
+	    # include <ncurses.h>
+	    #else
+	    # include <curses.h>
+	    #endif
+	    ],
+	    [LE_CURSES_BOOL var=0;],
+	    [ac_cv_curses_bool_defined=yes],
+	    [ac_cv_curses_bool_defined=no])
+      AC_LANG_RESTORE
+      LIBS="$old_LIBS"
+      CXXFLAGS="$old_CXXFLAGS"
+   ])
+  if test "$ac_cv_curses_bool_defined" = no; then
    AC_MSG_CHECKING(for curses bool type)
    AC_CACHE_VAL(ac_cv_curses_bool,
    [
@@ -265,8 +290,9 @@ AC_DEFUN(LE_CURSES_BOOL,
    ])
    AC_MSG_RESULT($ac_cv_curses_bool)
    if test x$ac_cv_curses_bool != xunknown; then
-      AC_DEFINE_UNQUOTED(CURSES_BOOL,$ac_cv_curses_bool)
+      AC_DEFINE_UNQUOTED(LE_CURSES_BOOL_TYPE,$ac_cv_curses_bool)
    fi
+  fi
 ])
 
 dnl check if c++ compiler can use dynamic initializers for static variables
@@ -308,4 +334,3 @@ AC_DEFUN(LFTP_PROG_CXXLINK,
    fi
    AC_MSG_RESULT(using $CXX)
 ])
-

@@ -1,3 +1,8 @@
+Version 1.5.6  2000-01-21
+
+* fixed cursor positioning in search/replace in text mode.
+* fixed compilation with solaris' native curses.
+
 Version 1.5.5  1999-11-06
 
 * better interaction with new xterms (xterm-120 and later). You need an
