@@ -4,6 +4,7 @@
 	* keymap.cc, keymap.h, keymapdf.cc, keymapfn.cc: lots of new functions;
 	  pretty keys support.
 	* menu1.cc, menu1.h: loadable menu support.
+	* mainmenu.cc: adapt for new menu1.h
 
 2000-09-04  lav
 
