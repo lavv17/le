@@ -18,7 +18,12 @@
 
 #include    <sys/types.h>
 #include    <time.h>
-#include    <curses.h>
+
+#ifdef USE_NCURSES_H
+# include <ncurses.h>
+#else
+# include <curses.h>
+#endif
 
 #define  EMAIL    "lav@yars.free.net"
 

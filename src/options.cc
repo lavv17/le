@@ -77,7 +77,7 @@ struct  opt
 {"Make backup",      ONE,  (void*)&makebak,	      45,2},
 {"No regular expr.", ONE,  (void*)&noreg,	      45,3},
 {"Use &colors",      ONE,  (void*)&UseColor,	      45,4},
-{"Syntax highlight", ONE,  (void*)&hl_option,	      45,5},
+{"&Syntax highlight",ONE,  (void*)&hl_option,	      45,5},
 {"Use tabs",         ONE,  (void*)&UseTabs,	      45,6},
 {"BackSp unindents", ONE,  (void*)&BackspaceUnindents,45,7},
 {"PageUp=PageTop",   ONE,  (void*)&PreferPageTop,     45,8},
@@ -1048,7 +1048,7 @@ void  EditColor(color *cp,color *bp)
    b_ul  =!!(bp->attr&A_UNDERLINE);
    b_dim =!!(bp->attr&A_DIM);
 
-   WIN *w=CreateWin(MIDDLE,MIDDLE+5,66,13,DIALOGUE_WIN_ATTR," Edit color ");
+   WIN *w=CreateWin(MIDDLE,MIDDLE+4,66,13,DIALOGUE_WIN_ATTR," Edit color ");
    DisplayWin(w);
    PutStr(3,2, "Foreground");
    PutStr(18,2,"Background");

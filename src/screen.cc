@@ -152,17 +152,16 @@ void  SyncTextWin()
 	 lim=range_end;
    }
 
-   static int accum_lines=0;
-   accum_lines+=lim-line+1;
-   if(accum_lines>2)
+   static int skipped=0;
+   if(CheckPending()>0)
    {
-      if(CheckPending()>0)
+      if(++skipped<5)
       {
 	 flag=REDISPLAY_ALL;
 	 return;
       }
-      accum_lines=0;
    }
+   skipped=0;
 
    if(hex)
       ptr=(ScreenTop&~15)+16*line;

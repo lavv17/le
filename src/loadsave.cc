@@ -41,6 +41,10 @@
 #include "clipbrd.h"
 #include "getch.h"
 
+#ifndef MAP_FAILED
+# define MAP_FAILED ((void*)-1)
+#endif
+
 #ifndef __MSDOS__
 int    LockFile(int fd)
 {

@@ -99,9 +99,11 @@ int   GetKey(int delay)
       getch_return_set=true;
       UnblockSignals();
 
+      bkgdset(NORMAL_TEXT_ATTR->attr|' ');   // recent ncurses uses bkgd for default clearing
       timeout(delay);
       int key=getch();
       timeout(-1);
+      bkgdset(' ');
 
       BlockSignals();
       getch_return_set=false;

@@ -50,8 +50,16 @@ void  TextPoint::DeleteTextPoint()
 TextPoint::TextPoint(offs o)
 {
    offset=o;
-   flags=COLUNDEFINED|LINEUNDEFINED;
    line=col=0;
+   if(offset<=0)
+   {
+      offset=0;
+      flags&=~(COLUNDEFINED|LINEUNDEFINED);
+   }
+   else
+      flags|=COLUNDEFINED|LINEUNDEFINED;
+/*   if(offset>Size())
+      offset=Size();*/
    AddTextPoint();
 //    FindLineCol();
 }
@@ -110,15 +118,6 @@ TextPoint   TextPoint::operator=(const TextPoint& tp)
    flags=tp.flags;
    return(*this);
 }
-
-/*int   TextPoint::SetDragMode(int mode)
-{
-   int   oldmode=(flags&DRAG)?1:0;
-   flags&=~DRAG;
-   if(mode)
-      flags|=DRAG;
-   return(oldmode);
-}*/
 
 void  TextPoint::FindOffset()
 {
@@ -245,6 +244,9 @@ void  TextPoint::FindLineCol()
       flags&=~(COLUNDEFINED|LINEUNDEFINED);
       return;
    }
+
+   if(!(flags&(COLUNDEFINED|LINEUNDEFINED)))
+      return;
 
    TextPoint   *found=NULL;
    num	 dist=INT_MAX;
