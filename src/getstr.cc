@@ -30,6 +30,7 @@
 
 void mb_get_col(const char *buf,int pos,int *col,int len)
 {
+#if USE_MULTIBYTE_CHARS
    *col=0;
    for(int i=0; i<pos; )
    {
@@ -42,9 +43,13 @@ void mb_get_col(const char *buf,int pos,int *col,int len)
       *col+=wcwidth(wc);
       i+=ch_len;
    }
+#else
+   *col=pos;
+#endif;
 }
 void mb_char_left(const char *buf,int *pos,int *col,int len)
 {
+#if USE_MULTIBYTE_CHARS
    *col=0;
    for(int i=0; i<*pos; )
    {
@@ -62,9 +67,13 @@ void mb_char_left(const char *buf,int *pos,int *col,int len)
       *col+=wcwidth(wc);
       i+=ch_len;
    }
+#else
+   *col=--*pos;
+#endif
 }
 void mb_char_right(const char *buf,int *pos,int *col,int len)
 {
+#if USE_MULTIBYTE_CHARS
    wchar_t wc;
    mblen(0,0);
    int ch_len=mbtowc(&wc,buf+*pos,len-*pos);
@@ -74,6 +83,9 @@ void mb_char_right(const char *buf,int *pos,int *col,int len)
    int ch_width=wcwidth(wc);
    *pos+=ch_len;
    *col+=ch_width;
+#else
+   *col=++*pos;
+#endif
 }
 
 int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
