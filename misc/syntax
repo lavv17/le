@@ -20,7 +20,7 @@
 h18
 
 # C language mode (lav)
-/*.c|/-\*-c-\*-
+/*.c|/-\*- *c *-\*-
 c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^'\n\\]|\\\\.)*'
 #c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
 c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[[:alpha:]]*))
@@ -33,7 +33,7 @@ c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 c2,1=\\[|\\]|\\(|\\)|{|}|,
 
 # C++ mode (lav)
-/*.cc|*.C|*.cpp|*.h|*.hh|*.hpp|*.H|/-\*-c++-\*-
+/*.cc|*.C|*.cpp|*.h|*.hh|*.hpp|*.H|/-\*- *c++ *-\*-
 c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^\n'\\]|\\\\.)*'
 #c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
 c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[[:alpha:]]*))
@@ -48,7 +48,7 @@ c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 c2,1=\\[|\\]|\\(|\\)|{|}|,
 
 # nroff mode (lav)
-/*.[1-9]|/-\*-nroff-\*-
+/*.[1-9]|/-\*- *nroff *-\*-
 c3,1=^\.\\\\".*$
 c2,1=^\.[[:alpha:]]*
 c1,2=\\\\fB((\\\\[^f]|[^\\])*[^\\]?)(\\\\f|$)
@@ -95,7 +95,7 @@ c1,4=([^[:alnum:]_]|^)(abstract|and|any|assert|attr|bind|break!|builtin|case\
 c2,1=\||#|::=|:=|::
 
 # Shell mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.sh|/^#![ \t]*/.*/\(ba\|z\|k\)?sh
+/*.sh|/^#![ \t]*/.*/\(ba\|z\|k\)?sh\|-\*- *sh *-\*-
 c3,1=#.*$
 c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
 c1,4=([^[:alnum:]/_]|^)(if|then|else|elif|fi|while|do|done|for|break|continue\
@@ -106,7 +106,7 @@ c1,4=([^[:alnum:]/_]|^)(if|then|else|elif|fi|while|do|done|for|break|continue\
 c2,1={|}|<<|<|>>|>|;;|;|\(|\)|\|
 
 # java mode (bird@yars.free.net)
-/*.java|/-\*-java-\*-
+/*.java|/-\*- *java *-\*-
 c3,1="([^"\n\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*'
 c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
 c1,4=([^[:alnum:]_]|^)(abstract|default|if|private|throw|boolean|do|implements\
@@ -124,7 +124,7 @@ c2,1="|\\\\n|%[+- #]*[0-9*]*\\.?[0-9*]*[l]?[diouxXfeEgGcs]
 c3,1=^#.*$
 
 # html mode (lav)
-/*.html|*.htm|*.shtml|/-\*-html-\*-\|<![Dd][Oo][Cc][Tt][Yy][Pp][Ee]
+/*.html|*.htm|*.shtml|/-\*- *html *-\*-\|<![Dd][Oo][Cc][Tt][Yy][Pp][Ee] [Hh][Tt][Mm][Ll]\|<[Hh][Tt][Mm][Ll]>
 c3,2=<!--(([^-]|-[^-]|--[^>])*)-->
 c3,2=<!([a-zA-Z][^>]*)>
 c3,2=("([^"\n\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*')[^<]*>
