@@ -547,6 +547,36 @@ int   ReadBlockOver(int fd,num size,num *act_read)
    return ERR;
 }
 
+int   GetBlock(char *copy,offs from,num size)
+{
+   if(from<0)
+   {
+     size+=from;
+     from=0;
+   }
+   if(from+size>Size())
+   {
+     size=Size()-from;
+   }
+   if(size<=0)
+      return 0;
+
+   if(from>=ptr1)
+   {
+      memcpy(copy,buffer+from+ptr2-ptr1,size);
+      return(size);
+   }
+   if(from+size<=ptr1)
+   {
+      memcpy(copy,buffer+from,size);
+      return(size);
+   }
+   num leftsize=ptr1-from;
+   memcpy(copy,buffer+from,leftsize);
+   memcpy(copy+leftsize,buffer+ptr2,size-leftsize);
+   return(size);
+}
+
 int   WriteBlock(int fd,offs from,num size,num *act_written)
 {
    num   leftsize;

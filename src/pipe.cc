@@ -110,6 +110,8 @@ int   PipeBlock(char *filter,int in,int out)
       return ERR;
    }
 
+   CheckPoint();
+
    fflush(stderr);
    switch(fork())
    {

@@ -162,7 +162,7 @@ void  TextPoint::FindOffset()
    {
       if(!(scan->flags&LINEUNDEFINED))
       {
-         if(!found || abs(this->line-scan->line)<abs(found->line-scan->line)
+         if(!found || abs(this->line-scan->line)<abs(this->line-found->line)
          || (scan->line==this->line && !(scan->flags&COLUNDEFINED)
              && scan->offset<found->offset))
          {

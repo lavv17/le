@@ -126,11 +126,13 @@ void    RCopy()
 
    ClipBoard cb;
    TextPoint tp=CurrentPos;
+   num old_stdcol=stdcol;
 
    if(!cb.Copy())
       return;
 
    CurrentPos=tp;
+   stdcol=old_stdcol;
    cb.PasteAndMark();
    CurrentPos=BlockBegin;
    stdcol=GetCol();
