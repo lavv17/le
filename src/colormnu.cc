@@ -18,7 +18,10 @@
 
 /* $Id$ */
 
+#include <config.h>
+
 #include <stdio.h>
+#include <unistd.h>
 #include "edit.h"
 #include "colormnu.h"
 #include "options.h"
@@ -46,6 +49,11 @@ void ColorsSaveForTerminal()
 
 void LoadColor(const char *f)
 {
+   if(access(f,R_OK)==-1)
+   {
+      FError(f);
+      return;
+   }
    ReadConfFromFile(f,colors);
    ParseColors();
    init_attrs();
@@ -77,4 +85,8 @@ void LoadColorBlack()
 void LoadColorWhite()
 {
    LoadColor(PKGDATADIR"/colors-white");
+}
+void LoadColorGreen()
+{
+   LoadColor(PKGDATADIR"/colors-green");
 }
