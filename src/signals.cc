@@ -36,6 +36,23 @@
 
 #include "xalloca.h"
 
+/* This pair of functions is to work
+   with signal handlers - install and release */
+static struct sigaction  OldSIGHUP;
+static struct sigaction  OldSIGINT;
+static struct sigaction  OldSIGQUIT;
+static struct sigaction  OldSIGTSTP;
+
+#ifdef __GNUC__
+#define  SA_HANDLER_TYPE   typeof(OldSIGHUP.sa_handler)
+#else
+#define  SA_HANDLER_TYPE   void(*)(int)
+#endif
+#ifndef SA_RESTART
+#define SA_RESTART 0
+#endif
+
+
 void  BlockSignals()
 {
    sigset_t ss;
@@ -189,6 +206,12 @@ void    hup(int sig)
 
 void    alarmsave(int a)
 {
+   // set handler again to be safe
+   struct sigaction  alarmsaveaction;
+   alarmsaveaction.sa_handler=(SA_HANDLER_TYPE)alarmsave;
+   alarmsaveaction.sa_flags=SA_RESTART;
+   sigemptyset(&alarmsaveaction.sa_mask);
+
    static offs dump_pos=0;
    static int fd=-1;
    static int interrupted=0;
@@ -244,25 +267,9 @@ void    alarmsave(int a)
    alarm(ALARMDELAY);
 }
 
-/* This pair of functions is to work
-   with signal handlers - install and release */
-struct sigaction  OldSIGHUP;
-struct sigaction  OldSIGINT;
-struct sigaction  OldSIGQUIT;
-struct sigaction  OldSIGTSTP;
-
 void    InstallSignalHandlers()
 {
    struct sigaction  hupaction;
-#ifdef __GNUC__
-#define  SA_HANDLER_TYPE   typeof(OldSIGHUP.sa_handler)
-#else
-#define  SA_HANDLER_TYPE   void(*)(int)
-#endif
-#ifndef SA_RESTART
-#define SA_RESTART 0
-#endif
-
    struct sigaction  alarmsaveaction;
    struct sigaction  ign_action;
    struct sigaction  suspend_action;
