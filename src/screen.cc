@@ -26,6 +26,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <xalloca.h>
+
 #include "edit.h"
 #include "block.h"
 #include "highli.h"
@@ -255,9 +258,11 @@ void  Redisplay(num line,offs ptr,num limit)
    extern  ShowMatchPos;
    num    col;
    int    i;
-   char  s[64];
+   char  s[64],*sp;
    offs  lptr;
    int    x;
+
+   struct attr *norm_attr=NORMAL_TEXT_ATTR,*blk_attr=BLOCK_TEXT_ATTR;
 
    static  num   OldBlockBeginLine=-1,OldBlockBeginCol=-1,
                  OldBlockEndLine=-1,OldBlockEndCol=-1;
@@ -307,6 +312,10 @@ void  Redisplay(num line,offs ptr,num limit)
       flag=0;
    }
 
+   chtype *cl=(chtype*)alloca(TextWinWidth*sizeof(chtype));
+   chtype *clp=cl;
+   struct attr *ca=norm_attr;
+
    if(hex)
    {
       /* here goes drawing the text in HEX mode */
@@ -314,63 +323,66 @@ void  Redisplay(num line,offs ptr,num limit)
       for( ; line<limit; line++)
       {
          lptr=ptr;
-         wmove(text_w,line,0);
-         SetAttr(NORMAL_TEXT_ATTR);
-         for(x=TextWinX; x<TextWinX+TextWinWidth; x++)
-            addch(' ');
-         if(!EofAt(ptr) || line==(Size()-ScreenTop.Offset()+15)/16)
+
+         clp=cl;
+
+	 if(!EofAt(ptr) || line==(Size()-ScreenTop.Offset()+15)/16)
          {
-            move(line+TextWinY,TextWinX);
-            sprintf(s,"%07lX",ptr);
-            addstr(s);
+            sprintf(s,"%07lX   ",ptr);
+            for(sp=s; *sp; sp++)
+	       *clp++=norm_attr->attr|*sp;
          }
-         move(line+TextWinY,HexPos+TextWinX);
          for(i=0; i<16 && !EofAt(ptr); i++)
          {
-            sprintf(s,"%02X",CharAt(ptr));
-            if(InBlock(ptr))
-               SetAttr(BLOCK_TEXT_ATTR);
-            else
-               SetAttr(NORMAL_TEXT_ATTR);
-            if(ascii && ptr==Offset() && ShowMatchPos)
-               SetAttr(SHADOW_ATTR);
             if(EofAt(ptr))
                break;
-            addstr(s);
+            sprintf(s,"%02X",CharAt(ptr));
+            ca=(InBlock(ptr)?blk_attr:norm_attr);
+            if(ascii && ptr==Offset() && ShowMatchPos)
+               ca=SHADOW_ATTR;
+	    *clp++=ca->attr|s[0];
+	    *clp++=ca->attr|s[1];
             ptr++;
             if(InBlock(ptr-1) && InBlock(ptr) && (ptr&15))
-               SetAttr(BLOCK_TEXT_ATTR);
+               *clp++=blk_attr->attr|' ';
             else
-               SetAttr(NORMAL_TEXT_ATTR);
-            addch(' ');
+               *clp++=norm_attr->attr|' ';
          }
-         move(line+TextWinY,AsciiPos+TextWinX);
+	 *clp++=norm_attr->attr|' ';
+	 *clp++=norm_attr->attr|' ';
          ptr=lptr;
          for(i=0; i<16 && !EofAt(ptr); i++,ptr++)
          {
-            if(InBlock(ptr))
-               SetAttr(BLOCK_TEXT_ATTR);
-            else
-               SetAttr(NORMAL_TEXT_ATTR);
+            ca=(InBlock(ptr)?blk_attr:norm_attr);
             if(!ascii && ptr==Offset() && ShowMatchPos)
-               SetAttr(SHADOW_ATTR);
-	    addch_visual(CharAt_NoCheck(ptr));
+               ca=SHADOW_ATTR;
+	    *clp++=visualize(ca,CharAt_NoCheck(ptr)|ca->attr);
          }
+	 // clear the rest of line
+	 for(i=TextWinWidth-(clp-cl); i>0; i--)
+            *clp++=norm_attr->attr|' ';
+
+	 wmove(text_w,line,0);
+      	 clp=cl;
+	 attrset(0);
+	 for(x=0; x<TextWinWidth; x++)
+	    waddch(text_w,*clp++);
       }
+      touchwin(stdscr);
+      wnoutrefresh(text_w);
    }
    else
    {
-      chtype *cl=(chtype*)alloca(TextWinWidth*sizeof(chtype));
-      struct attr *ca=NORMAL_TEXT_ATTR;
       for(; line<limit; line++,ptr=NextLine(ptr))
       {
+	 /* TODO: build highlight map here */
+
+	 clp=cl;
+
          for(col=(-ScrShift);
             col<TextWinWidth && !EolAt(ptr); ptr++)
          {
-            if(InBlock(ptr,line+ScrLine,col+ScrShift))
-               SetAttr(BLOCK_TEXT_ATTR);
-            else
-               SetAttr(NORMAL_TEXT_ATTR);
+            ca=(InBlock(ptr,line+ScrLine,col+ScrShift)?blk_attr:norm_attr);
 	    byte ch=CharAt_NoCheck(ptr);
             if(ch=='\t')
             {
@@ -380,34 +392,35 @@ void  Redisplay(num line,offs ptr,num limit)
                   i=0;
                while(i<col && i<TextWinWidth)
                {
-                  if(InBlock(ptr,line+ScrLine,i+ScrShift))
-                     attrset(BLOCK_TEXT_ATTR->attr);
-                  else
-                     attrset(NORMAL_TEXT_ATTR->attr);
-                  mvaddch(line+TextWinY,i+TextWinX,' ');
+		  ca=(InBlock(ptr,line+ScrLine,col+ScrShift)?blk_attr:norm_attr);
+                  *clp++=ca->attr|' ';
                   i++;
                }
             }
             else
             {
                if(col>=0)
-	       {
-                  move(line+TextWinY,col+TextWinX);
-		  addch_visual(ch);
-               }
+		  *clp++=visualize(ca,ch|ca->attr);
 	       col++;
             }
          }
-         for(col=(col<0)?0:col; col<TextWinWidth; col++)
+	 if(col<0)
+	    col=0;
+         for( ; col<TextWinWidth; col++)
          {
-            if(InBlock(ptr,line+ScrLine,col+ScrShift))
-               attrset(BLOCK_TEXT_ATTR->attr);
-            else
-               attrset(NORMAL_TEXT_ATTR->attr);
-            mvaddch(line+TextWinY,col+TextWinX,' ');
+	    ca=(InBlock(ptr,line+ScrLine,col+ScrShift)?blk_attr:norm_attr);
+            *clp++=ca->attr|' ';
          }
+
+	 wmove(text_w,line,0);
+      	 clp=cl;
+	 attrset(0);
+	 for(x=0; x<TextWinWidth; x++)
+	    waddch(text_w,*clp++);
       }
    }
+   touchwin(stdscr);
+   wnoutrefresh(text_w);
 }
 void  RedisplayAll()
 {
@@ -469,39 +482,7 @@ struct  menu   OkMenu[]={
 
 void  ErrMsg(const char *s)
 {
-/*   WIN    *w;
-   int    width=COLS/4;
-   int    height=7;
-   const char  *i;
-   int    pos,line;
-
-   for(i=s,pos=4; ; i++,pos++)
-   {
-      if(pos>width)
-         width=pos;
-      if(*i=='\n')
-      {
-         height++;
-         pos=3;
-      }
-      else if(*i==0)
-         break;
-   }
-   w=CreateWin(MIDDLE,MIDDLE,width,height,ERROR_WIN_ATTR," Error ",0);
-   DisplayWin(w);
-   for(i=s,pos=2,line=2; *i && line<height-2; i++,pos++)
-   {
-      if(*i=='\n')
-      {
-         line++;
-         pos=1;
-      }
-      else
-         PutCh(pos,line,*i);
-   }*/
    ReadMenuBox(OkMenu,HORIZ,s," Error ",ERROR_WIN_ATTR,CURR_BUTTON_ATTR);
-/*   CloseWin();
-   DestroyWin(w);*/
 }
 
 void  FError(char *s)
