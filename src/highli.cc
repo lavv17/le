@@ -163,7 +163,7 @@ void InitHighlight()
    char str[1024];
    char *s;
    int match=0;
-   int len;
+   unsigned len;
    int res;
    int color,mask;
 
@@ -194,10 +194,13 @@ void InitHighlight()
 	    if(s[0]=='/')
 	    {
 	       // it is a regex for file contents
+	       if(strlen(s)<len)
+		  s[strlen(s)]='|';
+
 	       s++;
 
 	       if(!buffer)
-		  continue;   // no buffer - no pattern
+		  break;
 
 	       static re_pattern_buffer rexp;
 	       re_syntax_options=0;
@@ -225,6 +228,7 @@ void InitHighlight()
 		     break;
 		  }
 	       }
+	       break;
 	    }
 	    if(fnmatch(s,FileName,0)==0)
 	    {
