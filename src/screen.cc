@@ -415,7 +415,7 @@ void  Redisplay(num line,offs ptr,num limit)
 	    addch(*clp++);
       }
    }
-   else
+   else /* !hex */
    {
       offs  next_line_ptr;
       static byte *hl;
@@ -490,16 +490,18 @@ void  Redisplay(num line,offs ptr,num limit)
 	    byte ch=CharAt_NoCheck(ptr);
             if(ch=='\t')
             {
-               i=col;
-               col=Tabulate(col+ScrShift)-ScrShift;
-               if(i<0)
-                  i=0;
-               while(i<col && i<TextWinWidth)
-               {
-		  ca=(InBlock(ptr,line+ScrLine,col+ScrShift)?blk_attr:norm_attr);
-                  *clp++=ca->attr|' ';
-                  i++;
-               }
+               i=Tabulate(col+ScrShift)-ScrShift;
+               if(i>0)
+	       {
+		  while(col<i && col<TextWinWidth)
+		  {
+		     ca=(InBlock(ptr,line+ScrLine,col+ScrShift)?blk_attr:norm_attr);
+		     *clp++=ca->attr|' ';
+		     col++;
+		  }
+	       }
+	       else
+		  col=i;
             }
             else
             {
