@@ -1,3 +1,8 @@
+2001-01-31  lav
+
+	* search.cc: fix replacing when replace string ends with \.
+	  (reported by Andrey E. Lerman <lae@lae.pp.ru>)
+
 2000-12-26  lav
 
 	* block.cc: set modification flag after piping in.

@@ -410,7 +410,7 @@ void  ReplaceFound()
 	    scan+=len;
 	    scan_len-=len;
 	 }
-	 if(!bslash)
+	 if(!bslash || scan_len==0)
 	    break;
 	 scan++;
 	 scan_len--;
