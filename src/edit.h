@@ -24,10 +24,17 @@
 #include    <sys/types.h>
 #include    <time.h>
 
+#if defined(CURSES_BOOL) && !defined(bool)
+# define bool CURSES_BOOL
+# define bool_redefined 1
+#endif
 #ifdef USE_NCURSES_H
 # include <ncurses.h>
 #else
 # include <curses.h>
+#endif
+#ifdef bool_redefined
+# undef bool
 #endif
 
 #define  EMAIL    "lav@yars.free.net"

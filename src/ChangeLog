@@ -1,3 +1,8 @@
+1999-10-06  lav
+
+	* edit.cc: add help line about --config; runtime bool check.
+	* edit.h: redefine bool for curses.h if possible.
+
 1999-09-08  lav
 
 	* user.cc: do PreUserEdit in UserStartDragMark to deal with text mode.

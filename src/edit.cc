@@ -515,6 +515,7 @@ void  PrintUsage(int arg)
 	  "-h  --hex-mode     start in hex mode\n"
 	  "-b  --black-white  black and white mode\n"
 	  "-c  --color        color mode\n"
+	  "    --config=FILE  use specified file instead of le.ini\n"
 	  "    --dump-keymap  dump default keymap to stdout and exit\n"
 	  "    --dump-colors  dump default color map to stdout and exit\n"
 	  "    --mmap         load file using mmap (read only)\n"
@@ -567,6 +568,14 @@ int     main(int argc,char **argv)
    char  newname[256];
 
    strcpy(Program,le_basename(argv[0]));
+
+#if defined(CURSES_BOOL) && !defined(bool_redefined)
+   if(sizeof(bool) != sizeof(CURSES_BOOL))
+   {
+      fprintf(stderr,"%s: warning: curses library has wrong bool type. Expect trouble.\n",Program);
+      sleep(2);
+   }
+#endif
 
 #ifdef __MSDOS__
     HOME=".";
