@@ -120,6 +120,7 @@ ActionNameRec  ActionNameTable[]=
    {BLOCK_FUNC_BAR,"block-functions"},
    {MARK_LINE,"mark-line"},
    {MARK_TO_EOL,"mark-to-eol"},
+   {MARK_ALL,"mark-all"},
    {START_DRAG_MARK,"start-drag-mark"},
    {YANK_BLOCK,"yank-block"},
 
