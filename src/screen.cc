@@ -126,6 +126,7 @@ void  TestPosition()
 }
 
 static int skipped=0;	// number of times Sync skipped its work
+static num skipped_line;
 
 void  SyncTextWin()
 {
@@ -186,9 +187,9 @@ void  SyncTextWin()
 	 lim=range_end;
    }
 
-   if(CheckPending()>0)
+   if(CheckPending()>0 && skipped_line==GetLine())
    {
-      if(++skipped<5)
+      if(++skipped<80)
       {
 	 leaveok(stdscr,TRUE);
 	 flag=REDISPLAY_ALL;
@@ -196,6 +197,7 @@ void  SyncTextWin()
       }
    }
    skipped=0;
+   skipped_line=GetLine();
 
    if(hex)
       ptr=(ScreenTop&~15)+16*line;

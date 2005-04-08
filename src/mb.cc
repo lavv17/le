@@ -211,4 +211,22 @@ void InsertWChar(wchar_t ch)
       return;
    InsertBlock(buf,len);
 }
+void ReplaceWCharMove(wchar_t ch)
+{
+   char buf[MB_CUR_MAX+1];
+   int len=wctomb(buf,ch);
+   if(len<=0)
+      return;
+   MBCheckRight();
+   if(MBCharSize!=len)
+   {
+      DeleteBlock(0,MBCharSize);
+      InsertBlock(buf,len);
+   }
+   else
+   {
+      ReplaceBlock(buf,len);
+      CurrentPos+=len;
+   }
+}
 #endif

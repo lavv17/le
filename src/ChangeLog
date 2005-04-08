@@ -1,3 +1,10 @@
+2005-04-08  lav
+
+	* block.cc: fix tolower/toupper/exchange for multibyte chars.
+	* screen.cc: skip screen update up to 80 chars, or when line changes.
+	* loadsave.cc: add includes for freebsd.
+	* mb.cc, mb.h: add ReplaceWCharMove function.
+
 2005-03-23  lav
 
 	* block.cc: use Space function.

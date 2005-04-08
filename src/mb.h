@@ -39,6 +39,7 @@ wchar_t getcode_wchar();
 wchar_t choose_wch();
 void ReplaceWCharExt(wchar_t);
 void ReplaceWCharExtMove(wchar_t);
+void ReplaceWCharMove(wchar_t);
 
 static inline bool MBCheckRight() { return MBCheckAt(Offset()); }
 static inline bool MBCheckLeft()  { return MBCheckLeftAt(Offset()); }
@@ -77,6 +78,7 @@ int  mb_len(const char *buf,int len);
 # define InsertWChar(ch) InsertChar(ch)
 # define ReplaceWCharExt(c) ReplaceCharExt(c)
 # define ReplaceWCharExtMove(c) ReplaceWCharExtMove(c)
+# define ReplaceWCharMove(c) ReplaceCharMove(c)
 # define mb_get_col(buf,pos,col,len)	*(col)=(pos)
 # define mb_char_left(buf,pos,col,len)  *(col)=--(*pos)
 # define mb_char_right(buf,pos,col,len) *(col)=++(*pos)

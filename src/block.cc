@@ -936,27 +936,117 @@ void  Transform(byte (*func)(byte))
    CurrentPos=oldpos;
    stdcol=GetCol();
 }
+#if USE_MULTIBYTE_CHARS
+wctrans_t trans_toupper;
+wchar_t ToupperW(wchar_t wc)
+{
+   return towctrans(wc,trans_toupper);
+}
+wctrans_t trans_tolower;
+wchar_t TolowerW(wchar_t wc)
+{
+   return towctrans(wc,trans_tolower);
+}
+wchar_t InverseW(wchar_t wc)
+{
+   if(iswupper(wc))
+      return towctrans(wc,trans_tolower);
+   else
+      return towctrans(wc,trans_toupper);
+}
+void  TransformW(wchar_t (*func)(wchar_t))
+{
+   TextPoint oldpos=CurrentPos;
+
+   if(hide || (!rblock && BlockBegin==BlockEnd))
+   {
+      while(!Eol())
+         ReplaceWCharMove(func(WChar()));
+      flag|=REDISPLAY_LINE;
+   }
+   else
+   {
+      if(rblock)
+      {
+         num i;
+         num line1=BlockBegin.Line();
+         num line2=BlockEnd.Line();
+         num col1 =BlockBegin.Col();
+         num col2 =BlockEnd.Col();
+
+         for(i=line1; i<=line2; i++)
+         {
+	    HardMove(i,col1);
+            if(col2>col1)
+            {
+	       while(GetCol()<col2 && !Eol())
+                  ReplaceWCharMove(func(WChar()));
+            }
+            else
+            {
+               while(!Eol())
+                  ReplaceWCharMove(func(WChar()));
+	    }
+         }
+      }
+      else
+      {
+         CurrentPos=BlockBegin;
+         while(CurrentPos<BlockEnd)
+	    ReplaceWCharMove(func(WChar()));
+      }
+      flag=REDISPLAY_ALL;
+   }
+   CurrentPos=oldpos;
+   stdcol=GetCol();
+}
+#endif
 
 void    ConvertToUpper()
 {
    if(DragMark)
       UserStopDragMark();
 
-   Transform(Toupper);
+#if USE_MULTIBYTE_CHARS
+   if(mb_mode)
+   {
+      trans_toupper=wctrans("toupper");
+      TransformW(ToupperW);
+   }
+   else
+#endif
+      Transform(Toupper);
 }
 void    ConvertToLower()
 {
    if(DragMark)
       UserStopDragMark();
 
-   Transform(Tolower);
+#if USE_MULTIBYTE_CHARS
+   if(mb_mode)
+   {
+      trans_tolower=wctrans("tolower");
+      TransformW(TolowerW);
+   }
+   else
+#endif
+      Transform(Tolower);
 }
 void    ExchangeCases()
 {
    if(DragMark)
       UserStopDragMark();
 
-   Transform(Inverse);
+#if USE_MULTIBYTE_CHARS
+   if(mb_mode)
+   {
+      trans_toupper=wctrans("toupper");
+      trans_tolower=wctrans("tolower");
+      TransformW(InverseW);
+   }
+   else
+#endif
+      Transform(Inverse);
 }
 void    BlockType()
 {
