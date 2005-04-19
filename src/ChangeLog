@@ -1,3 +1,9 @@
+2005-04-19  lav
+
+	* file.cc, menu.cc, menu1.cc, screen.cc, window.cc, window.h:
+	  (PutACS) new macro; use it; use WACS_* when in mb_mode.
+	* format.cc: fixed handling of inter-paragraph blank lines.
+
 2005-04-08  lav
 
 	* block.cc: fix tolower/toupper/exchange for multibyte chars.

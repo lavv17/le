@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2005 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ void  DisplayItem(int x,int y,char *i,attr *a)
       int w=Upper->w;
       SetAttr(a);
       while(x<w-2)
-	 PutCh(x++,y,ACS_HLINE);
+	 PutACS(x++,y,HLINE);
       return;
    }
    attr r=*a;

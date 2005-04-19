@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2005 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -136,10 +136,10 @@ void  Divide(int pos)
 {
    int   i;
    SetAttr(MENU_ATTR);
-   PutCh(0,pos,ACS_LTEE);
-   PutCh(Upper->w-1,pos,ACS_RTEE);
+   PutACS(0,pos,LTEE);
+   PutACS(Upper->w-1,pos,RTEE);
    for(i=Upper->w-2; i>0; i--)
-      PutCh(i,pos,ACS_HLINE);
+      PutACS(i,pos,HLINE);
 }
 
 void  DisplayMItem(int n,int pos)

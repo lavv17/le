@@ -1,6 +1,6 @@
-/* 
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+/*
+ * Copyright (c) 1993-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -453,7 +453,7 @@ int ChooseFileName(char *fn)
          }
          SetAttr(DIALOGUE_WIN_ATTR);
          for(x=0; x<12; x++)
-            PutCh(FRIGHT-14+x,FDOWN,ACS_HLINE);
+            PutACS(FRIGHT-14+x,FDOWN,HLINE);
          if(shift>0 && (shift+(Upper->h-2)*4)<dirsize)
             PutStr(FRIGHT-3,FDOWN," PgUp/PgDn ");
          else if(shift>0)

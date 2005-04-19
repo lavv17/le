@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2004 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2005 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,8 +63,11 @@ void  PutStr(int x,int y,const char *s);
 void  PutCh(int x,int y,chtype ch);
 #ifdef USE_MULTIBYTE_CHARS
 void  PutWCh(int x,int y,wchar_t ch);
+void  PutCCh(int x,int y,cchar_t *ch);
+#define PutACS(x,y,a) PutCCh(x,y,WACS_##a)
 #else
 # define PutWCh(x,y,c) PutCh(x,y,c)
+#define PutACS(x,y,a) PutCh(x,y,ACS_##a)
 #endif
 
 extern struct attr *curr_attr;

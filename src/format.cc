@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2003 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2005 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,13 +49,26 @@ void  FormatPara()
 
    flag=1;
    ToLineBegin();
-   while(Space() && !Eof())
+   for(;;)
    {
-      ExpandTab();
-      MoveRightOverEOL();
+      int space=0;
+      while(Space() && !Eof())
+      {
+	 ExpandTab();
+	 MoveRightOverEOL();
+	 space++;
+      }
+      if(Eof())
+	 return;
+      if(Eol())
+      {
+	 DeleteBlock(space,0);
+	 space=0;
+	 MoveRightOverEOL();
+      }
+      else
+	 break;
    }
-   if(Eof())
-      return;
 
    /* fold the paragraph, that is delete all spaces but one and all newlines */
    for(;;)

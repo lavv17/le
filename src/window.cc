@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2004 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2005 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,19 +57,19 @@ void  Clear()
          mvaddch(y+Upper->y,x+Upper->x,' ');
    if(Upper->w>2 && Upper->h>2)
    {
-      PutCh(0,0,ACS_ULCORNER);
-      PutCh(Upper->w-1,0,ACS_URCORNER);
-      PutCh(0,Upper->h-1,ACS_LLCORNER);
-      PutCh(Upper->w-1,Upper->h-1,ACS_LRCORNER);
+      PutACS(0,0,ULCORNER);
+      PutACS(Upper->w-1,0,URCORNER);
+      PutACS(0,Upper->h-1,LLCORNER);
+      PutACS(Upper->w-1,Upper->h-1,LRCORNER);
       for(x=1; x<Upper->w-1; x++)
       {
-         PutCh(x,0,ACS_HLINE);
-         PutCh(x,Upper->h-1,ACS_HLINE);
+         PutACS(x,0,HLINE);
+         PutACS(x,Upper->h-1,HLINE);
       }
       for(y=1; y<Upper->h-1; y++)
       {
-         PutCh(0,y,ACS_VLINE);
-         PutCh(Upper->w-1,y,ACS_VLINE);
+         PutACS(0,y,VLINE);
+         PutACS(Upper->w-1,y,VLINE);
       }
       PutStr(MIDDLE,0,Upper->title);
    }
@@ -109,6 +109,17 @@ void  PutWCh(int x,int y,wchar_t ch)
 	 addch_visual(ch&255);
       else
          addch_visual('?');
+      attrset(curr_attr->n_attr);
+   }
+}
+void  PutCCh(int x,int y,cchar_t *ch)
+{
+   Absolute(&x,1,Upper->w);
+   Absolute(&y,1,Upper->h);
+   if(x>=0 && y>=0 && x<Upper->w && y<Upper->h)
+   {
+      move(y+Upper->y,x+Upper->x);
+      add_wch(ch);
       attrset(curr_attr->n_attr);
    }
 }
