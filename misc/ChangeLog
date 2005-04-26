@@ -1,3 +1,7 @@
+2005-04-26	lav
+
+	* syntax: add more keywords for sql, php, tcl.
+
 2005-03-10	lav
 
 	* syntax: make sql key words case insensitive.

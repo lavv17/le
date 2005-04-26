@@ -380,7 +380,7 @@ sqlcode|sqlerrm|start|statement|stddev|subtype|successful|sum|synonym|\
 sysdate|tabauth|table|tables|task|terminate|then|to|trigger|true|type|uid|\
 union|unique|update|use|user|validate|values|varchar|varchar2|variance|view|\
 views|when|whenever|where|while|with|work|write|xor|\
-constraint|foreign|key|references|primary|using|decode|replace|\
+constraint|foreign|key|references|primary|using|decode|replace|enable|disable\
 )([^[:alnum:]_]|$)
 c2,1=\||\)|\(|:=|=|\|\||<|>|!=
 
@@ -418,11 +418,11 @@ c1,4=()(\\\\[[:alnum:]]*)([^[:alnum:]_]|$)
 c2,1={|}|\[|\]
 
 # PHP mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.php3
+/*.php3|*.php
 c3,1=#.*$
 c3,1=//.*$
 c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
-c1,4=([^[:alnum:]_]|^)(if|elseif|else|for|in|break|continue|while|var\
+c1,4=([^[:alnum:]_]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
 |function|class|return|global|in|or|and|not\
 )([^[:alnum:]_]|$)
 c2,1=:|\$|->
@@ -432,7 +432,7 @@ c2,1=:|\$|->
 c3,1=#.*$
 c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
 c1,4=([^[:alnum:]/_]|^)(break|case|continue|exit|for|foreach|if|return\
-|switch|while|set|eval|proc\
+|switch|while|set|eval|proc|global|else|elseif|default\
 )([^[:alnum:]/_]|$)
 c2,1={|}|\[|\]|\$|;|\(|\)|\|
 
