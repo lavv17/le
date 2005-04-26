@@ -1,3 +1,9 @@
+Version 1.12.1 - 2005-04-26
+
+* text formatting and some text operations fixed for wide characters.
+* fixed compilation on some systems.
+* syntax rules updated for php, tcl, sql.
+
 Version 1.12.0 - 2005-03-03
 
 * new syntax descriptions (Ada, GNU Assembler, Oracle PL/SQL, SNMP MIB,

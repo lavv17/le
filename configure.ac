@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.12.0], [le@uniyar.ac.ru])
+AC_INIT([le], [1.12.1], [le@uniyar.ac.ru])
 AC_CONFIG_SRCDIR([src/edit.cc])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([config.h])
@@ -72,7 +72,7 @@ AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS(fcntl.h limits.h sys/time.h unistd.h sys/ioctl.h\
  sys/select.h sys/poll.h sys/mman.h sys/times.h sys/mount.h langinfo.h\
- wchar.h wctype.h)
+ wchar.h wctype.h sys/syslimits.h sys/param.h)
 
 LE_PATH_CURSES
 if test x$no_curses = xyes

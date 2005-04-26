@@ -1,3 +1,7 @@
+2005-04-26  lav
+
+	* configure.ac: check for sys/syslimits.h, sys/param.h.
+
 2004-04-12  lav
 
 	* configure.ac: check for nl_langinfo; call LE_FUNC_WCWIDTH_REPLACE.
