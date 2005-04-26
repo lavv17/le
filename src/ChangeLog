@@ -1,3 +1,8 @@
+2005-04-26  lav
+
+	* window.h: use ACS instead of WACS when not in mb_mode (for some
+	  reason WACS are output without acs mode - ncurses bug?).
+
 2005-04-19  lav
 
 	* file.cc, menu.cc, menu1.cc, screen.cc, window.cc, window.h:
