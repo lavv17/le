@@ -481,7 +481,7 @@ static unsigned mkhash(byte *data,int len)
 static attr *norm_attr,*blk_attr,*syntax[3];
 static attr *FindPosAttr(offs ptr,num line,num col,byte *hlp)
 {
-   if(col==TextWinWidth-1 && !EolAt(ptr) && !EolAt(ptr+1))
+   if(col>=TextWinWidth-MBCharWidth && !EolAt(ptr) && !EolAt(ptr+MBCharSize))
       return SHADOW_ATTR;
    else if(InBlock(ptr,line+ScrLine,col+ScrShift))
       return blk_attr;
@@ -747,10 +747,11 @@ void  Redisplay(num line,offs ptr,num limit)
 	    clwp=clw;
 	    for( ; col<TextWinWidth && !EolAt(ptr); ptr+=MBCharSize)
 	    {
+	       wchar_t ch=WCharAt(ptr);
+
 	       if(col>-TabSize)
 		  ca=FindPosAttr(ptr,line,col,hlp);
 
-	       wchar_t ch=WCharAt(ptr);
 	       if(ch=='\t')
 	       {
 		  i=Tabulate(col+ScrShift)-ScrShift;

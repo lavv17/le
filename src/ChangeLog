@@ -1,3 +1,8 @@
+2005-05-01  lav
+
+	* screen.cc: fix shadowing of last char on lines longer than screen
+	  width for wide chars.
+
 2005-04-26  lav
 
 	* window.h: use ACS instead of WACS when not in mb_mode (for some
