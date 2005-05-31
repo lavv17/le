@@ -126,7 +126,7 @@ int   PipeBlock(char *filter,int in,int out)
       close(pipe_out[1]);
       close(pipe_err[0]);
       close(pipe_err[1]);
-      execl("/bin/sh","sh","-c",filter,NULL);
+      execl("/bin/sh","sh","-c",filter,(char*)0);
       perror("exec(/bin/sh) failed");
       fflush(stderr);
       _exit(1);

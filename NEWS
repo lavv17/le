@@ -1,3 +1,9 @@
+Version 1.12.2 - 2005-05-31
+
+* fixed replace mode for wide characters.
+* fixed a bug in line/column determination with wide characters.
+* fixed compilation without ncursesw.
+
 Version 1.12.1 - 2005-04-26
 
 * text formatting and some text operations fixed for wide characters.
