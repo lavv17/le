@@ -29,6 +29,7 @@
 bool  mb_mode=false;
 int   MBCharSize=1;
 int   MBCharWidth=1;
+bool  MBCharInvalid=false;
 
 #define REPLACEMENT_CHARACTER 0xFFFD
 
@@ -71,25 +72,34 @@ bool MBCheckLeftAt(offs o)
    {
       mbtowc(0,0,0);
       last_wc=-1;
+      MBCharInvalid=false;
       MBCharSize=mbtowc(&last_wc,last_mb_ptr+i,last_mb_len-i);
       if(MBCharSize<=0)
+      {
 	 MBCharSize=1;
+	 MBCharInvalid=true;
+      }
       if(MBCharSize==left_offset-i)
       {
 	 MBCharWidth=wcwidth(visualize_wchar(last_wc));
 	 if(MBCharWidth<0)
+	 {
 	    MBCharWidth=1;
+	    MBCharInvalid=true;
+	 }
 	 return true;
       }
       if(MBCharSize>left_offset-i)
       {
 	 MBCharSize=left_offset-i;
 	 MBCharWidth=0;
+	 MBCharInvalid=true;
 	 return true;
       }
    }
    MBCharSize=1;
    MBCharWidth=1;
+   MBCharInvalid=true;
    return false;
 }
 
@@ -97,19 +107,24 @@ bool MBCheckAt(offs o)
 {
    if(!mb_mode)
       return false;
+   MBCharInvalid=false;
    MB_Prepare(o);
    mbtowc(0,0,0);
    last_wc=-1;
    MBCharSize=mbtowc(&last_wc,last_mb_ptr,last_mb_len);
    if(MBCharSize<1)
    {
+      MBCharInvalid=true;
       MBCharSize=1;
       MBCharWidth=1;
       return false;
    }
    MBCharWidth=wcwidth(visualize_wchar(last_wc));
    if(MBCharWidth<0)
+   {
+      MBCharInvalid=true;
       MBCharWidth=1;
+   }
    return true;
 }
 wchar_t WCharAt(offs o)

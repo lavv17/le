@@ -409,7 +409,7 @@ int   InsertBlock(char *block_left,num size_left,char *block_right,num size_righ
          break;
       }
    }
-   for(register TextPoint *scan=TextPoint::base; scan; scan=scan->next)
+   for(TextPoint *scan=TextPoint::base; scan; scan=scan->next)
    {
       if(scan->offset>oldoffset || scan==&TextEnd)
       {
@@ -427,11 +427,12 @@ int   InsertBlock(char *block_left,num size_left,char *block_right,num size_righ
       }
       else if(scan==&CurrentPos)
       {
-//          scan->col=num_of_columns_curr;
-         scan->line+=num_of_lines_curr;
+	 if(!(scan->flags&LINEUNDEFINED))
+	 {
+	    scan->line+=num_of_lines_curr;
+	    scan->flags|=COLUNDEFINED;
+	 }
          scan->offset+=size_left;
-	 scan->flags&=~LINEUNDEFINED;
-	 scan->flags|=COLUNDEFINED;
       }
    }
 
@@ -825,6 +826,9 @@ int   ReplaceBlock(char *block,num size)
       }
    }
 
+   MBCheckLeftAt(base);
+   int mb_size0=MBCharSize;
+
    num num_of_lines=0;
    offs o;
    for(o=base+1; o<=base+oldsize; o++)
@@ -852,9 +856,13 @@ int   ReplaceBlock(char *block,num size)
      }
    }
 
+   MBCheckLeftAt(base);
+   int mb_size1=MBCharSize;
+   int mb_size_max=(mb_size0>mb_size1?mb_size0:mb_size1);
+
    for(TextPoint *scan=TextPoint::base; scan; scan=scan->next)
    {
-      if(scan->offset>base+size)
+      if(scan->offset>=base+size)
       {
          if(!(scan->flags&LINEUNDEFINED))
          {
@@ -872,6 +880,8 @@ int   ReplaceBlock(char *block,num size)
 	 scan->offset=base+size;
 	 scan->flags|=COLUNDEFINED|LINEUNDEFINED;
       }
+      else if(scan->offset+mb_size_max>base)
+	 scan->flags|=COLUNDEFINED;
    }
 
    // when mmapped, changes are committed to disk automatically.

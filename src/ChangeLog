@@ -1,3 +1,13 @@
+2005-05-31  lav
+
+	* kern.cc: (InsertBlock) fix line numbering of CurrentPos,
+	  (ReplaceBlock) fix column numbering for replaced wide chars.
+	* mb.cc, mb.h: add validity flag WCharValid, fixed compilation
+	  without wide chars.
+	* screen.cc: don't reassign ScreenTop each time.
+	* textpoin.cc: (FindLineCol) fixed a nasty bug; little optimization.
+	* user.cc: (UserReplaceChar) fixed for wide chars.
+
 2005-05-01  lav
 
 	* screen.cc: fix shadowing of last char on lines longer than screen

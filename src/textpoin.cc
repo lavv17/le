@@ -261,6 +261,8 @@ void  TextPoint::FindLineCol()
 	 {
 	    dist=abs(this->offset-scan->offset);
 	    found=scan;
+	    if(dist==0)
+	       break;
 	 }
       }
    }
@@ -289,7 +291,7 @@ void  TextPoint::FindLineCol()
    {
       if(BolAt(o) || CharAt(o-1)=='\t')
          break;
-      MBCheckLeft();
+      MBCheckLeftAt(o);
       c-=MBCharWidth;
       if(c<0)  // this would indicate libc bug with mb chars.
 	 break;

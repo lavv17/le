@@ -509,9 +509,15 @@ void  Redisplay(num line,offs ptr,num limit)
    syntax[2]=find_attr(SYNTAX3);
 
    if(!hex)
-      ScreenTop=LineBegin(ScreenTop);
+   {
+      if(!BolAt(ScreenTop))
+	 ScreenTop=TextPoint(ScreenTop.Line(),0);
+   }
    else
-      ScreenTop=ScreenTop&~15;
+   {
+      if(ScreenTop&15)
+	 ScreenTop=ScreenTop&~15;
+   }
 
    if(line<0)
    {

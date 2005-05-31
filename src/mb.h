@@ -28,6 +28,7 @@
 extern bool mb_mode;
 extern int  MBCharSize;
 extern int  MBCharWidth;
+extern bool MBCharInvalid;
 
 bool MBCheckLeftAt(offs o);
 bool MBCheckAt(offs o);
@@ -63,6 +64,7 @@ int  mb_len(const char *buf,int len);
 # define MBCheckAt(o)	(false)
 # define MBCharSize	(1)
 # define MBCharWidth	(1)
+# define MBCharInvalid	(false)
 # define MBCheckRight()	(false)
 # define CharWidthAt(o)	(1)
 # define CharSizeAt(o)	(1)
@@ -77,7 +79,7 @@ int  mb_len(const char *buf,int len);
 # define choose_wch()	choose_ch()
 # define InsertWChar(ch) InsertChar(ch)
 # define ReplaceWCharExt(c) ReplaceCharExt(c)
-# define ReplaceWCharExtMove(c) ReplaceWCharExtMove(c)
+# define ReplaceWCharExtMove(c) ReplaceCharExtMove(c)
 # define ReplaceWCharMove(c) ReplaceCharMove(c)
 # define mb_get_col(buf,pos,col,len)	*(col)=(pos)
 # define mb_char_left(buf,pos,col,len)  *(col)=--(*pos)

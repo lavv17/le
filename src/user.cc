@@ -1269,7 +1269,15 @@ void  UserReplaceChar(char ch)
    if(!hex && Eol())
       flag|=REDISPLAY_AFTER;
 
-   ReplaceCharMove(ch);
+   if(buffer_mmapped || hex || !mb_mode)
+      ReplaceCharMove(ch);
+   else
+   {
+      InsertChar(ch);
+      MBCheckLeft();
+      if(!MBCharInvalid)
+	 DeleteChar();
+   }
 
    if(!hex && Bol())
       flag|=REDISPLAY_AFTER;
