@@ -3,6 +3,7 @@
 	* keymapdf.cc: add rxvt codes; use shifted terminfo codes as block
 	  marking actions (reflecting new trend in terminfo).
 	* edit.cc, user.cc, user.h: add history for shell and pipe commands.
+	* history.cc: fixed reading InodeHistory - removed extra fgetc.
 
 2005-05-31  lav
 

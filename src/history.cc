@@ -255,7 +255,6 @@ void  InodeHistory::ReadFrom(FILE *f)
       if(++i>=HISTORY_SIZE)
          break;
    }
-   fgetc(f);
 }
 
 void  InodeHistory::Merge(const InodeHistory& add)
