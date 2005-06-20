@@ -462,6 +462,8 @@ void    Initialize()
       LoadHistory.ReadFrom(f);
       SearchHistory.ReadFrom(f);
       PositionHistory.ReadFrom(f);
+      ShellHistory.ReadFrom(f);
+      PipeHistory.ReadFrom(f);
       fclose(f);
    }
 
@@ -496,21 +498,34 @@ void    Terminate()
             History  oldLoadHistory;
             History  oldSearchHistory;
             InodeHistory oldPositionHistory;
+            History  oldShellHistory;
+            History  oldPipeHistory;
 
             oldLoadHistory.ReadFrom(f);
             oldSearchHistory.ReadFrom(f);
             oldPositionHistory.ReadFrom(f);
+            oldShellHistory.ReadFrom(f);
+            oldPipeHistory.ReadFrom(f);
             LoadHistory.Merge(oldLoadHistory);
             SearchHistory.Merge(oldSearchHistory);
             PositionHistory.Merge(oldPositionHistory);
+            ShellHistory.Merge(oldShellHistory);
+            PipeHistory.Merge(oldPipeHistory);
 
             rewind(f);
 
             LoadHistory.WriteTo(f);
             SearchHistory.WriteTo(f);
             PositionHistory.WriteTo(f);
+            ShellHistory.WriteTo(f);
+            PipeHistory.WriteTo(f);
 
+	    off_t size=ftell(f);
             fclose(f);
+
+#ifdef HAVE_FTRUNCATE
+	    ftruncate(fd,size);
+#endif
          }
          close(fd);
       }

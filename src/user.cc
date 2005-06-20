@@ -1498,11 +1498,14 @@ void  UserBlockPrefixIndent()
    flag=REDISPLAY_ALL;
 }
 
+History	 ShellHistory;
+History	 PipeHistory;
+
 void  UserShellCommand()
 {
    static char str[256];
 
-   if(getstring("Shell-Command: ",str,sizeof(str)-1)<1)
+   if(getstring("Shell-Command: ",str,sizeof(str)-1,&ShellHistory)<1)
       return;
 
    cmd(str,0,1);
@@ -1519,7 +1522,7 @@ void  UserPipeBlock()
    if(hide || rblock || View)
       return;
 
-   if(getstring("Pipe through: ",filter,sizeof(filter)-1,NULL,NULL,NULL)<1)
+   if(getstring("Pipe through: ",filter,sizeof(filter)-1,&PipeHistory,NULL,NULL)<1)
       return;
 
    MessageSync("Piping...");
