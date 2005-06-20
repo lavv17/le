@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2004 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2005 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,13 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {CHAR_LEFT,"$kcub1"},
    {CHAR_RIGHT,"$kcuf1"},
    {WORD_LEFT,"\033|$kcub1"},
-   {WORD_LEFT,"$kLFT"},
+//    {WORD_LEFT,"$kLFT"},
+   {WORD_LEFT,"\033Od"},      // rxvt
+   {WORD_LEFT,"\033[1;5D"},   // xterm
    {WORD_RIGHT,"\033|$kcuf1"},
-   {WORD_RIGHT,"$kRIT"},
+//    {WORD_RIGHT,"$kRIT"},
+   {WORD_RIGHT,"\033Oc"},     // rxvt
+   {WORD_RIGHT,"\033[1;5C"},  // xterm
    {LINE_BEGIN,"$kbeg"},
    {LINE_BEGIN,"$khome"},
    {LINE_BEGIN,"$ka1"},
@@ -48,18 +52,20 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {LINE_END,"\033|\\$"},
    {LINE_END,"\033|e"},
    {LINE_END,"\033|E"},
-   {TEXT_BEGIN,"$kBEG"},
-   {TEXT_BEGIN,"$kHOM"},
+//    {TEXT_BEGIN,"$kBEG"},
+//    {TEXT_BEGIN,"$kHOM"},
    {TEXT_BEGIN,"\033|$kbeg"},
    {TEXT_BEGIN,"\033|$khome"},
    {TEXT_BEGIN,"\007|B"},
    {TEXT_BEGIN,"\007|^B"},
    {TEXT_BEGIN,"\007|b"},
-   {TEXT_END,"$kEND"},
+   {TEXT_BEGIN,"\033[7^"}, // rxvt
+//    {TEXT_END,"$kEND"},
    {TEXT_END,"\033|$kend"},
    {TEXT_END,"\007|E"},
    {TEXT_END,"\007|^E"},
    {TEXT_END,"\007|e"},
+   {TEXT_END,"\033[8^"},   // rxvt
    {NEXT_PAGE,"$knp"},
    {NEXT_PAGE,"$kc3"},
    {NEXT_PAGE,"$knxt"},
@@ -69,9 +75,11 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {PREV_PAGE,"$kprv"},
    {PREV_PAGE,"\033|$kcuu1"},
    {PAGE_TOP,"\033|$kpp"},
-   {PAGE_TOP,"$kPRV"},
+//    {PAGE_TOP,"$kPRV"},
+   {PAGE_TOP,"\033[5^"},   // rxvt
    {PAGE_BOTTOM,"\033|$knp"},
-   {PAGE_BOTTOM,"$kNXT"},
+//    {PAGE_BOTTOM,"$kNXT"},
+   {PAGE_BOTTOM,"\033[6^"},   // rxvt
    {TO_LINE_NUMBER,"\007|G"},
    {TO_LINE_NUMBER,"\007|\007"},
    {TO_LINE_NUMBER,"\007|g"},
@@ -87,6 +95,20 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {TO_PREVIOUS_LOC,"\007|p"},
    {LINE_UP,"$kcuu1"},
    {LINE_DOWN,"$kcud1"},
+
+// Movement with block marking (generic, incomplete)
+   {MARK_CHAR_LEFT,"$kLFT"},
+   {MARK_CHAR_RIGHT,"$kRIT"},
+   {MARK_WORD_LEFT,"\033|$kLFT"},
+   {MARK_WORD_RIGHT,"\033|$kRIT"},
+   {MARK_LINE_BEGIN,"$kBEG"},
+   {MARK_LINE_BEGIN,"$kHOM"},
+   {MARK_LINE_END,"$kEND"},
+   {MARK_TEXT_BEGIN,"\033|$kBEG"},
+   {MARK_TEXT_BEGIN,"\033|$kHOM"},
+   {MARK_TEXT_END,"\033|$kEND"},
+   {MARK_PREV_PAGE,"$kPRV"},
+   {MARK_NEXT_PAGE,"$kNXT"},
 
 // Movement with block marking (new xterm codes)
    {MARK_CHAR_LEFT,"\033O2D"},
@@ -115,8 +137,20 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {MARK_TEXT_END,"\033[1;6F"},
    {MARK_LINE_UP,"\033[1;2A"},
    {MARK_LINE_DOWN,"\033[1;2B"},
-   {WORD_LEFT,"\033[1;5D"},
-   {WORD_RIGHT,"\033[1;5C"},
+
+// Movement with block marking (rxvt-unicode codes)
+   {MARK_CHAR_LEFT,"\033[d"},
+   {MARK_CHAR_RIGHT,"\033[c"},
+   {MARK_WORD_LEFT,"\033\033[d"},
+   {MARK_WORD_RIGHT,"\033\033[c"},
+   {MARK_LINE_BEGIN,"\033[7$"},
+   {MARK_LINE_END,"\033[8$"},
+   {MARK_TEXT_BEGIN,"\033\033[7$"},
+   {MARK_TEXT_END,"\033\033[8$"},
+   {MARK_TEXT_BEGIN,"\033[7@"},
+   {MARK_TEXT_END,"\033[8@"},
+   {MARK_LINE_UP,"\033[a"},
+   {MARK_LINE_DOWN,"\033[b"},
 
 // Delete actions
    {BACKSPACE_CHAR,"^H"},

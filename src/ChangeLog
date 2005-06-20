@@ -1,3 +1,8 @@
+2005-06-20  lav
+
+	* keymapdf.cc: add rxvt codes; use shifted terminfo codes as block
+	  marking actions (reflecting new trend in terminfo).
+
 2005-05-31  lav
 
 	* kern.cc: (InsertBlock) fix line numbering of CurrentPos,
