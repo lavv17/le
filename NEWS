@@ -1,3 +1,9 @@
+Version 1.12.3 - 2005-06-20
+
+* shell and pipe commands history added.
+* rxvt-unicode key codes added.
+* fixed compilation on some systems.
+
 Version 1.12.2 - 2005-05-31
 
 * fixed replace mode for wide characters.
