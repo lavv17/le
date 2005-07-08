@@ -1,3 +1,8 @@
+2005-07-08  lav
+
+	* getch.cc: fix code generation for linux console.
+	* keymapdf.cc: add redhat-modified xterm codes.
+
 2005-06-20  lav
 
 	* keymapdf.cc: add rxvt codes; use shifted terminfo codes as block

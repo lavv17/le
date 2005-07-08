@@ -189,13 +189,9 @@ int linux_process_key(int key)
    {
    case KEY_LEFT:
       code='D';
-      if(ctrl && !shift && !alt)
-	 return KEY_SLEFT;
       break;
    case KEY_RIGHT:
       code='C';
-      if(ctrl && !shift && !alt)
-	 return KEY_SRIGHT;
       break;
    case KEY_UP:
       code='A';
@@ -204,32 +200,24 @@ int linux_process_key(int key)
       code='B';
       break;
    case KEY_HOME:
-      if(ctrl && !shift && !alt)
-	 return KEY_SHOME;
       code='H';
       break;
    case KEY_END:
-      if(ctrl && !shift && !alt)
-	 return KEY_SEND;
       code='F';
       break;
    }
    if(code)
    {
-      sprintf(str,"\033O%d%c",xterm_shift,code);
+      sprintf(str,"\033[1;%d%c",xterm_shift,code);
       return ungetstr(str);
    }
    code=0;
    switch(key)
    {
    case KEY_IC:
-      if(ctrl && !shift && !alt)
-	 return KEY_SIC;
       code=2;
       break;
    case KEY_DC:
-      if(ctrl && !shift && !alt)
-	 return KEY_SDC;
       code=3;
       break;
    case KEY_PPAGE:
