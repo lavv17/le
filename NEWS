@@ -1,3 +1,9 @@
+Version 1.12.4 - 2005-07-08
+
+* added c-style comments to php syntax.
+* added redhat-modified xterm key codes.
+* fixed shift-keys on linux console.
+
 Version 1.12.3 - 2005-06-20
 
 * shell and pipe commands history added.
