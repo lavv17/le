@@ -419,8 +419,7 @@ c2,1={|}|\[|\]
 
 # PHP mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.php3|*.php
-c3,1=#.*$
-c3,1=//.*$
+c3,1=#.*$|//.*$|/\\*([^*]|\\*[^/])*\\*/
 c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
 c1,4=([^[:alnum:]_]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
 |function|class|return|global|in|or|and|not\
