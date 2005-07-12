@@ -1,11 +1,11 @@
-%define version 1.12.3
+%define version 1.12.4
 %define release 1
 
 Summary: Terminal text editor LE.
 Name: le
 Version: %{version}
 Release: %{release}
-Copyright: GNU GPL
+License: GNU GPL
 Group: Applications/Editors
 Source: ftp://ftp.yars.free.net/pub/software/unix/util/texteditors/le-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-buildroot
