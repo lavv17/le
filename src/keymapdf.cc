@@ -61,12 +61,14 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {TEXT_BEGIN,"\007|B"},
    {TEXT_BEGIN,"\007|^B"},
    {TEXT_BEGIN,"\007|b"},
-   {TEXT_BEGIN,"\033[7^"}, // rxvt
+   {TEXT_BEGIN,"\033[1;5H"},  // xterm
+   {TEXT_BEGIN,"\033[7^"},    // rxvt
 //    {TEXT_END,"$kEND"},
    {TEXT_END,"\033|$kend"},
    {TEXT_END,"\007|E"},
    {TEXT_END,"\007|^E"},
    {TEXT_END,"\007|e"},
+   {TEXT_END,"\033[1;5F"}, // xterm
    {TEXT_END,"\033[8^"},   // rxvt
    {NEXT_PAGE,"$knp"},
    {NEXT_PAGE,"$kc3"},
@@ -78,9 +80,11 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {PREV_PAGE,"\033|$kcuu1"},
    {PAGE_TOP,"\033|$kpp"},
 //    {PAGE_TOP,"$kPRV"},
+   {PAGE_TOP,"\033[5;5~"}, // xterm
    {PAGE_TOP,"\033[5^"},   // rxvt
    {PAGE_BOTTOM,"\033|$knp"},
 //    {PAGE_BOTTOM,"$kNXT"},
+   {PAGE_BOTTOM,"\033[6;5~"}, // xterm
    {PAGE_BOTTOM,"\033[6^"},   // rxvt
    {TO_LINE_NUMBER,"\007|G"},
    {TO_LINE_NUMBER,"\007|\007"},

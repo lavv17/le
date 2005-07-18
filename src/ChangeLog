@@ -1,3 +1,8 @@
+2005-07-18  lav
+
+	* keymapdf.cc: added shift-begin/end key codes (for linux console hack);
+	  added control-pgup/pgdn xterm key codes.
+
 2005-07-08  lav
 
 	* getch.cc: fix code generation for linux console.
