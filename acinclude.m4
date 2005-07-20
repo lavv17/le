@@ -45,11 +45,12 @@ AC_DEFUN([LE_PATH_CURSES_DIRECT],
   fi
 
 # First see if replacing the include by lib works.
-for ac_dir in `echo "$ac_curses_includes" | sed -e 's:include:lib:' -e 's:/ncurses$::'` \
+for ac_dir0 in `echo "$ac_curses_includes" | sed -e 's:include:lib:' -e 's:/ncurses$::'` \
     /usr/lib              \
     /usr/local/lib        \
     ; \
 do
+ for ac_dir in ${ac_dir0} ${ac_dir0}64; do
   for ac_extension in a so sl; do
     if test -r $ac_dir/lib${curses_direct_test_library}w.$ac_extension; then
       use_libcursesw=yes
@@ -61,6 +62,7 @@ do
       break 2
     fi
   done
+ done
 done
 ])
 
