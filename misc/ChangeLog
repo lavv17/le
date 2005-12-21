@@ -1,3 +1,7 @@
+2005-12-21	Abel Morabito <abel.morabito@gmail.com>
+
+	* syntax: add Awk and GEMA patterns.
+
 2005-07-08	lav
 
 	* syntax: add c comments for php.

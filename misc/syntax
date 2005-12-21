@@ -329,6 +329,38 @@ c1,2=@(Abbreviations|AboveChapterGap|AbstractDisplay|AbstractFormat\
 |ZeroWidthLeftSub|ZeroWidthRightSub)
 ################################################################
 
+# GNU Awk mode, by Abel Morabito <abel.morabito@gmail.com>
+/*.awk
+c3,2=#.*$
+c2,2=[^\\]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
+c1,4=([^[:alnum:]/_]|^)(if|while|do|for|in|break|continue|switch\
+|case|default|asort|asorti|index|length|match|split|sprintf\
+|strtonum|sub|gsub|gensub|substr|tolower|toupper|return|exit|next\
+|getline|print|printf|nextfile\
+|ARGV|ARGC|CONVFMT|ENVIRON|FILENAME|FNR|FS|NF|NR|OFMT|OFS|ORS\
+|RLENGTH|RSTART|RS|SUBSEP|ARGIND|BINMODE|ERRNO|FIELDWIDTHS|IGNORECASE\
+|LINT|PROCINFO|RT|TEXTDOMAIN|BEGIN|END\
+)([^[:alnum:]/_]|$)
+c2,1=\[|\]|\$|\^|\+|\/|=|~|!|{|}|<|>|;|\(|\)|\|
+
+# GEMA mode, by Abel Morabito <abel.morabito@gmail.com>
+/*.gma
+c3,1=[^\\]!.*$
+c2,1=\*|?|#|=|\$|(\\\)|\^|;|@|:|<|>|/|{|}
+c1,4=(@)(abort|add|and|append|bind|center|char-int|close|cmpi|cmpn|cmps\
+|column|date|datime|decr|define|div|downcase|end|err|exit-status\
+|expand-wild|fail|file|file-time|fill-center|fill-left|fill-right\
+|getenv|get-switch|incr|inpath|int-char|left|length|line|makepath\
+|mergepath|mod|mul|name|not|or|out|out-column|outpath|pop|probe\
+|push|quote|radix|read|relative-path|repeat|reset-syntax\
+|reverse|right|set|set-locale|set-parm|set-switch|set-syntax|set-wrap\
+|shell|show-help|special-character|sub|subst|substring|tab|terminate\
+|time|unbind|undefine|upcase|var|version|wrap|write)
+c1,4=(\\\)(a|b|d|e|f|n|r|s|t|v|A|B|C|E|G|I|J|L|N|P|S|W|X|Z)
+c1,4=(\\\)((x[[:xdigit:]]+)|([0-7]+)|(c[[:alpha:]]))
+c1,4=(\$)([[:digit:]]+|[[:alpha:]])
+ci1,4=(<)((-?)(A|C|D|F|G|I|J|K|L|N|O|P|S|T|U|W|X|Y)([[:digit:]]*))(>)
+
 # Perl mode, by Vladislav Zhuk <admin@dru.dn.ua>
 /*.pl|/^#![ \t]*/.*/\perl\|-\*- *perl *-\*-
 c3,4=(^|[^$])(#.*)$
