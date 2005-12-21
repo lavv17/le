@@ -478,7 +478,7 @@ c1,4=([^[:alnum:]/_]|^)(if|else|elif|fi|lft|rt|top|bot|iff|not\
 c2,1=:=|\(|\)|#|=|;|\[|]|---|--|\.\.\.|\.\.|{|}|,
 
 # Patch mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.pch
+/*.pch|*.diff|*.patch
 c3,1=^\+\+.*$
 c3,1=^--.*$
 c3,1=^@@.*$
