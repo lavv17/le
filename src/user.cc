@@ -1691,7 +1691,10 @@ void UserOptimizeText()
       {
          CurrentPos=ptr;
          while(!Bol() && (CharRel_NoCheck(-1)==' ' || CharRel_NoCheck(-1)=='\t'))
+	 {
             BackSpace();
+	    ptr--;
+	 }
       }
    }
    CurrentPos=TextEnd;

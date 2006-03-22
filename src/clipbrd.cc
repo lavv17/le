@@ -76,7 +76,7 @@ int ClipBoard::Copy()
       }
       width=col2-col1;
       height=line2-line1+1;
-      text=(char*)malloc(width*height+1);
+      text=(char*)malloc(MB_CUR_MAX*width*height+1);
       if(!text)
       {
 	 NotMemory();
@@ -93,53 +93,103 @@ int ClipBoard::Copy()
 	 while(l<line1+j)
 	 {
 	    if(EofAt(o))
-	       goto fill_space;
+	       goto next_line;
 	    o=NextLine(o);
 	    if(!BolAt(o))
-	       goto fill_space;
+	       goto next_line;
 	    l++;
 	    c=0;
 	 }
-	 while(c<col1)
+	 if(!mb_mode)
 	 {
-	    if(EolAt(o))
-	       goto next_line;
-	    if(CharAt_NoCheck(o)=='\t')
+	    while(c<col1)
 	    {
-	       num c1=Tabulate(c);
-	       if(c1>col1)
-	       	  break;
-	       c=c1;
-	    }
-	    else
-	       c++;
-	    o++;
-	 }
-	 while(i<width)
-	 {
-	    if(EolAt(o))
-	       goto next_line;
-	    byte ch=CharAt_NoCheck(o);
-	    if(ch=='\t')
-	    {
-	       num c1=Tabulate(c);
-	       int k=c1-c;
-	       if(c<col1)
-		  k-=(col1-c);
-	       if(k>(width-i))
-		  k=(width-i);
-	       i+=k;
-	       while(k-->0)
-		  *text_ptr++=' ';
-	       c=c1;
+	       if(EolAt(o))
+		  goto next_line;
+	       if(CharAt_NoCheck(o)=='\t')
+	       {
+		  num c1=Tabulate(c);
+		  if(c1>col1)
+		     break;
+		  c=c1;
+	       }
+	       else
+		  c++;
 	       o++;
-	       continue;
 	    }
-	    c++;
-	    o++;
-	    i++;
-	    *text_ptr++=ch;
+	    while(i<width)
+	    {
+	       if(EolAt(o))
+		  goto next_line;
+	       byte ch=CharAt_NoCheck(o);
+	       if(ch=='\t')
+	       {
+		  num c1=Tabulate(c);
+		  int k=c1-c;
+		  if(c<col1)
+		     k-=(col1-c);
+		  if(k>(width-i))
+		     k=(width-i);
+		  i+=k;
+		  while(k-->0)
+		     *text_ptr++=' ';
+		  c=c1;
+		  o++;
+		  continue;
+	       }
+	       c++;
+	       o++;
+	       i++;
+	       *text_ptr++=ch;
+	    }
 	 }
+#if USE_MULTIBYTE_CHARS
+	 else // mb_mode
+	 {
+	    while(c<col1)
+	    {
+	       if(EolAt(o))
+		  goto next_line;
+	       wchar_t ch=WCharAt(o);
+	       if(ch=='\t')
+	       {
+		  num c1=Tabulate(c);
+		  if(c1>col1)
+		     break;
+		  c=c1;
+	       }
+	       else
+		  c+=MBCharWidth;
+	       o+=MBCharSize;
+	    }
+	    while(i<width)
+	    {
+	       if(EolAt(o))
+		  goto next_line;
+	       wchar_t ch=WCharAt(o);
+	       if(ch=='\t')
+	       {
+		  num c1=Tabulate(c);
+		  int k=c1-c;
+		  if(c<col1)
+		     k-=(col1-c);
+		  if(k>(width-i))
+		     k=(width-i);
+		  i+=k;
+		  while(k-->0)
+		     *text_ptr++=' ';
+		  c=c1;
+		  o++;
+		  continue;
+	       }
+	       c+=MBCharWidth;
+	       i+=MBCharWidth;
+	       GetBlock(text_ptr,o,MBCharSize);
+	       text_ptr+=MBCharSize;
+	       o+=MBCharSize;
+	    }
+	 }
+#endif
       next_line:;
 	 while(i<width)
 	 {
@@ -147,11 +197,6 @@ int ClipBoard::Copy()
 	    *text_ptr++=' ';
 	 }
       }
-   fill_space:
-      // fill the rest with spaces
-      int rest=width*height-(text_ptr-text);
-      if(rest>0)
-	 memset(text_ptr,' ',rest);
    }
    else /* !rblock */
    {
@@ -188,7 +233,7 @@ int ClipBoard::Paste(bool mark)
       int i;
 
       // if the block is unlimited on the right and there is some text to the
-      // right of current position, insert blank lines to make place for block
+      // right of current position, insert blank lines to make room for the block
       if(toeol)
       {
 	 for(i=0; i<height; i++)
@@ -212,18 +257,45 @@ int ClipBoard::Paste(bool mark)
 	 hide=1;
 	 BlockBegin=CurrentPos;
       }
+      char *text_ptr=text;
       for(i=0; i<height; i++)
       {
 	 HardMove(l+i,c);
 	 num ll=width;
-	 if(Eol())
+	 if(!mb_mode)
 	 {
-	    while(ll>0 && text[i*width+ll-1]==' ')
-	       ll--;
+	    if(Eol())
+	    {
+	       while(ll>0 && text[i*width+ll-1]==' ')
+		  ll--;
+	    }
+	    res=InsertBlock(text_ptr,ll);
+	    if(res!=OK)
+	       return false;
+	    text_ptr+=width;
 	 }
-	 res=InsertBlock(&text[i*width],ll);
-	 if(res!=OK)
-	    return false;
+#if USE_MULTIBYTE_CHARS
+	 else // !mb_mode
+	 {
+	    int j=0,ch_len,ch_width;
+	    while(j<width) {
+	       mb_to_wc(text_ptr,MB_CUR_MAX,&ch_len,&ch_width);
+	       res=InsertBlock(text_ptr,ch_len);
+	       if(res!=OK)
+		  return false;
+	       j+=ch_width;
+	       text_ptr+=ch_len;
+	    }
+	    if(Eol())
+	    {
+	       while(CharRel(-1)==' ')
+	       {
+		  BackSpace();
+		  j--;
+	       }
+	    }
+	 }
+#endif
       }
       if(mark)
 	 HardMove(BlockBegin.Line()+height-1,BlockBegin.Col()+(toeol?0:width));

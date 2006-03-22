@@ -218,6 +218,30 @@ int mb_len(const char *buf,int len)
       ch_len=1;
    return ch_len;
 }
+wchar_t mb_to_wc(const char *buf,int len,int *ch_len_out,int *ch_width)
+{
+   if(!mb_mode)
+   {
+      if(ch_len_out)
+	 *ch_len_out=1;
+      if(ch_width)
+	 *ch_width=1;
+      return *buf;
+   }
+   wchar_t wc=REPLACEMENT_CHARACTER;
+   mbtowc(0,0,0);
+   int ch_len=mbtowc(&wc,buf,len);
+   if(ch_len<1)
+      ch_len=1;
+   if(ch_len_out)
+      *ch_len_out=ch_len;
+   if(ch_width)
+   {
+      wc=visualize_wchar(wc);
+      *ch_width=wcwidth(wc);
+   }
+   return wc;
+}
 void InsertWChar(wchar_t ch)
 {
    char buf[MB_CUR_MAX+1];

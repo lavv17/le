@@ -60,6 +60,7 @@ void mb_char_left(const char *buf,int *pos,int *col,int len);
 void mb_char_right(const char *buf,int *pos,int *col,int len);
 int  mb_get_pos_for_col(const char *buf,int width,int len);
 int  mb_len(const char *buf,int len);
+wchar_t mb_to_wc(const char *buf,int len,int *ch_len,int *ch_width);
 
 #else
 # define mb_mode	(false)
@@ -90,6 +91,11 @@ int  mb_len(const char *buf,int len);
 # define mb_char_right(buf,pos,col,len) *(col)=++(*pos)
 # define mb_get_pos_for_col(buf,width,len) (width)
 # define mb_len(buf,len) (1)
+# define mb_to_wc(buf,len,ch_len,ch_width) (((ch_len)?*(ch_len)=1:0),((ch_width)?*(ch_width)=1:0),*(buf))
+# ifndef MB_CUR_MAX
+#  define MB_CUR_MAX 1
+#  define MB_LEN_MAX 1
+# endif
 #endif
 
 #endif//MB_H

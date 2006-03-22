@@ -212,12 +212,11 @@ int   RDelete()
       else
       {
 	 offs o=CurrentPos;
-	 while(j<oldcol2 && !Eol())
+	 while(GetCol()<oldcol2 && !Eol())
 	 {
 	    if(Char()=='\t')
 	       ExpandTab();
-	    MoveRight();
-	    j++;
+	    MoveRightOverEOL();
 	 }
 	 DeleteBlock(CurrentPos-o,0);
       }
