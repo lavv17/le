@@ -19,7 +19,7 @@ dist-hook:
 	    $(srcdir)/$(PACKAGE).lsm > $(distdir)/$(PACKAGE).lsm && \
 	    cp $(distdir)/$(PACKAGE).lsm $(srcdir)/$(PACKAGE).lsm
 
-REL_DIR=/ftp/pub/software/unix/util/texteditors
+REL_DIR=/ftp/pub/source/le
 release:
 	cvs commit -m $(VERSION)
 	make dist
