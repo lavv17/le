@@ -558,47 +558,116 @@ void  Redisplay(num line,offs ptr,num limit)
       {
          lptr=ptr;
 
-         clp=cl;
+	 if(!mb_mode)
+	 {
+	    clp=cl;
 
-	 if(!EofAt(ptr) || line==(Size()-ScreenTop.Offset()+15)/16)
-         {
-            sprintf(s,"%08lX   ",(unsigned long)ptr);
-	    for(sp=s; *sp; sp++)
-	       *clp++=norm_attr->n_attr|*sp;
-         }
-         for(i=0; i<16 && !EofAt(ptr); i++)
-         {
-            if(EofAt(ptr))
-               break;
-            sprintf(s,"%02X",CharAt(ptr));
-            ca=(InBlock(ptr)?blk_attr:norm_attr);
-            if(ascii && ptr==Offset() && ShowMatchPos)
-               ca=SHADOW_ATTR;
-	    *clp++=ca->n_attr|s[0];
-	    *clp++=ca->n_attr|s[1];
-            ptr++;
-	    char b=' '; // ((ptr&15)!=8 ? ' ' : '-');
-	    if(InBlock(ptr-1) && InBlock(ptr) && (ptr&15))
-               *clp++=blk_attr->n_attr|b;
-            else
-               *clp++=norm_attr->n_attr|b;
-         }
-	 while(clp-cl<AsciiPos)
-	    *clp++=norm_attr->n_attr|' ';
-         ptr=lptr;
-         for(i=0; i<16 && !EofAt(ptr); i++,ptr++)
-         {
-            ca=(InBlock(ptr)?blk_attr:norm_attr);
-            if(!ascii && ptr==Offset() && ShowMatchPos)
-               ca=SHADOW_ATTR;
-	    *clp++=visualize(ca,CharAt_NoCheck(ptr)|ca->n_attr);
-         }
-	 // clear the rest of line
-	 for(i=TextWinWidth-(clp-cl); i>0; i--)
-            *clp++=norm_attr->n_attr|' ';
+	    if(!EofAt(ptr) || line==(Size()-ScreenTop.Offset()+15)/16)
+	    {
+	       sprintf(s,"%08lX   ",(unsigned long)ptr);
+	       for(sp=s; *sp; sp++)
+		  *clp++=norm_attr->n_attr|*sp;
+	    }
+	    for(i=0; i<16 && !EofAt(ptr); i++)
+	    {
+	       if(EofAt(ptr))
+		  break;
+	       sprintf(s,"%02X",CharAt(ptr));
+	       ca=(InBlock(ptr)?blk_attr:norm_attr);
+	       if(ascii && ptr==Offset() && ShowMatchPos)
+		  ca=SHADOW_ATTR;
+	       *clp++=ca->n_attr|s[0];
+	       *clp++=ca->n_attr|s[1];
+	       ptr++;
+	       char b=' '; // ((ptr&15)!=8 ? ' ' : '-');
+	       if(InBlock(ptr-1) && InBlock(ptr) && (ptr&15))
+		  *clp++=blk_attr->n_attr|b;
+	       else
+		  *clp++=norm_attr->n_attr|b;
+	    }
+	    while(clp-cl<AsciiPos)
+	       *clp++=norm_attr->n_attr|' ';
+	    ptr=lptr;
+	    for(i=0; i<16 && !EofAt(ptr); i++,ptr++)
+	    {
+	       ca=(InBlock(ptr)?blk_attr:norm_attr);
+	       if(!ascii && ptr==Offset() && ShowMatchPos)
+		  ca=SHADOW_ATTR;
+	       *clp++=visualize(ca,CharAt_NoCheck(ptr)|ca->n_attr);
+	    }
+	    // clear the rest of line
+	    for(i=TextWinWidth-(clp-cl); i>0; i--)
+	       *clp++=norm_attr->n_attr|' ';
 
-	 attrset(0);
-	 mvaddchnstr(TextWinY+line,TextWinX,cl,TextWinWidth);
+	    attrset(0);
+	    mvaddchnstr(TextWinY+line,TextWinX,cl,TextWinWidth);
+	 }
+#ifdef USE_MULTIBYTE_CHARS
+	 else // mb_mode
+	 {
+	    memset(clw,0,ll*sizeof(cchar_t));
+	    clwp=clw;
+	    if(!EofAt(ptr) || line==(Size()-ScreenTop.Offset()+15)/16)
+	    {
+	       sprintf(s,"%08lX   ",(unsigned long)ptr);
+	       for(sp=s; *sp; sp++)
+	       {
+		  clwp->attr=norm_attr->n_attr;
+		  clwp->chars[0]=*sp;
+		  clwp++;
+	       }
+	    }
+	    for(i=0; i<16 && !EofAt(ptr); i++)
+	    {
+	       if(EofAt(ptr))
+		  break;
+	       sprintf(s,"%02X",CharAt(ptr));
+	       ca=(InBlock(ptr)?blk_attr:norm_attr);
+	       if(ascii && ptr==Offset() && ShowMatchPos)
+		  ca=SHADOW_ATTR;
+	       clwp->attr=ca->n_attr;
+	       clwp->chars[0]=s[0];
+	       clwp++;
+	       clwp->attr=ca->n_attr;
+	       clwp->chars[0]=s[1];
+	       clwp++;
+	       ptr++;
+	       char b=' '; // ((ptr&15)!=8 ? ' ' : '-');
+	       ca=((InBlock(ptr-1) && InBlock(ptr) && (ptr&15))?blk_attr:norm_attr);
+	       clwp->attr=ca->n_attr;
+	       clwp->chars[0]=b;
+	       clwp++;
+	    }
+	    while(clwp-clw<AsciiPos)
+	    {
+	       clwp->attr=norm_attr->n_attr;
+	       clwp->chars[0]=' ';
+	       clwp++;
+	    }
+	    ptr=lptr;
+	    for(i=0; i<16 && !EofAt(ptr); i++,ptr++)
+	    {
+	       ca=(InBlock(ptr)?blk_attr:norm_attr);
+	       if(!ascii && ptr==Offset() && ShowMatchPos)
+		  ca=SHADOW_ATTR;
+	       wchar_t ch=CharAt_NoCheck(ptr);
+	       clwp->attr=ca->n_attr;
+	       clwp->chars[0]=visualize_wchar(ch);
+	       if(clwp->chars[0]!=ch)
+		  clwp->attr=ca->so_attr;
+	       clwp++;
+	    }
+	    // clear the rest of line
+	    for(i=TextWinWidth-(clwp-clw); i>0; i--)
+	    {
+	       clwp->attr=norm_attr->n_attr;
+	       clwp->chars[0]=' ';
+	       clwp++;
+	    }
+	    attrset(0);
+	    mvadd_wchnstr(TextWinY+line,TextWinX,clw,TextWinWidth);
+	 }
+#endif // USE_MULTIBYTE_CHARS
       }
    }
    else /* !hex */

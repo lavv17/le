@@ -5,6 +5,7 @@
 	* mb.cc, mb.h: mb_to_wc new function; define MB_CUR_MAX when unavailable.
 	* user.cc: fixed text optimization.
 	* edit.cc: fixed history truncation.
+	* screen.cc: fixed display of hex data in mb_mode.
 
 2005-07-18  lav
 
