@@ -1,4 +1,4 @@
-   The text editor LE 1.10.0 has the following functions:
+   The text editor LE 1.12.6 has the following functions:
 
    Rectangular and stream blocks: copy, move, delete, write to file, read
 from file, filtering through external command, shift left, shift right,
@@ -12,21 +12,21 @@ block begin/end.
    Text formatting, line centering (Hint: ESC+F4). Optional automatic word
 wrap.
 
-   Pseudo-graphics drawing.
+   Pseudo-graphics drawing (including UTF-8 encoding).
 
-   Test undeleting/uninserting (Hint: ^U) (TODO: full undo)
+   Full undo/redo.
 
-   Hex viewing/editing files
+   Hex viewing/editing files.
    
    Binary clean -- you can safely load binary files in `Exact' or `Hex'
 mode (Exact is the default).
 
-   Multibyte character encoding support with ncurses library version 5.4 or
-newer, built with --enable-widechar option.
+   Multibyte character encoding support (e.g. UTF-8) with ncurses library
+version 5.4 or newer, built with --enable-widechar option.
 
    Viewing/editing (replace only) of very large files or even devices using
 mmap system call (--mmap or --mmap-rw option). Use with caution --mmap-rw
-option: changes go directly to file with no undo (MAP_SHARED mode).
+option: changes go directly to file (MAP_SHARED mode), undo is available.
 
    Various options tuning form (Hint: ^O, also in menu)
 

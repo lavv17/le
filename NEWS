@@ -1,3 +1,9 @@
+Version 1.12.6 - 2006-03-22
+
+* fixed rectangular block detete, copy, move, paste in utf-8 mode.
+* fixed text optimization.
+* fixed history file truncation when it gets smaller.
+
 Version 1.12.5 - 2005-07-20
 
 * fixed shift(control)-end/begin on linux console.

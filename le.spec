@@ -7,7 +7,7 @@ Version: %{version}
 Release: %{release}
 License: GNU GPL
 Group: Applications/Editors
-Source: ftp://ftp.yars.free.net/pub/software/unix/util/texteditors/le-%{version}.tar.gz
+Source: ftp://ftp.yar.ru/pub/source/le/le-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-buildroot
 
 %description

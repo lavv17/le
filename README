@@ -23,9 +23,9 @@ Some of ^Fx, ~Fx, ^~Fx can be typed as ESC+Fx
 
 
 LE can be downloaded from the following locations:
-   ftp://ftp.yars.free.net/pub/software/unix/util/texteditors/
+   ftp://ftp.yar.ru/pub/source/le/
    ftp://metalab.unc.edu/pub/Linux/apps/editors/terminal/
-   http://ftp.yars.free.net/pub/software/unix/util/texteditors/
+   http://ftp.yar.ru/pub/source/le/
    http://metalab.unc.edu/pub/Linux/apps/editors/terminal/
 There is anonymous CVS server:
    cvs -z9 -d :pserver:anonymous@swing.yars.free.net:/home/lav/cvsroot login
