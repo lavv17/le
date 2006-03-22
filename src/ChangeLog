@@ -4,6 +4,7 @@
 	* clipbrd.cc: fixed copy/paste for rectangular blocks with multibyte chars.
 	* mb.cc, mb.h: mb_to_wc new function; define MB_CUR_MAX when unavailable.
 	* user.cc: fixed text optimization.
+	* edit.cc: fixed history truncation.
 
 2005-07-18  lav
 

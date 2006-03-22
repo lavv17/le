@@ -520,12 +520,11 @@ void    Terminate()
             ShellHistory.WriteTo(f);
             PipeHistory.WriteTo(f);
 
-	    off_t size=ftell(f);
-            fclose(f);
-
 #ifdef HAVE_FTRUNCATE
-	    ftruncate(fd,size);
+	    fflush(f);
+	    ftruncate(fd,ftell(f));
 #endif
+            fclose(f);
          }
          close(fd);
       }
