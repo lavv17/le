@@ -1,3 +1,7 @@
+2006-04-11  lav
+
+	* keynames.cc, keymapdf.cc: add support for ncurses extended names.
+
 2006-03-22  lav
 
 	* block.cc: fixed delete for rectangular blocks with multibyte chars.

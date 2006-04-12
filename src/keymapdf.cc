@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2006 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +34,12 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {CHAR_RIGHT,"$kcuf1"},
    {WORD_LEFT,"\033|$kcub1"},
 //    {WORD_LEFT,"$kLFT"},
+   {WORD_LEFT,"$kLFT5"},
    {WORD_LEFT,"\033Od"},      // rxvt
    {WORD_LEFT,"\033[1;5D"},   // xterm
    {WORD_RIGHT,"\033|$kcuf1"},
 //    {WORD_RIGHT,"$kRIT"},
+   {WORD_RIGHT,"$kRIT5"},
    {WORD_RIGHT,"\033Oc"},     // rxvt
    {WORD_RIGHT,"\033[1;5C"},  // xterm
    {LINE_BEGIN,"$kbeg"},
@@ -105,7 +107,9 @@ ActionCodeRec  DefaultActionCodeTable[]=
 // Movement with block marking (generic, incomplete)
    {MARK_CHAR_LEFT,"$kLFT"},
    {MARK_CHAR_RIGHT,"$kRIT"},
+   {MARK_WORD_LEFT,"$kLFT6"},
    {MARK_WORD_LEFT,"\033|$kLFT"},
+   {MARK_WORD_RIGHT,"$kRIT6"},
    {MARK_WORD_RIGHT,"\033|$kRIT"},
    {MARK_LINE_BEGIN,"$kBEG"},
    {MARK_LINE_BEGIN,"$kHOM"},
@@ -115,6 +119,8 @@ ActionCodeRec  DefaultActionCodeTable[]=
    {MARK_TEXT_END,"\033|$kEND"},
    {MARK_PREV_PAGE,"$kPRV"},
    {MARK_NEXT_PAGE,"$kNXT"},
+   {MARK_LINE_UP,"$kUP"},
+   {MARK_LINE_DOWN,"$kDN"},
 
 // Movement with block marking (new xterm codes)
    {MARK_CHAR_LEFT,"\033O2D"},

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2000 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2006 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include "edit.h"
 #include "keynames.h"
+#include <term.h>
 
 static const struct CodeName
 {
@@ -330,13 +331,53 @@ static const struct CodeName
 { KEY_UP         , "up"         },
 #endif //0
 };
-
 const int CodeNameTableSize=sizeof(CodeNameTable)/sizeof(CodeNameTable[0]);
+
+static struct CodeName *CodeNameTableExt;
+static int CodeNameTableExtSize;
 
 static int node_compare(const void *node1, const void *node2)
 {
    return(strcmp(((const CodeName*)node1)->name,
 		 ((const CodeName*)node2)->name));
+}
+
+static void MakeCodeNameTableExt()
+{
+#if NCURSES_XNAMES
+
+/* These are taken from ncurses internals */
+#define NUM_STRINGS(tp)  ((tp)->num_Strings)
+#define EXT_NAMES(tp,i,limit,index,table) ((i >= limit) ? tp->ext_Names[index] : table[i])
+#define ExtStrname(tp,i,names)  EXT_NAMES(tp, i, STRCOUNT, (i - (tp->num_Strings - tp->ext_Strings)) + (tp->ext_Numbers + tp->ext_Booleans), names)
+
+   if(!cur_term)
+      return;
+   TERMTYPE *tp = &cur_term->type;
+   if(!tp)
+      return;
+   if(NUM_STRINGS(tp)<=STRCOUNT)
+      return;
+   CodeNameTableExt=(CodeName*)malloc(sizeof(CodeName)*(NUM_STRINGS(tp)-STRCOUNT));
+   if(!CodeNameTableExt)
+      return;
+   CodeNameTableExtSize=0;
+   for(int n=STRCOUNT; n<NUM_STRINGS(tp); n++)
+   {
+      char *name = ExtStrname(tp, n, strnames);
+      char *value = tp->Strings[n];
+      if (name && *name=='k' && value)
+      {
+	 CodeNameTableExt[CodeNameTableExtSize].code=n-STRCOUNT+KEY_MAX;
+	 CodeNameTableExt[CodeNameTableExtSize].name=strdup(name);
+	 if(!CodeNameTableExt[CodeNameTableExtSize].name)
+	    return;
+	 CodeNameTableExtSize++;
+      }
+   }
+   if(CodeNameTableExtSize)
+      qsort(CodeNameTableExt,CodeNameTableExtSize,sizeof(CodeName),node_compare);
+#endif
 }
 
 int FindKeyCode(const char *name)
@@ -346,6 +387,15 @@ int FindKeyCode(const char *name)
    void *addr=bsearch(&node,CodeNameTable,CodeNameTableSize,
 		      sizeof(CodeNameTable[0]),node_compare);
    if(!addr)
-      return -1;
+   {
+      if(!CodeNameTableExt)
+	 MakeCodeNameTableExt();
+      if(!CodeNameTableExt)
+	 return -1;
+      addr=bsearch(&node,CodeNameTableExt,CodeNameTableExtSize,
+		   sizeof(CodeNameTableExt[0]),node_compare);
+      if(!addr)
+	 return -1;
+   }
    return ((CodeName*)addr)->code;
 }
