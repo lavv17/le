@@ -358,39 +358,6 @@ AC_DEFUN([CXX_DYNAMIC_INITIALIZERS],
    AC_LANG_RESTORE
 ])
 
-AC_DEFUN([LFTP_NOIMPLEMENTINLINE],
-[
-   AC_MSG_CHECKING(if -fno-implement-inlines implements virtual functions)
-   flags="-fno-implement-inlines -Winline"
-   AC_CACHE_VAL(lftp_cv_noimplementinline,
-   [
-      AC_LANG_SAVE
-      AC_LANG_CPLUSPLUS
-      old_CXXFLAGS="$CXXFLAGS"
-      CXXFLAGS="$CXXFLAGS $flags"
-      AC_TRY_LINK([
-	 class aaa
-	 {
-	    int var;
-	 public:
-	    virtual void func() { var=1; }
-	    aaa();
-	    virtual ~aaa();
-	 };
-	 aaa::aaa() { var=0; }
-	 aaa::~aaa() {}
-	 ],[],
-	 [lftp_cv_noimplementinline=yes],
-	 [lftp_cv_noimplementinline=no])
-      CXXFLAGS="$old_CXXFLAGS"
-      AC_LANG_RESTORE
-   ])
-   AC_MSG_RESULT($lftp_cv_noimplementinline)
-   if test x$lftp_cv_noimplementinline = xyes; then
-      CXXFLAGS="$CXXFLAGS $flags"
-   fi
-])
-
 AC_DEFUN([LE_CHECK_REGEX_BUGS],[
    AC_CACHE_CHECK([for good GNU regex in libc], le_cv_good_gnu_regex,
       le_cv_good_gnu_regex=yes

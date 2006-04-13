@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.12.6], [le@uniyar.ac.ru])
+AC_INIT([le], [1.12.7], [le@uniyar.ac.ru])
 AC_CONFIG_SRCDIR([src/edit.cc])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([config.h])
@@ -18,7 +18,6 @@ dnl Checks for programs.
 AC_PROG_CC
 AC_PROG_CXX
 CXX_DYNAMIC_INITIALIZERS
-LFTP_NOIMPLEMENTINLINE
 AC_PROG_LN_S
 AC_PROG_RANLIB
 
@@ -49,18 +48,16 @@ if test x$GCC = xyes; then
    CFLAGS="$CFLAGS -Wall"
 fi
 if test x$GXX = xyes; then
-   CXXFLAGS="$CXXFLAGS -Wall"
-
+   CXXFLAGS="$CXXFLAGS -Wall -Wwrite-strings -Woverloaded-virtual"
+   if test x$DEFAULT_CXX = xyes; then
+      LFTP_PROG_CXXLINK
+   fi
    # save some bytes
-   case "`$CXX --version`" in
-   egcs*|2.8*|pgcc*)
-	 CXXFLAGS="$CXXFLAGS -fno-exceptions -fno-rtti"
-	 ;;
-   esac
-fi
-
-if test x$DEFAULT_CXX = xyes; then
-   LFTP_PROG_CXXLINK
+   LFTP_CHECK_CXX_FLAGS([-fno-exceptions -fno-rtti])
+   # check for -fno-implement-inline (doesn't work without -O in gcc 2.95.4; functions are never inlined)
+   if test x$with_debug = xno; then
+      LFTP_NOIMPLEMENTINLINE
+   fi
 fi
 
 dnl Checks for libraries.
