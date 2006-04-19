@@ -39,7 +39,7 @@ int   FuncKeysNum=12;
 
 int   MouseCounter=0;
 
-ActionNameRec  ActionNameTable[]=
+const ActionNameRec ActionNameTable[]=
 {
    {CHAR_LEFT,"backward-char"},
    {CHAR_RIGHT,"forward-char"},
@@ -266,12 +266,11 @@ struct KeyTreeNode
    struct KeyTreeNode *child;
 };
 
-extern   ActionCodeRec  DefaultActionCodeTable[];
-ActionCodeRec  *ActionCodeTable=DefaultActionCodeTable;
-bool NeedFreeActionCodeTable=false;
+const ActionCodeRec *ActionCodeTable=DefaultActionCodeTable;
+ActionCodeRec *DynamicActionCodeTable;
 //char  *ti_cache[128]={NULL};
 
-char  *GetActionName(int action)
+const char *GetActionName(int action)
 {
    for(int i=0; ActionNameTable[i].action!=-1; i++)
       if(ActionNameTable[i].action==action)
@@ -532,7 +531,7 @@ KeyTreeNode *AddToKeyTree(KeyTreeNode *curr,int key_code,int delay,int action)
 #define LEFT_BRACE  '{'
 #define RIGHT_BRACE '}'
 
-KeyTreeNode *BuildKeyTree(ActionCodeRec *ac_table)
+KeyTreeNode *BuildKeyTree(const ActionCodeRec *ac_table)
 {
    KeyTreeNode *top=0;
    char  term_name[256];
@@ -555,7 +554,7 @@ KeyTreeNode *BuildKeyTree(ActionCodeRec *ac_table)
       {
 	 KeyTreeNode *curr=top;
 
-	 char *code=ac_table->code;
+	 const char *code=ac_table->code;
 	 int delay=MAX_DELAY;
 
 	 fk_num=0;
@@ -795,21 +794,19 @@ void  ReadActionMap(FILE *f)
    NewTable[CurrTableCell].code=NULL;
 
    ActionCodeTable=NewTable;
-   NeedFreeActionCodeTable=true;
+   DynamicActionCodeTable=NewTable;
 }
 
 void FreeActionCodeTable()
 {
-   if(!NeedFreeActionCodeTable)
+   if(DynamicActionCodeTable)
    {
-      ActionCodeTable=0;
-      return;
+      for(int i=0; DynamicActionCodeTable[i].code; i++)
+	 free(DynamicActionCodeTable[i].code);
+      free(DynamicActionCodeTable);
+      DynamicActionCodeTable=0;
    }
-   for(int i=0; ActionCodeTable[i].code; i++)
-      free(ActionCodeTable[i].code);
-   free(ActionCodeTable);
    ActionCodeTable=0;
-   NeedFreeActionCodeTable=false;
 }
 
 int   GetNextAction()

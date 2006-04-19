@@ -23,15 +23,16 @@
 #include <stdlib.h>
 #include "edit.h"
 #include "keymap.h"
+#include "menu.h"
 
-char  ItemChar(char *i)
+char  ItemChar(const char *i)
 {
    for(; *i; i++)
       if(*i=='&')
          return(toupper(i[1]));
    return(0);
 }
-int   ItemLen(char *i)
+int   ItemLen(const char *i)
 {
    int   len=0;
    for(; *i; i++)
@@ -39,7 +40,7 @@ int   ItemLen(char *i)
          len++;
    return(len);
 }
-void  DisplayItem(int x,int y,char *i,attr *a)
+void  DisplayItem(int x,int y,const char *i,const attr *a)
 {
    Absolute(&x,ItemLen(i),Upper->w);
    if(!strcmp(i,"---"))
@@ -68,12 +69,12 @@ void  DisplayItem(int x,int y,char *i,attr *a)
    SetAttr(a);
 }
 
-void  display(struct menu *mi,attr *a)
+void  display(const struct menu *mi,const attr *a)
 {
    DisplayItem(mi->x,mi->y,mi->text,a);
 }
 
-int   ReadMenu(struct menu *m,int dir,attr *a,attr *ca,int curr)
+int   ReadMenu(const struct menu *m,int dir,const attr *a,const attr *ca,int curr)
 {
    int   i,action,key;
 
@@ -177,7 +178,7 @@ void  GetTextGeometry(const char *s,int *w,int *h)
 }
 
 int   ReadMenuBox(struct menu *m,int dir,const char *msg,const char *title,
-		  attr *a,attr *a1)
+		  const attr *a,const attr *a1)
 {
    int	 w,h;
    int	 len;

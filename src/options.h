@@ -18,7 +18,7 @@
 
 struct init
 {
-   char  *name;
+   const char *name;
    int   format;
    void  *var;
 };

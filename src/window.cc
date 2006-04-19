@@ -22,7 +22,7 @@
 #include "edit.h"
 #include "xalloca.h"
 
-attr  *curr_attr;
+const attr *curr_attr;
 
 WIN      *Upper = NULL;
 
@@ -222,7 +222,7 @@ void  PutStr(int x,int y,const char *str)
    }
 }
 
-WIN   *CreateWin(int x,int y,unsigned w,unsigned h,struct attr *a,
+WIN   *CreateWin(int x,int y,unsigned w,unsigned h,const attr *a,
                  const char *title,int flags)
 {
    WIN   *win;

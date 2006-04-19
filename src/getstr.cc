@@ -35,7 +35,7 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
    int      width,start;
    int      shift,i,c,stuff;
    int	    ch_len;
-   HistoryLine *hl;
+   const HistoryLine *hl;
 
    if(history)
       history->Open();
@@ -60,7 +60,7 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
 	 hl=history->Prev();
 	 if(!hl)
 	    break;
-	 if(*len==hl->len && !memcmp(buf,hl->line,*len))
+	 if(hl->equals(buf,*len))
 	    break;
       }
    }
@@ -134,9 +134,10 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
             if(history==NULL)
                break;
             hl=history->Prev();
-            if(hl)
-               memcpy(buf,hl->line,*len=hl->len);
-            else
+            if(hl) {
+	       *len=hl->get_len();
+               memcpy(buf,hl->get_line(),*len);
+	    } else
                *len=0;
             pos=0;
 	    col=0;
@@ -146,9 +147,10 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
             if(history==NULL)
                break;
             hl=history->Next();
-            if(hl)
-               memcpy(buf,hl->line,*len=hl->len);
-            else
+            if(hl) {
+	       *len=hl->get_len();
+               memcpy(buf,hl->get_line(),*len);
+	    } else
                *len=0;
             pos=0;
 	    col=0;
@@ -256,6 +258,7 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
 /*NOTREACHED*/
 }
 
+#ifdef WITH_MODIFYKEY
 int   ModifyKey(int key)
 {
    int   i;
@@ -275,3 +278,4 @@ int   ModifyKey(int key)
    }
    return(key);
 }
+#endif

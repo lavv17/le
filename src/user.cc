@@ -987,20 +987,18 @@ int   UserSaveAs()
 }
 void  UserSwitch()
 {
-   char  newname[256];
-   HistoryLine *prev;
-
    LoadHistory.Open();
    LoadHistory.Prev();
-   LoadHistory.Prev();
-   prev=LoadHistory.Curr();
+   const HistoryLine *prev=LoadHistory.Prev();
    if(prev==NULL)
    {
       UserLoad();
       return;
    }
 
-   strcpy(newname,prev->line);
+   char newname[256];
+   strncpy(newname,prev->get_line(),255);
+   newname[255]=0;
 
    if(ChooseFileName(newname)<0)
       return;

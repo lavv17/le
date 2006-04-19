@@ -67,7 +67,7 @@ static int OldTabSize;
 
 struct  opt
 {
-   char  *name;
+   const char *name;
    int    type;
    void  *var;
    int    x,y;
@@ -307,7 +307,7 @@ void  SaveConfToFile(const char *f,const struct init *init)
    fclose(conf);
 }
 
-void  SaveConf(char *f)
+void  SaveConf(const char *f)
 {
    MessageSync("Saving the editor options...");
    SaveConfToFile(f,init);
@@ -677,7 +677,7 @@ static bool InOptField(int y,int x,struct opt *o)
 
 void  W_Dialogue(struct opt *opt,
              const char *SetupHelp,const char *SetupTitle,
-             int (*EatKey)(int),int (*HandleButton)(char *,int))
+             int (*EatKey)(int),int (*HandleButton)(const char *,int))
 {
    int newitem=0;
    int first=1;
@@ -686,7 +686,7 @@ void  W_Dialogue(struct opt *opt,
    int shift=0,pos=0,col=0,i,key=0,d,dist;
    int   action=-1;
    int   OldShowStatusLine=ShowStatusLine;
-   attr  *a=Upper->a;
+   const attr *a=Upper->a;
    int len,ch_len;
 
    OldTabSize=TabSize;
@@ -1064,9 +1064,9 @@ leave_cycle:
    idlok(stdscr,useidl);
 }
 
-void  Dialogue(struct opt *opt,int WinWidth,int WinHeight,char *WinTitle,
+void  Dialogue(struct opt *opt,int WinWidth,int WinHeight,const char *WinTitle,
              const char *SetupHelp,const char *SetupTitle,
-             int (*EatKey)(int),int (*HandleButton)(char *,int))
+             int (*EatKey)(int),int (*HandleButton)(const char *,int))
 {
    WIN *optw;
    optw=CreateWin(MIDDLE,MIDDLE,WinWidth,WinHeight,DIALOGUE_WIN_ATTR,WinTitle,0);
@@ -1093,7 +1093,7 @@ int    OptEatKey(int k)
    return(-1);
 }
 
-int    OptHandleBut(char *,int)
+int    OptHandleBut(const char *,int)
 {
    return(0);
 }
@@ -1120,7 +1120,7 @@ int   TOEatKey(int k)
    (void)k;
    return(-1);
 }
-int   TOHandleBut(char *,int)
+int   TOHandleBut(const char *,int)
 {
    return(0);
 }
@@ -1224,7 +1224,7 @@ static color new_color_pal[MAX_COLOR_NO+1];
 static color new_bw_pal[MAX_COLOR_NO+1];
 static bool color_applied;
 
-int ColorHandleBut(char *button,int index)
+int ColorHandleBut(const char *button,int index)
 {
    static int color_xlat[]={
       NORMAL_TEXT,BLOCK_TEXT,STATUS_LINE,SCROLL_BAR,ERROR_WIN,VERIFY_WIN,

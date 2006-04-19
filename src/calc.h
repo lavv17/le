@@ -29,6 +29,6 @@ extern int sp;
 extern double stack[STSIZE];
 extern int calcerrno;
 
-char  *calcerrmsg();
-int   calculator(char *);
+const char *calcerrmsg();
+int   calculator(const char *);
 void  initcalc();

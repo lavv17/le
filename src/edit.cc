@@ -459,9 +459,9 @@ void    Initialize()
    f=fopen(HstName,"rb");
    if(f && fcntl(fileno(f),F_SETLKW,&l)!=-1)
    {
+      PositionHistory.ReadFrom(f);
       LoadHistory.ReadFrom(f);
       SearchHistory.ReadFrom(f);
-      PositionHistory.ReadFrom(f);
       ShellHistory.ReadFrom(f);
       PipeHistory.ReadFrom(f);
       fclose(f);
@@ -495,28 +495,28 @@ void    Terminate()
          {
             f=fdopen(fd,"r+b");
 
+            InodeHistory oldPositionHistory;
             History  oldLoadHistory;
             History  oldSearchHistory;
-            InodeHistory oldPositionHistory;
             History  oldShellHistory;
             History  oldPipeHistory;
 
+            oldPositionHistory.ReadFrom(f);
             oldLoadHistory.ReadFrom(f);
             oldSearchHistory.ReadFrom(f);
-            oldPositionHistory.ReadFrom(f);
             oldShellHistory.ReadFrom(f);
             oldPipeHistory.ReadFrom(f);
+            PositionHistory.Merge(oldPositionHistory);
             LoadHistory.Merge(oldLoadHistory);
             SearchHistory.Merge(oldSearchHistory);
-            PositionHistory.Merge(oldPositionHistory);
             ShellHistory.Merge(oldShellHistory);
             PipeHistory.Merge(oldPipeHistory);
 
             rewind(f);
 
+            PositionHistory.WriteTo(f);
             LoadHistory.WriteTo(f);
             SearchHistory.WriteTo(f);
-            PositionHistory.WriteTo(f);
             ShellHistory.WriteTo(f);
             PipeHistory.WriteTo(f);
 
@@ -615,7 +615,6 @@ int     main(int argc,char **argv)
       {0,0,0,0}
    };
 
-   HistoryLine    *hl=0;
    char  newname[256];
    newname[0]=0;
 
@@ -749,6 +748,7 @@ int     main(int argc,char **argv)
 
    if(optind>=argc)
    {
+      const HistoryLine *hl=0;
       LoadHistory.Open();
       bool first=true;
       for(;;)
@@ -756,10 +756,11 @@ int     main(int argc,char **argv)
 	 hl=LoadHistory.Prev();
 	 if(!hl)
 	    break;
-	 if(hl->line[0] && (first || hl->line[0]!='/')
-	 && access(hl->line,R_OK)!=-1)
+	 const char *f=hl->get_line();
+	 if(*f && (first || f[0]!='/')
+	 && access(f,R_OK)!=-1)
 	 {
-	    strcpy(newname,hl->line);
+	    strcpy(newname,f);
       	    break;
 	 }
 	 first=false;

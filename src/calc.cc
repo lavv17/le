@@ -200,10 +200,10 @@ int   cosx()
 
 struct   func_def
 {
-   char  *name;
-   int      (*func)();
+   const char *name;
+   int (*func)();
 }
-func[]={
+const func[]={
 
 {"+",add},  {"-",sub},  {"/",div},  {"*",mul},
 {"cp",cpy}, {"**",pwr}, {"pi",mpi}, {"e",me},
@@ -219,10 +219,10 @@ int   check_for_number(char *w)
    return(isdigit(w[0]) || w[0]=='-' && isdigit(w[1]));
 }
 
-int   calculator(char *in)
+int   calculator(const char *in)
 {
    int      wl;
-   struct   func_def  *f;
+   const func_def *f;
    do
    {
       while(*in && isspace(*in))
@@ -263,7 +263,7 @@ void  initcalc()
 }
 
 #define  MAXCALCERR  5
-char  *calc_errlist[MAXCALCERR]=
+const char  *const calc_errlist[MAXCALCERR]=
 {
    "Stack underflow",
    "Stack overflow",
@@ -271,7 +271,7 @@ char  *calc_errlist[MAXCALCERR]=
    "Invalid function name",
    "Invalid number format"
 };
-char  *calcerrmsg()
+const char *calcerrmsg()
 {
    if(calcerrno>=0)
       return("No error");

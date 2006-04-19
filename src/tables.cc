@@ -20,6 +20,7 @@
  * This code actually is VERY old and must be reorganized or deleted,
  * but I don't have time nor wish to do that
  */
+#ifdef WITH_MODIFYKEY
 
 #include <config.h>
 #include <string.h>
@@ -73,3 +74,5 @@ void  InitTables()
       table=rl_d211;
 #endif
 }
+
+#endif // WITH_MODIFYKEY

@@ -21,15 +21,15 @@
 
 struct  menu
 {
-   char	 *text;
+   const char *text;
    int   x,y;
 };
 
-char  ItemChar(char *i);
-int   ItemLen(char *i);
-void  DisplayItem(int x,int y,char *i,attr *a);
-int   ReadMenu(struct menu *m,int dir,attr *a,attr *a1,int curr=0);
-int   ReadMenuBox(struct menu *m,int dir,const char *msg,const char *title,attr *a,attr *a1);
+char  ItemChar(const char *i);
+int   ItemLen(const char *i);
+void  DisplayItem(int x,int y,const char *i,const attr *a);
+int   ReadMenu(const struct menu *m,int dir,const attr *a,const attr *a1,int curr=0);
+int   ReadMenuBox(struct menu *m,int dir,const char *msg,const char *title,const attr *a,const attr *a1);
 
 #define HORIZ   1
 #define VERT    2

@@ -111,8 +111,6 @@ extern  num     GapSize;
 extern  offs    ptr1,ptr2,oldptr1,oldptr2;
 extern  num     stdcol;
 
-extern  int     DosEol;
-
 extern  int     hide;
 
 extern  int     message_sp;
@@ -120,8 +118,9 @@ extern  int     flag;
 
 extern  byte    chset[];
 
-extern   int   EolSize;
-extern   char  *EolStr;
+extern int DosEol;
+extern int EolSize;
+extern const char *EolStr;
 
 extern   int   TabsInMargin;
 
@@ -218,8 +217,6 @@ void    CorrectParameters();
 void  InitCurses();
 void  TermCurses();
 
-void    InitTables();
-
 void    _clrtoeol(void);
 
 offs    NextLine(offs);
@@ -252,8 +249,8 @@ int   PreUserEdit();
 
 int   choose_ch();
 
-int   InsertBlock(char *block,num len,char *rblock=NULL,num rlen=0);
-int   ReplaceBlock(char *block,num len);
+int   InsertBlock(const char *block,num len,const char *rblock=NULL,num rlen=0);
+int   ReplaceBlock(const char *block,num len);
 int   CopyBlock(offs from,num len);
 int   CopyBlockOver(offs from,num len);
 int   ReadBlock(int fd,num len,num *act_read);
@@ -275,7 +272,14 @@ void  ActivateMainMenu();
 num   MarginSizeAt(offs);
 
 void  UnrefKey(int key);
+
+#ifdef WITH_MODIFYKEY
+void  InitTables();
 int   ModifyKey(int key);
+#else
+#define InitTables() do{}while(0)
+#define ModifyKey(key) (key)
+#endif
 
 void  define_pairs();
 void  InitMenu();

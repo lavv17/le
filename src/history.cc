@@ -24,29 +24,39 @@
 #include <time.h>
 #include "edit.h"
 
+static char *memdup(const char *s,int len)
+{
+   char *mem=(char*)malloc(len+1);
+   if(mem)
+      memcpy(mem,s,len);
+   mem[len]=0;
+   return mem;
+}
+
 History::History()
 {
+   lines=(HistoryLine**)calloc(HISTORY_SIZE,sizeof(*lines));
    curr=-1;
 }
 void  History::Open()
 {
    curr=-1;
 }
-HistoryLine *History::Curr()
+const HistoryLine *History::Curr()
 {
    if(curr==-1)
       return(NULL);
    else
    {
-      if(lines[curr].len==0)
+      if(!lines[curr])
       {
          curr=-1;
          return(NULL);
       }
-      return(lines+curr);
+      return(lines[curr]);
    }
 }
-HistoryLine *History::Prev()
+const HistoryLine *History::Prev()
 {
    if(curr==-1)
       curr=0;
@@ -58,47 +68,49 @@ HistoryLine *History::Prev()
    }
    return(Curr());
 }
-HistoryLine *History::Next()
+const HistoryLine *History::Next()
 {
    if(curr==-1)
    {
       curr=HISTORY_SIZE;
-      while(lines[--curr].len==0 && curr>0);
+      while(!lines[--curr] && curr>0);
    }
    else
       curr--;
    return(Curr());
 }
-void  History::operator+=(const HistoryLine& hl)
+void History::operator+=(const HistoryLine& hl)
 {
    int   i;
 
    if(hl.len==0)
       return;
 
-   for(i=0; i<HISTORY_SIZE-1 && hl!=lines[i]; i++);
+   for(i=0; i<HISTORY_SIZE-1 && lines[i] && hl!=*lines[i]; i++);
+   delete lines[i];
    for( ; i>0; i--)
       lines[i]=lines[i-1];
-   lines[0]=hl;
+   lines[0]=new HistoryLine(hl);
 }
-void  History::operator-=(const HistoryLine& hl)
+void History::operator-=(const HistoryLine& hl)
 {
    int   i;
 
    if(hl.len==0)
       return;
 
-   for(i=0; hl!=lines[i]; i++)
+   for(i=0; lines[i] && hl!=*lines[i]; i++)
       if(i>=HISTORY_SIZE-1)
          return;
+   delete lines[i];
    for( ; i<HISTORY_SIZE-1; i++)
       lines[i]=lines[i+1];
-   lines[i]=HistoryLine();
+   lines[i]=0;
 }
 void  History::Push()
 {
-   HistoryLine hl2=lines[2];
-   HistoryLine hl1=lines[1];
+   HistoryLine hl2(*lines[2]);
+   HistoryLine hl1(*lines[1]);
    *this+=hl2;
    *this+=hl1;
 }
@@ -106,39 +118,42 @@ void  History::Push()
 HistoryLine::HistoryLine()
 {
    len=0;
-   memset(line,0,sizeof(line));
+   line=0;
    cr_time=0;
 }
-HistoryLine::HistoryLine(char *s,unsigned short l)
+HistoryLine::HistoryLine(const char *s,unsigned short l)
 {
    if(l==0)
       l=strlen(s);
-   memcpy(line,s,len=l);
-   memset(line+l,0,sizeof(line)-l);
+   len=l;
+   line=memdup(s,l);
    time(&cr_time);
 }
-const HistoryLine&   HistoryLine::operator=(const HistoryLine& hl)
+const HistoryLine& HistoryLine::operator=(const HistoryLine& hl)
 {
    len=hl.len;
-   memcpy(line,hl.line,sizeof(line));
+   free(line);
+   line=memdup(hl.line,len);
    cr_time=hl.cr_time;
    return(hl);
-}
-int   HistoryLine::operator!=(const HistoryLine& hl) const
-{
-   return(len!=hl.len || memcmp(line,hl.line,len));
 }
 
 void  History::Merge(const History& add)
 {
-   const HistoryLine *l1=this->lines;
-   const HistoryLine *l2=add.lines;
+   HistoryLine *const*l1=this->lines;
+   HistoryLine *const*l2=add.lines;
    History  newh;
 
-   int   i,j;
-   for(i=HISTORY_SIZE,j=HISTORY_SIZE; i>0 || j>0; )
+   int   i=HISTORY_SIZE,j=HISTORY_SIZE;
+   for(;;)
    {
-      if(j==0 || (i!=0 && l1[i-1].cr_time<l2[j-1].cr_time))
+      while(i>0 && !l1[i-1])
+	 i--;
+      while(j>0 && !l2[j-1])
+	 j--;
+      if(i==0 && j==0)
+	 break;
+      if(j==0 || (i!=0 && l1[i-1]->cr_time<l2[j-1]->cr_time))
          newh+=l1[--i];
       else
          newh+=l2[--j];
@@ -150,37 +165,51 @@ void  History::WriteTo(FILE *f)
 {
    for(int i=0; i<HISTORY_SIZE; i++)
    {
-      fprintf(f,"%10lu%4u",(unsigned long)lines[i].cr_time,lines[i].len);
-      fwrite(lines[i].line,1,lines[i].len,f);
+      if(!lines[i])
+	 break;
+      else
+      {
+	 fprintf(f,"%lu:%u:",(unsigned long)lines[i]->cr_time,lines[i]->len);
+	 fwrite(lines[i]->line,1,lines[i]->len,f);
+      }
       fputc('\n',f);
    }
+   fputs("0:0:\n",f);
 }
 void  History::ReadFrom(FILE *f)
 {
-   char  buf[15];
    for(int i=0; i<HISTORY_SIZE; i++)
    {
-      lines[i].len=0;
-      fread(buf,1,sizeof(buf)-1,f);
-      buf[sizeof(buf)-1]=0;
+      unsigned len=0;
       unsigned long cr_time;
-      if(sscanf(buf,"%10lu%4hu",&cr_time,&(lines[i].len))<2)
-         return;
-      lines[i].cr_time=cr_time;
-      if(lines[i].len>sizeof(lines[i].line))
+      if(fscanf(f,"%lu:%u:",&cr_time,&len)<2)
       {
-         lines[i].len=0;
+	 fprintf(stderr,"error reading history at offset %ld\n",ftell(f));
          return;
       }
-      fread(lines[i].line,1,lines[i].len,f);
-      fgetc(f);
+      if(len==0)
+      {
+	 fgetc(f); // skip \n
+	 return;
+      }
+      char *line=(char*)malloc(len);
+      if(!line)
+	 return;
+      if(fread(line,1,len,f)!=len)
+	 return;
+      lines[i]=new HistoryLine;
+      lines[i]->cr_time=cr_time;
+      lines[i]->line=line;
+      lines[i]->len=len;
+      fgetc(f);	  // skip \n
    }
+   fscanf(f,"%*u:%*u:");
+   fgetc(f);	  // skip \n
 }
 
 InodeInfo::InodeInfo()
 {
    time=size=device=inode=line=col=offset=0;
-   cr_time=0;
 }
 InodeInfo::InodeInfo(struct stat *st,num l,num c,num o)
 {
@@ -191,7 +220,6 @@ InodeInfo::InodeInfo(struct stat *st,num l,num c,num o)
    line=l;
    col=c;
    offset=o;
-   ::time(&cr_time);
 }
 int   InodeInfo::SameFile(const InodeInfo& file) const
 {
@@ -206,70 +234,53 @@ int   InodeInfo::SameFileModified(const InodeInfo& file) const
    return(SameFile(file) && (size!=file.size || time!=file.time));
 }
 
-InodeInfo   *InodeHistory::FindInode(const InodeInfo& file)
+int InodeHistory::FindInodeIndex(const InodeInfo& file)
 {
+   HistoryLine f_line(file.to_string());
    for(int i=0; i<HISTORY_SIZE; i++)
-      if(files[i].SameFile(file) && !files[i].SameFileModified(file))
-         return(files+i);
-   return(NULL);
+   {
+      if(!lines[i])
+	 break;
+      InodeInfo info(lines[i]);
+      if(info.SameFile(file) && !info.SameFileModified(file))
+         return(i);
+   }
+   return(-1);
+}
+
+const InodeInfo *InodeHistory::FindInode(const InodeInfo& file)
+{
+   static InodeInfo *info;
+   delete info; info=0;
+
+   int i=FindInodeIndex(file);
+   if(i!=-1)
+      return(info=new InodeInfo(lines[i]));
+
+   return(0);
 }
 void  InodeHistory::operator+=(const InodeInfo& file)
 {
-   InodeInfo   *find=FindInode(file);
-   if(find==NULL)
-      memmove(files+1,files,sizeof(files)-sizeof(files[0]));
-   else
-      memmove(files+1,files,sizeof(files[0])*(find-files));
-   files[0]=file;
+   int i=FindInodeIndex(file);
+   if(i!=-1)
+      *(History*)this-=*lines[i];
+   *(History*)this+=file.to_string();
 }
-void  InodeHistory::WriteTo(FILE *f)
+InodeInfo::InodeInfo(const HistoryLine *f_line)
 {
-   int i=0;
-   for(;;)
-   {
-      fprintf(f,"%10ld %ld,%ld,%ld,%ld,%ld,%ld,%ld\n",(long)files[i].cr_time,
-         (long)files[i].inode,(long)files[i].device,(long)files[i].time,
-         (long)files[i].size,(long)files[i].line,(long)files[i].col,
-	 (long)files[i].offset);
-      if(++i>=HISTORY_SIZE)
-         break;
-   }
-}
-void  InodeHistory::ReadFrom(FILE *f)
-{
-   long  inode,device,time,size,line,col,cr_time,offset;
-   int i=0;
-   for(;;)
-   {
-      if(fscanf(f,"%10ld %ld,%ld,%ld,%ld,%ld,%ld,%ld\n",
-		  &cr_time,&inode,&device,&time,&size,&line,&col,&offset)<7)
-         break;
-      files[i].inode=inode;
-      files[i].device=device;
-      files[i].time=time;
-      files[i].size=size;
-      files[i].line=line;
-      files[i].col=col;
-      files[i].offset=offset;
-      files[i].cr_time=cr_time;
-      if(++i>=HISTORY_SIZE)
-         break;
-   }
-}
+   long inode=0,device=0,time=0,size=0,line=0,col=0,offset=0;
+   sscanf(f_line->get_line(),"%ld,%ld,%ld,%ld,%ld,%ld,%ld",
+		  &inode,&device,&time,&size,&line,&col,&offset);
+   this->inode=inode,this->device=device,this->time=time,this->size=size;
+   this->line=line,this->col=col,this->offset=offset;
 
-void  InodeHistory::Merge(const InodeHistory& add)
+}
+const char *InodeInfo::to_string() const
 {
-   const InodeInfo *l1=this->files;
-   const InodeInfo *l2=add.files;
-   InodeHistory  newh;
-
-   int   i,j;
-   for(i=HISTORY_SIZE,j=HISTORY_SIZE; i>0 || j>0; )
-   {
-      if(j==0 || (i!=0 && l1[i-1].cr_time<l2[j-1].cr_time))
-         newh+=l1[--i];
-      else
-         newh+=l2[--j];
-   }
-   memcpy(this,&newh,sizeof(newh));
+   static char s[80];
+   sprintf(s,"%ld,%ld,%ld,%ld,%ld,%ld,%ld",
+         (long)inode,(long)device,(long)time,
+         (long)size,(long)line,(long)col,
+	 (long)offset);
+   return s;
 }

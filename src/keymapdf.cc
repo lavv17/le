@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include "keymap.h"
 
-ActionCodeRec  DefaultActionCodeTable[]=
+const ActionCodeRec DefaultActionCodeTable[]=
 {
    {CHAR_LEFT,"$kcub1"},
    {CHAR_RIGHT,"$kcuf1"},

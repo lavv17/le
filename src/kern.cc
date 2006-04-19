@@ -57,7 +57,7 @@ bool      newfile=false;
 
 int       DosEol=0;
 int       EolSize=1;
-char      *EolStr="\n";
+const char *EolStr="\n";
 
 InodeInfo   FileInfo;
 InodeHistory PositionHistory;
@@ -330,7 +330,7 @@ void  CalculateLineCol(num *line,num *col,offs source,offs target)
    }
 }
 
-int   InsertBlock(char *block_left,num size_left,char *block_right,num size_right)
+int   InsertBlock(const char *block_left,num size_left,const char *block_right,num size_right)
 {
    if(buffer_mmapped)
    {
@@ -781,7 +781,7 @@ int   DeleteBlock(num left,num right)
    return(OK);
 }
 
-int   ReplaceBlock(char *block,num size)
+int   ReplaceBlock(const char *block,num size)
 {
    if(!buffer_mmapped && !undo.Enabled() && !undo.Locked())
    {

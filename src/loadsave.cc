@@ -192,7 +192,7 @@ int   LoadFile(char *name)
    offs   i;
    num    act_read;
    char   msg[256];
-   InodeInfo   *old;
+   const InodeInfo *old;
 
    CheckBlock();
    if(!hide)

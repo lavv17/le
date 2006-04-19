@@ -240,7 +240,7 @@ struct   ActionProcRec
 struct   ActionNameRec
 {
    int   action;
-   char  *name;
+   const char *name;
 };
 
 struct   ActionCodeRec
@@ -249,18 +249,17 @@ struct   ActionCodeRec
    char  *code;
 };
 
-extern   unsigned char StringTyped[];
-extern   int   StringTypedLen;
-extern   ActionProcRec  EditorActionProcTable[];
-extern   ActionCodeRec  *ActionCodeTable;
-extern   ActionCodeRec  DefaultActionCodeTable[];
-extern   bool NeedFreeActionCodeTable;
+extern unsigned char StringTyped[];
+extern int   StringTypedLen;
+extern ActionProcRec  EditorActionProcTable[];
+extern const ActionCodeRec *ActionCodeTable;
+extern const ActionCodeRec DefaultActionCodeTable[];
 
 int   GetNextAction(void);
-char  *GetActionString(int action);
+const char *GetActionString(int action);
 void  ReadActionMap(FILE*);
 void  WriteActionMap(FILE*);
-ActionProc  GetActionProc(ActionProcRec*,int action);
+ActionProc GetActionProc(ActionProcRec*,int action);
 void  EditorReadKeymap();
 void  RebuildKeyTree();
 void  FreeActionCodeTable();

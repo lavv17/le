@@ -79,7 +79,7 @@ void  NormalizeFileName(char *s)
    }
 }
 
-char  *le_dirname(const char *f)
+const char *le_dirname(const char *f)
 {
    static
    char  dir[256];
@@ -95,7 +95,7 @@ char  *le_dirname(const char *f)
    *(s-1)=0;
    return(dir);
 }
-char  *le_basename(const char *f)
+const char *le_basename(const char *f)
 {
    static
    char  bn[256];
@@ -259,25 +259,24 @@ void  condense(char *filename)
 
 int ChooseFileName(char *fn)
 {
-   char        *a;
-   static        WIN *w=NULL;
-   int          action;
-   int          shift,current;
-   struct  stat   st;
-   int          x,y;
-   char        str[300];
-   char        str1[300];
-   int          i,l;
-   int          dirsize;
-   DIR          *dd;
-   struct dirent   *entry;
-   char        drive[3]="";
+   char	    *a;
+   static WIN *w=NULL;
+   int      action;
+   int      shift,current;
+   struct stat st;
+   int      x,y;
+   char     str[300];
+   char     str1[300];
+   int      i,l;
+   int      dirsize;
+   DIR      *dd;
+   struct dirent *entry;
+   char     drive[3]="";
 
 #ifdef MSDOS
    if(isalpha(fn[0]) && fn[1]==':')
       sprintf(drive,"%.2s",fn);
 #endif
-
 
    /* strip trailing slashes - they are not needed */
    for(a=fn+strlen(fn)-1; *a=='/' && a>fn; a--);

@@ -110,9 +110,9 @@ public:
    static   void  ResetTextPoints();
    static   void  OrFlags(int mask);
 
-   friend   int   InsertBlock(char *,num,char *,num);
+   friend   int   InsertBlock(const char *,num,const char *,num);
    friend   int   DeleteBlock(num,num);
-   friend   int   ReplaceBlock(char *,num);
+   friend   int   ReplaceBlock(const char *,num);
 };
 
 extern TextPoint  CurrentPos;

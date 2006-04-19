@@ -364,8 +364,8 @@ static void MakeCodeNameTableExt()
    CodeNameTableExtSize=0;
    for(int n=STRCOUNT; n<NUM_STRINGS(tp); n++)
    {
-      char *name = ExtStrname(tp, n, strnames);
-      char *value = tp->Strings[n];
+      const char *name = ExtStrname(tp, n, strnames);
+      const char *value = tp->Strings[n];
       if (name && *name=='k' && value)
       {
 	 CodeNameTableExt[CodeNameTableExtSize].code=n-STRCOUNT+KEY_MAX;

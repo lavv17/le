@@ -36,7 +36,7 @@ typedef struct  win
     win_cell *buf;
     int     x,y;
     int     w,h;
-    struct attr *a;
+    const attr *a;
     const char  *title;
     struct win  *prev;
     int     flags;
@@ -50,7 +50,7 @@ typedef struct  win
 /* window flags */
 #define NOSHADOW    1
 
-WIN   *CreateWin(int x,int y,unsigned w,unsigned h,struct attr *a,
+WIN   *CreateWin(int x,int y,unsigned w,unsigned h,const attr *a,
                  const char *title,int flags=0);
 void  DisplayWin(WIN *);
 void  CloseWin();
@@ -70,10 +70,10 @@ void  PutCCh(int x,int y,cchar_t *ch);
 #define PutACS(x,y,a) PutCh(x,y,ACS_##a)
 #endif
 
-extern struct attr *curr_attr;
+extern const struct attr *curr_attr;
 extern WIN *Upper;
 
-inline void  SetAttr(struct attr *a)
+static inline void SetAttr(const struct attr *a)
 {
    curr_attr=a;
    attrset(a->n_attr);

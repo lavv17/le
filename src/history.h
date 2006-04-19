@@ -24,32 +24,40 @@
 
 class HistoryLine
 {
+   int	  len;
+   char   *line;
+   time_t cr_time;
+   friend class History;
+
 public:
-   unsigned short len;
-   char     line[HISTORY_LINE_LEN];
-   time_t   cr_time;
-
    HistoryLine();
-   HistoryLine(char* s,unsigned short len=0);
+   HistoryLine(const char *s,unsigned short len=0);
 
-   int   operator!=(const HistoryLine&) const;
-   const HistoryLine&   operator=(const HistoryLine&);
+   bool equals(const char *s,int n) const { return(len==n && !memcmp(line,s,len)); }
+   bool operator!=(const HistoryLine &h) const { return !equals(h.line,h.len); }
+   const HistoryLine& operator=(const HistoryLine&);
+
+   const char *get_line() const { return line; }
+   int get_len() const { return len; }
 };
 
 class History
 {
-   HistoryLine lines[HISTORY_SIZE];
+protected:
+   HistoryLine **lines;
    int   curr;
 
 public:
    History();
 
    void        Open();
-   HistoryLine *Next();
-   HistoryLine *Prev();
-   HistoryLine *Curr();
+   const HistoryLine *Next();
+   const HistoryLine *Prev();
+   const HistoryLine *Curr();
    void  operator+=(const HistoryLine&);
    void  operator-=(const HistoryLine&);
+   void  operator+=(const HistoryLine *h) { *this+=*h; }
+   void  operator-=(const HistoryLine *h) { *this-=*h; }
    void  Push();
    void  ReadFrom(FILE*);
    void  WriteTo(FILE*);
@@ -62,31 +70,25 @@ class InodeInfo
    dev_t    device;
    time_t   time;
    size_t   size;
-   time_t   cr_time;
 
 public:
    num      line,col,offset;
 
    InodeInfo(struct stat *st,num line=0,num col=0,num o=0);
+   InodeInfo(const HistoryLine *line);
    InodeInfo();
 
    int   SameFile(const InodeInfo&) const;
    int   SameFileModified(const InodeInfo&) const;
    int   SameAndOlder(const InodeInfo&) const;
 
-   friend class   InodeHistory;
+   const char *to_string() const;
 };
 
-class InodeHistory
+class InodeHistory : public History
 {
-   InodeInfo   files[HISTORY_SIZE];
-
 public:
-   InodeHistory() {}
-   InodeInfo   *FindInode(const InodeInfo&);
+   int FindInodeIndex(const InodeInfo&);
+   const InodeInfo *FindInode(const InodeInfo&);
    void  operator+=(const InodeInfo&);
-
-   void  WriteTo(FILE *f);
-   void  ReadFrom(FILE *f);
-   void  Merge(const InodeHistory& add);
 };

@@ -1,3 +1,13 @@
+2006-04-19  lav
+
+	* calc.cc, calc.h, file.cc, file.h, getstr.cc, kern.cc, keymap.cc,
+	  keymap.h, keymapdf.cc, keynames.cc, loadsave.cc, menu.cc, menu.h,
+	  options.cc, options.h, textpoin.h, window.cc, window.h:
+	  add proper const's.
+	* edit.cc, user.cc: new history format.
+	* edit.h, tables.cc: move InitTables and ModifyKey into ifdef; consts.
+	* history.cc, history.h: new history file format; dynamic memory allocation.
+
 2006-04-11  lav
 
 	* keynames.cc, keymapdf.cc: add support for ncurses extended names.
