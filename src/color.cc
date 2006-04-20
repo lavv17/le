@@ -73,7 +73,7 @@ void  init_attr_table(struct color *pal)
       attr_table[an].n_attr|=pal[i].attr;
    }
 
-   color *hl=FindColor(pal,HIGHLIGHT);
+   const color *hl=FindColor(pal,HIGHLIGHT);
    bool hl_bw=(hl->fg==NO_COLOR && hl->bg==NO_COLOR);
 
    /* make standout attributes */
@@ -103,7 +103,7 @@ void  init_attr_table(struct color *pal)
    }
 }
 
-struct color default_color_pal[]=
+const color default_color_pal[]=
 {
    {STATUS_LINE,  A_NORMAL,   COLOR_BLACK,   COLOR_CYAN},
    {NORMAL_TEXT,  A_NORMAL,   COLOR_WHITE,   COLOR_BLUE},
@@ -123,7 +123,7 @@ struct color default_color_pal[]=
    {HIGHLIGHT,	  A_BOLD,     COLOR_YELLOW,  COLOR_BLACK},
    {-1}
 };
-struct color default_bw_pal[]=
+const color default_bw_pal[]=
 {
    {STATUS_LINE,  A_REVERSE|A_DIM,  NO_COLOR,NO_COLOR},
    {NORMAL_TEXT,  A_NORMAL,	    NO_COLOR,NO_COLOR},
@@ -193,9 +193,9 @@ const attr_name attr_names_table[]=
    {NULL},
 };
 
-color *FindColor(color *pal,int no)
+const color *FindColor(const color *pal,int no)
 {
-   for(color *scan=pal; scan->no!=-1; scan++)
+   for(const color *scan=pal; scan->no!=-1; scan++)
    {
       if(scan->no==no)
       {
@@ -270,7 +270,7 @@ void  ParseColors()
 
 }
 
-void  DescribeOneColor(char *const desc,color *cp)
+void  DescribeOneColor(char *const desc,const color *cp)
 {
    color c=*cp;
    const attr_name *a;
@@ -310,7 +310,7 @@ void  DescribeOneColor(char *const desc,color *cp)
    }
 }
 
-void  DescribeColors(color *bw,color *co)
+void  DescribeColors(const color *bw,const color *co)
 {
    le_use_default_colors=1;
 

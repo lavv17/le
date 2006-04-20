@@ -399,7 +399,7 @@ bool chset_isprint(int c)
    return !(chset[c/CHSET_BITS_PER_BYTE]&(1<<(c%CHSET_BITS_PER_BYTE)));
 }
 
-chtype visualize(struct attr *a,chtype ch)
+chtype visualize(const attr *a,chtype ch)
 {
    unsigned char ct=ch&A_CHARTEXT;
    if(!chset_isprint(ct))

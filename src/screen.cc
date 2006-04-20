@@ -478,8 +478,8 @@ static unsigned mkhash(byte *data,int len)
    return res;
 }
 
-static attr *norm_attr,*blk_attr,*syntax[3];
-static attr *FindPosAttr(offs ptr,num line,num col,byte *hlp)
+static const attr *norm_attr,*blk_attr,*syntax[3];
+static const attr *FindPosAttr(offs ptr,num line,num col,byte *hlp)
 {
    if(col>=TextWinWidth-MBCharWidth && !EolAt(ptr) && !EolAt(ptr+MBCharSize))
       return SHADOW_ATTR;
@@ -543,7 +543,7 @@ void  Redisplay(num line,offs ptr,num limit)
    int ll=max(TextWinWidth,80);
    chtype *cl=(chtype*)alloca(ll*sizeof(chtype));
    chtype *clp;
-   struct attr *ca=norm_attr;
+   const attr *ca=norm_attr;
 
 #ifdef USE_MULTIBYTE_CHARS
    cchar_t *clw=(cchar_t*)alloca(ll*sizeof(cchar_t));

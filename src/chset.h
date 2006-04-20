@@ -26,7 +26,7 @@ void  set_chset_8bit();
 void  set_chset_8bit_noctrl();
 
 void  addch_visual(chtype ch);
-chtype visualize(struct attr *a,chtype ch);
+chtype visualize(const attr *a,chtype ch);
 #if USE_MULTIBYTE_CHARS
 wchar_t visualize_wchar(wchar_t ch);
 #endif
