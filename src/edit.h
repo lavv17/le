@@ -63,7 +63,8 @@ typedef long            num;
 #include "history.h"
 #include "file.h"
 
-extern  int inputmode,editmode,noreg;
+extern  int inputmode,editmode;
+extern  int noreg,match_case;
 #define BACKUP_SUFFIX_LEN 16
 extern  char   bak[BACKUP_SUFFIX_LEN];
 extern  int    TabSize;

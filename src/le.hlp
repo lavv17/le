@@ -299,8 +299,9 @@ options entered as:
 where options are:
    w  - search for whole words only
    i  - ignore case
-   x  - interpret string as list of hex codes
-   n  - interpret string as list of numbers
+   I  - match case (when default is ignore)
+   x  - the string is list of hex codes
+   n  - the string is list of numbers
 
 [ReplaceHelp]
    Enter a string for replace. It can contain

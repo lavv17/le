@@ -6,6 +6,7 @@
 	* tables.cc: add wc table, move ModifyKey here.
 	* edit.cc, edit.h: rename InitTables, move init_chset outside; save new format
 	  history to history2 file.
+	* edit.h, options.cc, search.cc, le.hlp: add 'match case' option.
 
 2006-04-19  lav
 

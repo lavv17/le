@@ -47,6 +47,8 @@ extern "C" {
 
 History  SearchHistory;
 
+int   match_case=1;
+
 byte  pattern[256];
 int   patlen=0;
 
@@ -62,13 +64,11 @@ static bool rexp_compiled=false;
 static bool word_bounds;
 static bool numeric_search;
 static bool hex_search;
-static bool no_regex;
 
 int   LastOp=0;
 int   LastDir=FORWARD;
 
 TextPoint   back_tp;
-
 
 char *my_memrchr(const char *mem,char ch,int len)
 {
@@ -93,7 +93,7 @@ void  NotFound()
 unsigned char map_to_lower[256];
 void map_to_lower_init()
 {
-   if(map_to_lower[' '])  // assumes tolower(' ')!='\0' :-)
+   if(map_to_lower[(unsigned char)' '])  // assumes tolower(' ')!='\0' :-)
       return;
 
    unsigned i;
@@ -125,7 +125,7 @@ static bool CompilePattern()
    word_bounds=false;
    hex_search=false;
    numeric_search=false;
-   no_regex=false;
+   bool match_case_now=match_case;
 
    unsigned char *p=(unsigned char *)alloca(patlen+1);
    memcpy(p,pattern,patlen);
@@ -137,9 +137,10 @@ static bool CompilePattern()
 	 switch(*p)
 	 {
 	    case('i'): // ignore case
-	       map_to_lower_init();
-	       rexp.translate=(RE_TRANSLATE_TYPE)malloc(256);
-	       memcpy(rexp.translate,map_to_lower,256);
+	       match_case_now=false;
+	       break;
+	    case('I'): // match case
+	       match_case_now=true;
 	       break;
 	    case('w'):
 	       word_bounds=true;
@@ -162,6 +163,12 @@ static bool CompilePattern()
 	 len=patlen;
       }
    so_out:;
+   }
+   if(!match_case_now)
+   {
+      map_to_lower_init();
+      rexp.translate=(RE_TRANSLATE_TYPE)malloc(256);
+      memcpy(rexp.translate,map_to_lower,256);
    }
 
    if(numeric_search || hex_search)
