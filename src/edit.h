@@ -98,8 +98,6 @@ extern  bool	  newfile;
 
 extern  int     View;
 
-extern  char    *table;
-
 extern  int     ascii,right;    /* modifiers for HEX mode */
 
 extern  char    *HOME,*TERM,*DISPLAY;
@@ -273,13 +271,8 @@ num   MarginSizeAt(offs);
 
 void  UnrefKey(int key);
 
-#ifdef WITH_MODIFYKEY
-void  InitTables();
+void  InitModifyKeyTables();
 int   ModifyKey(int key);
-#else
-#define InitTables() do{}while(0)
-#define ModifyKey(key) (key)
-#endif
 
 void  define_pairs();
 void  InitMenu();

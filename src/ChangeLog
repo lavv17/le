@@ -1,3 +1,12 @@
+2006-04-20  lav
+
+	* calc.cc, calc.h, editcalc.cc: add support for hex, oct, ins, more functions.
+	* getstr.cc: move ModifyKey to tables.cc.
+	* le.hlp: update calc help.
+	* tables.cc: add wc table, move ModifyKey here.
+	* edit.cc, edit.h: rename InitTables, move init_chset outside; save new format
+	  history to history2 file.
+
 2006-04-19  lav
 
 	* calc.cc, calc.h, file.cc, file.h, getstr.cc, kern.cc, keymap.cc,

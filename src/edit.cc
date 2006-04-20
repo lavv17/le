@@ -424,7 +424,8 @@ void    Initialize()
 {
    FILE    *f;
 
-   InitTables();
+   InitModifyKeyTables();
+   init_chset();
    initcalc();
 
 #ifndef MSDOS
@@ -433,7 +434,7 @@ void    Initialize()
    mkdir(filename,0700);
    strcat(filename,"/tmp");
    mkdir(filename,0700);
-   sprintf(HstName,"%s/.le/history",HOME);
+   sprintf(HstName,"%s/.le/history2",HOME);
 #else
    sprintf(HstName,"%s/le.hst",HOME);
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2006 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,16 @@
 #define	INVALIDFN	(-4)
 #define	INVALIDNUM	(-5)
 
+struct calc_value
+{
+   long double value;
+   unsigned char base;
+   const char *to_string();
+   operator long double() { return value; }
+};
+
 extern int sp;
-extern double stack[STSIZE];
+extern calc_value stack[STSIZE];
 extern int calcerrno;
 
 const char *calcerrmsg();

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2006 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,17 +47,26 @@ void  editcalc()
 	    i=0;
          for(y=2; i<sp; i++,y++)
          {
-            sprintf(str,"%.*g",15,stack[i]);
-            PutStr(MIDDLE,y,str);
+            PutStr(MIDDLE,y,stack[i].to_string());
             if(i==sp-2)
-               PutStr(2,y,"Y");
+               PutStr(2,y,"Y:");
             if(i==sp-1)
-               PutStr(2,y,"X");
+               PutStr(2,y,"X:");
          }
       }
 
       if(getstring("Expression: ",expr,sizeof(expr)-1,&CalcHistory,NULL,"CalcHelp"," Calculator Help ")<1)
          break;
+      if(!strcmp(expr,"ins"))
+      {
+	 for(i=sp-1; i>=0; i--)
+	 {
+            sprintf(str,"%s%s",stack[i].to_string()," "+(i==0));
+	    InsertBlock(str,strlen(str));
+	 }
+	 CalcHistory-=expr;
+	 break;
+      }
       calcerrno=0;
       calculator(expr);
    }

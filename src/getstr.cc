@@ -257,25 +257,3 @@ int   getstring(const char *pr,char *buf,int maxlen,History* history,int *len,
    while(TRUE);
 /*NOTREACHED*/
 }
-
-#ifdef WITH_MODIFYKEY
-int   ModifyKey(int key)
-{
-   int   i;
-   if(inputmode!=LATIN && key!='\n' && key!='\t')
-   {
-      if(inputmode==RUSS)
-         for(i=0; table[i]!='\0'; i+=2)
-         {
-            if(table[i+1]==key)
-            {
-               key=table[i];
-               break;
-            }
-         }
-      else
-         key+=128;
-   }
-   return(key);
-}
-#endif

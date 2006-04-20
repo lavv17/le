@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2006 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,149 +26,151 @@
 
 #define  EPS   DBL_MIN
 
-double   stack[STSIZE];
+calc_value stack[STSIZE];
 int   sp;
 
-char  word[256];
 int   calcerrno=OKAY;
 
-int   add()
+static int add()
 {
    if(sp<2)
       return(STUNDERFLOW);
-   stack[sp-2]+=stack[sp-1];
+   stack[sp-2].value+=stack[sp-1];
    sp--;
    return(OKAY);
 }
-int   sub()
+static int sub()
 {
    if(sp<2)
       return(STUNDERFLOW);
-   stack[sp-2]-=stack[sp-1];
+   stack[sp-2].value-=stack[sp-1];
    sp--;
    return(OKAY);
 }
-int   mul()
+static int mul()
 {
    if(sp<2)
       return(STUNDERFLOW);
-   stack[sp-2]*=stack[sp-1];
+   stack[sp-2].value*=stack[sp-1];
    sp--;
    return(OKAY);
 }
-int   div()
+static int div()
 {
    if(sp<2)
       return(STUNDERFLOW);
    if(fabs(stack[sp-1])<EPS)
       return(ILLEGALFN);
-   stack[sp-2]/=stack[sp-1];
+   stack[sp-2].value/=stack[sp-1];
    sp--;
    return(OKAY);
 }
-int   rem()
+static int rem()
 {
    if(sp<2)
       return(STUNDERFLOW);
-   stack[sp-2]=fmod(stack[sp-2],stack[sp-1]);
+   stack[sp-2].value=fmod(stack[sp-2],stack[sp-1]);
    sp--;
    return(OKAY);
 }
-int   cpy()
+static int cpy()
 {
    if(sp<1)
       return(STUNDERFLOW);
    if(sp>=STSIZE)
       return(STOVERFLOW);
-   stack[sp]=stack[sp-1];
+   stack[sp].value=stack[sp-1];
+   stack[sp].base=stack[sp-1].base;
    sp++;
    return(OKAY);
 }
-int   pwr()
+static int pwr()
 {
    if(sp<2)
       return(STUNDERFLOW);
    if(stack[sp-1]<0)
       return(ILLEGALFN);
-   stack[sp-2]=pow(stack[sp-1],stack[sp-2]);
+   stack[sp-2].value=pow(stack[sp-1],stack[sp-2]);
    sp--;
    return(OKAY);
 }
-int   mpi()
+static int mpi()
 {
    if(sp>=STSIZE)
       return(STOVERFLOW);
-   stack[sp++]=M_PI;
+   stack[sp].base=10;
+   stack[sp++].value=M_PI;
    return(OKAY);
 }
-int   me()
+static int me()
 {
    if(sp>=STSIZE)
       return(STOVERFLOW);
-   stack[sp++]=M_E;
+   stack[sp].base=10;
+   stack[sp++].value=M_E;
    return(OKAY);
 }
-int   sqr()
+static int sqr()
 {
    if(sp<1)
       return(STUNDERFLOW);
-   stack[sp-1]=sqrt(fabs(stack[sp-1]));
+   stack[sp-1].value=sqrt(fabs(stack[sp-1]));
    return(OKAY);
 }
-int   sq()
+static int sq()
 {
    if(sp<1)
       return(STUNDERFLOW);
-   stack[sp-1]*=stack[sp-1];
+   stack[sp-1].value*=stack[sp-1];
    return(OKAY);
 }
-int   del()
+static int del()
 {
    if(sp<1)
       return(STUNDERFLOW);
    sp--;
    return(OKAY);
 }
-int   clr()
+static int clr()
 {
    initcalc();
    return(OKAY);
 }
-int   ln()
+static int ln()
 {
    if(sp<1)
       return(STUNDERFLOW);
    if(fabs(stack[sp-1])<EPS)
       return(ILLEGALFN);
-   stack[sp-1]=log(fabs(stack[sp-1]));
+   stack[sp-1].value=log(fabs(stack[sp-1]));
    return(OKAY);
 }
-int   lg()
+static int lg()
 {
    if(sp<1)
       return(STUNDERFLOW);
    if(fabs(stack[sp-1])<EPS)
       return(ILLEGALFN);
-   stack[sp-1]=log10(fabs(stack[sp-1]));
+   stack[sp-1].value=log10(fabs(stack[sp-1]));
    return(OKAY);
 }
-int   neg()
+static int neg()
 {
    if(sp<1)
       return(STUNDERFLOW);
-   stack[sp-1]=(-stack[sp-1]);
+   stack[sp-1].value=(-stack[sp-1]);
    return(OKAY);
 }
-int   rev()
+static int rev()
 {
    if(sp<1)
       return(STUNDERFLOW);
-   stack[sp-1]=1/stack[sp-1];
+   stack[sp-1].value=1/stack[sp-1];
    return(OKAY);
 }
-int   xy()
+static int xy()
 {
-   double   ox;
+   calc_value ox;
    if(sp<2)
       return(STUNDERFLOW);
    ox=stack[sp-1];
@@ -176,25 +178,135 @@ int   xy()
    stack[sp-2]=ox;
    return(OKAY);
 }
-int   expx()
+static int expx()
 {
    if(sp<1)
       return(STUNDERFLOW);
-   stack[sp-1]=exp(stack[sp-1]);
+   stack[sp-1].value=exp(stack[sp-1]);
    return(OKAY);
 }
-int   sinx()
+static int sinx()
 {
    if(sp<1)
       return(STUNDERFLOW);
-   stack[sp-1]=sin(stack[sp-1]);
+   stack[sp-1].value=sin(stack[sp-1]);
    return(OKAY);
 }
-int   cosx()
+static int cosx()
 {
    if(sp<1)
       return(STUNDERFLOW);
-   stack[sp-1]=cos(stack[sp-1]);
+   stack[sp-1].value=cos(stack[sp-1]);
+   return(OKAY);
+}
+static int tgx()
+{
+   if(sp<1)
+      return(STUNDERFLOW);
+   stack[sp-1].value=tan(stack[sp-1]);
+   return(OKAY);
+}
+static int ctgx()
+{
+   if(sp<1)
+      return(STUNDERFLOW);
+   stack[sp-1].value=1/tan(stack[sp-1]);
+   return(OKAY);
+}
+static int asinx()
+{
+   if(sp<1)
+      return(STUNDERFLOW);
+   stack[sp-1].value=asin(stack[sp-1]);
+   return(OKAY);
+}
+static int acosx()
+{
+   if(sp<1)
+      return(STUNDERFLOW);
+   stack[sp-1].value=acos(stack[sp-1]);
+   return(OKAY);
+}
+static int atgx()
+{
+   if(sp<1)
+      return(STUNDERFLOW);
+   stack[sp-1].value=atan(stack[sp-1]);
+   return(OKAY);
+}
+static int actgx()
+{
+   if(sp<1)
+      return(STUNDERFLOW);
+   stack[sp-1].value=atan(1/stack[sp-1]);
+   return(OKAY);
+}
+
+static int fact()
+{
+   if(sp<1)
+      return(STUNDERFLOW);
+   if(stack[sp-1]<0)
+      return(ILLEGALFN);
+   long long n=(long long)stack[sp-1].value;
+   if(stack[sp-1].value==0)
+      stack[sp-1].value=1;
+   while(--n>0 && !isnan(stack[sp-1].value))
+      stack[sp-1].value*=n;
+   return(OKAY);
+}
+
+static int f_and()
+{
+   if(sp<2)
+      return(STUNDERFLOW);
+   stack[sp-2].value=(long long)(stack[sp-1])&(long long)(stack[sp-2]);
+   sp--;
+   return(OKAY);
+}
+static int f_or()
+{
+   if(sp<2)
+      return(STUNDERFLOW);
+   stack[sp-2].value=(long long)(stack[sp-1])|(long long)(stack[sp-2]);
+   sp--;
+   return(OKAY);
+}
+static int f_xor()
+{
+   if(sp<2)
+      return(STUNDERFLOW);
+   stack[sp-2].value=(long long)(stack[sp-1])^(long long)(stack[sp-2]);
+   sp--;
+   return(OKAY);
+}
+static int f_not()
+{
+   if(sp<1)
+      return(STUNDERFLOW);
+   stack[sp-1].value=~(long long)(stack[sp-1]);
+   return(OKAY);
+}
+
+static int b16()
+{
+   if(sp<1)
+      return(STUNDERFLOW);
+   stack[sp-1].base=16;
+   return(OKAY);
+}
+static int b10()
+{
+   if(sp<1)
+      return(STUNDERFLOW);
+   stack[sp-1].base=10;
+   return(OKAY);
+}
+static int b8()
+{
+   if(sp<1)
+      return(STUNDERFLOW);
+   stack[sp-1].base=8;
    return(OKAY);
 }
 
@@ -205,23 +317,42 @@ struct   func_def
 }
 const func[]={
 
-{"+",add},  {"-",sub},  {"/",div},  {"*",mul},
+{"+",add}, {"-",sub}, {"/",div}, {"*",mul},
 {"cp",cpy}, {"**",pwr}, {"pi",mpi}, {"e",me},
-{"sqr",sqr},   {"sq",sq},  {"del",del},   {"clr",clr},
-{"ln",ln},  {"lg",lg},  {"xy",xy},  {"neg",neg},
-{"rev",rev},   {"exp",expx},  {"%",rem},  {"sin",sinx},
-{"cos",cosx},
+{"sqr",sqr}, {"sq",sq}, {"del",del}, {"clr",clr},
+{"ln",ln}, {"lg",lg}, {"xy",xy}, {"neg",neg},
+{"rev",rev}, {"exp",expx}, {"%",rem}, {"fact",fact},
+
+{"sin",sinx}, {"cos",cosx}, {"tg",tgx}, {"ctg",ctgx},
+{"asin",asinx}, {"acos",acosx}, {"atg",atgx}, {"actg",actgx},
+
+{"and",f_and}, {"or",f_or}, {"xor",f_xor}, {"not",f_not},
+{"b16",b16}, {"b10",b10}, {"b8",b8},
 
 {NULL}};
 
-int   check_for_number(char *w)
+static int check_for_number(char *w)
 {
    return(isdigit(w[0]) || w[0]=='-' && isdigit(w[1]));
+}
+const char *calc_value::to_string()
+{
+   static char s[256];
+   if(base==10)
+      sprintf(s,"%.28Lg",value);
+   else if(base==8)
+      sprintf(s,"%#llo",(long long)value);
+   else if(base==16)
+      sprintf(s,"0x%llX",(long long)value);
+   else
+      strcpy(s,"unsupported base");
+   return s;
 }
 
 int   calculator(const char *in)
 {
-   int      wl;
+   char  word[256];
+   int   wl;
    const func_def *f;
    do
    {
@@ -239,7 +370,39 @@ int   calculator(const char *in)
       {
          if(sp>=STSIZE)
             return(calcerrno=STOVERFLOW);
-         if(sscanf(word,"%lg",stack+sp)==0)
+	 if(word[0]=='0' || (word[0]=='-' && word[1]=='0'))
+	 {
+	    char base_char=(word[0]=='-'?word[2]:word[1]);
+	    long long n;
+	    if(base_char=='x' || base_char=='X')
+	    {
+	       stack[sp].base=16;
+	       if(sscanf(word,"%llx",&n)==0)
+		  return(calcerrno=INVALIDNUM);
+	       stack[sp++].value=n;
+	       continue;
+	    }
+#if 0
+	    if(base_char=='b' || base_char=='B')
+	    {
+	       stack[sp].base=2;
+	       if(sscanf(word,"%llb",&n)==0)
+		  return(calcerrno=INVALIDNUM);
+	       stack[sp++].value=n;
+	       continue;
+	    }
+#endif
+	    if(base_char>='0' && base_char<='9')
+	    {
+	       stack[sp].base=8;
+	       if(sscanf(word,"%llo",&n)==0)
+		  return(calcerrno=INVALIDNUM);
+	       stack[sp++].value=n;
+	       continue;
+	    }
+	 }
+	 stack[sp].base=10;
+         if(sscanf(word,"%Lg",&stack[sp].value)==0)
             return(calcerrno=INVALIDNUM);
          sp++;
       }

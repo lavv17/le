@@ -227,11 +227,11 @@ specified UNIX command (such as sed)
 
 [CalcHelp]
    This is a postfix calculator. For
-example, to calculate 2*2 you must
-type '2 2 *', when it is done stack
+example, to calculate 2*2 you have to
+type '2 2 *', when it is done the stack
 will contain 4. Now to add 2 you may
-type '2 +', stack will contain 6, etc.
-Here are operations of the calculator:
+type '2 +', the stack will contain 6, etc.
+Here are the operations of the calculator:
   + - * /  simplest arithmetics
   %        take remainder of Y/X
   sq       square X
@@ -247,7 +247,11 @@ Here are operations of the calculator:
   neg      take -X
   rev      take 1/X
   cp       copy X
-  sin,cos
+  sin,cos,tg,ctg,asin,acos,atg,actg
+           trigonometry functions of X
+  and,or,xor,not   binary operations
+  b16,b10,b8       change base of X
+  ins      insert stack contents to the text
 
 [FramesHelp]
    The editor is in frame-drawing
