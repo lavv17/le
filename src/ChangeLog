@@ -1,3 +1,7 @@
+2006-04-21  lav
+
+	* history.cc: don't print error when history file is empty.
+
 2006-04-20  lav
 
 	* calc.cc, calc.h, editcalc.cc: add support for hex, oct, ins, more functions.

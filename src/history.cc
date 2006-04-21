@@ -184,7 +184,8 @@ void  History::ReadFrom(FILE *f)
       unsigned long cr_time;
       if(fscanf(f,"%lu:%u:",&cr_time,&len)<2)
       {
-	 fprintf(stderr,"error reading history at offset %ld\n",ftell(f));
+	 if(!feof(f) || ftell(f))
+	    fprintf(stderr,"error reading history at offset %ld\r\n",ftell(f));
          return;
       }
       if(len==0)
