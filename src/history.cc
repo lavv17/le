@@ -193,11 +193,12 @@ void  History::ReadFrom(FILE *f)
 	 fgetc(f); // skip \n
 	 return;
       }
-      char *line=(char*)malloc(len);
+      char *line=(char*)malloc(len+1);
       if(!line)
 	 return;
       if(fread(line,1,len,f)!=len)
 	 return;
+      line[len]=0;
       lines[i]=new HistoryLine;
       lines[i]->cr_time=cr_time;
       lines[i]->line=line;

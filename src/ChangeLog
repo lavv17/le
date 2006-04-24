@@ -1,3 +1,7 @@
+2006-04-24  lav
+
+	* history.cc: null-terminate read history lines.
+
 2006-04-21  lav
 
 	* history.cc: don't print error when history file is empty.
