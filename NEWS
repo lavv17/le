@@ -1,3 +1,9 @@
+Version 1.13.1 - 2006-05-13
+
+* null terminate history lines when reading. This fixes auto loading of last
+  file by default.
+* fixed erroneous messages when there were no history file at the start.
+
 Version 1.13.0 - 2006-04-20
 
 * added `match case' option. 
