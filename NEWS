@@ -1,3 +1,7 @@
+Version 1.13.2 - 2006-05-15
+
+* fixed a coredump in block-write (history-related).
+
 Version 1.13.1 - 2006-05-13
 
 * null terminate history lines when reading. This fixes auto loading of last
