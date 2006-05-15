@@ -32,6 +32,7 @@ class HistoryLine
 public:
    HistoryLine();
    HistoryLine(const HistoryLine &h);
+   HistoryLine(const HistoryLine *h);
    HistoryLine(const char *s,unsigned short len=0);
 
    bool equals(const char *s,int n) const { return(len==n && !memcmp(line,s,len)); }

@@ -26,6 +26,8 @@
 
 static char *memdup(const char *s,int len)
 {
+   if(!s)
+      return 0;
    char *mem=(char*)malloc(len+1);
    if(mem)
       memcpy(mem,s,len);
@@ -109,8 +111,8 @@ void History::operator-=(const HistoryLine& hl)
 }
 void  History::Push()
 {
-   HistoryLine hl2(*lines[2]);
-   HistoryLine hl1(*lines[1]);
+   HistoryLine hl2(lines[2]);
+   HistoryLine hl1(lines[1]);
    *this+=hl2;
    *this+=hl1;
 }
@@ -126,6 +128,19 @@ HistoryLine::HistoryLine(const HistoryLine &hl)
    len=hl.len;
    line=memdup(hl.line,len);
    cr_time=hl.cr_time;
+}
+HistoryLine::HistoryLine(const HistoryLine *hl)
+{
+   if(!hl)
+   {
+      len=0;
+      line=0;
+      cr_time=0;
+      return;
+   }
+   len=hl->len;
+   line=memdup(hl->line,len);
+   cr_time=hl->cr_time;
 }
 HistoryLine::HistoryLine(const char *s,unsigned short l)
 {
