@@ -121,6 +121,12 @@ HistoryLine::HistoryLine()
    line=0;
    cr_time=0;
 }
+HistoryLine::HistoryLine(const HistoryLine &hl)
+{
+   len=hl.len;
+   line=memdup(hl.line,len);
+   cr_time=hl.cr_time;
+}
 HistoryLine::HistoryLine(const char *s,unsigned short l)
 {
    if(l==0)
