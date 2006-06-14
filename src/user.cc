@@ -564,7 +564,8 @@ void  UserCommentLine()
    ToLineBegin();
    if(Suffix(FileName,".cc")
    || Suffix(FileName,".cpp")
-   || Suffix(FileName,".cxx"))
+   || Suffix(FileName,".cxx")
+   || Suffix(FileName,".java"))
    {
       if(Char()=='/' && CharRel(1)=='/')
       {
@@ -575,6 +576,19 @@ void  UserCommentLine()
       else
       {
 	 InsertBlock("// ",3);
+      }
+   }
+   else if(Suffix(FileName,".sql"))
+   {
+      if(Char()=='-' && CharRel(1)=='-')
+      {
+	 DeleteBlock(0,2);
+	 if(Char()==' ')
+	    DeleteBlock(0,1);
+      }
+      else
+      {
+	 InsertBlock("-- ",3);
       }
    }
    else if(Suffix(FileName,".c") || Suffix(FileName,".h"))

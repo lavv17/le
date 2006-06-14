@@ -36,11 +36,13 @@ const ActionCodeRec DefaultActionCodeTable[]=
 //    {WORD_LEFT,"$kLFT"},
    {WORD_LEFT,"$kLFT5"},
    {WORD_LEFT,"\033Od"},      // rxvt
+   {WORD_LEFT,"\033OD"},      // putty
    {WORD_LEFT,"\033[1;5D"},   // xterm
    {WORD_RIGHT,"\033|$kcuf1"},
 //    {WORD_RIGHT,"$kRIT"},
    {WORD_RIGHT,"$kRIT5"},
    {WORD_RIGHT,"\033Oc"},     // rxvt
+   {WORD_RIGHT,"\033OC"},     // putty
    {WORD_RIGHT,"\033[1;5C"},  // xterm
    {LINE_BEGIN,"$kbeg"},
    {LINE_BEGIN,"$khome"},
