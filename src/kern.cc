@@ -963,8 +963,31 @@ void   DeleteToEOL()
 
 offs   NextLine(offs ptr)
 {
-   while(!EofAt(ptr) && !BolAt(++ptr));
-   return(ptr);
+   char eol=EolStr[EolSize-1];
+   char *found;
+   while(ptr<ptr1)
+   {
+      found=(char*)memchr(buffer+ptr,eol,ptr1-ptr);
+      if(!found)
+      {
+	 ptr=ptr1;
+	 break;
+      }
+      ptr=found-buffer;
+      if(BolAt(++ptr))
+	 return ptr;
+   }
+   offs size=Size();
+   for(;;)
+   {
+      found=(char*)memchr(buffer+ptr+GapSize,eol,size-ptr);
+      if(!found)
+	 return size;
+      ptr=found-buffer-GapSize;
+      if(BolAt(++ptr))
+	 return ptr;
+   }
+   /*NOTREACHED*/
 }
 offs   NextNLines(offs ptr,num n)
 {

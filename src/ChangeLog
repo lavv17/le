@@ -1,3 +1,8 @@
+2006-06-20  lav
+
+	* textpoin.cc: use NextLine for faster search.
+	* kern.cc: optimize NextLine with memchr.
+
 2006-06-14  lav
 
 	* keymapdf.cc: add putty codes.
