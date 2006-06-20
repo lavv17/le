@@ -307,6 +307,15 @@ void  TextPoint::FindLineCol()
          l--;
       }
    }
+   while(o<offset)
+   {
+      offs next_line=NextLine(o);
+      if(next_line>offset || !BolAt(next_line))
+	 break;
+      o=next_line;
+      l++;
+      c=0;
+   }
    while(o<offset && !EofAt(o))
    {
       if(BolAt(o+1))
