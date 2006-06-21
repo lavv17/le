@@ -1,7 +1,7 @@
 Begin3
 Title:		LE text editor
 Version:	1.13.3
-Entered-date:	2006-06-20
+Entered-date:	2006-06-21
 Description:	LE has many block operations with stream and
 		rectangular blocks, can edit both unix and dos
 		style files (LF/CRLF), is binary clean, has hex
