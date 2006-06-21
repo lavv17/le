@@ -1,3 +1,9 @@
+Version 1.13.3 - 2006-06-21
+
+* support comment-line operation for java and sql.
+* added two special putty key codes.
+* sped up line number calculation.
+
 Version 1.13.2 - 2006-05-15
 
 * fixed a coredump in block-write (history-related).
