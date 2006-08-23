@@ -381,7 +381,7 @@ c1,4=([^[:alnum:]_\$@#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |srand|stat|study|substr|symlink|syscall|sysread|system|syswrite|tell|telldir\
 |tie|time|times|truncate|uc|ucfirst|umask|undef|unless|unlink|unpack|untie|unshift\
 |use|utime|values|vec|wait|waitpid|wantarray|warn|while|write|else|elsif\
-|package|sub|BEGIN|END|INIT|CHECK|socket|defined\
+|package|sub|BEGIN|END|INIT|CHECK|socket|defined|our\
 )([^[:alnum:]/_]|$)
 c2,1={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.|<=>|&|^|->
 c2,4=([ \t)]|^)(and|or|xor|eq|ne|cmp|lt|gt|le|ge)([ \t(]|$)
@@ -492,3 +492,22 @@ c3,1=#.*$
 #|function|class|return|global|in|or|and|not\
 #)([^[:alnum:]_]|$)
 #c2,1=:|\$|->
+
+# Verilog mode, by Serge Vakulenko <vak@cronyx.ru>
+/*.v|/-\*- *verilog *-\*-
+c3,1="([^"\n\\]|\\\\(.|\n))*"
+c3,2=`[ \t]*(include[ \t]*"[^"\n]*"|define*)
+c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
+c1,4=([^[:alnum:]_]|^)(always|and|assign|attribute|begin|buf|bufif0|bufif1\
+|case|casex|casez|cmos|deassign|default|defparam|disable|edge|else|end\
+|endattribute|endcase|endfunction|endmodule|endprimitive|endspecify|endtable\
+|endtask|event|for|force|forever|fork|function|highz0|highz1|if|ifnone\
+|initial|inout|input|integer|join|medium|module|large|macromodule|nand\
+|negedge|nmos|nor|not|notif0|notif1|or|output|parameter|pmos|posedge\
+|primitive|pull0|pull1|pulldown|pullup|rcmos|real|realtime|reg|release\
+|repeat|rnmos|rpmos|rtran|rtranif0|rtranif1|scalared|signed|small|specify\
+|specparam|strength|strong0|strong1|supply0|supply1|table|task|time|tran\
+|tranif0|tranif1|tri|tri0|tri1|triand|trior|trireg|unsigned|vectored|wait\
+|wand|weak0|weak1|while|wire|wor|xnor|xor\
+)([^[:alnum:]_]|$)
+c2,1=\\[|\\]|\\(|\\)|{|}|,|@|<=

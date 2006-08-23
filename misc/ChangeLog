@@ -1,3 +1,11 @@
+2006-08-23	Serge Vakulenko <vak@cronyx.ru>
+
+	* syntax: new Verilog mode.
+
+2006-08-23	lav
+
+	* syntax: add our keyword for perl.
+
 2005-12-23	Abel Morabito <abel.morabito@gmail.com>
 
 	* syntax: update GEMA patterns.
