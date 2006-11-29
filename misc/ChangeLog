@@ -1,3 +1,7 @@
+2006-11-29	lav
+
+	* syntax: add syntax and named.conf modes; improve perl mode.
+
 2006-08-23	Serge Vakulenko <vak@cronyx.ru>
 
 	* syntax: new Verilog mode.

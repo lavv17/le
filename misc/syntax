@@ -1,4 +1,5 @@
-# Syntax patterns for LE editor. (c) 1997 Alexander V. Lukyanov
+# -*- LE-syntax -*-
+# Syntax patterns for LE editor. (c) 1997-2006 Alexander V. Lukyanov
 # Please send corrections and improvements to <lav@yars.free.net>
 #
 # $Id$
@@ -18,6 +19,13 @@
 
 # maximum height of constructs
 h18
+
+# This file mode
+//-\*- *LE-syntax *-\*-
+c3,1=^#.*$
+c1,1=^[hc]
+c2,2=^[hc][0-9],[0-9]+(=)
+c2,1=^/
 
 # C language mode (lav)
 /*.c|/-\*- *c *-\*-
@@ -47,6 +55,24 @@ c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 |typeid|dynamic_cast|const_cast|typename|explicit\
 )([^[:alnum:]_]|$)
 c2,1=\\[|\\]|\\(|\\)|{|}|,
+
+# named.conf mode (lav)
+/named.conf|/-\*- *\(named\|bind\) *-\*-
+c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^\n'\\]|\\\\.)*'
+c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
+c1,4=([^[:alnum:]_]|^)(acl|address|algorithm|allow-query|allow-recursion|allow-transfer\
+|also-notify|auth-nxdomain|blackhole|bogus|category|channel|check-names|cleaning-interval\
+|controls|coresize|datasize|deallocate-on-exit|dialup|directory|dump-file|fake-iquery\
+|fetch-glue|files?|first|forward|forwarders|has-old-clients|heartbeat-interval|hint\
+|host-statistics|include|interface-interval|keys?|lame-ttl|listen-on|logging\
+|maintain-ixfr-base|masters?|match-clients|max-ixfr-log-size|max-ncache-ttl\
+|max-transfer-time-in|memstatistics-file|min-roots|multiple-cnames|named-xfer|no|notify\
+|only|options|pid-file|port|print-category|print-severity|print-time|pubkey|query-source\
+|recursion|rfc2308-type1|rrset-order|secret|server|severity|size|slave|sortlist|stacksize\
+|statistics-file|statistics-interval|stub|syslog|topology|transfer-format|transfer-source\
+|transfers|transfers-in|transfers-out|transfers-per-ns|treat-cr-as-space|trusted-keys|type\
+|use-id-pool|versions?|view|yes|zone)([^[:alnum:]_]|$)
+c2,1={|}|,|;
 
 # nroff mode (lav)
 /*.[1-9]|/-\*- *nroff *-\*-
@@ -85,7 +111,7 @@ c1,4=([^[:alnum:]_]|^)(abort|else|new|return|abs|elsif|not|reverse|abstract\
 c2,1=<<|>>|:=|\\[|\\]|\\(|\\)|{|}|,|:|#|'Access|'Address|'Size
 
 # Assembler mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.S
+/*.S|*.s
 c3,1=@[^\n]*\n
 c3,1=;[^\n]*\n
 c3,1="([^"\\]|\\\\(.|\n))*"
@@ -372,7 +398,7 @@ c1,4=([^[:alnum:]_\$@#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |fcntl|fileno|flock|fock|for|foreach|format|formline|getc|getlogin|getpeername\
 |getpgrp|getppid|getpriority|getsockname|getsockopt|glob|gmtime|goto|grep\
 |hex|if|import|index|int|ioctl|join|keys|kill|last|lc|lcfirst|length|link\
-|listen|local|localtime|log|lstat|map|mkdir|msgctl|msgget|msgsnd|msgrcv|\\\\?my|next\
+|listen|local|localtime|log|lstat|map|mkdir|msgctl|msgget|msgsnd|msgrcv|my|next\
 |no Module|oct|open|opendir|ord|pack|pipe|pop|pos|(s)?print(f)?|push|quotemeta\
 |rand|read|readdir|readlink|recv|redo|ref|rename|require|reset|return|reverse\
 |rewindir|rindex|rmdir|scalar|seek|seekdir|select|select( RBITS| WBITS| EBITS| TIMEOUT)?\
@@ -383,6 +409,7 @@ c1,4=([^[:alnum:]_\$@#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |use|utime|values|vec|wait|waitpid|wantarray|warn|while|write|else|elsif\
 |package|sub|BEGIN|END|INIT|CHECK|socket|defined|our\
 )([^[:alnum:]/_]|$)
+c1,2=\\\\(my|our)([^[:alnum:]/_]|$)
 c2,1={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.|<=>|&|^|->
 c2,4=([ \t)]|^)(and|or|xor|eq|ne|cmp|lt|gt|le|ge)([ \t(]|$)
 c2,4=([ \t(]|^)(not)([ \t(]|$)
