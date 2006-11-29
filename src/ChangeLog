@@ -1,3 +1,7 @@
+2006-11-29  lav
+
+	* user.cc: do autoindent only when there is no input pending (no paste).
+
 2006-06-20  lav
 
 	* textpoin.cc: use NextLine for faster search.

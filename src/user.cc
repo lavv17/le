@@ -1171,7 +1171,7 @@ void  UserNewLine()
    if(View)
       return;
 
-   if(autoindent)
+   if(autoindent && !CheckPending())
       UserAutoindent();
    else
    {
