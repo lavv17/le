@@ -5,6 +5,7 @@
 	  show rotating stick when pasting.
 	* edit.cc, format.cc, frames.cc, options.cc, search.cc: separate StatusLine
 	  call is not needed anymore.
+	* highli.cc: fixed syntax signature recognition.
 
 2006-06-20  lav
 

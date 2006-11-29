@@ -215,7 +215,7 @@ void InitHighlight()
 	    if(s[0]=='/')
 	    {
 	       // it is a regex for file contents
-	       if(strlen(s)<len)
+	       if(strlen(s)+(s-str)<len)
 		  s[strlen(s)]='|';
 
 	       s++;
