@@ -169,7 +169,6 @@ void    Edit()
 
       ClearMessage();
       SyncTextWin();
-      StatusLine();
       SetCursor();
 
       action=GetNextAction();

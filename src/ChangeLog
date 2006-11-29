@@ -1,6 +1,10 @@
 2006-11-29  lav
 
 	* user.cc: do autoindent only when there is no input pending (no paste).
+	* screen.cc: better aggregate paste operations; do StatusLine in SyncTextWin;
+	  show rotating stick when pasting.
+	* edit.cc, format.cc, frames.cc, options.cc, search.cc: separate StatusLine
+	  call is not needed anymore.
 
 2006-06-20  lav
 

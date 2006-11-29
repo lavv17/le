@@ -126,7 +126,6 @@ void  TestPosition()
 }
 
 static int skipped=0;	// number of times Sync skipped its work
-static num skipped_line;
 
 void  SyncTextWin()
 {
@@ -187,17 +186,20 @@ void  SyncTextWin()
 	 lim=range_end;
    }
 
-   if(CheckPending()>0 && skipped_line==GetLine())
+   if(CheckPending()>0)
    {
-      if(++skipped<80)
+      if(++skipped<2000)
       {
+	 attrset(STATUS_LINE_ATTR->n_attr);
+	 move(StatusLineY,COLS-3);
+	 addch(' ');
+	 addch("-\\|/"[time(0)%4]);
 	 leaveok(stdscr,TRUE);
 	 flag=REDISPLAY_ALL;
 	 return;
       }
    }
    skipped=0;
-   skipped_line=GetLine();
 
    if(hex)
       ptr=(ScreenTop&~15)+16*line;
@@ -210,6 +212,7 @@ void  SyncTextWin()
    if(lim>=line)
       Redisplay(line,ptr,lim);
    flag=0;
+   StatusLine();
 }
 
 int   ScrollBarPos=0;

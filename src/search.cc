@@ -83,7 +83,6 @@ void  NotFound()
 {
    CurrentPos=back_tp;
    SyncTextWin();
-   StatusLine();
    Message("Search string not found.");
    stdcol=GetCol();
    SetCursor();
@@ -503,10 +502,7 @@ void  Replace()
    do
    {
       if(key!='*' && key!='#')
-      {
-	 StatusLine();
 	 SyncTextWin(); // before possible long search
-      }
       if(!Search(FORWARD,(key!='#'?TextEnd:block_end)))
       {
          if(first)
@@ -524,7 +520,6 @@ void  Replace()
             stdcol=GetCol();
 	    CenterView();
             SyncTextWin();
-            StatusLine();
 	    Message(str);
             SetCursor();
             while(WaitForKey()==ERR);
@@ -551,7 +546,6 @@ void  Replace()
 	 stdcol=GetCol();
          CenterView();
          SyncTextWin();
-         StatusLine();
 	 rblock=oldr;
          BlockBegin=OldBlockBegin;
          BlockEnd=OldBlockEnd;

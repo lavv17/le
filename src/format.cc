@@ -365,7 +365,6 @@ again:
    ClearMessage();
    CenterView();
    SyncTextWin();
-   StatusLine();
    Message("Format: F-Format all P-format Paragraph C-Center line R-align Right");
    SetCursor();
 

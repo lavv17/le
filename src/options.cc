@@ -1295,6 +1295,5 @@ void  ColorsOpt()
       clearok(stdscr,1);
       flag=REDISPLAY_ALL;
       RedisplayAll();
-      StatusLine();
    }
 }
