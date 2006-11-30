@@ -1,3 +1,11 @@
+Version 1.13.4 - 2006-11-30
+
+* don't do autoindent when pasting from terminal.
+* improve terminal pasting speed.
+* perl syntax updated.
+* new syntax patterns for named.conf.
+* new syntax description for Verilog (by Serge Vakulenko).
+
 Version 1.13.3 - 2006-06-21
 
 * support comment-line operation for java and sql.
@@ -16,7 +24,7 @@ Version 1.13.1 - 2006-05-13
 
 Version 1.13.0 - 2006-04-20
 
-* added `match case' option. 
+* added `match case' option.
 * improved built-in calculator (hex, oct, binary operations, insertion to
   text, more trig functions, factorial).
 * changed history file format.
