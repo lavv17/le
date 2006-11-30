@@ -1,3 +1,7 @@
+2006-11-30	lav
+
+	* syntax: add readline keyword for perl and ci for syntax.
+
 2006-11-29	lav
 
 	* syntax: add syntax and named.conf modes; improve perl mode.

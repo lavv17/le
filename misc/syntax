@@ -1,5 +1,6 @@
 # -*- LE-syntax -*-
 # Syntax patterns for LE editor. (c) 1997-2006 Alexander V. Lukyanov
+# This file is distributed under GNU GPL license.
 # Please send corrections and improvements to <lav@yars.free.net>
 #
 # $Id$
@@ -23,7 +24,7 @@ h18
 # This file mode
 //-\*- *LE-syntax *-\*-
 c3,1=^#.*$
-c1,1=^[hc]
+c1,1=^(h|ci?)
 c2,2=^[hc][0-9],[0-9]+(=)
 c2,1=^/
 
@@ -400,7 +401,7 @@ c1,4=([^[:alnum:]_\$@#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |hex|if|import|index|int|ioctl|join|keys|kill|last|lc|lcfirst|length|link\
 |listen|local|localtime|log|lstat|map|mkdir|msgctl|msgget|msgsnd|msgrcv|my|next\
 |no Module|oct|open|opendir|ord|pack|pipe|pop|pos|(s)?print(f)?|push|quotemeta\
-|rand|read|readdir|readlink|recv|redo|ref|rename|require|reset|return|reverse\
+|rand|read|readdir|readline|readlink|recv|redo|ref|rename|require|reset|return|reverse\
 |rewindir|rindex|rmdir|scalar|seek|seekdir|select|select( RBITS| WBITS| EBITS| TIMEOUT)?\
 |semctl|semget|semop|send|setpgrp|setpriority|setsockopt|shift|shmget|shmget\
 |shmread|shutdown|sin|sleep|soket|soketpair|sort|splice|split|sqrt\
