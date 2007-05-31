@@ -1,3 +1,7 @@
+2007-05-31	lav
+
+	* syntax: add missed keywords (java,perl,c++); fixed -*-\c++-*- pattern.
+
 2006-11-30	lav
 
 	* syntax: add readline keyword for perl and ci for syntax.

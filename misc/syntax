@@ -42,7 +42,7 @@ c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 c2,1=\\[|\\]|\\(|\\)|{|}|,
 
 # C++ mode (lav)
-/*.cc|*.C|*.cpp|*.h|*.hh|*.hpp|*.H|/-\*- *c++ *-\*-
+/*.cc|*.C|*.cpp|*.h|*.hh|*.hpp|*.H|/-\*- *c\+\+ *-\*-
 c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^\n'\\]|\\\\.)*'
 #c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
 c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[[:alpha:]]*))
@@ -53,7 +53,7 @@ c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 |return|sizeof|static|struct|typedef|union|void|volatile\
 |try|catch|class|new|delete|private|public|protected|this|virtual\
 |inline|bool|true|false|operator|overload|template|friend|namespace|using\
-|typeid|dynamic_cast|const_cast|typename|explicit\
+|typeid|dynamic_cast|const_cast|static_cast|reinterpret_cast|typename|explicit\
 )([^[:alnum:]_]|$)
 c2,1=\\[|\\]|\\(|\\)|{|}|,
 
@@ -165,7 +165,7 @@ c1,4=([^[:alnum:]_]|^)(abstract|default|if|private|throw|boolean|do|implements\
 |protected|throws|break|double|import|public|transient|byte|else|instanceof\
 |return|try|case|extends|int|short|void|catch|final|interface|static|volatile\
 |char|finally|long|super|while|class|float|native|switch|const|for|new\
-|synchronized|continue|goto|package|this\
+|synchronized|continue|goto|package|this|null|true|false\
 )([^[:alnum:]_]|$)
 c2,1=\\[|\\]|\\(|\\)|{|}|,
 
@@ -400,13 +400,13 @@ c1,4=([^[:alnum:]_\$@#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |getpgrp|getppid|getpriority|getsockname|getsockopt|glob|gmtime|goto|grep\
 |hex|if|import|index|int|ioctl|join|keys|kill|last|lc|lcfirst|length|link\
 |listen|local|localtime|log|lstat|map|mkdir|msgctl|msgget|msgsnd|msgrcv|my|next\
-|no Module|oct|open|opendir|ord|pack|pipe|pop|pos|(s)?print(f)?|push|quotemeta\
+|no Module|oct|open|opendir|ord|pack|pipe|pop|pos|s?printf?|push|quotemeta\
 |rand|read|readdir|readline|readlink|recv|redo|ref|rename|require|reset|return|reverse\
 |rewindir|rindex|rmdir|scalar|seek|seekdir|select|select( RBITS| WBITS| EBITS| TIMEOUT)?\
 |semctl|semget|semop|send|setpgrp|setpriority|setsockopt|shift|shmget|shmget\
 |shmread|shutdown|sin|sleep|soket|soketpair|sort|splice|split|sqrt\
 |srand|stat|study|substr|symlink|syscall|sysread|system|syswrite|tell|telldir\
-|tie|time|times|truncate|uc|ucfirst|umask|undef|unless|unlink|unpack|untie|unshift\
+|tied?|times?|truncate|uc|ucfirst|umask|undef|unless|unlink|unpack|untie|unshift\
 |use|utime|values|vec|wait|waitpid|wantarray|warn|while|write|else|elsif\
 |package|sub|BEGIN|END|INIT|CHECK|socket|defined|our\
 )([^[:alnum:]/_]|$)
