@@ -187,6 +187,7 @@ void InitHighlight()
    unsigned len;
    int res;
    int color,mask;
+   const char *bn=le_basename(FileName);
 
    for(;;)
    {
@@ -251,7 +252,7 @@ void InitHighlight()
 	       }
 	       break;
 	    }
-	    if(fnmatch(s,FileName,0)==0)
+	    if(fnmatch(s,bn,0)==0)
 	    {
 	       match=1;
 	       break;

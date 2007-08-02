@@ -1,3 +1,7 @@
+2007-08-02  lav
+
+	* highli.cc: match basename.
+
 2006-11-29  lav
 
 	* user.cc: do autoindent only when there is no input pending (no paste).
