@@ -1,3 +1,7 @@
+2007-08-08  lav
+
+	* search.cc: do not match empty string.
+
 2007-08-02  lav
 
 	* highli.cc: match basename.

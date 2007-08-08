@@ -371,19 +371,15 @@ search_again:
    else
       fndlen=regs.end[0]-res;
    CurrentPos=fndind;
-
-   if(word_bounds)
+   if(fndlen==0
+   || word_bounds && (isalnum(CharRel(-1)) || isalnum(CharRel(fndlen))))
    {
-      if(isalnum(CharRel(-1)) || isalnum(CharRel(fndlen)))
-      {
-	 if(dir==FORWARD)
-	    srchpos=CurrentPos+1;
-	 else // dir==BACKWARD
-	    srchpos=CurrentPos-1;
-	 goto search_again;
-      }
+      if(dir==FORWARD)
+	 srchpos=CurrentPos+1;
+      else // dir==BACKWARD
+	 srchpos=CurrentPos-1;
+      goto search_again;
    }
-
    return(TRUE);
 }
 
