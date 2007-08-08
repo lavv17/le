@@ -1,3 +1,9 @@
+Version 1.13.5 - 2007-08-08
+
+* fixed search not to match empty string.
+* match only base name when choosing appropriate syntax section.
+* syntax descriptions updated.
+
 Version 1.13.4 - 2006-11-30
 
 * don't do autoindent when pasting from terminal.

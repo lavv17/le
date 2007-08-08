@@ -50,8 +50,8 @@ for ac_dir0 in `echo "$ac_curses_includes" | sed -e 's:include:lib:' -e 's:/ncur
     /usr/local/lib        \
     ; \
 do
- for ac_dir in ${ac_dir0} ${ac_dir0}64; do
-  for ac_extension in a so sl; do
+ for ac_dir in ${ac_dir0}64 ${ac_dir0}; do
+  for ac_extension in so a sl; do
     if test -r $ac_dir/lib${curses_direct_test_library}w.$ac_extension; then
       use_libcursesw=yes
       no_curses= ac_curses_libraries=$ac_dir
