@@ -333,7 +333,7 @@ const func[]={
 
 static int check_for_number(char *w)
 {
-   return(isdigit(w[0]) || w[0]=='-' && isdigit(w[1]));
+   return(isdigit(w[0]) || ((w[0]=='-'||w[0]=='.') && isdigit(w[1])));
 }
 const char *calc_value::to_string()
 {

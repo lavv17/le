@@ -1,3 +1,8 @@
+2007-09-06  lav
+
+	* calc.cc: recognize .123 as a number.
+	* about.cc: update copyright year.
+
 2007-08-08  lav
 
 	* search.cc: do not match empty string.
