@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2004 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2008 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -964,10 +964,10 @@ void   DeleteToEOL()
 offs   NextLine(offs ptr)
 {
    char eol=EolStr[EolSize-1];
-   char *found;
+   const char *found;
    while(ptr<ptr1)
    {
-      found=(char*)memchr(buffer+ptr,eol,ptr1-ptr);
+      found=(const char*)memchr(buffer+ptr,eol,ptr1-ptr);
       if(!found)
       {
 	 ptr=ptr1;
@@ -980,7 +980,7 @@ offs   NextLine(offs ptr)
    offs size=Size();
    for(;;)
    {
-      found=(char*)memchr(buffer+ptr+GapSize,eol,size-ptr);
+      found=(const char*)memchr(buffer+ptr+GapSize,eol,size-ptr);
       if(!found)
 	 return size;
       ptr=found-buffer-GapSize;
@@ -1000,8 +1000,9 @@ offs   NextNLines(offs ptr,num n)
 offs   PrevLine(offs ptr)
 {
    ptr=LineBegin(ptr);
-   while(!BofAt(ptr) && !BolAt(--ptr));
-   return(ptr);
+   if(BofAt(ptr))
+      return ptr;
+   return LineBegin(ptr-1);
 }
 
 offs   PrevNLines(offs ptr,num n)

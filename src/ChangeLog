@@ -1,6 +1,9 @@
 2008-01-10  lav
 
 	* options.cc: allow tab size up to 99.
+	* kern.cc: nicer PrevLine.
+	* about.cc: update copyright.
+	* menu1.cc: fix off-by-one.
 
 2007-09-06  lav
 

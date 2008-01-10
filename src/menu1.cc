@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2008 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -563,7 +563,7 @@ read_it:
 	 break;
       ungetc(c,f);
 
-      if(fscanf(f,"%256s",func)!=1)
+      if(fscanf(f,"%255s",func)!=1)
 	 break;
       if(!strcmp(func,"submenu") || !strcmp(func,"function"))
       {

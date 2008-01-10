@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2008 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 WIN   *about_window;
 
-const char copyright[]="Copyright (C) 1993-2007 by Alexander V. Lukyanov";
+const char copyright[]="Copyright (C) 1993-2008 by Alexander V. Lukyanov";
 
 void  ShowAbout()
 {
