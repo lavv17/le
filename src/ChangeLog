@@ -1,3 +1,7 @@
+2008-01-10  lav
+
+	* options.cc: allow tab size up to 99.
+
 2007-09-06  lav
 
 	* calc.cc: recognize .123 as a number.

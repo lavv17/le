@@ -504,8 +504,8 @@ ini_done:
 
 void  CorrectParameters()
 {
-   if(TabSize>40)
-      TabSize=40;
+   if(TabSize>99)
+      TabSize=99;
    if(TabSize<2)
       TabSize=2;
    if(hscroll>40)
