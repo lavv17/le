@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.13.5], [le@uniyar.ac.ru])
+AC_INIT([le], [1.13.6], [le@uniyar.ac.ru])
 AC_CONFIG_SRCDIR([src/edit.cc])
 AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER([config.h])
@@ -119,8 +119,16 @@ dnl Checks for library functions.
 AC_FUNC_ALLOCA
 AC_PROG_GCC_TRADITIONAL
 AC_FUNC_STRCOLL
-AC_CHECK_FUNCS(getcwd mkdir select strdup strerror strftime strtol poll mmap\
+AC_CHECK_FUNCS(getcwd mkdir select strdup strerror strftime strtol mmap\
  ftruncate fchmod times nl_langinfo btowc)
+
+LFTP_FUNC_POLL
+if test x$lftp_cv_func_poll_works = xno; then
+   AC_LIBOBJ(poll)
+   if test x$ac_cv_header_sys_poll_h = xno; then
+      AC_CONFIG_LINKS([include/poll.h:lib/poll.h])
+   fi
+fi
 
 dnl AC_REPLACE_GNU_GETOPT
 AC_LIBOBJ(getopt)
@@ -143,10 +151,6 @@ if test x$am_cv_gnu_regex = xno; then
    AC_CONFIG_LINKS([include/regex.h:lib/regex.h])
 else
    AC_CONFIG_LINKS([include/rx.h:lib/rx.h])
-fi
-if test x$ac_cv_func_poll = xno; then
-   AC_LIBOBJ(poll)
-   AC_CONFIG_LINKS([include/poll.h:lib/poll.h])
 fi
 if test x$ac_cv_func_fnmatch_works = xno; then
    AC_LIBOBJ(fnmatch)

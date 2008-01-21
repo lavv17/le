@@ -1,3 +1,10 @@
+Version 1.13.6 - 2008-01-21
+
+* allow large tab size (up to 99).
+* fixed calculator to recognize .123 numbers without leading zero.
+* fixed block functions prompt (on F4).
+* perl syntax updated.
+
 Version 1.13.5 - 2007-08-08
 
 * fixed search not to match empty string.
