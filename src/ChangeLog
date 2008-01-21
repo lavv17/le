@@ -1,3 +1,8 @@
+2008-01-21  lav
+
+	* block.cc: use MessageSync instead of Message+SyncTextWin (fixes
+	  block prompt)
+
 2008-01-10  lav
 
 	* options.cc: allow tab size up to 99.
