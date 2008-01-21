@@ -1,3 +1,7 @@
+2008-01-21	lav
+
+	* syntax: (perl) add *.pm; fix soket typo; add sysseek.
+
 2007-05-31	lav
 
 	* syntax: add missed keywords (java,perl,c++); fixed -*-\c++-*- pattern.
