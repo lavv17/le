@@ -1,3 +1,7 @@
+Version 1.13.7 - 2008-03-08
+
+* fixed display for single-byte encodings on linux.
+
 Version 1.13.6 - 2008-01-21
 
 * allow large tab size (up to 99).
