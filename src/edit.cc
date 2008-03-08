@@ -565,8 +565,11 @@ void  PrintUsage(int arg)
 static bool has_widechars()
 {
    for(int c=' '; c<256; c++)
-      if(btowc(c)>=256)
+   {
+      wchar_t w=btowc(c);
+      if(w!=WEOF && w>=256)
 	 return 1;
+   }
    return 0;
 }
 #endif
