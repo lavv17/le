@@ -1,3 +1,12 @@
+2008-04-04	Igor Zhbanov
+
+	* syntax: better sh comment pattern; add *.php4, *.php5 files;
+	  add php constants true, false, null and keywords public, private, protected.
+
+2008-04-08	lav
+
+	* syntax: add -*-sql-*- pattern.
+
 2008-01-21	lav
 
 	* syntax: (perl) add *.pm; fix soket typo; add sysseek.

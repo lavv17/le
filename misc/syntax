@@ -148,7 +148,7 @@ c2,1=\||#|::=|:=|::
 
 # Shell mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.sh|/^#![ \t]*/.*/\(ba\|z\|k\)?sh\|-\*- *sh *-\*-
-c3,1=#.*$
+c3,1=([^$]|^)#.*$
 c3,2=[^\\]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
 c1,4=([^[:alnum:]/_]|^)(if|then|else|elif|fi|while|do|done|for|break|continue\
 |case|in|esac|local|return|exit|alias|bg|cd|eval|exec|export|fc|fg|getopts|hash\
@@ -416,7 +416,7 @@ c2,4=([ \t)]|^)(and|or|xor|eq|ne|cmp|lt|gt|le|ge)([ \t(]|$)
 c2,4=([ \t(]|^)(not)([ \t(]|$)
 
 # PL/SQL mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.sql|*.buf
+/*.sql|*.buf|/-\*- *[sS][qQ][lL] *-\*-
 c3,1=--.*$|/\\*([^*]|\\*[^/])*\\*/
 c3,1="([^"\n\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*'
 ci1,4=([^[:alnum:]_]|^)(\
@@ -479,11 +479,12 @@ c1,4=()(\\\\[[:alnum:]]*)([^[:alnum:]_]|$)
 c2,1={|}|\[|\]
 
 # PHP mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.php3|*.php
+/*.php[345]|*.php
 c3,1=#.*$|//.*$|/\\*([^*]|\\*[^/])*\\*/
 c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
+ci1,4=([^[:alnum:]_]|^)(true|false|null)
 c1,4=([^[:alnum:]_]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
-|function|class|return|global|in|or|and|not\
+|function|class|return|global|in|or|and|not|public|private|protected\
 )([^[:alnum:]_]|$)
 c2,1=:|\$|->
 
