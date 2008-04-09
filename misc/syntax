@@ -482,9 +482,9 @@ c2,1={|}|\[|\]
 /*.php[345]|*.php
 c3,1=#.*$|//.*$|/\\*([^*]|\\*[^/])*\\*/
 c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
-ci1,4=([^[:alnum:]_]|^)(true|false|null)
-c1,4=([^[:alnum:]_]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
-|function|class|return|global|in|or|and|not|public|private|protected\
+ci1,4=([^[:alnum:]\$_]|^)(true|false|null)
+c1,4=([^[:alnum:]\$_]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
+|function|class|return|global|in|or|and|not|public|private|protected|final|clone|new|array\
 )([^[:alnum:]_]|$)
 c2,1=:|\$|->
 
