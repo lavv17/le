@@ -1,3 +1,7 @@
+2008-05-08  Raphael Geissert <atomo64@gmail.com>
+
+	* getch.cc: Fix build problem related to KEY_F macro definition (closes: #223168).
+
 2008-03-08  lav
 
 	* edit.cc: fixed has_widechar for unsigned wchar_t.

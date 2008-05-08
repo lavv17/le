@@ -35,14 +35,15 @@
 #else
 #include <poll.h>
 #endif
-#include "edit.h"
-#include "getch.h"
 
 #ifdef __linux__
 #  include <linux/keyboard.h>
    static int linux_process_key(int);
    static int ungetstr(const char *str);
 #endif
+
+#include "edit.h"
+#include "getch.h"
 
 sigjmp_buf getch_return;
 bool  getch_return_set=false;
