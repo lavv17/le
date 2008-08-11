@@ -1,3 +1,10 @@
+Version 1.13.8 - 2008-08-11
+
+* add kri/kind terminfo codes to keymap.
+* fixed a build problem related to KEY_F on linux.
+* php syntax updated (Igor Zhbanov).
+* minor improvemens in shell and sql syntax patterns.
+
 Version 1.13.7 - 2008-03-08
 
 * fixed display for single-byte encodings on linux.
