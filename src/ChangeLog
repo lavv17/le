@@ -1,3 +1,7 @@
+2008-08-11  lav
+
+	* keymapdf.cc: add kri/kind terminfo keys to keymap.
+
 2008-05-08  Raphael Geissert <atomo64@gmail.com>
 
 	* getch.cc: Fix build problem related to KEY_F macro definition (closes: #223168).

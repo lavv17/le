@@ -121,8 +121,8 @@ const ActionCodeRec DefaultActionCodeTable[]=
    {MARK_TEXT_END,"\033|$kEND"},
    {MARK_PREV_PAGE,"$kPRV"},
    {MARK_NEXT_PAGE,"$kNXT"},
-   {MARK_LINE_UP,"$kUP"},
-   {MARK_LINE_DOWN,"$kDN"},
+   {MARK_LINE_UP,"$kri"},
+   {MARK_LINE_DOWN,"$kind"},
 
 // Movement with block marking (new xterm codes)
    {MARK_CHAR_LEFT,"\033O2D"},
