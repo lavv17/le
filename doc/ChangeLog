@@ -1,3 +1,7 @@
+2008-08-18	Raphael Geissert <atomo64@gmail.com>
+
+	* le.1: fixed minor typos.
+
 2008-05-08	Raphael Geissert <atomo64@gmail.com>
 
 	* le.1: correctly escape -, indicating that it must be treated as a minus
