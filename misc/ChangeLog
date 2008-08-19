@@ -1,3 +1,23 @@
+2008-08-18	Raphael Geissert <atomo64@gmail.com>
+
+	* syntax:
+	    + Improved syntax highlighting for php.
+	    + Fixed an incorrect highlighting of $" in perl mode.
+	    + Fixed an incorrect highlighting of \# in perl mode.
+	    + Increased the height up to 20 for some long constructors.
+	    + Added makefile mode.
+	    + Also match *.ini in the generic config file mode.
+	    + Added Debian control (control, dsc, changes) file mode.
+	    + Added Debian changelog mode.
+	    + Also match *.pot in po mode.
+	    + Added basic lsm mode.
+	    + Added watch file, uscan(1), mode.
+	    + Added gdbinit mode.
+	    + Added .desktop (and eventsrc) mode.
+	    + Added basic quilt series mode.
+	    + Added basic .ac and .m4 mode.
+	    + Added generic changelog mode.
+
 2008-04-04	Igor Zhbanov
 
 	* syntax: better sh comment pattern; add *.php4, *.php5 files;

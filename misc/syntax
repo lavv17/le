@@ -19,7 +19,7 @@
 # c1 usually marks keywords
 
 # maximum height of constructs
-h18
+h20
 
 # This file mode
 //-\*- *LE-syntax *-\*-
@@ -170,7 +170,7 @@ c1,4=([^[:alnum:]_]|^)(abstract|default|if|private|throw|boolean|do|implements\
 c2,1=\\[|\\]|\\(|\\)|{|}|,
 
 # po (i18n) mode (lav)
-/*.po
+/*.po|*.pot
 c1,1=^#, .*
 c2,1="|\\\\n|%[+- #]*[0-9*]*\\.?[0-9*]*l?[l]?[diouxXfeEgGcs]
 c3,1=^#.*$
@@ -391,9 +391,9 @@ ci1,4=(<)((-?)(A|C|D|F|G|I|J|K|L|N|O|P|S|T|U|W|X|Y)([[:digit:]]*))(>)
 
 # Perl mode, by Vladislav Zhuk <admin@dru.dn.ua>
 /*.p[lm]|/^#![ \t]*/.*/\perl\|-\*- *perl *-\*-
-c3,4=(^|[^$])(#.*)$
-c3,2=[^\\]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
-c1,4=([^[:alnum:]_\$@#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
+c3,4=(^|[^$\\])(#.*)$
+c3,2=[^\\$]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
+c1,4=([^[:alnum:]_\$@%#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |chdir|chmod|chomp|chop|chown|chr|chroot|close|closedir|connect|cos|crypt\
 |dbmclose|dbmopen|define|delete|die|do|dump|each|eof|eval|exec|exists|exit|exp\
 |fcntl|fileno|flock|fock|for|foreach|format|formline|getc|getlogin|getpeername\
@@ -479,14 +479,40 @@ c1,4=()(\\\\[[:alnum:]]*)([^[:alnum:]_]|$)
 c2,1={|}|\[|\]
 
 # PHP mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.php[345]|*.php
+# and Raphael Geissert <atomo64@gmail.com>
+/*.php.*|*.php|/<\?php
 c3,1=#.*$|//.*$|/\\*([^*]|\\*[^/])*\\*/
 c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
-ci1,4=([^[:alnum:]\$_]|^)(true|false|null)
-c1,4=([^[:alnum:]\$_]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
-|function|class|return|global|in|or|and|not|public|private|protected|final|clone|new|array\
+ci1,4=([^[:alnum:]_$]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
+|function|class|return|global|in|or|and|not|echo|print|exit|die|as|do|unset\
+|str_i?replace|substr|strlen|empty|str?ri?pos|trim|each|stri?str\
+|preg_(quote|match(|_all)|replace(|_callback)|last_error|grep|split)\
+|strcmp|str(nat)?(case)?cmp|(md5|sha1)(_file)?|strtr\
+|(str|chunk)_split\
+|strto(lower|upper)|gettype\
+|(user|trigger)_error|(set|restore)_(exception|error)_handler\
+|(add|strip)c?slashes|(raw)?url(en|de)code|base64_(de|en)code\
+|is(set|_(bool|int(eger)?|a([^[:alnum:]]|rray)|string|binary|buffer|callable\
+|double|float|long|null|object|real|scalar|numeric|resource|unicode))\
+|switch|case|default|explode|implode\
+|(([sf]|)print(f||_r))\
+|f(open|eof|close|flush|lock|read|put(csv|s)|scanf|stat|seek|truncate|write\
+|get(c|csv|s|ss)|ile(|_(exists|(get|put)_contents)|[acm]time|group|inode|owner\
+|perms|size|type))\
+|count|defined?|new\
+|array(|_(change_key_case|chunk|combine|count_values|diff_(u?assoc|u?key)\
+|fill(_keys)?|flip|u?intersect(|_(u?assoc|u?key))|key_exists|map\
+|merge(_recursive)?|multisort|pas|pop|product|push|rand|reduce|reverse|search\
+|shift|sp?lice|sum|udiff(|_u?assoc)|unique|values|walk(_recursive)?))|\
+|microtime|timestamp|pow|rand|round|pi|min|max|ceil|floor\
+|a?(cos|sin|tan)h?|atan2?\
+|is_(in)?finite|is_nan|\
+|function_exists\
+|public|private|protected|final|clone\
 )([^[:alnum:]_]|$)
-c2,1=:|\$|->
+ci1,1=(true|false|null|\$this)
+#c2,1=:|\$|->
+c2,1={|}|<<|<|<\?(php)?|>>|>|\?>|;;|;|\(|\)|[.+-*]?=|!=|&&|\|\||!|\.\.|<=>|&|^|@|->
 
 # Tcl mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.tcl|/^#![ \t]*/.*/tcl\|-\*- *tcl *-\*-
@@ -515,12 +541,29 @@ c3,1=^@@.*$
 c2,1=^(\+|-)
 
 # Generic configuration files, by Serge Vakulenko <vak@cronyx.ru>
-/*.conf|*.cf|*.cfg|Makefile|makefile
-c3,1=#.*$
+/*.conf|*.cf|*.cfg|*.ini
+c3,1=[#;].*$
 #c1,4=([^[:alnum:]_]|^)(if|elseif|else|for|in|break|continue|while|var\
 #|function|class|return|global|in|or|and|not\
 #)([^[:alnum:]_]|$)
-#c2,1=:|\$|->
+c2,1=:|\$|->|=
+c2,2=^(\[)[^\]]+\]
+c2,2=^\[[^\]]+(\])
+c1,2=^\[([^\]]+)\]
+
+# makefile mode, by Raphael Geissert <atomo64@gmail.com>
+/Makefile|Makefile.*|makefile|makefile.*|*.mk|/^#![ \t]*/.*/make\|.*-\*-.*makefile[^\w]
+c3,1=^[[:space:]]*#.*$
+c3,1="|'
+c1,4=([^[:alnum:]_]|^)(findstring|ifn?eq|endif|define|shell\
+|else|while|if|fi|then|do|done|for|case|esac|export|MAKE|ifn?def\
+|(pat)?subst|filter(-out)?|foreach|words|call|wildcard\
+)([^[:alnum:]_]|$)
+c1,4=([^[:alnum:]_]|^)(include)([[:space:]].+$)
+c2,1=:|\$|[+-:?]?=|>|<|`|\||\[|\]|\(|\)|{|}|&|\$[@*]
+ci1,2=^([ [:alnum:]/%()$,_.-]+):[^=]
+c1,2=^[ \t]*@?(-)[^-][^[:space:]]
+c1,2=^[ \t]*(@)
 
 # Verilog mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.v|/-\*- *verilog *-\*-
@@ -540,3 +583,95 @@ c1,4=([^[:alnum:]_]|^)(always|and|assign|attribute|begin|buf|bufif0|bufif1\
 |wand|weak0|weak1|while|wire|wor|xnor|xor\
 )([^[:alnum:]_]|$)
 c2,1=\\[|\\]|\\(|\\)|{|}|,|@|<=
+
+# Debian control file mode, by Raphael Geissert <atomo64@gmail.com>
+#/control|/^Source:
+//^Source:
+c3,1=^#.*$
+ci2,2=^[[:alnum:]-]+(:)
+c2,1=\$|=|<|>|\||,
+c2,1=^ \.
+c1,2=^(Source|Package|Version|Section|Priority|Maintainer|Homepage|Description\
+|Standards-Version|(Build-)?Depends(-Indep)?|Architecture|Provides|Replaces\
+|Recommends|Suggests|(Build-)?Conflicts(-Indep)?|Enhaces|Uploaders|Vcs-Browser\
+|Essential|Installed-Size|Binary|Format|Files|Closes|Changes|Urgency\
+|Distribution|Date|Changed-By|Checksums-Sha(1|256)\
+)
+ci1,1=^Vcs-[[:alnum:]]+
+c1,2=^(X[BCS]+-[[:alnum:]-]+)(:)
+
+# Debian changelog mode, by Raphael Geissert <atomo64@gmail.com>
+#/changelog|/^.+[ ]+\(.+\)[ ]+.+;[ ]+urgency=.+
+//^.+[ ]+\(.+\)[ ]+.+;[ ]+urgency=.+
+c3,1=^[[:space:]]+--.+
+c2,2=urgency=([[:alnum:]]+)
+ci2,2=[[:space:]]+([[:alnum:]]+);[[:space:]]+urgency=
+c2,2=^[[:alnum:].-]+ +\((.+)\)
+c1,2=^([[:alnum:].-]+) +\(.+\)
+ci1,1=closes:[[:space:]]*(bug)?#?[[:space:]]?[[:digit:]]+(,[[:space:]]*\
+(bug)?\#?[[:space:]]?[[:digit:]]+)*
+c1,1=LP:[[:space:]]+#[[:digit:]]+
+c2,2=(\[).+\]
+c2,2=\[.+(\])
+c3,2=\[(.+)\]
+c1,1=^[[:space:]]+[*+-][^-]
+c3,1="[^"\n]+"
+c3,1='[^'\n]+'
+
+# simple, and imperfect, changelog mode, by Raphael Geissert <atomo64@gmail.com>
+/ChangeLog|/[[:digit:]]+-[[:digit:]]+-[[:digit:]]+[[:space:]]+
+c3,1=^[[:digit:]]+-[[:digit:]]+-[[:digit:]]+[[:space:]]+
+ci2,6=^[[:digit:]]+-[[:digit:]]+-[[:digit:]]+.*  ([[:alnum:]]+)$
+
+# lsm mode, by Raphael Geissert <atomo64@gmail.com>
+/*.lsm|/^Begin[34]
+c3,1=^(Begin[34]|End)
+ci2,2=^[[:alnum:]-]+(:)
+#c1,2=^([^ \t]*):
+c1,2=^(Title|Version|Entered-date|Description|Keywords|Author|Maintained-by\
+|(Primary|Alternate|Original)-site|Platforms|Copying-policy):
+c2,1=[@()]
+
+# really basic m4 and ac modes, by Raphael Geissert <atomo64@gmail.com>
+/*.m4
+c3,1=^[[:space:]]*#.*$
+c2,1=:|\$|[+-:]?=|>|<|`|\||\[|\]|\(|\)|{|}|&
+c1,1=m4_[[:alnum:]_]+
+c3,1="|'
+/*.ac
+c3,1=^dnl.*$
+c1,1=AC_[[:alnum:]_]+
+c2,1=:|=|>|<|,|\||\[|\]|\(|\)|{|}|&
+c3,1="|'
+
+# watch file mode, by Raphael Geissert <atomo64@gmail.com>
+/watch|/version=[23]
+c3,1=^[[:space:]]*#.*
+c2,1=[[:space:]]*version=[[:digit:]]
+c1,2=^[[:space:]]*(opt(ion)?s)
+c1,1=(downloadurl|[du]?version|filename|active|passive|pasv)mangle
+c2,1=,
+c2,2=[^\\](\.)[^/]+[ \n\t]
+c3,1=\(.+\)
+
+# .gdbinit mode, by Raphael Geissert <atomo64@gmail.com>
+/gdbinit|.*gdbinit
+c1,2=^(define|end|document)([^[:alnum:]_]|$)
+c2,6=^[[:alnum:]][^ \t]+[ \t]+([[:alnum:]_]+)$
+
+# series (quilt) mode, by Raphael Geissert <atomo64@gmail.com>
+/series
+c3,1=^[[:space:]]*#.*
+
+# .desktop files mode, by Raphael Geissert <atomo64@gmail.com>
+/*.desktop|*eventsrc
+c2,2=(\[).+\]
+c2,2=\[.+(\])
+c3,2=\[(.+)\]
+c3,1=^[ \t]*#.*
+c1,2=^((Generic)?Name|Comment|(Try)?Exec|Icon|X-[a-zA-Z0-9-]+|Type|Categories\
+|Version|NoDisplay|Hidden|(Only|Not)ShowIn|Path|Terminal|MimeType|URL\
+|Startup(Notify|WMClass)|\
+# eventsrc-specific:\
+|default_presentation\
+)
