@@ -25,7 +25,7 @@
 
 2008-04-08	lav
 
-	* syntax: add -*-sql-*- pattern.
+	* syntax: add sql pattern.
 
 2008-01-21	lav
 
