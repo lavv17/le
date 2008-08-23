@@ -28,3 +28,12 @@ fnmatch_loop.c
 poll.c
 stdbool.in.h
 fnmatch.c
+Makefile.am
+alloca.c
+getopt.c
+getopt1.c
+mbswidth.c
+wcwidth.c
+intprops.h
+strerror.c
+string.in.h
