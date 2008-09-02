@@ -1241,3 +1241,46 @@ void  InsertAutoindent(num oldcol)
    }
    stdcol=GetCol();
 }
+
+num GetCol()
+{
+   if(hex)
+      return 0;
+   return(CurrentPos.Col());
+}
+bool EolAt(offs o)
+{
+   return((CharAt(o)==EolStr[0] && (EolSize<2 || CharAt(o+1)==EolStr[1]))
+      || EofAt(o));
+}
+bool BolAt(offs o)
+{
+   return((CharAt(o-EolSize)==EolStr[0] && (EolSize<2 || CharAt(o-1)==EolStr[1]))
+      || BofAt(o));
+}
+bool Eol()
+{
+   return(EolAt(CurrentPos));
+}
+bool Bol()
+{
+   return(BolAt(CurrentPos));
+}
+void DeleteChar()
+{
+   MBCheckRight();
+   DeleteBlock(0,MBCharSize);
+}
+void BackSpace()
+{
+   MBCheckLeft();
+   DeleteBlock(MBCharSize,0);
+}
+int InsertChar(char ch)
+{
+   return(InsertBlock(&ch,1));
+}
+int ReplaceChar(char ch)
+{
+   return ReplaceBlock(&ch,1);
+}

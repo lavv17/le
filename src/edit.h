@@ -144,6 +144,17 @@ extern   int   TabsInMargin;
 #define hex     (editmode==HEXM)
 #define Text    (editmode==TEXT && !buffer_mmapped)
 
+num   GetCol();
+bool  EolAt(offs o);
+bool  BolAt(offs o);
+bool  Eol();
+bool  Bol();
+
+void  DeleteChar();
+void  BackSpace();
+int   InsertChar(char ch);
+int   ReplaceChar(char ch);
+
 void  MoveLeftOverEOL();
 void  MoveRightOverEOL();
 
@@ -311,6 +322,7 @@ int   Suffix(const char *,const char *);
 #define  REDISPLAY_RANGE   8
 
 #include "inline.h"
+#include "mb.h"
 #include "chset.h"
 
 int   isslash(char);

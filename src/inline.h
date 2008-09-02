@@ -103,60 +103,9 @@ void    MoveLeft()
    CurrentPos-=1;
 }
 static inline
-num     GetCol()
-{
-   if(hex)
-      return 0;
-   return(CurrentPos.Col());
-}
-static inline
 num     GetLine()
 {
    return(CurrentPos.Line());
-}
-static inline
-void    DeleteChar()
-{
-   MBCheckRight();
-   DeleteBlock(0,MBCharSize);
-}
-static inline
-void    BackSpace()
-{
-   MBCheckLeft();
-   DeleteBlock(MBCharSize,0);
-}
-static inline
-int EolAt(offs o)
-{
-   return((CharAt(o)==EolStr[0] && (EolSize<2 || CharAt(o+1)==EolStr[1]))
-      || EofAt(o));
-}
-static inline
-int BolAt(offs o)
-{
-   return((CharAt(o-EolSize)==EolStr[0] && (EolSize<2 || CharAt(o-1)==EolStr[1]))
-      || BofAt(o));
-}
-static inline
-int Eol()
-{
-   return(EolAt(CurrentPos));
-}
-static inline
-int Bol()
-{
-   return(BolAt(CurrentPos));
-}
-static inline
-int  InsertChar(char ch)
-{
-   return(InsertBlock(&ch,1));
-}
-static inline
-int   ReplaceChar(char ch)
-{
-   return ReplaceBlock(&ch,1);
 }
 static inline
 bool le_isspace(int c)
