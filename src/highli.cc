@@ -27,7 +27,7 @@
 #include "edit.h"
 #include "screen.h"
 #include "search.h"
-#include "xalloca.h"
+#include <alloca.h>
 
 #ifdef HAVE_SYS_TIMES_H
 #include <sys/times.h>

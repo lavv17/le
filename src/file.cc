@@ -395,8 +395,8 @@ int ChooseFileName(char *fn)
          }
          sprintf(str,"%s/%s",directory,entry->d_name);
          if(stat(str,&(dir[i].st))==-1
-         || (dir[i].st.st_mode&S_IFMT)==S_IFREG && fnmatch(filename,entry->d_name,0)!=0
-         || (dir[i].st.st_mode&S_IFMT)!=S_IFREG && (dir[i].st.st_mode&S_IFMT)!=S_IFDIR
+         || ((dir[i].st.st_mode&S_IFMT)==S_IFREG && fnmatch(filename,entry->d_name,0)!=0)
+         || ((dir[i].st.st_mode&S_IFMT)!=S_IFREG && (dir[i].st.st_mode&S_IFMT)!=S_IFDIR)
          || !strcmp(entry->d_name,"."))
          {
             i--;

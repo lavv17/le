@@ -22,12 +22,7 @@
 #include <stdlib.h>
 
 extern "C" {
-#ifdef WITH_REGEX
-   #include <regex.h>
-#else
-   #include <rx.h>
-   #define RE_TRANSLATE_TYPE unsigned char *
-#endif
+#include <regex.h>
 }
 
 extern int hl_option,hl_active,hl_lines;

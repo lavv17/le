@@ -28,15 +28,10 @@
 #include "keymap.h"
 #include "getch.h"
 #include "search.h"
-#include "xalloca.h"
+#include <alloca.h>
 
 extern "C" {
-#ifdef WITH_REGEX
-   #include <regex.h>
-#else
-   #include <rx.h>
-   #define RE_TRANSLATE_TYPE unsigned char *
-#endif
+#include <regex.h>
 }
 
 #define SEARCH  1
@@ -319,8 +314,8 @@ int    Search(int dir,offs offslim)
 
    offs srchpos=CurrentPos;
 
-   if(dir==FORWARD && srchpos>=offslim
-   || dir==BACKWARD && srchpos<=offslim)
+   if((dir==FORWARD  && srchpos>=offslim)
+   || (dir==BACKWARD && srchpos<=offslim))
       return FALSE;
 
    if(!buffer)
@@ -372,7 +367,7 @@ search_again:
       fndlen=regs.end[0]-res;
    CurrentPos=fndind;
    if(fndlen==0
-   || word_bounds && (isalnum(CharRel(-1)) || isalnum(CharRel(fndlen))))
+   || (word_bounds && (isalnum(CharRel(-1)) || isalnum(CharRel(fndlen)))))
    {
       if(dir==FORWARD)
 	 srchpos=CurrentPos+1;

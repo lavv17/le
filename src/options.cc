@@ -363,11 +363,11 @@ void  ReadConfFromOpenFile(FILE *f,const struct init *init,bool mine)
 	 continue;
       }
       for(i=0; str[i]; i++)
-	 if(!isspace(str[i]))
+	 if(!isspace((unsigned char)str[i]))
 	    break;
       memmove(str,str+i,strlen(str+i)+1);
       for(i=strlen(str); i>0; i--)
-	 if(!isspace(str[i-1]))
+	 if(!isspace((unsigned char)str[i-1]))
 	    break;
       str[i]=0;
       for(i=strlen(str); i>0; i--)

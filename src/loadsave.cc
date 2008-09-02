@@ -46,7 +46,7 @@
 #include "edit.h"
 #include "keymap.h"
 #include "highli.h"
-#include <xalloca.h>
+#include <alloca.h>
 #include "block.h"
 #include "clipbrd.h"
 #include "getch.h"

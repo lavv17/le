@@ -25,10 +25,6 @@
 #include <wchar.h>
 #include <wctype.h>
 
-#if !HAVE_DECL_WCWIDTH
-extern "C" int wcwidth(wchar_t);
-#endif
-
 extern bool mb_mode;
 extern int  MBCharSize;
 extern int  MBCharWidth;

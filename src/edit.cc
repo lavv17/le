@@ -51,13 +51,12 @@
 
 #include <getopt.h>
 
-// #include <term.h>
-
 #ifdef DISABLE_FILE_LOCKS
 # define fcntl(x,y,z)	(0)
 #endif
 
-#include <xalloca.h>
+#include <alloca.h>
+#include "localcharset.h"
 
 char  Program[256];
 
@@ -640,11 +639,9 @@ int     main(int argc,char **argv)
 #if USE_MULTIBYTE_CHARS
    if(has_widechars())
       mb_mode=true;
-# if defined(HAVE_NL_LANGINFO) && defined(CODESET)
-   char *cs=nl_langinfo(CODESET);
+   const char *cs=locale_charset();
    if(cs && !strcasecmp(cs,"UTF-8"))
       mb_mode=true;
-# endif
 #endif
 
    HOME=getenv("HOME");
@@ -743,7 +740,7 @@ int     main(int argc,char **argv)
       mb_mode=opt_mb_mode;
 #endif
 
-   if(optind<argc-1 && argv[optind][0]=='+' && isdigit(argv[optind][1]))
+   if(optind<argc-1 && argv[optind][0]=='+' && isdigit((unsigned char)argv[optind][1]))
    {
       optWarpLine=atoi(argv[optind]);
       optind++;

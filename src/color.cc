@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include <xalloca.h>
+#include <alloca.h>
 #include "edit.h"
 #include "options.h"
 
@@ -223,10 +223,10 @@ void  ParseOneColor(color *pal,const char *desc,int no)
       char *eq=strchr(tok,'=');
       if(eq)
 	 *eq=':';
-      while(*tok && isspace(*tok))
+      while(*tok && isspace((unsigned char)*tok))
 	 tok++;
       eq=tok+strlen(tok);
-      while(eq>tok && isspace(*--eq))
+      while(eq>tok && isspace((unsigned char)*--eq))
 	 *eq=0;
       for(const attr_name *an=attr_names_table; an->name; an++)
       {

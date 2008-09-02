@@ -23,7 +23,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <xalloca.h>
+#include <alloca.h>
 
 #include "edit.h"
 #include "block.h"

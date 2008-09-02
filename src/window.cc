@@ -19,8 +19,8 @@
 #include <config.h>
 #include <string.h>
 #include <stdlib.h>
+#include <alloca.h>
 #include "edit.h"
-#include "xalloca.h"
 
 const attr *curr_attr;
 

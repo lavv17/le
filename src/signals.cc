@@ -34,8 +34,6 @@
 #endif
 #endif
 
-#include "xalloca.h"
-
 /* This pair of functions is to work
    with signal handlers - install and release */
 static struct sigaction  OldSIGHUP;

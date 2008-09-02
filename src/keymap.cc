@@ -334,7 +334,7 @@ static int PrettyCodeScore(const char *c)
 	 c+=bracket;
 
 	 term_str=term_name;
-	 while(*c!=0 && (bracket?*c!=RIGHT_BRACE:isalnum(*c)) && term_str-term_name<255)
+	 while(*c!=0 && (bracket?*c!=RIGHT_BRACE:isalnum((unsigned char)*c)) && term_str-term_name<255)
 	    *term_str++=*c++;
 	 *term_str=0;
 	 if(!(bracket && *c==RIGHT_BRACE))
@@ -394,7 +394,7 @@ const char *ActionCodePrettyPrint(const char *c)
 	 c+=bracket;
 
 	 term_str=term_name;
-	 while(*c!=0 && (bracket?*c!=RIGHT_BRACE:isalnum(*c)) && term_str-term_name<255)
+	 while(*c!=0 && (bracket?*c!=RIGHT_BRACE:isalnum((unsigned char)*c)) && term_str-term_name<255)
 	    *term_str++=*c++;
 	 *term_str=0;
 	 if(!(bracket && *c==RIGHT_BRACE))
@@ -576,7 +576,7 @@ KeyTreeNode *BuildKeyTree(const ActionCodeRec *ac_table)
 	       code+=bracket;
 
 	       term_str=term_name;
-	       while(*code!=0 && (bracket?*code!=RIGHT_BRACE:isalnum(*code)) && term_str-term_name<255)
+	       while(*code!=0 && (bracket?*code!=RIGHT_BRACE:isalnum((unsigned char)*code)) && term_str-term_name<255)
 		  *term_str++=*code++;
 	       *term_str=0;
 	       if(bracket && *code==RIGHT_BRACE)

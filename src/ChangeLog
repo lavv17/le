@@ -1,3 +1,15 @@
+2008-09-02  lav
+
+	* calc.cc: add sum function.
+	* inline.h, kern.cc, edit.h, textpoin.cc, textpoin.h: outline some
+	  functions as suggested by gcc.
+	* color.cc, colormnu.cc, edit.cc, file.cc, format.cc, highli.cc,
+	  highli.h, keymap.cc, loadsave.cc, mb.h, options.cc, screen.cc,
+	  search.cc, signals.cc, window.cc: fixed warnings; used gnulib;
+	  dropped rx.h support.
+	* regex.c, regex.h, wcwidth.c, wcwidth1.c: moved here to save
+	  from gnulib-tool.
+
 2008-08-11  lav
 
 	* keymapdf.cc: add kri/kind terminfo keys to keymap.

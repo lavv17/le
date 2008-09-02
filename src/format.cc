@@ -30,7 +30,7 @@
 #include "keymap.h"
 #include "format.h"
 #include "undo.h"
-#include <xalloca.h>
+#include <alloca.h>
 
 int   LineLen=63;
 int   LeftMargin=0;

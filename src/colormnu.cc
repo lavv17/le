@@ -25,7 +25,7 @@
 #include "edit.h"
 #include "colormnu.h"
 #include "options.h"
-#include "xalloca.h"
+#include <alloca.h>
 
 void ColorsSaveToFile(const char *f)
 {
