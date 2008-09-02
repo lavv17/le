@@ -251,6 +251,7 @@ Here are the operations of the calculator:
            trigonometry functions of X
   and,or,xor,not   binary operations
   b16,b10,b8       change base of X
+  sum      sum all the numbers in the stack
   ins      insert stack contents to the text
 
 [FramesHelp]
