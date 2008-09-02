@@ -393,3 +393,16 @@ TextPoint TextPoint::ForcedLineCol(num l,num c)
    stdcol=old_stdcol;
    return res;
 }
+
+num TextPoint::Line()
+{
+   if(flags&LINEUNDEFINED)
+      FindLineCol();
+   return(line);
+}
+num TextPoint::Col()
+{
+   if(flags&(COLUNDEFINED|LINEUNDEFINED))
+      FindLineCol();
+   return(col);
+}
