@@ -310,6 +310,14 @@ static int b8()
    return(OKAY);
 }
 
+static int f_sum()
+{
+   if(sp<1)
+      return STUNDERFLOW;
+   while(add()==OKAY);
+   return OKAY;
+}
+
 struct   func_def
 {
    const char *name;
@@ -328,6 +336,8 @@ const func[]={
 
 {"and",f_and}, {"or",f_or}, {"xor",f_xor}, {"not",f_not},
 {"b16",b16}, {"b10",b10}, {"b8",b8},
+
+{"sum",f_sum},
 
 {NULL}};
 
