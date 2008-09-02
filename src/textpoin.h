@@ -52,18 +52,9 @@ public:
    {
       return(offset);
    }
-   num   Line()
-   {
-      if(flags&LINEUNDEFINED)
-         FindLineCol();
-      return(line);
-   }
-   num   Col()
-   {
-      if(flags&(COLUNDEFINED|LINEUNDEFINED))
-         FindLineCol();
-      return(col);
-   }
+   num   Line();
+   num   Col();
+
    num	 LineSimple()
    {
       if(flags&LINEUNDEFINED)
