@@ -1,8 +1,10 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.13.8], [le@uniyar.ac.ru])
+AC_INIT([le], [1.13.9], [le@uniyar.ac.ru])
+AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/edit.cc])
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER([config.h])
+AM_CONFIG_HEADER([lib/config.h])
 
 AC_ARG_ENABLE(file-locks, [  --disable-file-locks    disable file locking],
    [enable_file_locks=$enableval],[enable_file_locks=yes])
@@ -16,13 +18,11 @@ test -z "$CXXFLAGS"  && DEFAULT_CXXFLAGS=yes
 
 dnl Checks for programs.
 AC_PROG_CC
+gl_EARLY
 AC_PROG_CXX
 CXX_DYNAMIC_INITIALIZERS
 AC_PROG_LN_S
 AC_PROG_RANLIB
-
-# for lib/mbswidth.{c,h}
-jm_PREREQ_MBSWIDTH
 
 AC_ARG_WITH(debug,
 [  --with-debug            enable debug info],
@@ -59,6 +59,8 @@ if test x$GXX = xyes; then
       LFTP_NOIMPLEMENTINLINE
    fi
 fi
+
+gl_INIT
 
 dnl Checks for libraries.
 AC_CHECK_LIB(m, exp)
@@ -109,9 +111,9 @@ AC_SUBST(CURSES_INCLUDES)
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_TYPE_UID_T
-dnl AC_C_INLINE
 AC_TYPE_MODE_T
 AC_TYPE_SIZE_T
+AC_TYPE_UINTPTR_T
 AC_HEADER_TIME
 AC_STRUCT_TM
 
@@ -120,44 +122,7 @@ AC_FUNC_ALLOCA
 AC_PROG_GCC_TRADITIONAL
 AC_FUNC_STRCOLL
 AC_CHECK_FUNCS(getcwd mkdir select strdup strerror strftime strtol mmap\
- ftruncate fchmod times nl_langinfo btowc)
+ ftruncate fchmod times btowc)
 
-LFTP_FUNC_POLL
-if test x$lftp_cv_func_poll_works = xno; then
-   AC_LIBOBJ(poll)
-   if test x$ac_cv_header_sys_poll_h = xno; then
-      AC_CONFIG_LINKS([include/poll.h:lib/poll.h])
-   fi
-fi
-
-dnl AC_REPLACE_GNU_GETOPT
-AC_LIBOBJ(getopt)
-AC_LIBOBJ(getopt1)
-
-AC_FUNC_FNMATCH
-
-#rx.c is faster for our needs, but it has subtle bugs.
-#test -z "$with_regex" && with_regex=no
-
-# probably we should test for rx bug, but this is simpler
-ac_cv_func_re_rx_search=no
-# disable libc regex until the problem with mb chars+html highlighting is resolved.
-le_cv_good_gnu_regex=no
-
-LE_CHECK_REGEX_BUGS
-
-AM_WITH_REGEX
-if test x$am_cv_gnu_regex = xno; then
-   AC_CONFIG_LINKS([include/regex.h:lib/regex.h])
-else
-   AC_CONFIG_LINKS([include/rx.h:lib/rx.h])
-fi
-if test x$ac_cv_func_fnmatch_works = xno; then
-   AC_LIBOBJ(fnmatch)
-   AC_CONFIG_LINKS([include/fnmatch.h:lib/fnmatch.h])
-fi
-
-LE_FUNC_WCWIDTH_REPLACE
-
-AC_CONFIG_FILES([Makefile lib/Makefile include/Makefile src/Makefile misc/Makefile doc/Makefile m4/Makefile])
+AC_CONFIG_FILES([Makefile lib/Makefile src/Makefile misc/Makefile doc/Makefile m4/Makefile])
 AC_OUTPUT

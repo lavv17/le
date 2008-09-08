@@ -9,3 +9,4 @@ aclocal.m4
 stamp-h.in
 configure
 Makefile.in
+link-warning.h

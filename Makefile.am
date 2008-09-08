@@ -1,4 +1,4 @@
-SUBDIRS = doc lib include src misc m4
+SUBDIRS = doc lib src misc m4
 EXTRA_DIST = le.lsm FEATURES HISTORY le.spec
 AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
