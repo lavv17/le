@@ -15,7 +15,7 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --aux-dir=build-aux --no-libtool --macro-prefix=gl alloca fnmatch fnmatch-posix getopt mbswidth poll wcwidth
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --aux-dir=build-aux --no-libtool --macro-prefix=gl alloca fnmatch fnmatch-posix getopt mbswidth poll strerror
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
@@ -26,7 +26,7 @@ gl_MODULES([
   getopt
   mbswidth
   poll
-  wcwidth
+  strerror
 ])
 gl_AVOID([])
 gl_SOURCE_BASE([lib])

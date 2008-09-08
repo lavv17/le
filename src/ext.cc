@@ -76,6 +76,12 @@ void  ExpandAllTabs()
    stdcol=GetCol();
 }
 
+void  DOS_UNIX_switch()
+{
+   DosEol=!DosEol;
+   SetEolStr(DosEol?"\r\n":"\n");
+}
+
 void  DOS_UNIX(void)
 {
    num ol=GetLine(),oc=GetCol();
@@ -98,62 +104,22 @@ void  DOS_UNIX(void)
       {
          if(Eol())
          {
-            DosEol=!DosEol;
-            if(DosEol)
-            {
-               EolSize=2;
-               EolStr="\r\n";
-            }
-            else
-            {
-               EolSize=1;
-               EolStr="\n";
-            }
+	    DOS_UNIX_switch();
             NewLine();
-            DosEol=!DosEol;
-            if(DosEol)
-            {
-               EolSize=2;
-               EolStr="\r\n";
-            }
-            else
-            {
-               EolSize=1;
-               EolStr="\n";
-            }
+	    DOS_UNIX_switch();
             DeleteEOL();
          }
          else
             MoveRight();
       }
-      DosEol=!DosEol;
-      if(DosEol)
-      {
-         EolSize=2;
-         EolStr="\r\n";
-      }
-      else
-      {
-         EolSize=1;
-         EolStr="\n";
-      }
+      DOS_UNIX_switch();
       CurrentPos=TextBegin;
       ScrShift=0;
       ScreenTop=CurrentPos;
       MoveLineCol(ol,oc);
       break;
    case('N'):
-      DosEol=!DosEol;
-      if(DosEol)
-      {
-         EolSize=2;
-         EolStr="\r\n";
-      }
-      else
-      {
-         EolSize=1;
-         EolStr="\n";
-      }
+      DOS_UNIX_switch();
       CurrentPos=TextBegin;
       ScrShift=0;
       ScreenTop=CurrentPos;

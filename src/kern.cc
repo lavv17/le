@@ -57,7 +57,7 @@ bool      newfile=false;
 
 int       DosEol=0;
 int       EolSize=1;
-const char *EolStr="\n";
+char	  EolStr[2]="\n";
 
 InodeInfo   FileInfo;
 InodeHistory PositionHistory;
@@ -1067,8 +1067,7 @@ void  EmptyText()
    ScrShift=0;
 
    DosEol=0;
-   EolSize=1;
-   EolStr="\n";
+   SetEolStr("\n");
 }
 
 bool IsAlNumAt(num o)
@@ -1283,4 +1282,10 @@ int InsertChar(char ch)
 int ReplaceChar(char ch)
 {
    return ReplaceBlock(&ch,1);
+}
+
+void SetEolStr(const char *n)
+{
+   EolSize=strlen(n);
+   memcpy(EolStr,n,EolSize);
 }

@@ -32,3 +32,5 @@ mbstate_t.m4
 mbswidth.m4
 stdbool.m4
 wcwidth.m4
+strerror.m4
+string_h.m4

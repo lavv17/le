@@ -119,7 +119,8 @@ extern  byte    chset[];
 
 extern int DosEol;
 extern int EolSize;
-extern const char *EolStr;
+extern char EolStr[2];
+void SetEolStr(const char *);
 
 extern   int   TabsInMargin;
 
