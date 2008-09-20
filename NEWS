@@ -1,3 +1,9 @@
+Version 1.13.10 - 2008-09-20
+
+* automatically turn off syntax highlighting for screens with too long lines.
+* speed-optimized some syntax patterns.
+* fixed DOS-EOL mode display in status line.
+
 Version 1.13.9 - 2008-09-08
 
 * added sum function in the calculator.
