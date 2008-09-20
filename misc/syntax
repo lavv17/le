@@ -32,7 +32,7 @@ c2,1=^/
 /*.c|/-\*- *c *-\*-
 c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^'\n\\]|\\\\.)*'
 #c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
-c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[[:alpha:]]*))
+c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[a-z]*))
 c3,1=/\\*([^*]|\\*[^/])*\\*/
 c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 |continue|char|short|int|long|unsigned|signed|auto\
@@ -45,7 +45,7 @@ c2,1=\\[|\\]|\\(|\\)|{|}|,
 /*.cc|*.C|*.cpp|*.h|*.hh|*.hpp|*.H|/-\*- *c\+\+ *-\*-
 c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^\n'\\]|\\\\.)*'
 #c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
-c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[[:alpha:]]*))
+c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[a-z]*))
 c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
 c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 |continue|char|short|int|long|unsigned|signed|auto\
@@ -116,7 +116,7 @@ c2,1=<<|>>|:=|\\[|\\]|\\(|\\)|{|}|,|:|#|'Access|'Address|'Size
 c3,1=@[^\n]*\n
 c3,1=;[^\n]*\n
 c3,1="([^"\\]|\\\\(.|\n))*"
-c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[[:alpha:]]*))
+c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[a-z]*))
 c1,4=([^[:alnum:]_]|^)(\.section|\.func|\.globl|\.global|\.code|\.comm|\.weak\
 |\.endfunc\
 )([^[:alnum:]_]|$)
@@ -386,8 +386,8 @@ c1,4=(@)(abort|add|and|append|bind|center|char-int|close|cmpi|cmpn|cmps\
 |time|unbind|undefine|upcase|var|version|wrap|write)($|{|;| )
 c1,4=(\\\)(a|b|d|e|f|n|r|s|t|v|A|B|C|E|G|I|J|L|N|P|S|W|X|Z)
 c1,4=(\\\)((x[[:xdigit:]]+)|([0-7]+)|(c[[:alpha:]]))
-c1,4=(\$)([[:digit:]]+|[[:alpha:]])
-ci1,4=(<)((-?)(A|C|D|F|G|I|J|K|L|N|O|P|S|T|U|W|X|Y)([[:digit:]]*))(>)
+c1,4=(\$)([0-9]+|[[:alpha:]])
+ci1,4=(<)((-?)(A|C|D|F|G|I|J|K|L|N|O|P|S|T|U|W|X|Y)([0-9]*))(>)
 
 # Perl mode, by Vladislav Zhuk <admin@dru.dn.ua>
 /*.p[lm]|/^#![ \t]*/.*/\perl\|-\*- *perl *-\*-
@@ -552,17 +552,17 @@ c2,2=^\[[^\]]+(\])
 c1,2=^\[([^\]]+)\]
 
 # makefile mode, by Raphael Geissert <atomo64@gmail.com>
-/Makefile|Makefile.*|makefile|makefile.*|*.mk|/^#![ \t]*/.*/make\|.*-\*-.*makefile[^\w]
-c3,1=^[[:space:]]*#.*$
+/Makefile|Makefile.*|makefile|makefile.*|*.mk|/^#![ \t]*/.*/make\|-\*-.*makefile[^\w]
+c3,1=^[ \t]*#.*$
 c3,1="|'
 c1,4=([^[:alnum:]_]|^)(findstring|ifn?eq|endif|define|shell\
 |else|while|if|fi|then|do|done|for|case|esac|export|MAKE|ifn?def\
 |(pat)?subst|filter(-out)?|foreach|words|call|wildcard\
 )([^[:alnum:]_]|$)
-c1,4=([^[:alnum:]_]|^)(include)([[:space:]].+$)
+c1,4=([^[:alnum:]_]|^)(include)([ \t].+$)
 c2,1=:|\$|[+-:?]?=|>|<|`|\||\[|\]|\(|\)|{|}|&|\$[@*]
 ci1,2=^([ [:alnum:]/%()$,_.-]+):[^=]
-c1,2=^[ \t]*@?(-)[^-][^[:space:]]
+c1,2=^[ \t]*@?(-)[^-][^ \t]
 c1,2=^[ \t]*(@)
 
 # Verilog mode, by Serge Vakulenko <vak@cronyx.ru>
@@ -601,27 +601,26 @@ ci1,1=^Vcs-[[:alnum:]]+
 c1,2=^(X[BCS]+-[[:alnum:]-]+)(:)
 
 # Debian changelog mode, by Raphael Geissert <atomo64@gmail.com>
-#/changelog|/^.+[ ]+\(.+\)[ ]+.+;[ ]+urgency=.+
-//^.+[ ]+\(.+\)[ ]+.+;[ ]+urgency=.+
-c3,1=^[[:space:]]+--.+
+// \(.+\) .+; +urgency=
+c3,1=^[ \t]+--.+
 c2,2=urgency=([[:alnum:]]+)
-ci2,2=[[:space:]]+([[:alnum:]]+);[[:space:]]+urgency=
+ci2,2=[ \t]+([[:alnum:]]+);[ \t]+urgency=
 c2,2=^[[:alnum:].-]+ +\((.+)\)
 c1,2=^([[:alnum:].-]+) +\(.+\)
-ci1,1=closes:[[:space:]]*(bug)?#?[[:space:]]?[[:digit:]]+(,[[:space:]]*\
-(bug)?\#?[[:space:]]?[[:digit:]]+)*
-c1,1=LP:[[:space:]]+#[[:digit:]]+
+ci1,1=closes:[ \t]*(bug)?#?[ \t]?[0-9]+(,[ \t]*\
+(bug)?\#?[ \t]?[0-9]+)*
+c1,1=LP:[ \t]+#[0-9]+
 c2,2=(\[).+\]
 c2,2=\[.+(\])
 c3,2=\[(.+)\]
-c1,1=^[[:space:]]+[*+-][^-]
+c1,1=^[ \t]+[*+-][^-]
 c3,1="[^"\n]+"
 c3,1='[^'\n]+'
 
 # simple, and imperfect, changelog mode, by Raphael Geissert <atomo64@gmail.com>
-/ChangeLog|/^[[:digit:]]+-[[:digit:]]+-[[:digit:]]+[[:space:]]+
-c3,1=^[[:digit:]]+-[[:digit:]]+-[[:digit:]]+[[:space:]]+
-ci2,6=^[[:digit:]]+-[[:digit:]]+-[[:digit:]]+.*  ([[:alnum:]]+)$
+/ChangeLog|/^[0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2,4\}[ \t]
+c3,1=^[0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2,4\}[ \t]+
+c2,6=^[0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2,4\}.*  ([[:alnum:]]+)$
 
 # lsm mode, by Raphael Geissert <atomo64@gmail.com>
 /*.lsm|/^Begin[34]
@@ -634,7 +633,7 @@ c2,1=[@()]
 
 # really basic m4 and ac modes, by Raphael Geissert <atomo64@gmail.com>
 /*.m4
-c3,1=^[[:space:]]*#.*$
+c3,1=^[ \t]*#.*$
 c2,1=:|\$|[+-:]?=|>|<|`|\||\[|\]|\(|\)|{|}|&
 c1,1=m4_[[:alnum:]_]+
 c3,1="|'
@@ -646,9 +645,9 @@ c3,1="|'
 
 # watch file mode, by Raphael Geissert <atomo64@gmail.com>
 /watch|/version=[23]
-c3,1=^[[:space:]]*#.*
-c2,1=[[:space:]]*version=[[:digit:]]
-c1,2=^[[:space:]]*(opt(ion)?s)
+c3,1=^[ \t]*#.*
+c2,1=[ \t]*version=[0-9]
+c1,2=^[ \t]*(opt(ion)?s)
 c1,1=(downloadurl|[du]?version|filename|active|passive|pasv)mangle
 c2,1=,
 c2,2=[^\\](\.)[^/]+[ \n\t]
@@ -661,7 +660,7 @@ c2,6=^[[:alnum:]][^ \t]+[ \t]+([[:alnum:]_]+)$
 
 # series (quilt) mode, by Raphael Geissert <atomo64@gmail.com>
 /series
-c3,1=^[[:space:]]*#.*
+c3,1=^[ \t]*#.*
 
 # .desktop files mode, by Raphael Geissert <atomo64@gmail.com>
 /*.desktop|*eventsrc
