@@ -217,7 +217,7 @@ void InitHighlight()
 	    {
 	       // it is a regex for file contents
 	       if(strlen(s)+(s-str)<len)
-		  s[strlen(s)]='|';
+		  s[strlen(s)]='|';    // undo strtok
 
 	       s++;
 
@@ -225,7 +225,8 @@ void InitHighlight()
 		  break;
 
 	       static re_pattern_buffer rexp;
-	       re_syntax_options=0;
+	       re_syntax_options=RE_NO_BK_VBAR|RE_NO_BK_PARENS|RE_INTERVALS|
+				 RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS;
 	       if(!re_compile_pattern(s,strlen(s),&rexp))
 	       {
 		  int s1=ptr1;
@@ -240,10 +241,8 @@ void InitHighlight()
 		     s2=0;
 		  }
 		  int pos=-1;
-
 		  if(p1)
-		     pos=re_search_2(&rexp,p1,s1,p2,s2,
-				     0,1024,NULL,1024);
+		     pos=re_search_2(&rexp,p1,s1,p2,s2,0,1024,NULL,1024);
 		  if(pos!=-1)
 		  {
 		     match=1;
@@ -417,6 +416,10 @@ void syntax_hl::attrib_line(const char *buf1,int len1,
       return;
 
    memset(line,'\0',ll);
+
+   // It's too expensive to color such a long text
+   if(ll>hl_lines*1024)
+      return;
 
    element *els=0;
    element *el;

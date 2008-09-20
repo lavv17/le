@@ -1,3 +1,9 @@
+2008-09-20  lav
+
+	* loadsave.cc: set DosEol properly.
+	* highli.cc: limit max text length to highlight; use the same
+	  re_syntax_options for file type mapping.
+
 2008-09-02  lav
 
 	* calc.cc: add sum function.
