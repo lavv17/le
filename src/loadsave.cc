@@ -308,9 +308,10 @@ int   LoadFile(char *name)
       if(UnixLastLine/2<=DosLastLine)
 #endif
       {
-	SetEolStr("\r\n");
-	TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
-	TextEnd=TextPoint(Size(),DosLastLine,-1);
+	 DosEol=1;
+	 SetEolStr("\r\n");
+	 TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
+	 TextEnd=TextPoint(Size(),DosLastLine,-1);
       }
       else
       {
