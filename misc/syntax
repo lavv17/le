@@ -58,7 +58,7 @@ c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 c2,1=\\[|\\]|\\(|\\)|{|}|,
 
 # named.conf mode (lav)
-/named.conf|/-\*- *\(named\|bind\) *-\*-
+/named.conf|/-\*- *\(named|bind\) *-\*-
 c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^\n'\\]|\\\\.)*'
 c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
 c1,4=([^[:alnum:]_]|^)(acl|address|algorithm|allow-query|allow-recursion|allow-transfer\
@@ -147,7 +147,7 @@ c1,4=([^[:alnum:]_]|^)(abstract|and|any|assert|attr|bind|break!|builtin|case\
 c2,1=\||#|::=|:=|::
 
 # Shell mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.sh|/^#![ \t]*/.*/\(ba\|z\|k\)?sh\|-\*- *sh *-\*-
+/*.sh|/^#![ \t]*/.*/\(ba|z|k\)?sh|-\*- *sh *-\*-
 c3,1=([^$]|^)#.*$
 c3,2=[^\\]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
 c1,4=([^[:alnum:]/_]|^)(if|then|else|elif|fi|while|do|done|for|break|continue\
@@ -176,7 +176,7 @@ c2,1="|\\\\n|%[+- #]*[0-9*]*\\.?[0-9*]*l?[l]?[diouxXfeEgGcs]
 c3,1=^#.*$
 
 # html mode (lav)
-/*.html|*.htm|*.shtml|/-\*- *html *-\*-\|^<![Dd][Oo][Cc][Tt][Yy][Pp][Ee] [Hh][Tt][Mm][Ll]\|^<[Hh][Tt][Mm][Ll]>
+/*.html|*.htm|*.shtml|/-\*- *html *-\*-|^<![Dd][Oo][Cc][Tt][Yy][Pp][Ee] [Hh][Tt][Mm][Ll]|^<[Hh][Tt][Mm][Ll]>
 c3,2=<!--(([^-]|-[^-]|--[^>])\{0,10000\})-->
 c3,2=<!([a-zA-Z][^>]\{0,100\})>
 c3,2=("([^"\n\\]|\\\\.)\{0,100\}"|'([^\n'\\]|\\\\.)\{0,100\}')[^<]\{0,1000\}>
@@ -390,7 +390,7 @@ c1,4=(\$)([0-9]+|[[:alpha:]])
 ci1,4=(<)((-?)(A|C|D|F|G|I|J|K|L|N|O|P|S|T|U|W|X|Y)([0-9]*))(>)
 
 # Perl mode, by Vladislav Zhuk <admin@dru.dn.ua>
-/*.p[lm]|/^#![ \t]*/.*/\perl\|-\*- *perl *-\*-
+/*.p[lm]|/^#![ \t]*/.*/\perl|-\*- *perl *-\*-
 c3,4=(^|[^$\\])(#.*)$
 c3,2=[^\\$]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
 c1,4=([^[:alnum:]_\$@%#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
@@ -515,7 +515,7 @@ ci1,1=(true|false|null|\$this)
 c2,1={|}|<<|<|<\?(php)?|>>|>|\?>|;;|;|\(|\)|[.+-*]?=|!=|&&|\|\||!|\.\.|<=>|&|^|@|->
 
 # Tcl mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.tcl|/^#![ \t]*/.*/tcl\|-\*- *tcl *-\*-
+/*.tcl|/^#![ \t]*/.*/tcl|-\*- *tcl *-\*-
 c3,1=#.*$
 c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
 c1,4=([^[:alnum:]/_]|^)(break|case|continue|exit|for|foreach|if|return\
@@ -552,7 +552,7 @@ c2,2=^\[[^\]]+(\])
 c1,2=^\[([^\]]+)\]
 
 # makefile mode, by Raphael Geissert <atomo64@gmail.com>
-/Makefile|Makefile.*|makefile|makefile.*|*.mk|/^#![ \t]*/.*/make\|-\*-.*makefile[^\w]
+/Makefile|Makefile.*|makefile|makefile.*|*.mk|/^#![ \t]*/.*/make|-\*-.*makefile[^\w]
 c3,1=^[ \t]*#.*$
 c3,1="|'
 c1,4=([^[:alnum:]_]|^)(findstring|ifn?eq|endif|define|shell\
