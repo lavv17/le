@@ -58,7 +58,7 @@ c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 c2,1=\\[|\\]|\\(|\\)|{|}|,
 
 # named.conf mode (lav)
-/named.conf|/-\*- *\(named|bind\) *-\*-
+/named.conf|/-\*- *(named|bind) *-\*-
 c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^\n'\\]|\\\\.)*'
 c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
 c1,4=([^[:alnum:]_]|^)(acl|address|algorithm|allow-query|allow-recursion|allow-transfer\
@@ -147,7 +147,7 @@ c1,4=([^[:alnum:]_]|^)(abstract|and|any|assert|attr|bind|break!|builtin|case\
 c2,1=\||#|::=|:=|::
 
 # Shell mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.sh|/^#![ \t]*/.*/\(ba|z|k\)?sh|-\*- *sh *-\*-
+/*.sh|/^#![ \t]*/.*/(ba|z|k)?sh|-\*- *sh *-\*-
 c3,1=([^$]|^)#.*$
 c3,2=[^\\]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
 c1,4=([^[:alnum:]/_]|^)(if|then|else|elif|fi|while|do|done|for|break|continue\
@@ -601,7 +601,7 @@ ci1,1=^Vcs-[[:alnum:]]+
 c1,2=^(X[BCS]+-[[:alnum:]-]+)(:)
 
 # Debian changelog mode, by Raphael Geissert <atomo64@gmail.com>
-// \(.+\) .+; +urgency=
+// ([^ ]+) .+; +urgency=
 c3,1=^[ \t]+--.+
 c2,2=urgency=([[:alnum:]]+)
 ci2,2=[ \t]+([[:alnum:]]+);[ \t]+urgency=
