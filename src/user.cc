@@ -37,6 +37,7 @@
 #include "about.h"
 #include "bm.h"
 #include "undo.h"
+#include "highli.h"
 
 void  UserDeleteToEol()
 {
@@ -1044,7 +1045,7 @@ void  UserInfo()
    struct passwd  *pw;
    struct group   *gr;
 
-   DisplayWin(InfoWin=CreateWin(MIDDLE,MIDDLE,40,20,DIALOGUE_WIN_ATTR," Info ",0));
+   DisplayWin(InfoWin=CreateWin(MIDDLE,MIDDLE,50,20,DIALOGUE_WIN_ATTR," Info ",0));
 
    pw=getpwuid(uid);
    gr=getgrgid(gid);
@@ -1071,6 +1072,11 @@ void  UserInfo()
       sprintf(s,"User: %s(%ld), Group: %s(%ld)",pw?pw->pw_name:"",(long)uid,
                                               gr?gr->gr_name:"",(long)gid);
       PutStr(3,cl+=2,s);
+
+      if(syntax_hl::selector) {
+	 PutStr(3,cl+=2,"Syntax selector:");
+	 PutStr(3,++cl,syntax_hl::selector);
+      }
 
       refresh();
    }

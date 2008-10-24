@@ -39,6 +39,7 @@ struct syntax_hl
 
    syntax_hl *next;
 
+   static char *selector;
    static syntax_hl *chain;
    static void free_chain();
    static void attrib_line(const char *buf1,int len1,const char *buf2,int len2,

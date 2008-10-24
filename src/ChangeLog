@@ -1,3 +1,7 @@
+2008-10-24  lav
+
+	* highli.cc, highli.h, user.cc: save and show syntax selector line.
+
 2008-09-20  lav
 
 	* loadsave.cc: set DosEol properly.

@@ -39,7 +39,8 @@ int hl_active=0;
 
 int hl_lines=20; // maximum height of highlighted constructs
 
-syntax_hl *syntax_hl::chain=0;
+syntax_hl *syntax_hl::chain;
+char *syntax_hl::selector;
 
 syntax_hl::syntax_hl(int color,int mask)
 {
@@ -78,6 +79,8 @@ syntax_hl::~syntax_hl()
 
 void syntax_hl::free_chain()
 {
+   free(selector);
+   selector=0;
    while(chain)
       delete chain;
 }
@@ -210,6 +213,7 @@ void InitHighlight()
 	 if(s[len-1]=='\r')
 	    len--;
 	 s[len]=0;
+	 syntax_hl::selector=strdup(s);
 	 s=strtok(str,"|");
 	 while(s)
 	 {
@@ -257,6 +261,10 @@ void InitHighlight()
 	       break;
 	    }
 	    s=strtok(0,"|");
+	 }
+	 if(!match) {
+	    free(syntax_hl::selector);
+	    syntax_hl::selector=0;
 	 }
 	 break;
       case('c'):
