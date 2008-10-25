@@ -153,7 +153,7 @@ void  PutStr(int x,int y,const char *str)
 	 attrset(curr_attr->n_attr);
 	 if(*wstr=='\n')
 	 {
-	    while(x<Upper->w-1)
+	    while(x<Upper->clip_x)
 	       mvaddch(y+Upper->y,(x++)+Upper->x,' ');
 	    x=bx;
 	    y++;
@@ -163,7 +163,7 @@ void  PutStr(int x,int y,const char *str)
 	    int add=((x-bx+8)&~7)-x+bx;
 	    while(add-->0)
 	    {
-	       if(x<Upper->w)
+	       if(x<Upper->clip_x)
 		  mvaddch(y+Upper->y,x+Upper->x,' ');
 	       x++;
 	    }
@@ -172,7 +172,7 @@ void  PutStr(int x,int y,const char *str)
 	 {
 	    wchar_t wc=visualize_wchar(*wstr);
 	    int width=wcwidth(wc);
-	    if(x>=0 && y>=0 && x+width<=Upper->w)
+	    if(x>=0 && y>=0 && x+width<=Upper->clip_x)
 	    {
 	       move(y+Upper->y,x+Upper->x);
 	       if(wc!=*wstr)
@@ -193,7 +193,7 @@ void  PutStr(int x,int y,const char *str)
       {
 	 if(*str=='\n')
 	 {
-	    while(x<Upper->w-1)
+	    while(x<Upper->clip_x)
 	       mvaddch(y+Upper->y,(x++)+Upper->x,' ');
 	    x=bx;
 	    y++;
@@ -203,14 +203,14 @@ void  PutStr(int x,int y,const char *str)
 	    int add=((x-bx+8)&~7)-x+bx;
 	    while(add-->0)
 	    {
-	       if(x<Upper->w)
+	       if(x<Upper->clip_x)
 		  mvaddch(y+Upper->y,x+Upper->x,' ');
 	       x++;
 	    }
 	 }
 	 else
 	 {
-	    if(x>=0 && y>=0 && x<Upper->w)
+	    if(x>=0 && y>=0 && x<Upper->clip_x)
 	    {
 	       move(y+Upper->y,x+Upper->x);
 	       addch_visual((byte)*str);
@@ -248,6 +248,9 @@ WIN   *CreateWin(int x,int y,unsigned w,unsigned h,const attr *a,
    win->x=x;
    win->y=y;
    win->w=w;
+   win->clip_x=w;
+   if(w>2 && h>2)
+      win->clip_x--;
    win->h=h;
    win->a=a;
    win->title=title;

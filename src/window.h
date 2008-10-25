@@ -36,6 +36,7 @@ typedef struct  win
     win_cell *buf;
     int     x,y;
     int     w,h;
+    int	    clip_x;
     const attr *a;
     const char  *title;
     struct win  *prev;

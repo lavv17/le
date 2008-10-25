@@ -1,3 +1,7 @@
+2008-10-25  lav
+
+	* window.cc, window.h: add clip_x member; limit PutStr on it.
+
 2008-10-24  lav
 
 	* highli.cc, highli.h, user.cc: save and show syntax selector line.
