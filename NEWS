@@ -1,3 +1,8 @@
+Version 1.13.11 - 2008-10-25
+
+* fixed some syntax selector patterns.
+* display syntax selector in File/Info dialog.
+
 Version 1.13.10 - 2008-09-20
 
 * automatically turn off syntax highlighting for screens with too long lines.

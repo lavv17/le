@@ -37,3 +37,4 @@ wcwidth.c
 intprops.h
 strerror.c
 string.in.h
+errno.in.h

@@ -34,3 +34,5 @@ stdbool.m4
 wcwidth.m4
 strerror.m4
 string_h.m4
+errno_h.m4
+sys_ioctl_h.m4

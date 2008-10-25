@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.13.10], [le@uniyar.ac.ru])
+AC_INIT([le], [1.13.11], [le@uniyar.ac.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/edit.cc])
