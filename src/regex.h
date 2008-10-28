@@ -1,23 +1,22 @@
 /* Definitions for data structures and routines for the regular
    expression library, version 0.12.
-   Copyright (C) 1985,1989-1993,1995-1998, 2000 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.  Its master source is NOT part of
-   the C library, however.  The master source lives in /gd/gnu/lib.
 
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
+   Copyright (C) 1985,89,90,91,92,93,95,2000 Free Software Foundation, Inc.
 
-   The GNU C Library is distributed in the hope that it will be useful,
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2, or (at your option)
+   any later version.
+
+   This program is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
-   02111-1307 USA.  */
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+   USA.  */
 
 #ifndef _REGEX_H
 #define _REGEX_H 1
@@ -36,16 +35,10 @@ extern "C" {
 # include <stddef.h>
 #endif
 
-/* The following two types have to be signed and unsigned integer type
-   wide enough to hold a value of a pointer.  For most ANSI compilers
-   ptrdiff_t and size_t should be likely OK.  Still size of these two
-   types is 2 for Microsoft C.  Ugh... */
-typedef long int s_reg_t;
-typedef unsigned long int active_reg_t;
-
 /* The following bits are used to determine the regexp syntax we
-   recognize.  The set/not-set meanings are chosen so that Emacs syntax
-   remains the value 0.  The bits are given in alphabetical order, and
+   recognize.  The set/not-set meanings where historically chosen so
+   that Emacs syntax had the value 0.
+   The bits are given in alphabetical order, and
    the definitions shifted by one from the previous bit; thus, when we
    add or remove a bit, only one other definition need change.  */
 typedef unsigned long int reg_syntax_t;
@@ -151,30 +144,42 @@ typedef unsigned long int reg_syntax_t;
    If not set, then the GNU regex operators are recognized. */
 #define RE_NO_GNU_OPS (RE_NO_POSIX_BACKTRACKING << 1)
 
+/* If this bit is set, then *?, +? and ?? match non greedily. */
+#define RE_FRUGAL (RE_NO_GNU_OPS << 1)
+
+/* If this bit is set, then (?:...) is treated as a shy group.  */
+#define RE_SHY_GROUPS (RE_FRUGAL << 1)
+
+/* If this bit is set, ^ and $ only match at beg/end of buffer.  */
+#define RE_NO_NEWLINE_ANCHOR (RE_SHY_GROUPS << 1)
+
 /* If this bit is set, turn on internal regex debugging.
    If not set, and debugging was on, turn it off.
    This only works if regex.c is compiled -DDEBUG.
    We define this bit always, so that all that's needed to turn on
    debugging is to recompile regex.c; the calling code can always have
    this bit set, and it won't affect anything in the normal case. */
-#define RE_DEBUG (RE_NO_GNU_OPS << 1)
-
-/* If this bit is set, a syntactically invalid interval is treated as
-   a string of ordinary characters.  For example, the ERE 'a{1' is
-   treated as 'a\{1'.  */
-#define RE_INVALID_INTERVAL_ORD (RE_DEBUG << 1)
+#define RE_DEBUG (RE_NO_NEWLINE_ANCHOR << 1)
 
 /* This global variable defines the particular regexp syntax to use (for
    some interfaces).  When a regexp is compiled, the syntax used is
    stored in the pattern buffer, so changing this does not affect
    already-compiled regexps.  */
 extern reg_syntax_t re_syntax_options;
+
+#ifdef emacs
+/* In Emacs, this is the string or buffer in which we
+   are matching.  It is used for looking up syntax properties.  */
+extern Lisp_Object re_match_object;
+#endif
+
 
 /* Define combinations of the above bits for the standard possibilities.
    (The [[[ comments delimit what gets put into the Texinfo file, so
    don't delete them!)  */
 /* [[[begin syntaxes]]] */
-#define RE_SYNTAX_EMACS 0
+#define RE_SYNTAX_EMACS							\
+  (RE_CHAR_CLASSES | RE_INTERVALS | RE_SHY_GROUPS | RE_FRUGAL)
 
 #define RE_SYNTAX_AWK							\
   (RE_BACKSLASH_ESCAPE_IN_LISTS   | RE_DOT_NOT_NULL			\
@@ -203,8 +208,7 @@ extern reg_syntax_t re_syntax_options;
    | RE_NO_BK_VBAR)
 
 #define RE_SYNTAX_POSIX_EGREP						\
-  (RE_SYNTAX_EGREP | RE_INTERVALS | RE_NO_BK_BRACES			\
-   | RE_INVALID_INTERVAL_ORD)
+  (RE_SYNTAX_EGREP | RE_INTERVALS | RE_NO_BK_BRACES)
 
 /* P1003.2/D11.2, section 4.20.7.1, lines 5078ff.  */
 #define RE_SYNTAX_ED RE_SYNTAX_POSIX_BASIC
@@ -334,10 +338,10 @@ struct re_pattern_buffer
   unsigned char *buffer;
 
 	/* Number of bytes to which `buffer' points.  */
-  unsigned long int allocated;
+  size_t allocated;
 
 	/* Number of bytes actually used in `buffer'.  */
-  unsigned long int used;
+  size_t used;
 
         /* Syntax setting with which the pattern was compiled.  */
   reg_syntax_t syntax;
@@ -359,8 +363,7 @@ struct re_pattern_buffer
         /* Zero if this pattern cannot match the empty string, one else.
            Well, in truth it's used only in `re_search_2', to see
            whether or not we should use the fastmap, so we don't set
-           this absolutely perfectly; see `re_compile_fastmap' (the
-           `duplicate' case).  */
+           this absolutely perfectly; see `re_compile_fastmap'.  */
   unsigned can_be_null : 1;
 
         /* If REGS_UNALLOCATED, allocate space in the `regs' structure
@@ -387,8 +390,11 @@ struct re_pattern_buffer
         /* Similarly for an end-of-line anchor.  */
   unsigned not_eol : 1;
 
-        /* If true, an anchor at a newline matches.  */
-  unsigned newline_anchor : 1;
+#ifdef emacs
+  /* If true, multi-byte form in the `buffer' should be recognized as a
+     multibyte character. */
+  unsigned multibyte : 1;
+#endif
 
 /* [[[end pattern_buffer]]] */
 };
@@ -434,15 +440,15 @@ typedef struct
    unfortunately clutters up the declarations a bit, but I think it's
    worth it.  */
 
-#if __STDC__
+#if defined __STDC__ || defined PROTOTYPES
 
 # define _RE_ARGS(args) args
 
-#else /* not __STDC__ */
+#else /* not __STDC__  || PROTOTYPES */
 
 # define _RE_ARGS(args) ()
 
-#endif /* not __STDC__ */
+#endif /* not __STDC__  || PROTOTYPES */
 
 /* Sets the current default syntax to SYNTAX, and return the old syntax.
    You can also simply assign to the `re_syntax_options' variable.  */
@@ -529,10 +535,12 @@ extern int re_exec _RE_ARGS ((const char *));
 #  endif
 # endif
 #endif
-/* For now unconditionally define __restrict_arr to expand to nothing.
+/* For now conditionally define __restrict_arr to expand to nothing.
    Ideally we would have a test for the compiler which allows defining
    it to restrict.  */
-#define __restrict_arr
+#ifndef __restrict_arr
+# define __restrict_arr
+#endif
 
 /* POSIX compatibility.  */
 extern int regcomp _RE_ARGS ((regex_t *__restrict __preg,
@@ -563,3 +571,6 @@ version-control: t
 trim-versions-without-asking: nil
 End:
 */
+
+/* arch-tag: bda6e3ec-3c02-4237-a55a-01ad2e120083
+   (do not change this comment) */
