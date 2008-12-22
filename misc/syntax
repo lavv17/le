@@ -1,5 +1,5 @@
 # -*- LE-syntax -*-
-# Syntax patterns for LE editor. (c) 1997-2006 Alexander V. Lukyanov
+# Syntax patterns for LE editor. (c) 1997-2008 Alexander V. Lukyanov
 # This file is distributed under GNU GPL license.
 # Please send corrections and improvements to <lav@yars.free.net>
 #
@@ -8,815 +8,296 @@
 # This file describes how to highlight syntax. The following format
 # used:
 # /PATTERN - selects file names for which next lines apply
-# c[i]COLOR,MASK=REGEXP - use COLOR (1-3) to highlight subexpressions
+# c[i]COLOR[,MASK]=REGEXP - use COLOR (1-3) to highlight subexpressions
 # of REGEXP; MASK is bitmask selecting which subexpressions are to
-# highlight. C escapes can be used in REGEXP; it also can be split
-# into several lines by last \ on the line. The optional `i' means
-# to ignore case.
+# highlight, 0 (default) means the whole patterm. C escapes can be used
+# in REGEXP it also can be split into several lines by last \ on the line.
+# The optional `i' means to ignore case.
 
 # c3 usually marks comments or text strings
 # c2 usually marks important syntax elements
 # c1 usually marks keywords
+
+# i=file includes specified file from PKGDATADIR/syntax.d/file
+#	(useful for large descriptions or common patterns)
+# s[i](file)[MASK]=REGEXP uses patterns in the file to color matched substring(s)
 
 # maximum height of constructs
 h20
 
 # This file mode
 //-\*- *LE-syntax *-\*-
-c3,1=^#.*$
-c1,1=^(h|ci?)
-c2,2=^[hc][0-9],[0-9]+(=)
-c2,1=^/
+c3=^#.*$
+c1,1=^(h|ci?|i)[0-9]?(?:,[0-9]+)?=
+c2,1=^(?:h|ci?|i)[0-9]?(?:,[0-9]+)?(=)
+c1,1=^(si?)\\([^\n]+\\)[0-9]*=
+c2,7=^si?(\\()[^\n]+(\\))[0-9]*(=)
+c2=^/
 
 # C language mode (lav)
 /*.c|/-\*- *c *-\*-
-c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^'\n\\]|\\\\.)*'
-#c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
-c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[a-z]*))
-c3,1=/\\*([^*]|\\*[^/])*\\*/
-c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
-|continue|char|short|int|long|unsigned|signed|auto\
-|const|default|do|double|enum|extern|float|register\
-|return|sizeof|static|struct|typedef|union|void|volatile\
+i=c-comment
+i=cpp
+i=c-literal
+c1,2=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
+ |continue|char|short|int|long|unsigned|signed|auto\
+ |const|default|do|double|enum|extern|float|register\
+ |return|sizeof|static|struct|typedef|union|void|volatile\
 )([^[:alnum:]_]|$)
-c2,1=\\[|\\]|\\(|\\)|{|}|,
+c2=\\[|\\]|\\(|\\)|{|}|,
 
 # C++ mode (lav)
 /*.cc|*.C|*.cpp|*.h|*.hh|*.hpp|*.H|/-\*- *c\+\+ *-\*-
-c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^\n'\\]|\\\\.)*'
-#c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
-c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[a-z]*))
-c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
-c1,4=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
-|continue|char|short|int|long|unsigned|signed|auto\
-|const|default|do|double|enum|extern|float|register\
-|return|sizeof|static|struct|typedef|union|void|volatile\
-|try|catch|class|new|delete|private|public|protected|this|virtual\
-|inline|bool|true|false|operator|overload|template|friend|namespace|using\
-|typeid|dynamic_cast|const_cast|static_cast|reinterpret_cast|typename|explicit\
+i=cpp
+i=c-literal
+i=c++-comment
+c1,2=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
+ |continue|char|short|int|long|unsigned|signed|auto\
+ |const|default|do|double|enum|extern|float|register\
+ |return|sizeof|static|struct|typedef|union|void|volatile\
+ |try|catch|class|new|delete|private|public|protected|this|virtual\
+ |inline|bool|true|false|operator|overload|template|friend|namespace|using\
+ |typeid|dynamic_cast|const_cast|static_cast|reinterpret_cast|typename|explicit\
 )([^[:alnum:]_]|$)
-c2,1=\\[|\\]|\\(|\\)|{|}|,
+c2=\\[|\\]|\\(|\\)|{|}|,
 
 # named.conf mode (lav)
 /named.conf|/-\*- *(named|bind) *-\*-
-c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^\n'\\]|\\\\.)*'
-c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
-c1,4=([^[:alnum:]_]|^)(acl|address|algorithm|allow-query|allow-recursion|allow-transfer\
-|also-notify|auth-nxdomain|blackhole|bogus|category|channel|check-names|cleaning-interval\
-|controls|coresize|datasize|deallocate-on-exit|dialup|directory|dump-file|fake-iquery\
-|fetch-glue|files?|first|forward|forwarders|has-old-clients|heartbeat-interval|hint\
-|host-statistics|include|interface-interval|keys?|lame-ttl|listen-on|logging\
-|maintain-ixfr-base|masters?|match-clients|max-ixfr-log-size|max-ncache-ttl\
-|max-transfer-time-in|memstatistics-file|min-roots|multiple-cnames|named-xfer|no|notify\
-|only|options|pid-file|port|print-category|print-severity|print-time|pubkey|query-source\
-|recursion|rfc2308-type1|rrset-order|secret|server|severity|size|slave|sortlist|stacksize\
-|statistics-file|statistics-interval|stub|syslog|topology|transfer-format|transfer-source\
-|transfers|transfers-in|transfers-out|transfers-per-ns|treat-cr-as-space|trusted-keys|type\
-|use-id-pool|versions?|view|yes|zone)([^[:alnum:]_]|$)
-c2,1={|}|,|;
+i=named-conf
 
 # nroff mode (lav)
 /*.[1-9]|/-\*- *nroff *-\*-
-c3,1=^\.\\\\".*$
-c2,1=^\.[[:alpha:]]*
-c1,2=\\\\fB((\\\\[^f]|[^\\])*[^\\]?)(\\\\f|$)
-c3,2=\\\\fI((\\\\[^f]|[^\\])*[^\\]?)(\\\\f|$)
-c1,2=^\.B[IR]? (.*)$
-c3,2=^\.I (.*)$
+c3=^\.\\\\".*$
+c2=^\.[[:alpha:]]*
+c1,1=\\\\fB((\\\\[^f]|[^\\])*[^\\]?)(\\\\f|$)
+c3,1=\\\\fI((\\\\[^f]|[^\\])*[^\\]?)(\\\\f|$)
+c1,1=^\.B[IR]? (.*)$
+c3,1=^\.I (.*)$
 
-# Eiffel mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.e
-c3,1=--[^\n]*\n
-c3,1="([^"\\]|\\\\(.|\n))*"
-c1,4=([^[:alnum:]_]|^)(alias|all|and|as|check|class|creation|debug\
-|deferred|do|else|elseif|end|ensure|expanded|export|external|false\
-|feature|from|frozen|if|implies|indexing|infix|inherit|inspect|invariant\
-|is|like|local|loop|not|obsolete|old|once|or|prefix|redefine|rename\
-|require|rescue|retry|select|separate|strip|then|true|undefine|unique\
-|until|variant|when|xor|Current|Result|True|False|Void\
-|ARRAY|BIT|BOOLEAN|CHARACTER|DOUBLE|INTEGER|NONE|POINTER|REAL|STRING\
-)([^[:alnum:]_]|$)
-c2,1=<<|>>
+i=eiffel
 
-# Ada mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.adb|*.ads|*.adc|*.gpr
-c3,1=--[^\n]*\n
-c3,1="([^"\\]|\\\\(.|\n))*"
-c1,4=([^[:alnum:]_]|^)(abort|else|new|return|abs|elsif|not|reverse|abstract\
-|end|null|accept|entry|select|access|exception|separate|aliased|exit|of\
-|subtype|all|or|and|for|others|tagged|array|function|out|task|at|terminate\
-|generic|package|then|begin|goto|pragma|type|body|private|if|procedure\
-|case|in|protected|until|constant|is|use|raise|declare|range|when|delay\
-|limited|record|while|delta|loop|rem|with|digits|renames|do|mod|requeue|xor\
-)([^[:alnum:]_]|$)
-c2,1=<<|>>|:=|\\[|\\]|\\(|\\)|{|}|,|:|#|'Access|'Address|'Size
+i=ada
 
-# Assembler mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.S|*.s
-c3,1=@[^\n]*\n
-c3,1=;[^\n]*\n
-c3,1="([^"\\]|\\\\(.|\n))*"
-c3,2=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[a-z]*))
-c1,4=([^[:alnum:]_]|^)(\.section|\.func|\.globl|\.global|\.code|\.comm|\.weak\
-|\.endfunc\
-)([^[:alnum:]_]|$)
-c2,1==|,|\(|\)|#|\[|\]|:
+i=as
 
 # Python mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.py
-c3,1=#.*$
-c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
-c1,4=([^[:alnum:]_]|^)(if|elif|else|for|in|break|continue|while|pass\
-|try|except|raise|finally|import|from|class|def|return|global\
-|print|del|exec|access|in|or|and|not|is|lambda\
+c3=#.*$
+c3="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
+c1,2=([^[:alnum:]_]|^)(if|elif|else|for|in|break|continue|while|pass\
+ |try|except|raise|finally|import|from|class|def|return|global\
+ |print|del|exec|access|in|or|and|not|is|lambda\
 )([^[:alnum:]_]|$)
-c2,1=:
+c2=:
 
-# Sather mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.sa
-c3,1=--[^\n]*$
-c3,1="([^"\\]|\\\\(.|\n))*"
-c1,4=([^[:alnum:]_]|^)(abstract|and|any|assert|attr|bind|break!|builtin|case\
-|class|clusters!|cohort|const|else|elsif|end|exception|external|false|far\
-|fork|guard|if|immutable|inout|include|initial|is|ITER|lock|loop|near|new\
-|once|or|out|par|parloop|post|pre|private|protect|quit|raise|readonly|result\
-|return|ROUT|SAME|self|shared|sync|then|true|typecase|unlock|until|void|when\
-|while!|with|yuild|ARRAY|BOOL|CHAR|FLTD|INT|INTI|FLT|FLTI|STR|\\$OB|AREF|AVAL\
-|TUP|SYS|\\$NIL|\\$FINALIZE\
-)([^[:alnum:]_]|$)
-c2,1=\||#|::=|:=|::
+i=sather
 
-# Shell mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.sh|/^#![ \t]*/.*/(ba|z|k)?sh|-\*- *sh *-\*-
-c3,1=([^$]|^)#.*$
-c3,2=[^\\]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
-c1,4=([^[:alnum:]/_]|^)(if|then|else|elif|fi|while|do|done|for|break|continue\
-|case|in|esac|local|return|exit|alias|bg|cd|eval|exec|export|fc|fg|getopts|hash\
-|jobid|jobs|pwd|read|readonly|set|setvar|shift|trap|ulimit|umask|unalias|unset\
-|wait\
-)([^[:alnum:]/_]|$)
-c2,1={|}|<<|<|>>|>|;;|;|\(|\)|\|
+i=shell
 
-# java mode (bird@yars.free.net)
 /*.java|/-\*- *java *-\*-
-c3,1="([^"\n\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*'
-c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
-c1,4=([^[:alnum:]_]|^)(abstract|default|if|private|throw|boolean|do|implements\
-|protected|throws|break|double|import|public|transient|byte|else|instanceof\
-|return|try|case|extends|int|short|void|catch|final|interface|static|volatile\
-|char|finally|long|super|while|class|float|native|switch|const|for|new\
-|synchronized|continue|goto|package|this|null|true|false\
-)([^[:alnum:]_]|$)
-c2,1=\\[|\\]|\\(|\\)|{|}|,
+i=java
 
 # po (i18n) mode (lav)
 /*.po|*.pot
-c1,1=^#, .*
-c2,1="|\\\\n|%[+- #]*[0-9*]*\\.?[0-9*]*l?[l]?[diouxXfeEgGcs]
-c3,1=^#.*$
+c1=^#, .*
+c2="|\\\\n|%[+- #]*[0-9*]*\\.?[0-9*]*l?[l]?[diouxXfeEgGcs]
+c3=^#.*$
 
-# html mode (lav)
-/*.html|*.htm|*.shtml|/-\*- *html *-\*-|^<![Dd][Oo][Cc][Tt][Yy][Pp][Ee] [Hh][Tt][Mm][Ll]|^<[Hh][Tt][Mm][Ll]>
-c3,2=<!--(([^-]|-[^-]|--[^>])\{0,10000\})-->
-c3,2=<!([a-zA-Z][^>]\{0,100\})>
-c3,2=("([^"\n\\]|\\\\.)\{0,100\}"|'([^\n'\\]|\\\\.)\{0,100\}')[^<]\{0,1000\}>
-c2,1=<!--|-->|<[/!]|<|>|&[a-zA-Z]\{1,64\};|&#[0-9]\{1,8\};
-ci1,2=<[!/]?(HTML|BODY|TITLE|HEAD|META|STYLE|FRAME(SET)?|IFRAME|APPLET|\
-BASE(FONT)?|NOFRAMES|A( HREF| NAME)?|IMG( SRC)?|AREA|(NO)?SCRIPT|OBJECT|\
-PARAM|LINK|MAP|P( ALIGN)?|HR( WIDTH)?|PRE|BLOCKQUOTE|QUOTE|Q|DIV|CENTER|\
-H[1-6]|BR|INS|DEL|BDO|SPAN|TT|[BIUS]|FONT( ALIGN| SIZE| COLOR)?|STRONG|\
-SAMP|VAR|CODE|EM|ADDRESS|DFN|CITE|ABBR|ACRONYM|BIG|SMALL|BLINK|LISTING|\
-KBD|STRIKE|SU[BP]|UL|OL|LI|DIR|MENU|DL( COMPACT)?|DT|DD|THEAD|TFOOT|TBODY|\
-INPUT|FORM|SELECT|OPTION|BUTTON|FIELDSET|LABEL|LEGEND|OPTGROUP|TEXTAREA|\
-ISINDEX|TABLE|TR|TD( WIDTH| VALIGN)?|TH|CAPTION|COL(GROUP)?|MULTICOL|\
-(I|NO)?LAYER|ABOVE|BGSOUND|ARRAY|COMMENT|EMBED|FIG|MARQUEE|NEXTID|NOBR|\
-RANGE|ROOT|SOUND|SPACER|SQRT|TEXT|WBR|XMP\
-)[\n\r\t >=]
-
-##########################################################################
-# Lout mode by Abel Morabito <abelmora@crosswinds.net>
-# extension .lout
-# Most standard tags for Lout 3.24
 /*.lout
-#### COMMENTS AND LITERAL TEXT
-c3,1=(#.*$)|("[^"]*")
-## SPECIAL CHARACTERS
-c2,1=(@|&|/|\^|{|}|\||~|"|\\\|``|'')
-#### TAGS
-c1,2=@(Abbreviations|AboveChapterGap|AbstractDisplay|AbstractFormat\
-|AbstractTitle|AbstractWord|ACell|ACurve|ACurveArrow\
-|Address|AfterTitlePage|AIndex|AL|AlignedDisplay|AlphaList\
-|AmberLight|And|Annote|ANode|AnotherFootNote|AppendixGap\
-|AppendixHeadingBreak|AppendixHeadingFont|AppendixHeadingFormat\
-|AppendixInContents|AppendixNumbers|AppendixNumInDisplays\
-|AppendixNumInFigures|AppendixNumInTables|AppendixNumInTheorems\
-|AppendixPrefix|AppendixWord|Arrow|AtEnd|Author|AuthorIndex|B|BAD\
-|BasicSetup|Batlow|BCell|BeforeTitlePage|Begin\
-|BeginAlignedDisplays|BeginAppendices|BeginChapters\
-|BeginOverheads|BeginSections|BeginSubAppendices\
-|BeginSubSections|BeginSubSubAppendices|BeginSubSubSections\
-|Bezier|BezierArrow|BI|BigOctagon|BIndex|BIsymbols|BL\
-|Blue|BNode|Body|BookSetup|BoundaryMarks|Box|Break\
-|Bullet|BulletList|BypassBeginIndex|BypassChapReference\
-|BypassContentsEntry|BypassEndIndex|BypassMajorContentsEntry\
-|BypassNumber|BypassRawIndex|BypassReference|Caption\
-|CaptionBreak|CaptionFont|CaptionFormat|CaptionPos|Case|CC\
-|CCell|CCurve|CCurveArrow|CD|CDot|Cell|CenteredDisplay\
-|CenteredList|CentredAlignedNumberedDisplay|CentredDisplay\
-|CentredList|ChapCite|ChapRef|ChapRefListTitle\
-|ChapterHeadingBreak|ChapterHeadingFont|ChapterHeadingFontand\
-|ChapterHeadingFormat|ChapterInContents|ChapterNumbers\
-|ChapterNumInDisplays|ChapterNumInTheorems|ChapterStartPages\
-|ChapterStartPagesdetermineswhat|ChapterWord|Char|Circle\
-|Cite|CL|Claim|ClaimWord|ClosedCircle|CNode|CNP|Code\
-|Color|Colour|ColumnGap|ColumnGapmay|ColumnNumber|Com\
-|Conjecture|ContentsGap|ContentsGapAbove|ContentsGapBelow\
-|ContentsGoesHere|ContentsGoesHeresymbol|ContentsLeader\
-|ContentsLeaderGap|ContentsRightWidth|ContentsSeparate\
-|ContentsWord|CopyRight|Corollary|CoverSheet|CP|CPSetup\
-|CrossLink|CrossLinkFormat|CtdWord|CTR|CurveArrow|CurveBox\
-|Dagger|DaggerDbl|DashJoin|DashList|Database|Date\
-|DateLine|DayNum|DefaultIndent|Definition|Degree|Diag\
-|DiagSetup|Diagsymbol|Diamond|Display|DisplayGap\
-|DisplayIndent|DisplayNumStyleoption|Diverted|Divide|DL\
-|DLI|Doc|Document|DocumentSetup|DotJoin|DotJoinbut\
-|DotSep|DoubleArrow|DoubleLine|DP|DropCapThree|DropCapTwo\
-|DropListItem|DropTagItem|DTI|DWrapArrow|DWrapCurve\
-|DWrapCurveArrow|DWrapLine|Edition|Eiffel|EL|Ellipse|End\
-|EndAlignedDisplays|EndAppendices|EndChapters|EndHeaderRow\
-|EndList|EndNote|EndOverheads|EndProof|EndSections\
-|EndSubAppendices|EndSubSections|EndSubSubAppendices\
-|EndSubSubSections|Eq|Eqsymbol|Euro|EvenFoot\
-|EvenLeftBodyMargin|EvenLeftMargin|EvenRightBodyMargin\
-|EvenRightMargin|EvenTop|Example|Figure|FigureCaptionBreak\
-|FigureCaptionFont|FigureCaptionFormat|FigureCaptionPos\
-|FigureFormat|FigureListWord|FigureLocation|FigureNumbers\
-|FigureWord|FirstAppendixNumber|FirstLectureNumber\
-|FirstOverheadNumber|FirstPageNumber|FirstRow|FirstRowa\
-|FirstRowb|FirstSub|Florin|Fmta|Font|FootAboveGap\
-|FootGap|FootLen|FootMargin|FootNote|FootNoteBreak\
-|FootNoteFont|FootNoteFormat|FootNoteLocation|FootNoteNumbers\
-|FootNoteThrough|Format|FullPage|FullWidthRule\
-|FullWidthsymbols|Graph|GraphCircle|GraphCross|GraphDashed\
-|GraphDiamond|GraphDotted|GraphFilledCircle|GraphFilledDiamond\
-|GraphFilledSquare|GraphFilledTriangle|GraphNoLine|GraphPlus\
-|GraphSolid|GraphSquare|Graphsymbol|GraphTriangle|GreyBox\
-|HeaderFirstRow|HeaderFirstRowa|HeaderFirstRowb|HeaderRow\
-|HeaderRowa|HeaderRowb|HeaderRowd|HeaderRowh\
-|HeaderRowhsymbol|Heading|HeadingBox|HeadingFont|HExpand\
-|High|Hour|HowPublished|HShift|HSpan|HTree|HVArrow\
-|HVCurve|HVCurveArrow|HVLine|I|ID|If|II|IL\
-|Illustration|InAuthor|Include|IncludeGraphic\
-|IndentedDisplay|IndentedList|Index|IndexA|IndexBBlanks\
-|IndexBlanks|IndexBreak|IndexColumnGap|IndexColumnNumber\
-|IndexCtd|IndexCtdFormat|IndexCtdWord|IndexFont|IndexWord\
-|InitialBreak|InitialColour|InitialFont|InitialLanguage\
-|InitialSpace|InnerNote|Insert|Institution|InTitle\
-|Introduction|IntroEvenFoot|IntroEvenTop|IntroFirstPageNumber\
-|IntroOddFoot|IntroOddTop|IntroPageNumbers|IntroStartEvenFoot\
-|IntroStartEvenTop|IntroStartOddFoot|IntroStartOddTop\
-|Isosceles|Isymbol|Journal|Keywords|Label|Labeloption\
-|Language|LD|Lecture|LectureHeadingFont|LectureHeadingFormat\
-|LectureInContents|LectureNumbers|LeftDisplay|LeftList\
-|LeftNote|LeftSub|Lemma|LI|Line|Link|List|ListGap\
-|ListIndent|ListInterruptItem|ListItem|ListNewPage\
-|ListOuterGap|ListRightIndent|ListTagWidth|LLP\
-|LocalWidthRule|Location|Loop|LoopDiverted|LoopOpposite\
-|LOP|Lozenge|LP|LVRArrow|LVRCurve|LVRCurveArrow|LVRLine\
-|MajorNum|MajorTitle|MakeContents|MakeFigureContents\
-|MakeIndex|MakeReferences|MarginNoteBreak|MarginNoteFont\
-|MarginNoteHGap|MarginNoteVGap|MarginNoteWidth|MarkRow\
-|MarkRowa|MeriDiem|MinorNum|MinorTitle|Minute|Modula\
-|MonthNum|Multiply|MyLink|MyNode|NCP|NE|NextSub|NL\
-|NoBreakRow|NoBreakRowa|NoBreakRowb|NoChapCite|NoChapRef\
-|NoCite|Node|NoDotJoin|NoDotSep|NoRef|Note|NP|Null\
-|NumberedDisplay|NumberedList|NumberOf|NumberSeparator\
-|NumSep|NW|OddFoot|OddLeftBodyMargin|OddLeftMargin\
-|OddPageTop|OddRightBodyMargin|OddRightMargin|OddTop|OneCol\
-|OnePage|OneRow|OnTitlePage|Open|OpenCircle|OptimizePages\
-|Optional|OptionalDiverted|OrdinarySetup|Organization\
-|OrIfPlain|OuterNote|Outline|Overhead|OverheadHeadingFont\
-|OverheadHeadingFormat|OverheadInContents|OverheadNumbers\
-|OverheadSetup|OverheadTransparencies|OverStrike\
-|PageBackground|PageBox|PageBoxLineWidth|PageBoxMargin\
-|PageBoxPaint|PageBoxShadow|PageBoxType|PageEnclose\
-|PageHeaders|PageHeight|PageMark|PageNumbersand|PageOf\
-|PageOrientation|PageOrientationsymbol|Pages|PageType\
-|PageWidth|PAL|ParaGap|ParaIndent|ParenAlphaList\
-|ParenNumberedList|ParenRomanList|ParenUCAlphaList\
-|ParenUCRomanList|ParSym|PartHeadingFormat|PartNumber\
-|PartText|PartTitle|Pas|Perl|Pinpoint|Place|PNL|Pod\
-|Poetry|Polygon|PP|PPsymbol|Preface|PrefaceAfterContents\
-|PRL|Proof|Proposition|Publisher|PUCAL|PUCRL|Python|QD\
-|QL|QQ|QuotedDisplay|QuotedList|RawAlignedDisplay\
-|RawAlignedNumberedDisplay|RawCentredAlignedNumberedDisplay\
-|RawEndList|RawIndex|RawList|RawNumberedList\
-|RawParenRomanList|RawSubIndex|RawSubSubIndex\
-|RawVerbatimsymbol|RCAND|RefCiteLabels|RefCiteStyle\
-|ReferencesBeforeAppendices|ReferencesInContents|RefListBreak\
-|RefListFont|RefListFormat|RefListGap|RefListIndent\
-|RefListLabels|RefListLabelWidth|RefListLabelWidthdetermines\
-|RefListLabelWidthsetup|RefListRightIndent|RefListSortKey\
-|RefListTitle|RefNum|RefNumbers|RefPrint|RefStyle|Register\
-|Repeat|RepeatDiverted|RepeatOpposite|Report|ReportSetup\
-|RightDisplay|RightNote|RightSub|RightSubsymbol|RL|RNL\
-|RomanList|Rotate|Rowa|Rowb|Rowc|Rowd|RR\
-|RunningEvenFoot|RunningEvenTop|RunningIntroEvenFoot\
-|RunningIntroEvenTop|RunningIntroOddFoot|RunningIntroOddTop\
-|RunningIntroStartEvenFoot|RunningIntroStartEvenTop\
-|RunningIntroStartOddFoot|RunningIntroStartOddTop|RunningOddFoot\
-|RunningOddTop|RunningStartEvenFoot|RunningStartEvenTop\
-|RunningStartOddFoot|RunningStartOddTop|RunningTitle\
-|RunningTitleoption|RVLArrow|RVLCurve|RVLCurveArrow|RVLLine\
-|Scale|SE|Second|Section|SectionGap|SectionHeadingFont\
-|SectionInContents|SectionNumbers|SectionNumInFigures\
-|SectionNumInTheorems|SectSym|Select|SeparateIntroNumbering\
-|Sequence|SetColour|ShadowBox|ShortDay|ShortHour\
-|ShortMeriDiem|ShortMonth|ShortYear|ShowDirections\
-|ShowPoints|ShowTags|Skip|SL|SolidArrowHead|SomeText\
-|Square|Star|StarList|StartDown|StartEvenFoot|StartEvenTop\
-|StartHSpan|StartHVSpan|StartLeft|StartOddFoot|StartOddTop\
-|StartRight|StartRightDown|StartRightRight|StartUp\
-|StartVSpan|Sterling|StructPageNums|StubSub|Style|Sub\
-|SubAppendixInContents|SubAppendixNumInRunners|SubIndex\
-|SubSection|SubSectionInContents|SubSubAppendixInContents|SubSubIndex\
-|SubSubSectionInContents|Sup|SW||Sym|SymGamma|Symmu\
-|SymMu|Symmultiply|Symweierstrass|SyntaxDiag|SysDatabase\
-|SysInclude|SysIncludecommand|Table|TableCaptionPos\
-|TableFormat|TableLocation|TableNumbers|Tag|TaggedList|TagItem\
-|Tan|Tbl|TblSetup|Text|Theorem|TheoremFormat\
-|TheoremTitleFormat|TheoremWord|TI|Time|Title|TitleNote\
-|TitlePageFont|TL|TopMargin|TradeMark|Tree|TRType|True\
-|TwelveHour|Type|UCAL|UCAlphaList|UCRL|UCRomanList\
-|Underline|Unpaginated|URL|Use|UWrapArrow|UWrapCurve\
-|UWrapCurveArrow|UWrapLine|Verbatim|Verbatimsymbol\
-|VeryWideIndent|VeryWideTaggedList|VExpand|VHArrow|VHCurve\
-|VHCurveArrow|VHLine|Volume|VShift|VSpan|VWTL|WideIndent\
-|WideTaggedList|Word|WTL|XCell|Year|Yen|Yield\
-|ZeroWidthLeftSub|ZeroWidthRightSub)
-################################################################
+i=lout
 
-# GNU Awk mode, by Abel Morabito <abel.morabito@gmail.com>
 /*.awk
-c3,2=#.*$
-c2,2=[^\\]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
-c1,4=([^[:alnum:]/_]|^)(if|while|do|for|in|break|continue|switch\
-|case|default|asort|asorti|index|length|match|split|sprintf\
-|strtonum|sub|gsub|gensub|substr|tolower|toupper|return|exit|next\
-|getline|print|printf|nextfile\
-|ARGV|ARGC|CONVFMT|ENVIRON|FILENAME|FNR|FS|NF|NR|OFMT|OFS|ORS\
-|RLENGTH|RSTART|RS|SUBSEP|ARGIND|BINMODE|ERRNO|FIELDWIDTHS|IGNORECASE\
-|LINT|PROCINFO|RT|TEXTDOMAIN|BEGIN|END\
-)([^[:alnum:]/_]|$)
-c2,1=\[|\]|\$|\^|\+|\/|=|~|!|{|}|<|>|;|\(|\)|\|
+i=awk
 
-# GEMA mode, by Abel Morabito <abel.morabito@gmail.com>
-# /*.gma|*.gema
 /*.gma|*.gema|/^#![ \t]*/.*/\gema
-c3,1=(^!.*$)|([^\\]!.*$)
-c2,4=([^\\])(\*|?|#|=|\$|(\\\)|\^|;|@|:|<|>|/|{|})
-c1,4=(@)(abort|add|and|append|bind|center|char-int|close|cmpi|cmpn|cmps\
-|column|date|datime|decr|define|div|downcase|end|err|exit-status\
-|expand-wild|fail|file|file-time|fill-center|fill-left|fill-right\
-|getenv|get-switch|incr|inpath|int-char|left|length|line|makepath\
-|mergepath|mod|mul|name|not|or|out|out-column|outpath|pop|probe\
-|push|quote|radix|read|relative-path|repeat|reset-syntax\
-|reverse|right|set|set-locale|set-parm|set-switch|set-syntax|set-wrap\
-|shell|show-help|special-character|sub|subst|substring|tab|terminate\
-|time|unbind|undefine|upcase|var|version|wrap|write)($|{|;| )
-c1,4=(\\\)(a|b|d|e|f|n|r|s|t|v|A|B|C|E|G|I|J|L|N|P|S|W|X|Z)
-c1,4=(\\\)((x[[:xdigit:]]+)|([0-7]+)|(c[[:alpha:]]))
-c1,4=(\$)([0-9]+|[[:alpha:]])
-ci1,4=(<)((-?)(A|C|D|F|G|I|J|K|L|N|O|P|S|T|U|W|X|Y)([0-9]*))(>)
+i=gema
 
-# Perl mode, by Vladislav Zhuk <admin@dru.dn.ua>
 /*.p[lm]|/^#![ \t]*/.*/\perl|-\*- *perl *-\*-
-c3,4=(^|[^$\\])(#.*)$
-c3,2=[^\\$]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
-c1,4=([^[:alnum:]_\$@%#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
-|chdir|chmod|chomp|chop|chown|chr|chroot|close|closedir|connect|cos|crypt\
-|dbmclose|dbmopen|define|delete|die|do|dump|each|eof|eval|exec|exists|exit|exp\
-|fcntl|fileno|flock|fock|for|foreach|format|formline|getc|getlogin|getpeername\
-|getpgrp|getppid|getpriority|getsockname|getsockopt|glob|gmtime|goto|grep\
-|hex|if|import|index|int|ioctl|join|keys|kill|last|lc|lcfirst|length|link\
-|listen|local|localtime|log|lstat|map|mkdir|msgctl|msgget|msgsnd|msgrcv|my|next\
-|no Module|oct|open|opendir|ord|pack|pipe|pop|pos|s?printf?|push|quotemeta\
-|rand|read|readdir|readline|readlink|recv|redo|ref|rename|require|reset|return|reverse\
-|rewindir|rindex|rmdir|scalar|seek|seekdir|select|select( RBITS| WBITS| EBITS| TIMEOUT)?\
-|semctl|semget|semop|send|setpgrp|setpriority|setsockopt|shift|shmget|shmget\
-|shmread|shutdown|sin|sleep|socket|socketpair|sort|splice|split|sqrt\
-|srand|stat|study|substr|symlink|syscall|sysread|sysseek|system|syswrite|tell|telldir\
-|tied?|times?|truncate|uc|ucfirst|umask|undef|unless|unlink|unpack|untie|unshift\
-|use|utime|values|vec|wait|waitpid|wantarray|warn|while|write|else|elsif\
-|package|sub|BEGIN|END|INIT|CHECK|socket|defined|our\
-)([^[:alnum:]/_]|$)
-c1,2=\\\\(my|our)([^[:alnum:]/_]|$)
-c2,1={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.|<=>|&|^|->
-c2,4=([ \t)]|^)(and|or|xor|eq|ne|cmp|lt|gt|le|ge)([ \t(]|$)
-c2,4=([ \t(]|^)(not)([ \t(]|$)
+i=perl
 
-# PL/SQL mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.sql|*.buf|/-\*- *[sS][qQ][lL] *-\*-
-c3,1=--.*$|/\\*([^*]|\\*[^/])*\\*/
-c3,1="([^"\n\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*'
-ci1,4=([^[:alnum:]_]|^)(\
-abort|accept|access|add|all|alter|and|any|array|arraylen|as|asc|assert|\
-assign|at|audit|authorization|avg|base_table|begin|between|binary_integer|\
-body|boolean|by|case|char|char_base|check|close|cluster|clusters|colauth|\
-column|columns|comment|commit|compress|connect|constant|count|crash|create|\
-current|cursor|curval|database|data_base|date|dba|debugoff|debugon|decimal|\
-declare|default|definition|delay|delete|delta|desc|digits|dispose|distinct|\
-do|drop|else|elsif|end|entry|exception|exception_init|exclusive|exists|exit|\
-false|fetch|file|float|for|form|from|function|generic|goto|grant|group|\
-having|identified|if|immediate|in|increment|index|indexes|indicator|initial|\
-insert|integer|interface|intersect|into|is|level|like|limited|lock|long|\
-loop|max|maxextents|min|minus|mlslabel|mod|mode|modify|natural|naturaln|\
-new|nextval|noaudit|nocompress|not|nowait|null|number|number_base|of|\
-offline|on|online|open|option|or|order|others|out|package|partition|pctfree|\
-pls_integer|positive|positiven|pragma|prior|private|privileges|procedure|\
-public|raise|range|raw|real|record|ref|release|rem|rename|resource|return|\
-reverse|revoke|rollback|row|rowid|rowlabel|rownum|rows|rowtype|run|\
-savepoint|schema|select|separate|session|set|share|size|smallint|space|sql|\
-sqlcode|sqlerrm|start|statement|stddev|subtype|successful|sum|synonym|\
-sysdate|tabauth|table|tables|task|terminate|then|to|trigger|true|type|uid|\
-union|unique|update|use|user|validate|values|varchar|varchar2|variance|view|\
-views|when|whenever|where|while|with|work|write|xor|\
-constraint|foreign|key|references|primary|using|decode|replace|enable|disable\
-)([^[:alnum:]_]|$)
-c2,1=\||\)|\(|:=|=|\|\||<|>|!=
+i=sql
 
-# SNMP MIB mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.mib|*.smi
-c3,1=--.*$|/\\*([^*]|\\*[^/])*\\*/
-c3,1="([^"\\]|\\\\.)*"|'([^\n'\\]|\\\\.)*'
-c1,4=([^[:alnum:]_]|^)(\
-BEGIN|END|DEFINITIONS|OBJECT-TYPE|OBJECT|OBJECTS|IDENTIFIER|FROM|SIZE|INDEX|\
-IMPORTS|SYNTAX|ACCESS|STATUS|DESCRIPTION|INTEGER|SEQUENCE|OF|OCTET|STRING|\
-TRAP-TYPE|ENTERPRISE|VARIABLES|NOTIFICATION-TYPE|MODULE-IDENTITY|\
-OBJECT-IDENTITY|MAX-ACCESS|OBJECT-GROUP|NOTIFICATION-GROUP|MODULE-COMPLIANCE|\
-TEXTUAL-CONVENTION|REVISION|LAST-UPDATED|ORGANIZATION|CONTACT-INFO|\
-DISPLAY-HINT|NOTIFICATIONS|MODULE|MANDATORY-GROUPS|GROUP\
-)([^[:alnum:]_]|$)
-c2,1=\||\)|\(|::=|=|\|\||{|}|;
+i=snmp-mib
 
 # Texinfo mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.texi|-\*- *texinfo *-\*-
-#c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^'\n\\]|\\\\.)*'
-#c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
-c3,1=^[ \t]*@c\W.*$
-#c3,1=/\\*([^*]|\\*[^/])*\\*/
-c1,4=([^[:alnum:]_@]|^)(@[[:alnum:]]*\
+#c3="([^"\n\\]|\\\\(.|\n))*"|'([^'\n\\]|\\\\.)*'
+#c3=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
+c3=^[ \t]*@c\W.*$
+#c3=/\\*(?:.|\n)*?\\*/
+c1,2=([^[:alnum:]_@]|^)(@[[:alnum:]]*\
 )([^[:alnum:]_]|$)
-c2,1={|}
+c2={|}
 
 # Tex mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.tex
-#c3,1="([^"\n\\]|\\\\(.|\n))*"|'([^'\n\\]|\\\\.)*'
-#c3,1=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
-c3,1=%.*$
-#c3,1=/\\*([^*]|\\*[^/])*\\*/
-c1,4=()(\\\\[[:alnum:]]*)([^[:alnum:]_]|$)
-c2,1={|}|\[|\]
+#c3="([^"\n\\]|\\\\(.|\n))*"|'([^'\n\\]|\\\\.)*'
+#c3=^[ \t]*#([^\\\n]|\\\\(.|\n))*$
+c3=%.*$
+#c3=/\\*(?:.|\n)*?\\*/
+c1,2=()(\\\\[[:alnum:]]*)([^[:alnum:]_]|$)
+c2={|}|\[|\]
 
 # PHP mode, by Serge Vakulenko <vak@cronyx.ru>
 # and Raphael Geissert <atomo64@gmail.com>
 /*.php.*|*.php|/<\?php
-c3,1=#.*$|//.*$|/\\*([^*]|\\*[^/])*\\*/
-c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
-ci1,4=([^[:alnum:]_$]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
-|function|class|return|global|in|or|and|not|echo|print|exit|die|as|do|unset\
-|str_i?replace|substr|strlen|empty|str?ri?pos|trim|each|stri?str\
-|preg_(quote|match(|_all)|replace(|_callback)|last_error|grep|split)\
-|strcmp|str(nat)?(case)?cmp|(md5|sha1)(_file)?|strtr\
-|(str|chunk)_split\
-|strto(lower|upper)|gettype\
-|(user|trigger)_error|(set|restore)_(exception|error)_handler\
-|(add|strip)c?slashes|(raw)?url(en|de)code|base64_(de|en)code\
-|is(set|_(bool|int(eger)?|a([^[:alnum:]]|rray)|string|binary|buffer|callable\
-|double|float|long|null|object|real|scalar|numeric|resource|unicode))\
-|switch|case|default|explode|implode\
-|(([sf]|)print(f||_r))\
-|f(open|eof|close|flush|lock|read|put(csv|s)|scanf|stat|seek|truncate|write\
-|get(c|csv|s|ss)|ile(|_(exists|(get|put)_contents)|[acm]time|group|inode|owner\
-|perms|size|type))\
-|count|defined?|new\
-|array(|_(change_key_case|chunk|combine|count_values|diff_(u?assoc|u?key)\
-|fill(_keys)?|flip|u?intersect(|_(u?assoc|u?key))|key_exists|map\
-|merge(_recursive)?|multisort|pas|pop|product|push|rand|reduce|reverse|search\
-|shift|sp?lice|sum|udiff(|_u?assoc)|unique|values|walk(_recursive)?))|\
-|microtime|timestamp|pow|rand|round|pi|min|max|ceil|floor\
-|a?(cos|sin|tan)h?|atan2?\
-|is_(in)?finite|is_nan|\
-|function_exists\
-|public|private|protected|final|clone\
-)([^[:alnum:]_]|$)
-ci1,1=(true|false|null|\$this)
-#c2,1=:|\$|->
-c2,1={|}|<<|<|<\?(php)?|>>|>|\?>|;;|;|\(|\)|[.+-*]?=|!=|&&|\|\||!|\.\.|<=>|&|^|@|->
+s(php)1=<\?(?:php)?((?:.|\n)*?)\?>
+s(html)1=(?:\`|\?>)((?:.|\n)*?)(?:<\?|\')
+i=html
+i=php
+
+# html mode (lav)
+/*.html|*.htm|*.shtml|/-\*- *html *-\*-|^<![Dd][Oo][Cc][Tt][Yy][Pp][Ee] [Hh][Tt][Mm][Ll]|^<[Hh][Tt][Mm][Ll]>
+i=html
 
 # Tcl mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.tcl|/^#![ \t]*/.*/tcl|-\*- *tcl *-\*-
-c3,1=#.*$
-c3,1="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
-c1,4=([^[:alnum:]/_]|^)(break|case|continue|exit|for|foreach|if|return\
-|switch|while|set|eval|proc|global|else|elseif|default\
+c3=#.*$
+i=c-literal
+c1,2=([^[:alnum:]/_]|^)(break|case|continue|exit|for|foreach|if|return\
+ |switch|while|set|eval|proc|global|else|elseif|default\
 )([^[:alnum:]/_]|$)
-c2,1={|}|\[|\]|\$|;|\(|\)|\|
+c2={|}|\[|\]|\$|;|\(|\)|\|
 
 # Metafont mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.mf|*.mp
-c3,1=%.*$
-c3,2=[^\\]("([^"\\]|\\\\(.|\n))*")
-c1,4=([^[:alnum:]/_]|^)(if|else|elif|fi|lft|rt|top|bot|iff|not\
-|def|vardef|enddef|suffix|whatever|expr\
-|fill|draw|filldraw|pickup|let|beginchar|endchar\
+c3=%.*$
+c3,1=[^\\]("([^"\\]|\\\\(.|\n))*")
+c1,2=([^[:alnum:]/_]|^)(if|else|elif|fi|lft|rt|top|bot|iff|not\
+ |def|vardef|enddef|suffix|whatever|expr\
+ |fill|draw|filldraw|pickup|let|beginchar|endchar\
 )([^[:alnum:]/_]|$)
-c2,1=:=|\(|\)|#|=|;|\[|]|---|--|\.\.\.|\.\.|{|}|,
+c2=:=|\(|\)|#|=|;|\[|]|---|--|\.\.\.|\.\.|{|}|,
 
 # Patch mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.pch|*.diff|*.patch
-c3,1=^\+\+.*$
-c3,1=^--.*$
-c3,1=^@@.*$
-c2,1=^(\+|-)
+c3=^\+\+.*$
+c3=^--.*$
+c3=^@@.*$
+c2=^(\+|-)
 
 # Generic configuration files, by Serge Vakulenko <vak@cronyx.ru>
 /*.conf|*.cf|*.cfg|*.ini
-c3,1=[#;].*$
-#c1,4=([^[:alnum:]_]|^)(if|elseif|else|for|in|break|continue|while|var\
-#|function|class|return|global|in|or|and|not\
-#)([^[:alnum:]_]|$)
-c2,1=:|\$|->|=
-c2,2=^(\[)[^\]]+\]
-c2,2=^\[[^\]]+(\])
-c1,2=^\[([^\]]+)\]
+c3=[#;].*$
+c2=:|\$|->|=
+c2,1=^(\[)[^\]]+\]
+c2,1=^\[[^\]]+(\])
+c1,1=^\[([^\]]+)\]
 
 # makefile mode, by Raphael Geissert <atomo64@gmail.com>
 /Makefile|Makefile.*|makefile|makefile.*|*.mk|/^#![ \t]*/.*/make|-\*-.*makefile[^\w]
-c3,1=^[ \t]*#.*$
-c3,1="|'
-c1,4=([^[:alnum:]_]|^)(findstring|ifn?eq|endif|define|shell\
-|else|while|if|fi|then|do|done|for|case|esac|export|MAKE|ifn?def\
-|(pat)?subst|filter(-out)?|foreach|words|call|wildcard\
+c3=^[ \t]*#.*$
+c3="|'
+c1,2=([^[:alnum:]_]|^)(findstring|ifn?eq|endif|define|shell\
+ |else|while|if|fi|then|do|done|for|case|esac|export|MAKE|ifn?def\
+ |(pat)?subst|filter(-out)?|foreach|words|call|wildcard\
 )([^[:alnum:]_]|$)
-c1,4=([^[:alnum:]_]|^)(include)([ \t].+$)
-c2,1=:|\$|[+-:?]?=|>|<|`|\||\[|\]|\(|\)|{|}|&|\$[@*]
-ci1,2=^([ [:alnum:]/%()$,_.-]+):[^=]
-c1,2=^[ \t]*@?(-)[^-][^ \t]
-c1,2=^[ \t]*(@)
+c1,2=([^[:alnum:]_]|^)(include)([ \t].+$)
+c2=:|\$|[+-:?]?=|>|<|`|\||\[|\]|\(|\)|{|}|&|\$[@*]
+ci1,1=^([ [:alnum:]/%()$,_.-]+):[^=]
+c1,1=^[ \t]*@?(-)[^-][^ \t]
+c1,1=^[ \t]*(@)
 
-# Verilog mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.v|/-\*- *verilog *-\*-
-c3,1="([^"\n\\]|\\\\(.|\n))*"
-c3,2=`[ \t]*(include[ \t]*"[^"\n]*"|define*)
-c3,1=//.*$|/\\*([^*]|\\*[^/])*\\*/
-c1,4=([^[:alnum:]_]|^)(always|and|assign|attribute|begin|buf|bufif0|bufif1\
-|case|casex|casez|cmos|deassign|default|defparam|disable|edge|else|end\
-|endattribute|endcase|endfunction|endmodule|endprimitive|endspecify|endtable\
-|endtask|event|for|force|forever|fork|function|highz0|highz1|if|ifnone\
-|initial|inout|input|integer|join|medium|module|large|macromodule|nand\
-|negedge|nmos|nor|not|notif0|notif1|or|output|parameter|pmos|posedge\
-|primitive|pull0|pull1|pulldown|pullup|rcmos|real|realtime|reg|release\
-|repeat|rnmos|rpmos|rtran|rtranif0|rtranif1|scalared|signed|small|specify\
-|specparam|strength|strong0|strong1|supply0|supply1|table|task|time|tran\
-|tranif0|tranif1|tri|tri0|tri1|triand|trior|trireg|unsigned|vectored|wait\
-|wand|weak0|weak1|while|wire|wor|xnor|xor\
-)([^[:alnum:]_]|$)
-c2,1=\\[|\\]|\\(|\\)|{|}|,|@|<=
+i=verilog
 
 # Debian control file mode, by Raphael Geissert <atomo64@gmail.com>
 #/control|/^Source:
 //^Source:
-c3,1=^#.*$
-ci2,2=^[[:alnum:]-]+(:)
-c2,1=\$|=|<|>|\||,
-c2,1=^ \.
-c1,2=^(Source|Package|Version|Section|Priority|Maintainer|Homepage|Description\
-|Standards-Version|(Build-)?Depends(-Indep)?|Architecture|Provides|Replaces\
-|Recommends|Suggests|(Build-)?Conflicts(-Indep)?|Enhaces|Uploaders|Vcs-Browser\
-|Essential|Installed-Size|Binary|Format|Files|Closes|Changes|Urgency\
-|Distribution|Date|Changed-By|Checksums-Sha(1|256)\
-)
-ci1,1=^Vcs-[[:alnum:]]+
-c1,2=^(X[BCS]+-[[:alnum:]-]+)(:)
+c3=^#.*$
+ci2,1=^[[:alnum:]-]+(:)
+c2=\$|=|<|>|\||,
+c2=^ \.
+c1,1=^(Source|Package|Version|Section|Priority|Maintainer|Homepage|Description\
+ |Standards-Version|(Build-)?Depends(-Indep)?|Architecture|Provides|Replaces\
+ |Recommends|Suggests|(Build-)?Conflicts(-Indep)?|Enhaces|Uploaders|Vcs-Browser\
+ |Essential|Installed-Size|Binary|Format|Files|Closes|Changes|Urgency\
+ |Distribution|Date|Changed-By|Checksums-Sha(1|256))
+ci1=^Vcs-[[:alnum:]]+
+c1,1=^(X[BCS]+-[[:alnum:]-]+)(:)
 
 # Debian changelog mode, by Raphael Geissert <atomo64@gmail.com>
 // ([^ ]+) .+; +urgency=
-c3,1=^[ \t]+--.+
-c2,2=urgency=([[:alnum:]]+)
-ci2,2=[ \t]+([[:alnum:]]+);[ \t]+urgency=
-c2,2=^[[:alnum:].-]+ +\((.+)\)
-c1,2=^([[:alnum:].-]+) +\(.+\)
-ci1,1=closes:[ \t]*(bug)?#?[ \t]?[0-9]+(,[ \t]*\
-(bug)?\#?[ \t]?[0-9]+)*
-c1,1=LP:[ \t]+#[0-9]+
-c2,2=(\[).+\]
-c2,2=\[.+(\])
-c3,2=\[(.+)\]
-c1,1=^[ \t]+[*+-][^-]
-c3,1="[^"\n]+"
-c3,1='[^'\n]+'
+c3=^[ \t]+--.+
+c2,1=urgency=([[:alnum:]]+)
+ci2,1=[ \t]+([[:alnum:]]+);[ \t]+urgency=
+c2,1=^[[:alnum:].-]+ +\((.+)\)
+c1,1=^([[:alnum:].-]+) +\(.+\)
+ci1=closes:[ \t]*(bug)?#?[ \t]?[0-9]+(,[ \t]*\
+ (bug)?\#?[ \t]?[0-9]+)*
+c1=LP:[ \t]+#[0-9]+
+c2,1=(\[).+\]
+c2,1=\[.+(\])
+c3,1=\[(.+)\]
+c1=^[ \t]+[*+-][^-]
+c3="[^"\n]+"
+c3='[^'\n]+'
 
 # simple, and imperfect, changelog mode, by Raphael Geissert <atomo64@gmail.com>
 /ChangeLog|/^[0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2,4\}[ \t]
-c3,1=^[0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2,4\}[ \t]+
-c2,6=^[0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2,4\}.*  ([[:alnum:]]+)$
+c3=^[0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2,4\}[ \t]+
+c2,3=^[0-9]\{2,4\}-[0-9]\{2\}-[0-9]\{2,4\}.*  ([[:alnum:]]+)$
 
 # lsm mode, by Raphael Geissert <atomo64@gmail.com>
 /*.lsm|/^Begin[34]
-c3,1=^(Begin[34]|End)
-ci2,2=^[[:alnum:]-]+(:)
-#c1,2=^([^ \t]*):
-c1,2=^(Title|Version|Entered-date|Description|Keywords|Author|Maintained-by\
-|(Primary|Alternate|Original)-site|Platforms|Copying-policy):
-c2,1=[@()]
+c3=^(Begin[34]|End)
+ci2,1=^[[:alnum:]-]+(:)
+#c1,1=^([^ \t]*):
+c1,1=^(Title|Version|Entered-date|Description|Keywords|Author|Maintained-by\
+ |(Primary|Alternate|Original)-site|Platforms|Copying-policy):
+c2=[@()]
 
 # really basic m4 and ac modes, by Raphael Geissert <atomo64@gmail.com>
 /*.m4
-c3,1=^[ \t]*#.*$
-c2,1=:|\$|[+-:]?=|>|<|`|\||\[|\]|\(|\)|{|}|&
-c1,1=m4_[[:alnum:]_]+
-c3,1="|'
+c3=^[ \t]*#.*$
+c2=:|\$|[+-:]?=|>|<|`|\||\[|\]|\(|\)|{|}|&
+c1,2=(^|[^[:alnum:]_])(m4_[[:alnum:]_]+)
+c3="|'
 /*.ac
-c3,1=^dnl.*$
-c1,1=AC_[[:alnum:]_]+
-c2,1=:|=|>|<|,|\||\[|\]|\(|\)|{|}|&
-c3,1="|'
+c3,2=(^|[^[:alnum:]_])dnl([^[:alnum:]_].*)?$
+c1,2=(^|[^[:alnum:]_])(A[CM]_[[:alnum:]_]+)
+c2=:|=|>|<|,|\||\[|\]|\(|\)|{|}|&
+c3="|'
+i=shell
 
 # watch file mode, by Raphael Geissert <atomo64@gmail.com>
 /watch|/version=[23]
-c3,1=^[ \t]*#.*
-c2,1=[ \t]*version=[0-9]
-c1,2=^[ \t]*(opt(ion)?s)
-c1,1=(downloadurl|[du]?version|filename|active|passive|pasv)mangle
-c2,1=,
-c2,2=[^\\](\.)[^/]+[ \n\t]
-c3,1=\(.+\)
+c3=^[ \t]*#.*
+c2=[ \t]*version=[0-9]
+c1,1=^[ \t]*(opt(ion)?s)
+c1=(downloadurl|[du]?version|filename|active|passive|pasv)mangle
+c2=,
+c2,1=[^\\](\.)[^/]+[ \n\t]
+c3=\(.+\)
 
 # .gdbinit mode, by Raphael Geissert <atomo64@gmail.com>
 /gdbinit|.*gdbinit
-c1,2=^(define|end|document)([^[:alnum:]_]|$)
-c2,6=^[[:alnum:]][^ \t]+[ \t]+([[:alnum:]_]+)$
+c1,1=^(define|end|document)([^[:alnum:]_]|$)
+c2,3=^[[:alnum:]][^ \t]+[ \t]+([[:alnum:]_]+)$
 
 # series (quilt) mode, by Raphael Geissert <atomo64@gmail.com>
 /series
-c3,1=^[ \t]*#.*
+c3=^[ \t]*#.*
 
 # .desktop files mode, by Raphael Geissert <atomo64@gmail.com>
 /*.desktop|*eventsrc
-c2,2=(\[).+\]
-c2,2=\[.+(\])
-c3,2=\[(.+)\]
-c3,1=^[ \t]*#.*
-c1,2=^((Generic)?Name|Comment|(Try)?Exec|Icon|X-[a-zA-Z0-9-]+|Type|Categories\
-|Version|NoDisplay|Hidden|(Only|Not)ShowIn|Path|Terminal|MimeType|URL\
-|Startup(Notify|WMClass)|\
-# eventsrc-specific:\
-|default_presentation\
+c2,1=(\[).+\]
+c2,1=\[.+(\])
+c3,1=\[(.+)\]
+c3=^[ \t]*#.*
+c1,1=^((Generic)?Name|Comment|(Try)?Exec|Icon|X-[a-zA-Z0-9-]+|Type|Categories\
+ |Version|NoDisplay|Hidden|(Only|Not)ShowIn|Path|Terminal|MimeType|URL\
+ |Startup(Notify|WMClass)|\
+ # eventsrc-specific:\
+ |default_presentation\
 )
 
-# FVWM2 configuration....
-# by Aldis Berjoza aka killasmurf86 <killasmurf86@inbox.lv>
 /*.fvwm|*.fvwmrc|*.fvwm2rc
-c3,1=([^$]|^)#.*$
-c3,3=[^\\]("([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*')
-ci1,4=( |^|\t)\
-(AddButtonStyle|DefaultColors|HideGeometryWindow|Quit|TearMenuOff\
-|AddTitleStyle|DefaultColorset|QuitScreen|Test|AddToDecor\
-|DefaultFont|QuitSession|TestRc|AddToFunc|DefaultIcon\
-|Raise|ThisWindow|AddToMenu|DefaultLayers|Iconify|RaiseLower\
-|Title|All|Delete|Read|TitleStyle|AnimatedMove|Deschedule\
-|IgnoreModifiers|UnsetEnv|Any|Desk|ImagePath\
-|UpdateDecor|Asteric|DesktopName|Key|Refresh|UpdateStyles|Beep|DesktopSize\
-|KeepRc|RefreshWindow|Wait|BorderStyle|Destroy|KillModule|Repeat|WarpToWindow\
-|Break|DestroyDecor|Layer|Resize|BugOpts|DestroyFunc|LocalePath\
-|ResizeMaximize|WindowId|BusyCursor|DestroyMenu|Lower|ResizeMove|WindowList\
-|ButtonState|DestroyMenuStyle|Maximize|ResizeMoveMaximize\
-|ButtonStyle|DestroyModuleConfig|Menu|RestackTransients|WindowShade\
-|ChangeDecor|DestroyStyle|MenuStyle|Restart|ChangeMenuStyle\
-|DestroyWindowStyle|Module|SaveQuitSession|WindowStyle|CleanupColorsets\
-|Direction|ModuleListenOnly|SaveSession|Xinerama|ClickTime|Echo|ModulePath\
-|ScanForWindow|XineramaPrimaryScreen|Close|EchoFuncDefinition\
-|ModuleSynchronous|Schedule|XineramaSls|EdgeCommand|ModuleTimeout\
-|Scroll|XineramaSlsScreensF|ColormapFocus|EdgeLeaveCommand|Mouse|SendToModule\
-|XineramaSlsSize|Colorset|EdgeResistance|Move|SetAnimation|XorPixmap\
-|CopyMenuStyle|EdgeScroll|MoveThreshold|SetEnv|XorValue|Current|EdgeThickness\
-|MoveToDesk|ShellCmd|XSync|CursorMove|Emulate|MoveToPage|Silent|XSynchronize\
-|CursorStyle|EscapeFunc|MoveToScreen|EwmhBaseStruts|Next\
-|SnapGrid|EwmhNumberOfDesktops|None|State|Nop|Stick|ExecUseShell\
-|NoWindow|StickAcrossDesks|FakeClick|OpaqueMoveSize|StickAcrossPages\
-|FakeKeypress|Pick|Stroke|FlipFocus|PipeRead|StrokeFunc|Focus|PixmapPath\
-|Style|FocusStyle|PlaceAgain|Function|PointerKey|PointerWindow\
-|GnomeButton|Popup|GnomeShowDesks|Prev|GotoDesk|PrintInfo|GotoDeskAndPage\
-|GotoPage|MissingSubmenuFunction)( |\n|\t)
-c1,4=( |^|\t)(Exec)( |\n|\t)
-ci2,4=(,| |\t)(BorderWidth|HandleWidth|!Icon|Icon|MiniIcon|IconBox\
-|IconGrid|IconFill|IconSize|!Title|Title|TitleAtBottom|TitleAtLeft\
-|TitleAtRight|TitleAtTop|LeftTitleRotatedCW|LeftTitleRotatedCCW\
-|RightTitleRotatedCCW|RightTitleRotatedCW|TopTitleRotated|TopTitleNotRotated\
-|BottomTitleRotated|BottomTitleNotRotated|!UseTitleDecorRotation\
-|UseTitleDecorRotation|StippledTitle|!StippledTitle|StippledIconTitle\
-|!StippledIconTitle|IndexedWindowName|ExactWindowName|IndexedIconName\
-|ExactIconName|!Borders|Borders|!Handles|Handles|WindowListSkip|WindowListHit\
-|CirculateSkip|CirculateHit|CirculateSkipShaded|CirculateHitShaded\
-|CirculateSkipIcon|CirculateHitIcon|Layer|StaysOnTop|StaysOnBottom|StaysPut\
-|Sticky|Slippery|StickyAcrossPages|!StickyAcrossPages|StickyAcrossDesks\
-|!StickyAcrossDesks|!StickyStippledTitle|StickyStippledTitle\
-|!StickyStippledIconTitle|StickyStippledIconTitle|StartIconic|StartNormal\
-|Color|ForeColor|BackColor|Colorset|HilightFore|HilightBack|HilightColorset\
-|BorderColorset|HilightBorderColorset|IconTitleColorset\
-|HilightIconTitleColorset|IconBackgroundColorset|IconTitleRelief\
-|IconBackgroundRelief|IconBackgroundPadding|Font|IconFont|StartsOnDesk\
-|StartsOnPage|StartsAnyWhere|StartsOnScreen|StartShaded|!StartShaded\
-|ManualPlacementHonorsStartsOnPage|ManualPlacementIgnoresStartsOnPage\
-|CaptureHonorsStartsOnPage|CaptureIgnoresStartsOnPage\
-|RecaptureHonorsStartsOnPage|RecaptureIgnoresStartsOnPage\
-|StartsOnPageIncludesTransients|StartsOnPageIgnoresTransients|IconTitle\
-|!IconTitle|MwmButtons|FvwmButtons|MwmBorder|FvwmBorder|MwmDecor|!MwmDecor\
-|MwmFunctions|!MwmFunctions|HintOverride|!HintOverride|!Button|Button\
-|ResizeHintOverride|!ResizeHintOverride|OLDecor|!OLDecor|GNOMEUseHints\
-|GNOMEIgnoreHints|StickyIcon|SlipperyIcon|StickyAcrossPagesIcon\
-|!StickyAcrossPagesIcon|StickyAcrossDesksIcon|!StickyAcrossDesksIcon\
-|ManualPlacement|CascadePlacement|MinOverlapPlacement\
-|MinOverlapPercentPlacement|TileManualPlacement|TileCascadePlacement\
-|PositionPlacement|MinOverlapPlacementPenalties\
-|MinOverlapPercentPlacementPenalties|DecorateTransient|NakedTransient\
-|DontRaiseTransient|RaiseTransient|DontLowerTransient|LowerTransient\
-|DontStackTransientParent|StackTransientParent|SkipMapping|ShowMapping\
-|ScatterWindowGroups|KeepWindowGroupsOnDesk|UseDecor|UseStyle|!UsePPosition\
-|NoPPosition|UsePPosition|!UseUSPosition|NoUSPosition|UseUSPosition\
-|!UseTransientPPosition|NoTransientPPosition|UseTransientPPosition\
-|!UseTransientUSPosition|NoTransientUSPosition|UseTransientUSPosition\
-|!UseIconPosition|NoIconPosition|UseIconPosition|Lenience|!Lenience\
-|ClickToFocus|SloppyFocus|MouseFocus|FocusFollowsMouse|NeverFocus\
-|ClickToFocusPassesClickOff|ClickToFocusPassesClick|ClickToFocusRaisesOff\
-|ClickToFocusRaises|MouseFocusClickRaises|MouseFocusClickRaisesOff|GrabFocus\
-|GrabFocusOff|GrabFocusTransientOff|GrabFocusTransient|FPFocusClickButtons\
-|FPFocusClickModifiers|!FPSortWindowlistByFocus|FPSortWindowlistByFocus\
-|FPClickRaisesFocused|!FPClickRaisesFocused|FPClickDecorRaisesFocused\
-|!FPClickDecorRaisesFocused|FPClickIconRaisesFocused|!FPClickIconRaisesFocused\
-|!FPClickRaisesUnfocused|FPClickRaisesUnfocused|FPClickDecorRaisesUnfocused\
-|!FPClickDecorRaisesUnfocused|FPClickIconRaisesUnfocused\
-|!FPClickIconRaisesUnfocused|FPClickToFocus|!FPClickToFocus\
-|FPClickDecorToFocus|!FPClickDecorToFocus|FPClickIconToFocus\
-|!FPClickIconToFocus|!FPEnterToFocus|FPEnterToFocus|!FPLeaveToUnfocus\
-|FPLeaveToUnfocus|!FPFocusByProgram|FPFocusByProgram|!FPFocusByFunction\
-|FPFocusByFunction|FPFocusByFunctionWarpPointer|!FPFocusByFunctionWarpPointer\
-|FPLenient|!FPLenient|!FPPassFocusClick|FPPassFocusClick|!FPPassRaiseClick\
-|FPPassRaiseClick|FPIgnoreFocusClickMotion|!FPIgnoreFocusClickMotion\
-|FPIgnoreRaiseClickMotion|!FPIgnoreRaiseClickMotion|!FPAllowFocusClickFunction\
-|FPAllowFocusClickFunction|!FPAllowRaiseClickFunction\
-|FPAllowRaiseClickFunction|FPGrabFocus|!FPGrabFocus|!FPGrabFocusTransient\
-|FPGrabFocusTransient|FPOverrideGrabFocus|!FPOverrideGrabFocus|FPReleaseFocus\
-|!FPReleaseFocus|!FPReleaseFocusTransient|FPReleaseFocusTransient\
-|FPOverrideReleaseFocus|!FPOverrideReleaseFocus|StartsLowered|StartsRaised\
-|IgnoreRestack|AllowRestack|FixedPosition|VariablePosition|FixedUSPosition\
-|VariableUSPosition|FixedPPosition|VariablePPosition|FixedSize|VariableSize\
-|FixedUSSize|VariableUSSize|FixedPSize|VariablePSize|!Closable|Closable\
-|!Iconifiable|Iconifiable|!Maximizable|Maximizable|!AllowMaximizeFixedSize\
-|AllowMaximizeFixedSize|IconOverride|NoIconOverride|NoActiveIconOverride\
-|DepressableBorder|FirmBorder|MinWindowSize|MaxWindowSize|IconifyWindowGroups\
-|IconifyWindowGroupsOff|ResizeOpaque|ResizeOutline|BackingStore\
-|BackingStoreOff|BackingStoreWindowDefault|Opacity|ParentalRelativity\
-|SaveUnder|SaveUnderOff|WindowShadeShrinks|WindowShadeScrolls\
-|WindowShadeSteps|WindowShadeAlwaysLazy|WindowShadeBusy|WindowShadeLazy\
-|EWMHDonateIcon|EWMHDontDonateIcon|EWMHDonateMiniIcon|EWMHDontDonateMiniIcon\
-|EWMHMiniIconOverride|EWMHNoMiniIconOverride|EWMHUseStackingOrderHints\
-|EWMHIgnoreStackingOrderHints|EWMHIgnoreStateHints|EWMHUseStateHints\
-|EWMHIgnoreStrutHints|EWMHUseStrutHints|EWMHIgnoreWindowType\
-|!EWMHIgnoreWindowType|EWMHMaximizeIgnoreWorkingArea\
-|EWMHMaximizeUseWorkingArea|EWMHMaximizeUseDynamicWorkingArea\
-|EWMHPlacementIgnoreWorkingArea|EWMHPlacementUseWorkingArea\
-|EWMHPlacementUseDynamicWorkingArea|MoveByProgramMethod|Unmanaged|State\
-|SnapGrid|SnapAttraction|EdgeMoveDelay|EdgeResizeDelay|EdgeMoveResistance\
-|Fvwm|Mwm|Win|BorderWidth|Foreground|Background|Greyed|HilightBack\
-|!HilightBack|HilightTitleBack|ActiveFore|!ActiveFore|MenuColorset\
-|ActiveColorset|GreyedColorset|TitleColorset|Hilight3DThick\
-|Hilight3DThin|Hilight3DOff|Hilight3DThickness|Animation|!Animation|Font\
-|TitleFont|MenuFace|PopupDelay|PopupOffset|TitleWarp|!TitleWarp\
-|TitleUnderlines0|TitleUnderlines1|TitleUnderlines2|SeparatorsLong\
-|SeparatorsShort|TrianglesSolid|TrianglesRelief|PopupImmediately\
-|PopupDelayed|PopdownImmediately|PopdownDelayed|PopupActiveArea\
-|DoubleClickTime|SidePic|SideColor|PopupAsRootMenu|PopupAsSubmenu\
-|PopupIgnore|PopupClose|RemoveSubmenus|HoldSubmenus|SubmenusRight\
-|SubmenusLeft|SelectOnRelease|ItemFormat|VerticalItemSpacing\
-|VerticalMargins|VerticalTitleSpacing|AutomaticHotkeys|!AutomaticHotkeys\
-|MouseWheel|ScrollOffPage|!ScrollOffPage|TrianglesUseFore|!TrianglesUseFore\
-|Never|Move|Resize|All|Left|Right|Reset|ActiveUp|ActiveDown|InactiveUp\
-|InactiveDown|Active|Inactive|MwmDecorMax|MwmDecorShade|MwmDecorStick\
-|MwmDecorLayer|AllNormal|AllToggled|AllActive|AllInactive|AllUp|AllDown\
-|AllActiveUp|AllActiveDown|AllInactiveUp|AllInactiveDown|Reset|Raised\
-|Sunk|Flat|UseTitleStyle|UseBorderStyle|Simple|Default|Solid|Colorset\
-|Vector|?Gradient|Pixmap|AdjustedPixmap|ShrunkPixmap|StretchedPixmap\
-|TiledPixmap|MiniIcon|MwmDecorMenu|MwmDecorMin|MwmDecorMax|MwmDecorShade\
-|MwmDecorStick|MwmDecorLayer|POSITION|TITLE|DEFAULT|SYS|MOVE|RESIZE|WAIT\
-|MENU|SELECT|DESTROY|TOP|RIGHT|BOTTOM|LEFT|TOP_LEFT|TOP_RIGHT|BOTTOM_LEFT\
-|BOTTOM_RIGHT|TOP_EDGE|RIGHT_EDGE|BOTTOM_EDGE|LEFT_EDGE|STROKE|None|Tiny\
-|Clear|NoInset|HiddenHandles|!GnomeUseHints|on|off|*)\
-(,| |$|\t)
-ci2,4=(^)(+)( |\t)
-ci2,4=( |\(|\t)(Version|EnvIsSet|EnvMatch|EdgeHasPointer|EdgeIsActive|Start|Init|Restart|Exit\
-|Quit|ToRestart|True|False|F|R|W|X|!Version|!EnvIsSet|!EnvMatch\
-|!EdgeHasPointer|!EdgeIsActive|!Start|!Init|!Restart|!Exit|!Quit|!ToRestart\
-|!True|!False|!F|!R|!W|!X|NoMatch|Match|Error|Break|!NoMatch|!Match|!Error\
-|!Break|Layer|I|C|D|H|M)( |\)|\t)
+i=fvwm2
