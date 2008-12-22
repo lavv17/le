@@ -20,11 +20,12 @@
 
 #include <config.h>
 
+#include "edit.h"
 #include <fnmatch.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "highli.h"
-#include "edit.h"
 #include "screen.h"
 #include "search.h"
 #include <alloca.h>
@@ -45,15 +46,7 @@ char *syntax_hl::selector;
 syntax_hl::syntax_hl(int color,int mask)
 {
    rexp=0;
-   next=0;
-   for(syntax_hl **scan=&chain; ; scan=&(**scan).next)
-   {
-      if(!*scan)
-      {
-	 *scan=this;
-	 break;
-      }
-   }
+   next=sub=0;
    this->color=color;
    this->mask=mask;
    memset(&rexp_c,0,sizeof(rexp_c));
@@ -67,22 +60,16 @@ syntax_hl::~syntax_hl()
       free(rexp);
       regfree(&rexp_c);
    }
-   for(syntax_hl **scan=&chain; ; scan=&(**scan).next)
-   {
-      if(*scan==this)
-      {
-	 *scan=this->next;
-	 break;
-      }
-   }
+   free_chain(&sub);
 }
 
-void syntax_hl::free_chain()
+void syntax_hl::free_chain(syntax_hl **chain)
 {
-   free(selector);
-   selector=0;
-   while(chain)
-      delete chain;
+   while(*chain) {
+      syntax_hl *r=*chain;
+      chain=&chain[0]->next;
+      delete r;
+   }
 }
 
 const char *syntax_hl::set_rexp(const char *nr,bool ignore_case)
@@ -108,8 +95,8 @@ const char *syntax_hl::set_rexp(const char *nr,bool ignore_case)
       rexp_c.translate=(RE_TRANSLATE_TYPE)malloc(256);
       memcpy(rexp_c.translate,map_to_lower,256);
    }
-   re_syntax_options=RE_NO_BK_VBAR|RE_NO_BK_PARENS|RE_INTERVALS|
-		     RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS;
+   re_syntax_options = RE_SYNTAX_EMACS | RE_FRUGAL | RE_NO_POSIX_BACKTRACKING |
+      RE_NO_BK_VBAR | RE_NO_BK_PARENS | RE_CONTEXT_INDEP_ANCHORS;
    const char *err=re_compile_pattern(rexp,strlen(rexp),&rexp_c);
    if(err)
       return err;
@@ -153,44 +140,95 @@ void c_string_interpret(char *s)
 
 extern void fskip(FILE*);
 
-void InitHighlight()
+char *read_regex(FILE*f)
+{
+   char str[1024];
+   char *accum=0;
+   int cont=1;
+   while(cont)
+   {
+      char *s=fgets(str,sizeof(str),f);
+      if(!s)
+      {
+	 if(accum)
+	    break;
+	 return 0;
+      }
+      cont=0;
+      int len=strlen(s);
+      if(s[len-1]=='\n')
+      {
+	 len--;
+	 if(s[len-1]=='\r')
+	    len--;
+	 if(s[len-1]=='\\')
+	 {
+	    len--;
+	    cont=1;
+	    for(;;) {
+	       int ch=fgetc(f);
+	       if(ch==EOF || ch=='\n') {
+		  cont=0;
+		  break;
+	       }
+	       if(ch!=' ' && ch!='\t') {
+		  ungetc(ch,f);
+		  break;
+	       }
+	    }
+	 }
+      }
+      else
+      {
+	 cont=1;
+      }
+      s[len]=0;
+      if(!accum)
+      {
+	 accum=strdup(str);
+	 if(!accum)
+	    return 0;
+      }
+      else
+      {
+	 s=(char*)realloc(accum,strlen(accum)+len+1);
+	 if(!s)
+	 {
+	    free(accum);
+	    return 0;
+	 }
+	 accum=s;
+	 strcat(accum,str);
+      }
+   }
+   c_string_interpret(accum);
+   return accum;
+}
+
+static FILE *open_syntax_d(const char *name)
+{
+   if(name[0]!='/') {
+      const char *base_dir="syntax.d";
+      char *fn=(char*)alloca(strlen(PKGDATADIR)+1+strlen(base_dir)+1+strlen(name)+1);
+      sprintf(fn,"%s/.le/%s/%s",HOME,base_dir,name);
+      if(access(fn,R_OK)==-1)
+	 sprintf(fn,"%s/%s/%s",PKGDATADIR,base_dir,name);
+      name=fn;
+   }
+   return fopen(name,"r");
+}
+
+static bool hl_section_match;
+static void ReadSyntaxFile(FILE *f,syntax_hl **chain)
 {
    int ch;
-   FILE *f;
-
-   syntax_hl::free_chain();
-
-   hl_active=0;
-   if(!hl_option)
-      return;
-
-   const char base_fn[]="syntax";
-   char *fn1=(char*)alloca(strlen(PKGDATADIR)+1+strlen(base_fn)+1);
-   char *fn2=(char*)alloca(strlen(HOME)+1+3+1+ strlen(base_fn)+1);
-   char *fn3=(char*)alloca(4+strlen(base_fn)+1);
-   char *fn;
-
-   sprintf(fn1,"%s/%s",PKGDATADIR,base_fn);
-   sprintf(fn2,"%s/.le/%s",HOME,base_fn);
-   sprintf(fn3,".le.%s",base_fn);
-
-   f=0;
-   if(!f)
-      f=fopen(fn=fn3,"r");
-   if(!f)
-      f=fopen(fn=fn2,"r");
-   if(!f)
-      f=fopen(fn=fn1,"r");
-   if(!f)
-      return;
-
    char str[1024];
    char *s;
-   int match=0;
    unsigned len;
    int res;
    int color,mask;
    const char *bn=le_basename(FileName);
+   char *rx;
 
    for(;;)
    {
@@ -198,11 +236,9 @@ void InitHighlight()
       switch(ch)
       {
       case(EOF):
-      end:
-	 fclose(f);
-	 return;
+	 goto end;
       case('/'):
-	 if(match)
+	 if(hl_section_match)
 	    goto end;
 	 s=fgets(str,sizeof(str),f);
 	 if(!s)
@@ -229,8 +265,8 @@ void InitHighlight()
 		  break;
 
 	       static re_pattern_buffer rexp;
-	       re_syntax_options=RE_NO_BK_VBAR|RE_NO_BK_PARENS|RE_INTERVALS|
-				 RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS;
+	       re_syntax_options = RE_SYNTAX_EMACS |
+		  RE_NO_BK_VBAR | RE_NO_BK_PARENS | RE_CONTEXT_INDEP_ANCHORS;
 	       if(!re_compile_pattern(s,strlen(s),&rexp))
 	       {
 		  int s1=ptr1;
@@ -249,7 +285,7 @@ void InitHighlight()
 		     pos=re_search_2(&rexp,p1,s1,p2,s2,0,1024,NULL,1024);
 		  if(pos!=-1)
 		  {
-		     match=1;
+		     hl_section_match=true;
 		     break;
 		  }
 	       }
@@ -257,19 +293,19 @@ void InitHighlight()
 	    }
 	    if(fnmatch(s,bn,0)==0)
 	    {
-	       match=1;
+	       hl_section_match=true;
 	       break;
 	    }
 	    s=strtok(0,"|");
 	 }
-	 if(!match) {
+	 if(!hl_section_match) {
 	    free(syntax_hl::selector);
 	    syntax_hl::selector=0;
 	 }
 	 break;
       case('c'):
       {
-	 if(!match)
+	 if(!hl_section_match)
 	 {
 	    fskip(f);
 	    continue;
@@ -281,72 +317,36 @@ void InitHighlight()
 	 else
 	    ungetc(c,f);
 	 res=fscanf(f,"%d,%i=",&color,&mask);
-	 if(res!=2)
+	 if(res==1) {
+	    mask=1;
+	    if(fgetc(f)!='=') {
+	       fskip(f);
+	       continue;
+	    }
+	 }
+	 else if(res!=2)
 	 {
 	    fskip(f);
 	    continue;
 	 }
-	 char *accum=0;
-	 int cont=1;
-	 while(cont)
-	 {
-	    s=fgets(str,sizeof(str),f);
-	    if(!s)
-	    {
-	       if(accum)
-		  break;
-	       goto end;
-	    }
-	    cont=0;
-	    len=strlen(s);
-	    if(s[len-1]=='\n')
-	    {
-	       len--;
-	       if(s[len-1]=='\r')
-		  len--;
-	       if(s[len-1]=='\\')
-	       {
-		  len--;
-		  cont=1;
-	       }
-	    }
-	    else
-	    {
-	       cont=1;
-	    }
-	    s[len]=0;
-	    if(!accum)
-	    {
-	       accum=strdup(str);
-	       if(!accum)
-		  goto end;
-	    }
-	    else
-	    {
-	       s=(char*)realloc(accum,strlen(accum)+len+1);
-	       if(!s)
-	       {
-		  free(accum);
-		  goto end;
-	       }
-	       accum=s;
-	       strcat(accum,str);
-	    }
-	    if(!cont)
-	       break;
+	 else {
+	    mask<<=1;
 	 }
-	 c_string_interpret(accum);
+	 rx=read_regex(f);
+	 if(!rx)
+	    goto end;
 	 syntax_hl *hl=new syntax_hl(color,mask);
-	 const char *err=hl->set_rexp(accum,ignore_case);
+	 const char *err=hl->set_rexp(rx,ignore_case);
+	 free(rx); rx=0;
 	 if(err)
 	 {
 	    ErrMsg(err);
-	    free(accum);
 	    delete hl;
 	    goto end;
 	 }
-	 free(accum);
-	 hl_active=1;
+	 *chain=hl; // add to chain
+	 chain=&hl->next;
+	 hl_active=1; // have at least one element
 	 break;
       }
       case('h'):
@@ -355,12 +355,113 @@ void InitHighlight()
 	    hl_lines=1;
 	 fskip(f);
 	 break;
+      case('i'):
+	 if(!hl_section_match)
+	 {
+	    fskip(f);
+	    continue;
+	 }
+	 /*fallthrought*/
+      case('I'):
+	 if(fscanf(f,"=%255s",str)==1) {
+	    FILE *i_f=open_syntax_d(str);
+	    if(i_f) {
+	       ReadSyntaxFile(i_f,chain);
+	       while(*chain) // skip the newly added nodes
+		  chain=&chain[0]->next;
+	    }
+	 }
+	 fskip(f);
+	 break;
+      case('s'):
+      {
+	 ch=fgetc(f);
+	 bool ignore_case=false;
+	 if(ch=='i') {
+	    ignore_case=true;
+	    ch=fgetc(f);
+	 }
+	 if(ch!='(') {
+	    fskip(f);
+	    break;
+	 }
+	 if(fscanf(f,"%255[^)\n=])",str)==1) {
+	    res=fscanf(f,"%i=",&mask);
+	    if(res!=1)
+	    {
+	       fskip(f);
+	       break;
+	    }
+	    else {
+	       mask<<=1;
+	    }
+	    rx=read_regex(f);
+	    if(!rx)
+	       goto end;
+
+	    syntax_hl *hl=new syntax_hl(-1,mask);
+	    const char *err=hl->set_rexp(rx,ignore_case);
+	    free(rx); rx=0;
+	    if(err)
+	    {
+	       ErrMsg(err);
+	       delete hl;
+	       goto end;
+	    }
+	    *chain=hl; // add to chain
+	    chain=&hl->next;
+	    hl_active=1; // have at least one element
+
+	    FILE *i_f=open_syntax_d(str);
+	    if(i_f) {
+	       ReadSyntaxFile(i_f,&hl->sub);
+	    }
+	 } else {
+	    fskip(f);
+	 }
+	 break;
+      }
       default:
 	 fskip(f);
       case('\n'):
 	 break;
       }
    }
+end:
+   fclose(f);
+}
+
+void InitHighlight()
+{
+   free(syntax_hl::selector);
+   syntax_hl::selector=0;
+   syntax_hl::free_chain(&syntax_hl::chain);
+
+   hl_active=0;
+   if(!hl_option)
+      return;
+
+   const char base_fn[]="syntax";
+   char *fn1=(char*)alloca(strlen(PKGDATADIR)+1+strlen(base_fn)+1);
+   char *fn2=(char*)alloca(strlen(HOME)+1+3+1+ strlen(base_fn)+1);
+   char *fn3=(char*)alloca(4+strlen(base_fn)+1);
+   char *fn;
+
+   sprintf(fn1,"%s/%s",PKGDATADIR,base_fn);
+   sprintf(fn2,"%s/.le/%s",HOME,base_fn);
+   sprintf(fn3,".le.%s",base_fn);
+
+   FILE *f=0;
+   if(!f)
+      f=fopen(fn=fn3,"r");
+   if(!f)
+      f=fopen(fn=fn2,"r");
+   if(!f)
+      f=fopen(fn=fn1,"r");
+   if(!f)
+      return;
+   hl_section_match=false;
+   ReadSyntaxFile(f,&syntax_hl::chain);
 }
 
 class element
@@ -370,7 +471,8 @@ class element
    static int hunk_size;
 public:
    int begin,end;
-   struct element *next;
+   element *next;
+   element *sub;
    byte color;
 
    static element *New();
@@ -378,9 +480,9 @@ public:
    static void FreeChain(element *);
 };
 
-element *element::pool=0;
-element *element::hunk=0;
-int	 element::hunk_size=0;
+element *element::pool;
+element *element::hunk;
+int	 element::hunk_size;
 
 element *element::New()
 {
@@ -401,6 +503,7 @@ element *element::New()
 
 void element::Free(element *el)
 {
+   FreeChain(el->sub);
    el->next=pool;
    pool=el;
 }
@@ -416,35 +519,27 @@ void element::FreeChain(element *el)
    pool=el;
 }
 
-void syntax_hl::attrib_line(const char *buf1,int len1,
-			    const char *buf2,int len2,unsigned char *line)
+static element *top_els;
+
+#ifdef HAVE_TIMES
+static clock_t clock0;
+#endif
+
+void syntax_hl::make_els(const char *buf1,int len1,
+			 const char *buf2,int len2,
+			 int pos0,int ll,syntax_hl *scan,element **elpp0)
 {
-   int ll=len1+len2;
-   if(ll==0)
-      return;
-
-   memset(line,'\0',ll);
-
-   // It's too expensive to color such a long text
-   if(ll>hl_lines*1024)
-      return;
-
-   element *els=0;
    element *el;
    element **elpp;
 
-#ifdef HAVE_TIMES
-   struct tms tms;
-   times(&tms);
-   clock_t clock=tms.tms_utime;
-#endif
-
-   for(syntax_hl *scan=chain; scan; scan=scan->next)
+   for( ; scan; scan=scan->next)
    {
       int pos=0;
-      elpp=&els;
+      elpp=elpp0;
       for(;;)
       {
+	 if(pos>=ll)
+	    break;
 	 pos=re_search_2(&scan->rexp_c,buf1,len1,buf2,len2,
 			 pos,ll-pos,&scan->regs,ll);
 	 if(pos==-1) // not found
@@ -460,15 +555,61 @@ void syntax_hl::attrib_line(const char *buf1,int len1,
 	       continue;
 
 	    el=element::New();
-	    el->begin=scan->regs.start[r];
-	    el->end=scan->regs.end[r];
+	    el->begin=scan->regs.start[r]+pos0;
+	    el->end=scan->regs.end[r]+pos0;
 	    el->color=scan->color;
+	    el->sub=0;
 
-	    while(*elpp && (*elpp)->begin<=el->begin)
-	       elpp=&(*elpp)->next;
+	    while(*elpp && elpp[0]->begin<=el->begin) {
+	       // check if this element is already overlapped
+	       if(elpp[0]->begin < el->begin && elpp[0]->end > el->begin) {
+		  element::Free(el);
+		  el=0;
+		  break;
+	       }
+	       elpp=&elpp[0]->next;
+	    }
+	    if(!el)  // another element has overlapped this one
+	       continue;
 
 	    el->next=*elpp;
 	    *elpp=el;
+
+	    // remove some of overlapping elements
+	    while(el->next && el->next->begin<el->end)
+	    {
+	       element *tmp=el->next;
+	       el->next=tmp->next;
+	       element::Free(tmp);
+	    }
+
+	    if(scan->sub) {
+	       // reduce the buffer so that ^ and $ work properly
+	       int sub_ll=scan->regs.end[r]-scan->regs.start[r];
+	       int sub_pos=scan->regs.start[r];
+	       int sub_len1=len1>sub_pos?len1-sub_pos:0;
+	       const char *sub_buf1=len1>sub_pos?buf1+sub_pos:0;
+	       int sub_len2=len1>sub_pos?len2:len2-(sub_pos-len1);
+	       const char *sub_buf2=len1>sub_pos?buf2:buf2+(sub_pos-len1);
+	       if(sub_len2<0) {
+		  sub_len2=0;
+		  sub_buf2=0;
+	       }
+	       if(sub_len1<=0 && sub_len2>0) {
+		  sub_len1=sub_len2;
+		  sub_buf1=sub_buf2;
+		  sub_len2=0;
+		  sub_buf2=0;
+	       }
+	       if(sub_len1>sub_ll) {
+		  sub_len1=sub_ll;
+		  sub_len2=0;
+		  sub_buf2=0;
+	       } else if(sub_len1+sub_len2>sub_ll) {
+		  sub_len2=sub_ll-sub_len1;
+	       }
+	       make_els(sub_buf1,sub_len1,sub_buf2,sub_len2,sub_pos+pos0,sub_len1+sub_len2,scan->sub,&el->sub);
+	    }
 	 }
 	 pos++;
 
@@ -476,30 +617,55 @@ void syntax_hl::attrib_line(const char *buf1,int len1,
 # ifndef CLOCKS_PER_SEC
 #  define CLOCKS_PER_SEC CLK_TCK
 # endif
+	 struct tms tms;
 	 times(&tms);
 	 clock_t clock1=tms.tms_utime;
-	 if(clock1-clock>CLOCKS_PER_SEC/5)
+	 if(clock1-clock0>CLOCKS_PER_SEC/5)
 	    break;
 #endif
       }
    }
-   for(el=els; el; el=el->next)
-   {
-      elpp=&el->next;
-      while(*elpp)
-      {
-	 if((*elpp)->begin<el->end)
-	 {
-	    element *tmp=*elpp;
-	    *elpp=tmp->next;
-	    element::Free(tmp);
-	 }
-	 else
-	    elpp=&(*elpp)->next;
-      }
+}
 
-      for(int i=el->begin; i<el->end; i++)
-	 line[i]=el->color;
+static void do_color(element *els,unsigned char *line)
+{
+   for(element *el=els; el; el=el->next)
+   {
+      int end=el->end;
+      if(el->sub) {
+	 do_color(el->sub,line);
+      } else {
+	 for(int i=el->begin; i<end; i++)
+	    line[i]=el->color;
+      }
+      // skip overlapping elements
+      while(el->next && el->next->begin<end)
+	 el=el->next;
    }
-   element::FreeChain(els);
+}
+
+void syntax_hl::attrib_line(const char *buf1,int len1,
+			    const char *buf2,int len2,unsigned char *line)
+{
+   int ll=len1+len2;
+   if(ll==0)
+      return;
+
+   memset(line,'\0',ll);
+
+   // It's too expensive to color such a long text
+   if(ll>hl_lines*1024)
+      return;
+
+#ifdef HAVE_TIMES
+   struct tms tms;
+   times(&tms);
+   clock0=tms.tms_utime;
+#endif
+
+   make_els(buf1,len1,buf2,len2,0,ll,chain,&top_els);
+   do_color(top_els,line);
+
+   element::FreeChain(top_els);
+   top_els=0;
 }
