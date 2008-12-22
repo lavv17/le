@@ -1,11 +1,13 @@
 /* Definitions for data structures and routines for the regular
    expression library, version 0.12.
 
-   Copyright (C) 1985,89,90,91,92,93,95,2000 Free Software Foundation, Inc.
+   Copyright (C) 1985, 1989, 1990, 1991, 1992, 1993, 1995, 2000, 2001,
+                 2002, 2003, 2004, 2005, 2006, 2007, 2008
+                 Free Software Foundation, Inc.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2, or (at your option)
+   the Free Software Foundation; either version 3, or (at your option)
    any later version.
 
    This program is distributed in the hope that it will be useful,
@@ -15,7 +17,7 @@
 
    You should have received a copy of the GNU General Public License
    along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301,
    USA.  */
 
 #ifndef _REGEX_H
@@ -316,7 +318,8 @@ typedef enum
   /* Error codes we've added.  */
   REG_EEND,		/* Premature end.  */
   REG_ESIZE,		/* Compiled pattern bigger than 2^16 bytes.  */
-  REG_ERPAREN		/* Unmatched ) or \); not returned from regcomp.  */
+  REG_ERPAREN,		/* Unmatched ) or \); not returned from regcomp.  */
+  REG_ERANGEX		/* Range striding over charsets.  */
 } reg_errcode_t;
 
 /* This data structure represents a compiled pattern.  Before calling
@@ -390,10 +393,21 @@ struct re_pattern_buffer
         /* Similarly for an end-of-line anchor.  */
   unsigned not_eol : 1;
 
+  /* If true, the compilation of the pattern had to look up the syntax table,
+     so the compiled pattern is only valid for the current syntax table.  */
+  unsigned used_syntax : 1;
+
 #ifdef emacs
-  /* If true, multi-byte form in the `buffer' should be recognized as a
-     multibyte character. */
+  /* If true, multi-byte form in the regexp pattern should be
+     recognized as a multibyte character.  */
   unsigned multibyte : 1;
+
+  /* If true, multi-byte form in the target of match should be
+     recognized as a multibyte character.  */
+  unsigned target_multibyte : 1;
+
+  /* Charset of unibyte characters at compiling time. */
+  int charset_unibyte;
 #endif
 
 /* [[[end pattern_buffer]]] */
@@ -562,15 +576,55 @@ extern void regfree _RE_ARGS ((regex_t *__preg));
 }
 #endif	/* C++ */
 
+/* For platform which support the ISO C amendement 1 functionality we
+   support user defined character classes.  */
+#if WIDE_CHAR_SUPPORT
+/* Solaris 2.5 has a bug: <wchar.h> must be included before <wctype.h>.  */
+# include <wchar.h>
+# include <wctype.h>
+#endif
+
+#if WIDE_CHAR_SUPPORT
+/* The GNU C library provides support for user-defined character classes
+   and the functions from ISO C amendement 1.  */
+# ifdef CHARCLASS_NAME_MAX
+#  define CHAR_CLASS_MAX_LENGTH CHARCLASS_NAME_MAX
+# else
+/* This shouldn't happen but some implementation might still have this
+   problem.  Use a reasonable default value.  */
+#  define CHAR_CLASS_MAX_LENGTH 256
+# endif
+typedef wctype_t re_wctype_t;
+typedef wchar_t re_wchar_t;
+# define re_wctype wctype
+# define re_iswctype iswctype
+# define re_wctype_to_bit(cc) 0
+#else
+# define CHAR_CLASS_MAX_LENGTH  9 /* Namely, `multibyte'.  */
+# define btowc(c) c
+
+/* Character classes.  */
+typedef enum { RECC_ERROR = 0,
+	       RECC_ALNUM, RECC_ALPHA, RECC_WORD,
+	       RECC_GRAPH, RECC_PRINT,
+	       RECC_LOWER, RECC_UPPER,
+	       RECC_PUNCT, RECC_CNTRL,
+	       RECC_DIGIT, RECC_XDIGIT,
+	       RECC_BLANK, RECC_SPACE,
+	       RECC_MULTIBYTE, RECC_NONASCII,
+	       RECC_ASCII, RECC_UNIBYTE
+} re_wctype_t;
+
+extern char re_iswctype (int ch,    re_wctype_t cc);
+extern re_wctype_t re_wctype (const unsigned char* str);
+
+typedef int re_wchar_t;
+
+extern void re_set_whitespace_regexp (const char *regexp);
+
+#endif /* not WIDE_CHAR_SUPPORT */
+
 #endif /* regex.h */
 
-/*
-Local variables:
-make-backup-files: t
-version-control: t
-trim-versions-without-asking: nil
-End:
-*/
-
 /* arch-tag: bda6e3ec-3c02-4237-a55a-01ad2e120083
    (do not change this comment) */
