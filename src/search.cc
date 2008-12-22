@@ -113,8 +113,8 @@ static bool CompilePattern()
       memset(&regs,0,sizeof(regs));
    }
 
-   re_syntax_options=RE_BK_PLUS_QM|RE_CHAR_CLASSES|RE_CONTEXT_INDEP_ANCHORS|
-		     RE_UNMATCHED_RIGHT_PAREN_ORD;
+   re_syntax_options = RE_SYNTAX_EMACS |
+      RE_BK_PLUS_QM | RE_CONTEXT_INDEP_ANCHORS | RE_UNMATCHED_RIGHT_PAREN_ORD;
    rexp.translate=0;
    word_bounds=false;
    hex_search=false;
