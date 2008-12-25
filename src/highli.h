@@ -42,7 +42,7 @@ struct syntax_hl
 
    static char *selector;
    static syntax_hl *chain;
-   static void free_chain(syntax_hl**);
+   static void free_chain(syntax_hl*);
    static void attrib_line(const char *buf1,int len1,const char *buf2,int len2,
 			   unsigned char *line);
    static void make_els(const char *buf1,int len1,const char *buf2,int len2,int pos,int ll,syntax_hl *c,class element **els);

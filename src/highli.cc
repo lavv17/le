@@ -60,14 +60,13 @@ syntax_hl::~syntax_hl()
       free(rexp);
       regfree(&rexp_c);
    }
-   free_chain(&sub);
+   free_chain(sub);
 }
 
-void syntax_hl::free_chain(syntax_hl **chain)
+void syntax_hl::free_chain(syntax_hl *chain)
 {
-   while(*chain) {
-      syntax_hl *r=*chain;
-      chain=&chain[0]->next;
+   for(syntax_hl *r=chain; r; r=chain) {
+      chain=r->next;
       delete r;
    }
 }
@@ -119,6 +118,9 @@ void c_string_interpret(char *s)
 	    break;
 	 case('n'):
 	    *s='\n';
+	    break;
+	 case('r'):
+	    *s='\r';
 	    break;
 	 case('t'):
 	    *s='\t';
@@ -375,6 +377,11 @@ static void ReadSyntaxFile(FILE *f,syntax_hl **chain)
 	 break;
       case('s'):
       {
+	 if(!hl_section_match)
+	 {
+	    fskip(f);
+	    continue;
+	 }
 	 ch=fgetc(f);
 	 bool ignore_case=false;
 	 if(ch=='i') {
@@ -435,7 +442,8 @@ void InitHighlight()
 {
    free(syntax_hl::selector);
    syntax_hl::selector=0;
-   syntax_hl::free_chain(&syntax_hl::chain);
+   syntax_hl::free_chain(syntax_hl::chain);
+   syntax_hl::chain=0;
 
    hl_active=0;
    if(!hl_option)
@@ -504,6 +512,7 @@ element *element::New()
 void element::Free(element *el)
 {
    FreeChain(el->sub);
+   el->sub=0;
    el->next=pool;
    pool=el;
 }

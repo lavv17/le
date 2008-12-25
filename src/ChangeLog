@@ -1,3 +1,7 @@
+2008-12-25  lav
+
+	* highli.cc: fixed free_chain; handle \r; ignore s-lines in ignored sections.
+
 2008-12-22  lav
 
 	* highli.cc, highli.h: add support for sub-text highlighting;
