@@ -1,9 +1,7 @@
 
-nobase_pkgdata_DATA = syntax colors-black colors-blue colors-white colors-defbg\
- colors-green mainmenu mainmenu-ru keymap-emacs\
- syntax.d/[a-z]*
+nobase_pkgdata_DATA = colors-* mainmenu* keymap-* syntax syntax.d/[a-z]*
 
-EXTRA_DIST   = $(pkgdata_DATA)
+EXTRA_DIST   = $(nobase_pkgdata_DATA)
 
 colors: ../src/le
 	../src/le --dump-colors > $@
