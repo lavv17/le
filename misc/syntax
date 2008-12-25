@@ -65,6 +65,9 @@ c2=\\[|\\]|\\(|\\)|{|}|,
 /named.conf|/-\*- *(named|bind) *-\*-
 i=named-conf
 
+/logrotate.conf|/-\*- *logrotate *-\*-
+i=logrotate-conf
+
 # nroff mode (lav)
 /*.[1-9]|/-\*- *nroff *-\*-
 c3=^\.\\\\".*$
@@ -260,6 +263,7 @@ c3=^[ \t]*#.*$
 c2=:|\$|[+-:]?=|>|<|`|\||\[|\]|\(|\)|{|}|&
 c1,2=(^|[^[:alnum:]_])(m4_[[:alnum:]_]+)
 c3="|'
+
 /*.ac
 c3,2=(^|[^[:alnum:]_])dnl([^[:alnum:]_].*)?$
 c1,2=(^|[^[:alnum:]_])(A[CM]_[[:alnum:]_]+)

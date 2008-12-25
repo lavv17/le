@@ -1,3 +1,10 @@
+Version 1.14.0 - 2008-12-25
+
+* allow syntax pattern inclusion from additional files.
+* add support for nested syntax descriptions.
+* use newer regex with non-greedy modifier (useful for C comments highlight).
+* improved syntax descriptions for shell, configure.ac, perl.
+
 Version 1.13.11 - 2008-10-25
 
 * fixed some syntax selector patterns.
