@@ -1,3 +1,4 @@
+# -*- LE-syntax -*-
 i=c-literal
 i=c++-comment
 c1,2=([^[:alnum:]_]|^)(acl|address|algorithm|allow-query|allow-recursion|allow-transfer\

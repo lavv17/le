@@ -1,6 +1,5 @@
 # -*- LE-syntax -*-
 # Assembler mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.S|*.s
 c3=@[^\n]*\n
 c3=;[^\n]*\n
 c3="([^"\\]|\\\\(.|\n))*"

@@ -1,6 +1,5 @@
 # -*- LE-syntax -*-
 # Ada mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.adb|*.ads|*.adc|*.gpr
 c3=--[^\n]*\n
 c3="([^"\\]|\\\\(.|\n))*"
 c1,2=([^[:alnum:]_]|^)(abort|else|new|return|abs|elsif|not|reverse|abstract\

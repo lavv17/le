@@ -1,5 +1,5 @@
+# -*- LE-syntax -*-
 # Eiffel mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.e
 c3=--[^\n]*\n
 c3="([^"\\]|\\\\(.|\n))*"
 c1,2=([^[:alnum:]_]|^)(alias|all|and|as|check|class|creation|debug\

@@ -1,5 +1,5 @@
+# -*- LE-syntax -*-
 # Sather mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.sa
 c3=--[^\n]*$
 c3="([^"\\]|\\\\(.|\n))*"
 c1,2=([^[:alnum:]_]|^)(abstract|and|any|assert|attr|bind|break!|builtin|case\
