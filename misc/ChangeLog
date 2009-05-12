@@ -1,3 +1,9 @@
+2009-05-12	Raphael Geissert <atomo64@gmail.com>
+
+	* syntax: Recognise files starting with ^diff; Colourise the whole added/removed lines,
+	  not just the symbols; s/Enhaces/Enhances; Fix an error related to active/passive caused
+	  by accident.
+
 2008-10-07	lav
 
 	* syntax: fixed tags.

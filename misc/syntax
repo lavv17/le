@@ -180,11 +180,12 @@ c1,2=([^[:alnum:]/_]|^)(if|else|elif|fi|lft|rt|top|bot|iff|not\
 c2=:=|\(|\)|#|=|;|\[|]|---|--|\.\.\.|\.\.|{|}|,
 
 # Patch mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.pch|*.diff|*.patch
-c3=^\+\+.*$
-c3=^--.*$
-c3=^@@.*$
-c2=^(\+|-)
+/*.pch|*.diff|*.patch|/^diff
+c2=^\+\+.*$
+c2=^--.*$
+c2=^@@.*$
+c3=^\+.*$
+c1=^-.*$
 
 # Generic configuration files, by Serge Vakulenko <vak@cronyx.ru>
 /*.conf|*.cf|*.cfg|*.ini
@@ -220,7 +221,7 @@ c2=\$|=|<|>|\||,
 c2=^ \.
 c1,1=^(Source|Package|Version|Section|Priority|Maintainer|Homepage|Description\
  |Standards-Version|(Build-)?Depends(-Indep)?|Architecture|Provides|Replaces\
- |Recommends|Suggests|(Build-)?Conflicts(-Indep)?|Enhaces|Uploaders|Vcs-Browser\
+ |Recommends|Suggests|(Build-)?Conflicts(-Indep)?|Enhances|Uploaders|Vcs-Browser\
  |Essential|Installed-Size|Binary|Format|Files|Closes|Changes|Urgency\
  |Distribution|Date|Changed-By|Checksums-Sha(1|256))
 ci1=^Vcs-[[:alnum:]]+
@@ -276,7 +277,8 @@ i=shell
 c3=^[ \t]*#.*
 c2=[ \t]*version=[0-9]
 c1,1=^[ \t]*(opt(ion)?s)
-c1=(downloadurl|[du]?version|filename|active|passive|pasv)mangle
+c1=(downloadurl|[du]?version|filename)mangle
+c1=active|passive|pasv
 c2=,
 c2,1=[^\\](\.)[^/]+[ \n\t]
 c3=\(.+\)
@@ -305,3 +307,18 @@ c1,1=^((Generic)?Name|Comment|(Try)?Exec|Icon|X-[a-zA-Z0-9-]+|Type|Categories\
 
 /*.fvwm|*.fvwmrc|*.fvwm2rc
 i=fvwm2
+
+# Pascal mode, by Raphael Geissert <atomo64@gmail.com>
+/*.pas
+ci1,2=([^[:alnum:]_]|^)(\
+begin|end|program\
+|if|in|else|do|while|then|for|(down)?to|until|repeat|case|with|of\
+|and|or|not\
+|var|type|real|integer|char|boolean|string|nil|array|const|file|packed|byte\
+|procedure|record|set\
+|new|function|goto|label|uses\
+)([^[:alnum:]_]|$)
+ci2,1=^end(\.)
+c2=<|>|;|\(|\)|\[|\]|:|=|[+*/-]|div|mod|\.\.
+c3={[^}]*}
+c3='[^']*'
