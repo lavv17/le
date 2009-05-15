@@ -196,7 +196,8 @@ c2,1=^\[[^\]]+(\])
 c1,1=^\[([^\]]+)\]
 
 # makefile mode, by Raphael Geissert <atomo64@gmail.com>
-/Makefile|Makefile.*|makefile|makefile.*|*.mk|/^#![ \t]*/.*/make|-\*-.*makefile[^\w]
+/[Mm]akefile|[Mm]akefile.*|*.mk|/^#![ \t]*/.*/make|-\*-.*makefile[^\w]
+s(shell)1=^\t[@-]*(.*(?:\\\\\n(?:.*\\\\\n)*.*)?)
 c3=^[ \t]*#.*$
 c3="|'
 c1,2=([^[:alnum:]_]|^)(findstring|ifn?eq|endif|define|shell\
