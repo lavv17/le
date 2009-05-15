@@ -31,3 +31,7 @@ syntax2=fg:magenta,bg:white
 syntax2_bw=bold
 syntax3=fg:blue,bg:white
 syntax3_bw=dim
+syntax4=fg:green,bg:white
+syntax4_bw=dim
+highlight=bold,fg:yellow,bg:black
+highlight_bw=bold

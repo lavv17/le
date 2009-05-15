@@ -31,5 +31,7 @@ syntax2=fg:magenta
 syntax2_bw=bold
 syntax3=fg:green
 syntax3_bw=dim
+syntax4=fg:cyan
+syntax4_bw=dim
 highlight=bold,fg:yellow,bg:black
 highlight_bw=bold

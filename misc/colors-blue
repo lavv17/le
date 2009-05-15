@@ -29,5 +29,7 @@ syntax2=bold,fg:cyan,bg:blue
 syntax2_bw=bold
 syntax3=bold,fg:green,bg:blue
 syntax3_bw=dim
+syntax4=bold,fg:magenta,bg:blue
+syntax4_bw=dim
 highlight=bold,fg:yellow,bg:black
 highlight_bw=bold
