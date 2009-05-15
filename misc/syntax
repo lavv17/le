@@ -309,17 +309,5 @@ c1,1=^((Generic)?Name|Comment|(Try)?Exec|Icon|X-[a-zA-Z0-9-]+|Type|Categories\
 /*.fvwm|*.fvwmrc|*.fvwm2rc
 i=fvwm2
 
-# Pascal mode, by Raphael Geissert <atomo64@gmail.com>
 /*.pas
-ci1,2=([^[:alnum:]_]|^)(\
-begin|end|program\
-|if|in|else|do|while|then|for|(down)?to|until|repeat|case|with|of\
-|and|or|not\
-|var|type|real|integer|char|boolean|string|nil|array|const|file|packed|byte\
-|procedure|record|set\
-|new|function|goto|label|uses\
-)([^[:alnum:]_]|$)
-ci2,1=^end(\.)
-c2=<|>|;|\(|\)|\[|\]|:|=|[+*/-]|div|mod|\.\.
-c3={[^}]*}
-c3='[^']*'
+i=pascal

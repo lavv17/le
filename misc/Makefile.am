@@ -6,7 +6,7 @@ syntax = syntax syntax.d/ada syntax.d/as syntax.d/awk syntax.d/c-comment \
  syntax.d/fvwm2 syntax.d/gema syntax.d/html syntax.d/java \
  syntax.d/logrotate-conf syntax.d/lout syntax.d/named-conf syntax.d/perl \
  syntax.d/php syntax.d/sather syntax.d/shell syntax.d/snmp-mib syntax.d/sql \
- syntax.d/verilog
+ syntax.d/verilog syntax.d/pascal
 
 nobase_pkgdata_DATA = $(colors) $(keymaps) $(mainmenus) $(syntax)
 EXTRA_DIST = $(nobase_pkgdata_DATA)
