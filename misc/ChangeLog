@@ -1,3 +1,7 @@
+2009-05-15	lav
+
+	* syntax.d/html: fixed comment pattern.
+
 2009-05-12	Raphael Geissert <atomo64@gmail.com>
 
 	* syntax: Recognise files starting with ^diff; Colourise the whole added/removed lines,
