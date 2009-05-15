@@ -394,12 +394,13 @@ static void ReadSyntaxFile(FILE *f,syntax_hl **chain)
 	 }
 	 if(fscanf(f,"%255[^)\n=])",str)==1) {
 	    res=fscanf(f,"%i=",&mask);
-	    if(res!=1)
-	    {
-	       fskip(f);
-	       break;
-	    }
-	    else {
+	    if(res!=1) {
+	       mask=1;
+	       if(fgetc(f)!='=') {
+		  fskip(f);
+		  continue;
+	       }
+	    } else {
 	       mask<<=1;
 	    }
 	    rx=read_regex(f);
