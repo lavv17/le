@@ -311,3 +311,6 @@ i=fvwm2
 
 /*.pas
 i=pascal
+
+/*.t2t
+i=txt2tags
