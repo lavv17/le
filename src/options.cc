@@ -269,6 +269,8 @@ const struct init colors[]=
    { "syntax2_bw",	STR,  color_descriptions[SYNTAX2+MAX_COLOR_NO]	   },
    { "syntax3",		STR,  color_descriptions[SYNTAX3]		   },
    { "syntax3_bw",	STR,  color_descriptions[SYNTAX3+MAX_COLOR_NO]	   },
+   { "syntax4",		STR,  color_descriptions[SYNTAX4]		   },
+   { "syntax4_bw",	STR,  color_descriptions[SYNTAX4+MAX_COLOR_NO]	   },
    { "highlight",	STR,  color_descriptions[HIGHLIGHT]		   },
    { "highlight_bw",	STR,  color_descriptions[HIGHLIGHT+MAX_COLOR_NO]   },
    { NULL }
@@ -1231,7 +1233,7 @@ int ColorHandleBut(const char *button,int index)
    static int color_xlat[]={
       NORMAL_TEXT,BLOCK_TEXT,STATUS_LINE,SCROLL_BAR,ERROR_WIN,VERIFY_WIN,
       HELP_WIN,DIALOGUE_WIN,MENU_WIN,CURR_BUTTON,DISABLED_ITEM,SHADOWED,
-      SYNTAX1,SYNTAX2,SYNTAX3};
+      SYNTAX1,SYNTAX2,SYNTAX3,SYNTAX4};
    if(index<(int)(sizeof(color_xlat)/sizeof(*color_xlat)))
    {
       int color_no=color_xlat[index];
@@ -1263,32 +1265,21 @@ void  ColorsOpt()
    memcpy(new_bw_pal,bw_pal,sizeof(new_bw_pal));
 
    static struct opt m[]={
-      {" Normal text                        ",BUTTON,NULL,2,2},
-      {" Block text                         ",BUTTON,NULL,2,3},
-      {" Status line                        ",BUTTON,NULL,2,4},
-      {" Scroll bar                         ",BUTTON,NULL,2,5},
-      {" Error window                       ",BUTTON,NULL,2,6},
-      {" Verify window                      ",BUTTON,NULL,2,7},
-      {" Help window                        ",BUTTON,NULL,2,8},
-      {" Dialogue window                    ",BUTTON,NULL,2,9},
-      {" Menu                               ",BUTTON,NULL,2,10},
-      {" Current button                     ",BUTTON,NULL,2,11},
-      {" Disabled button                    ",BUTTON,NULL,2,12},
-      {" Shadow                             ",BUTTON,NULL,2,13},
-      {" Syntax 1                           ",BUTTON,NULL,2,14},
-      {" Syntax 2                           ",BUTTON,NULL,2,15},
-      {" Syntax 3                           ",BUTTON,NULL,2,16},
-//       {"[&Save]",			      BUTTON,NULL,MIDDLE-15,FDOWN-2},
-//       {"[Save for &tty]",                     BUTTON,NULL,MIDDLE-4, FDOWN-2},
-//       {"[&Use]",                              BUTTON,NULL,MIDDLE+7, FDOWN-2},
-//       {"[&Cancel]",			      BUTTON,NULL,MIDDLE+14,FDOWN-2},
+      {" Normal text      ",BUTTON,NULL,2,2},{" Block text       ",BUTTON,NULL,22,2},
+      {" Status line      ",BUTTON,NULL,2,3},{" Scroll bar       ",BUTTON,NULL,22,3},
+      {" Error window     ",BUTTON,NULL,2,4},{" Verify window    ",BUTTON,NULL,22,4},
+      {" Help window      ",BUTTON,NULL,2,5},{" Dialogue window  ",BUTTON,NULL,22,5},
+      {" Menu             ",BUTTON,NULL,2,6},{" Current button   ",BUTTON,NULL,22,6},
+      {" Disabled button  ",BUTTON,NULL,2,7},{" Shadow           ",BUTTON,NULL,22,7},
+      {" Syntax 1         ",BUTTON,NULL,2,8},{" Syntax 2         ",BUTTON,NULL,22,8},
+      {" Syntax 3         ",BUTTON,NULL,2,9},{" Syntax 4         ",BUTTON,NULL,22,9},
       {"[   &Ok   ]",                         BUTTON,NULL,MIDDLE-8,FDOWN-2},
       {"[ &Cancel ]",			      BUTTON,NULL,MIDDLE+8,FDOWN-2},
       {NULL}};
 
    color_applied=false;
 
-   Dialogue(m,40,21," Select color to tune ",NULL,NULL,TOEatKey,ColorHandleBut);
+   Dialogue(m,42,14," Select color to tune ",NULL,NULL,TOEatKey,ColorHandleBut);
 
    if(color_applied)
    {

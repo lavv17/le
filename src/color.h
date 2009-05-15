@@ -33,6 +33,7 @@ enum
    SYNTAX1,
    SYNTAX2,
    SYNTAX3,
+   SYNTAX4,
    HIGHLIGHT,
 
    MAX_COLOR_NO

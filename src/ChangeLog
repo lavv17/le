@@ -1,3 +1,8 @@
+2009-05-15  lav
+
+	* highli.cc: handle s without a subex number.
+	* color.cc, color.h, options.cc: add syntax4 color.
+
 2008-12-25  lav
 
 	* highli.cc: fixed free_chain; handle \r; ignore s-lines in ignored sections.
