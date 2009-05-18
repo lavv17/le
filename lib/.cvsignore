@@ -38,3 +38,12 @@ intprops.h
 strerror.c
 string.in.h
 errno.in.h
+mbrtowc.c
+mbsinit.c
+verify.h
+alignof.h
+mbsrtowcs-state.c
+mbsrtowcs.c
+select.c
+strnlen1.c
+strnlen1.h
