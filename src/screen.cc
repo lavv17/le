@@ -481,14 +481,14 @@ static unsigned mkhash(byte *data,int len)
    return res;
 }
 
-static const attr *norm_attr,*blk_attr,*syntax[3];
+static const attr *norm_attr,*blk_attr,*syntax[SYNTAX_COLORS];
 static const attr *FindPosAttr(offs ptr,num line,num col,byte *hlp)
 {
    if(col>=TextWinWidth-MBCharWidth && !EolAt(ptr) && !EolAt(ptr+MBCharSize))
       return SHADOW_ATTR;
    else if(InBlock(ptr,line+ScrLine,col+ScrShift))
       return blk_attr;
-   else if(hlp && *hlp>0 && *hlp<4)
+   else if(hlp && *hlp>0 && *hlp<=SYNTAX_COLORS)
       return syntax[*hlp-1];
    else
       return norm_attr;
@@ -507,9 +507,8 @@ void  Redisplay(num line,offs ptr,num limit)
 
    norm_attr=NORMAL_TEXT_ATTR;
    blk_attr=BLOCK_TEXT_ATTR;
-   syntax[0]=find_attr(SYNTAX1);
-   syntax[1]=find_attr(SYNTAX2);
-   syntax[2]=find_attr(SYNTAX3);
+   for(i=0; i<SYNTAX_COLORS; i++)
+      syntax[i]=find_attr(SYNTAX1+i);
 
    if(!hex)
    {

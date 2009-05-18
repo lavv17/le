@@ -39,6 +39,8 @@ enum
    MAX_COLOR_NO
 };
 
+#define SYNTAX_COLORS 4
+
 struct attr
 {
    chtype n_attr;    // normal

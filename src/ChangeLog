@@ -1,3 +1,8 @@
+2009-05-18  lav
+
+	* screen.cc, color.h: fixes for syntax4.
+	* color.cc: fixed default syntax4 color.
+
 2009-05-15  lav
 
 	* highli.cc: handle s without a subex number.

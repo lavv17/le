@@ -120,7 +120,7 @@ const color default_color_pal[]=
    {SYNTAX1,	  A_BOLD,     COLOR_YELLOW,  COLOR_BLUE},
    {SYNTAX2,	  A_BOLD,     COLOR_CYAN,    COLOR_BLUE},
    {SYNTAX3,	  A_BOLD,     COLOR_GREEN,   COLOR_BLUE},
-   {SYNTAX4,	  A_DIM,      COLOR_MAGENTA, COLOR_BLUE},
+   {SYNTAX4,	  A_BOLD,     COLOR_MAGENTA, COLOR_BLUE},
    {HIGHLIGHT,	  A_BOLD,     COLOR_YELLOW,  COLOR_BLACK},
    {-1}
 };
