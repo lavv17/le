@@ -36,3 +36,11 @@ strerror.m4
 string_h.m4
 errno_h.m4
 sys_ioctl_h.m4
+00gnulib.m4
+locale-fr.m4
+locale-ja.m4
+locale-zh.m4
+mbsinit.m4
+multiarch.m4
+mbsrtowcs.m4
+select.m4

@@ -1,3 +1,9 @@
+Version 1.14.1 - 2009-05-19
+
+* fixed html comment pattern.
+* added fourth syntax color.
+* added txt2tags syntax patterns (Stefano D'Archino).
+
 Version 1.14.0 - 2008-12-25
 
 * allow syntax pattern inclusion from additional files.
