@@ -125,9 +125,11 @@ void c_string_interpret(char *s)
 	 case('t'):
 	    *s='\t';
 	    break;
+#if 0 // \b is word bound in regex (one could type \\b, but it's not convenient)
 	 case('b'):
 	    *s='\b';
 	    break;
+#endif
 	 default:
 	    s++;
 	    continue;

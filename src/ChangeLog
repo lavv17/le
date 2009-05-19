@@ -1,3 +1,7 @@
+2009-05-19  lav
+
+	* highli.cc: don't interpret \b
+
 2009-05-18  lav
 
 	* screen.cc, color.h: fixes for syntax4.
