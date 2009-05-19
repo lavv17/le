@@ -3,12 +3,11 @@
 s(shell)1=^\t[@-]*(.*(?:\\\\\n(?:.*\\\\\n)*.*)?)
 c3=^[ \t]*#.*$
 c3="|'
-c1,2=([^[:alnum:]_]|^)(findstring|ifn?eq|endif|define|shell\
+c1,2=([^[:alnum:]_-]|^)(findstring|ifn?eq|endif|define|shell\
  |else|while|if|fi|then|do|done|for|case|esac|export|MAKE|ifn?def\
  |(pat)?subst|filter(-out)?|foreach|words|call|wildcard\
-)([^[:alnum:]_]|$)
+)([^[:alnum:]_-]|$)
 c1,2=([^[:alnum:]_]|^)(include)([ \t].+$)
 c2=:|\$|[+-:?]?=|>|<|`|\||\[|\]|\(|\)|{|}|&|\$[@*]
 ci1,1=^([ [:alnum:]/%()$,_.-]+):[^=]
-c1,1=^[ \t]*@?(-)[^-][^ \t]
-c1,1=^[ \t]*(@)
+c4,1=^\t([@-]+)
