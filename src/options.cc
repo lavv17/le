@@ -271,6 +271,10 @@ const struct init colors[]=
    { "syntax3_bw",	STR,  color_descriptions[SYNTAX3+MAX_COLOR_NO]	   },
    { "syntax4",		STR,  color_descriptions[SYNTAX4]		   },
    { "syntax4_bw",	STR,  color_descriptions[SYNTAX4+MAX_COLOR_NO]	   },
+   { "syntax5",		STR,  color_descriptions[SYNTAX5]		   },
+   { "syntax5_bw",	STR,  color_descriptions[SYNTAX5+MAX_COLOR_NO]	   },
+   { "syntax6",		STR,  color_descriptions[SYNTAX6]		   },
+   { "syntax6_bw",	STR,  color_descriptions[SYNTAX6+MAX_COLOR_NO]	   },
    { "highlight",	STR,  color_descriptions[HIGHLIGHT]		   },
    { "highlight_bw",	STR,  color_descriptions[HIGHLIGHT+MAX_COLOR_NO]   },
    { NULL }
@@ -1233,7 +1237,7 @@ int ColorHandleBut(const char *button,int index)
    static int color_xlat[]={
       NORMAL_TEXT,BLOCK_TEXT,STATUS_LINE,SCROLL_BAR,ERROR_WIN,VERIFY_WIN,
       HELP_WIN,DIALOGUE_WIN,MENU_WIN,CURR_BUTTON,DISABLED_ITEM,SHADOWED,
-      SYNTAX1,SYNTAX2,SYNTAX3,SYNTAX4};
+      SYNTAX1,SYNTAX2,SYNTAX3,SYNTAX4,SYNTAX5,SYNTAX6};
    if(index<(int)(sizeof(color_xlat)/sizeof(*color_xlat)))
    {
       int color_no=color_xlat[index];
@@ -1273,13 +1277,14 @@ void  ColorsOpt()
       {" Disabled button  ",BUTTON,NULL,2,7},{" Shadow           ",BUTTON,NULL,22,7},
       {" Syntax 1         ",BUTTON,NULL,2,8},{" Syntax 2         ",BUTTON,NULL,22,8},
       {" Syntax 3         ",BUTTON,NULL,2,9},{" Syntax 4         ",BUTTON,NULL,22,9},
+      {" Syntax 5         ",BUTTON,NULL,2,10},{" Syntax 6         ",BUTTON,NULL,22,10},
       {"[   &Ok   ]",                         BUTTON,NULL,MIDDLE-8,FDOWN-2},
       {"[ &Cancel ]",			      BUTTON,NULL,MIDDLE+8,FDOWN-2},
       {NULL}};
 
    color_applied=false;
 
-   Dialogue(m,42,14," Select color to tune ",NULL,NULL,TOEatKey,ColorHandleBut);
+   Dialogue(m,42,15," Select color to tune ",NULL,NULL,TOEatKey,ColorHandleBut);
 
    if(color_applied)
    {

@@ -34,12 +34,14 @@ enum
    SYNTAX2,
    SYNTAX3,
    SYNTAX4,
+   SYNTAX5,
+   SYNTAX6,
    HIGHLIGHT,
 
    MAX_COLOR_NO
 };
 
-#define SYNTAX_COLORS 4
+#define SYNTAX_COLORS 6
 
 struct attr
 {

@@ -1,3 +1,7 @@
+2009-05-22  lav
+
+	* color.h, color.cc, options.cc: add SYNTAX5, SYNTAX6.
+
 2009-05-19  lav
 
 	* highli.cc: don't interpret \b
