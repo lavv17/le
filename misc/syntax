@@ -19,6 +19,8 @@
 # c2 usually marks important syntax elements
 # c3 usually marks comments or text strings
 # c4 usually marks preprocessor directives
+# c5
+# c6
 
 # i=file includes specified file from PKGDATADIR/syntax.d/file
 #	(useful for large descriptions or common patterns)
