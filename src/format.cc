@@ -421,15 +421,15 @@ void WordWrapInsertHook()
    if(GetCol()<LineLen+LeftMargin)
       return;
    offs pos=CurrentPos;
-   while(!BolAt(pos) && !SpaceLeft())
+   while(!BolAt(pos) && !SpaceLeftAt(pos))
       pos--;
    if(pos==CurrentPos)
       return;
    offs word_begin=pos;
-   while(!BolAt(pos) && SpaceLeft())
+   while(!BolAt(pos) && SpaceLeftAt(pos))
       pos--;
    if(BolAt(pos))
-      return;
+      return;  // it was the first word on the line
    TextPoint old(CurrentPos);
    CurrentPos=word_begin;
    DeleteBlock(word_begin-pos,0);

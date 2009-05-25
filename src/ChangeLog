@@ -1,3 +1,7 @@
+2009-05-25  lav
+
+	* inline.h, format.cc: fixed auto word wrap.
+
 2009-05-22  lav
 
 	* color.h, color.cc, options.cc: add SYNTAX5, SYNTAX6.

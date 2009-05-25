@@ -122,3 +122,8 @@ bool SpaceLeft()
 {
    return le_isspace(WCharLeft());
 }
+static inline
+bool SpaceLeftAt(offs pos)
+{
+   return le_isspace(WCharLeftAt(pos));
+}
