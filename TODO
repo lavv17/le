@@ -8,10 +8,6 @@
 
 6. Get rid of fixed size arrays.
 
-7. Move to newer GNU rx (use rx_make_solutions/rx_next_solution)
-
 8. mail formatting: http://www.newsreaders.com/gnksa/wrapping.tar.gz
-
-9. more colors for syntax highlight, scrollable color menu.
 
 11. mmap range (edit part of file in mmap mode)
