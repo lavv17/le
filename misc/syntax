@@ -102,6 +102,9 @@ i=shell
 /*.java|/-\*- *java *-\*-
 i=java
 
+/*.js|/-\*- *javascript *-\*-
+i=javascript
+
 # po (i18n) mode (lav)
 /*.po|*.pot
 c1=^#, .*
