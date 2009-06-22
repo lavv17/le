@@ -11,6 +11,7 @@ syntax = syntax syntax.d/ada syntax.d/as syntax.d/awk syntax.d/c++-comment	\
  syntax.d/verilog syntax.d/javascript
 
 nobase_pkgdata_DATA = $(colors) $(keymaps) $(mainmenus) $(syntax)
+pkgdata_SCRIPTS = help
 EXTRA_DIST = $(nobase_pkgdata_DATA)
 
 colors: ../src/le

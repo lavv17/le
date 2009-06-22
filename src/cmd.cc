@@ -32,7 +32,7 @@ char    Shell  [256]="exec $SHELL";
 char    Make   [256]="exec make";
 char    Run    [256]="exec make run";
 char    Compile[256]="exec make \"$FNAME.o\"";
-char    HelpCmd[256]="exec man \"$WORD\"";
+char    HelpCmd[256]="exec "PKGDATADIR"/help";
 #else
 char    Shell  [256]="command";
 char    Make   [256]="make";

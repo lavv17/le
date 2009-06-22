@@ -21,8 +21,8 @@
 #ifndef EDIT_H
 #define EDIT_H
 
-#include    <sys/types.h>
-#include    <time.h>
+#include <sys/types.h>
+#include <time.h>
 
 #if !defined(bool)
 # define bool LE_CURSES_BOOL_TYPE
@@ -51,6 +51,7 @@ typedef unsigned char   byte;
 typedef long            offs;
 typedef long            num;
 
+#include <configmake.h>
 #include "textpoin.h"
 #include "color.h"
 #include "window.h"

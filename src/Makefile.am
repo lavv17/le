@@ -17,7 +17,6 @@ le_DEPENDENCIES = $(GNULIB)
 le_LDADD = $(GNULIB) $(CURSES_LIBS) $(LIBINTL)
 
 INCLUDES = -I$(top_builddir)/lib -I$(top_srcdir)/lib $(CURSES_INCLUDES)
-AM_CPPFLAGS = -DPKGDATADIR=\"$(pkgdatadir)\"
 
 EXTRA_DIST = le.hlp
 pkgdata_DATA = le.hlp
