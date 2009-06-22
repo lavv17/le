@@ -89,7 +89,7 @@ int    LockFile(int fd,bool drop)
          }
          fstat(fd,&st);
 
-         sprintf(msg,"This file is already locked by prosess %ld",(long)Lock1.l_pid);
+         sprintf(msg,"This file is already locked by process %ld",(long)Lock1.l_pid);
          switch(ReadMenuBox(LockEnforce(st.st_mode)?
             LockMenu1:LockMenu,HORIZ,msg," Lock Error ",
 	    VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))

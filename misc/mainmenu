@@ -101,7 +101,7 @@ submenu "&Options"
       function "Full 8-bit, no ctrl chars"   set-charset-8bit-no-control   hide
       function "&Save terminal options"	     save-terminal-options	   hide
       end
-   function "&Appearence"  appearence-options
+   function "&Appearance"  appearance-options
    submenu  "&Colors"
       function "&Edit"	edit-colors    hide
       function "&Save"	save-colors    hide

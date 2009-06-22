@@ -150,7 +150,7 @@ ActionProcRec  EditorActionProcTable[]=
    {EDITOR_OPTIONS,Options},
    {TERMINAL_OPTIONS,TermOpt},
    {FORMAT_OPTIONS,FormatOptions},
-   {APPEARENCE_OPTIONS,AppearOpt},
+   {APPEARANCE_OPTIONS,AppearOpt},
    {PROGRAM_OPTIONS,ProgOpt},
    {UNDO_OPTIONS,UndoOpt},
    {COLOR_TUNING,ColorsOpt},

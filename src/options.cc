@@ -1143,7 +1143,7 @@ void  FormatOptions(void)
 }
 void  AppearOpt(void)
 {
-   Dialogue(AppearOptTbl,26,11," Appearence Options ",NULL,NULL,TOEatKey,TOHandleBut);
+   Dialogue(AppearOptTbl,26,11," Appearance Options ",NULL,NULL,TOEatKey,TOHandleBut);
 }
 void  ProgOpt(void)
 {

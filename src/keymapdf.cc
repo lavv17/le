@@ -307,7 +307,7 @@ const ActionCodeRec DefaultActionCodeTable[]=
    {EDITOR_OPTIONS,"\017"},
 //   {TERMINAL_OPTIONS,TermOpt,"terminal-options"},
 //   {FORMAT_OPTIONS,FormatOptions,"format-options"},
-//   {APPEARENCE_OPTIONS,AppearOpt,"appearence-options"},
+//   {APPEARANCE_OPTIONS,AppearOpt,"appearance-options"},
 //   {SAVE_OPTIONS,UpdtOpt,"save-options"},
 //   {SAVE_OPTIONS_LOCAL,SaveOpt,"save-options-local"},
 

@@ -161,7 +161,7 @@ const ActionNameRec ActionNameTable[]=
    {EDITOR_OPTIONS,"editor-options"},
    {TERMINAL_OPTIONS,"terminal-options"},
    {FORMAT_OPTIONS,"format-options"},
-   {APPEARENCE_OPTIONS,"appearence-options"},
+   {APPEARANCE_OPTIONS,"appearance-options"},
    {SAVE_OPTIONS,"save-options"},
    {SAVE_OPTIONS_LOCAL,"save-options-local"},
 

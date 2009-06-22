@@ -87,7 +87,7 @@ submenu "&Настройка"
       function "Все 8 бит, без &управл. символов"   set-charset-8bit-no-control   hide
       function "&Сохранить установки терминала"	     save-terminal-options	   hide
       end
-   function "&Внешний вид"  appearence-options
+   function "&Внешний вид"  appearance-options
    submenu  "&Цвета"
       function "&Правка"	edit-colors    hide
       function "&Сохранить"	save-colors    hide
