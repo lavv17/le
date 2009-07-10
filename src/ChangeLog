@@ -1,6 +1,6 @@
-2009-06-22	Raphael Geissert <atomo64@gmail.com>
+2009-07-10	Raphael Geissert <atomo64@gmail.com>
 
-	* mainmenu, mainmenu-ru: fixed typos.
+	* edit.cc: fix a typo.
 
 2009-05-25  lav
 

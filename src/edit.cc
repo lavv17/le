@@ -550,7 +550,7 @@ void  PrintUsage(int arg)
 	  "    --dump-colors  dump default color map to stdout and exit\n"
 	  "    --mmap         load file using mmap (read only)\n"
 	  "    --mmap-rw      mmap read-write. Use with extreme caution,\n"
-	  "                   expecially on your hard disk!\n"
+	  "                   especially on your hard disk!\n"
 	  "                   All changes go directly to file/disk.\n"
 	  "    --help         this description\n"
 	  "    --version      print LE version\n"
