@@ -1,3 +1,7 @@
+2009-07-10	Raphael Geissert <atomo64@gmail.com>
+
+	* syntax: improve the syntax colouring regexes of the Debian control file mode.
+
 2009-06-22	Raphael Geissert <atomo64@gmail.com>
 
 	* mainmenu, mainmenu-ru: fixed typos.
