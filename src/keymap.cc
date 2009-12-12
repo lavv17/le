@@ -868,7 +868,8 @@ int   GetNextAction()
 	    if(kt==KeyTree)
 	       return MOUSE_ACTION;
 	    MEVENT mev;
-	    while(getmouse(&mev)==OK)
+	    int limit=100; // workaround for ncurses bug
+	    while(getmouse(&mev)==OK && limit-->0)
 	       ;  // flush mouse event queue
 	    continue;
 	 }
