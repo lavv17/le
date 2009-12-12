@@ -1245,7 +1245,7 @@ int ColorHandleBut(const char *button,int index)
                 FindColor(new_bw_pal,color_no));
       return -1;
    }
-   char *l=strchr(button,'&');
+   const char *l=strchr(button,'&');
    if(!l)
       return -1;
    char res=toupper(l[1]);

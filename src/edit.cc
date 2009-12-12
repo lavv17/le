@@ -565,7 +565,7 @@ static bool has_widechars()
 {
    for(int c=' '; c<256; c++)
    {
-      wchar_t w=btowc(c);
+      wint_t w=btowc(c);
       if(w!=WEOF && w>=256)
 	 return 1;
    }
