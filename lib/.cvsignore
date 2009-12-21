@@ -47,3 +47,11 @@ mbsrtowcs.c
 select.c
 strnlen1.c
 strnlen1.h
+memchr.c
+memchr.valgrind
+stddef.in.h
+close-hook.c
+close-hook.h
+sockets.c
+sockets.h
+w32sock.h

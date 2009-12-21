@@ -14,4 +14,4 @@ ISINDEX|TABLE|TR|TD( WIDTH| VALIGN)?|TH|CAPTION|COL(GROUP)?|MULTICOL|\
 (I|NO)?LAYER|ABOVE|BGSOUND|ARRAY|COMMENT|EMBED|FIG|MARQUEE|NEXTID|NOBR|\
 RANGE|ROOT|SOUND|SPACER|SQRT|TEXT|WBR|XMP\
 )[\n\r\t >=]
-si(javascript)1=<SCRIPT\b[^>]\{0,100\}>((?:.|\n)+?)(?:</SCRIPT\b[^>]\{0,100\}>|\')
+si(javascript)1=<SCRIPT\b[^>]\{0,100\}>((?:.|\n)*?)(?:</SCRIPT\b[^>]\{0,100\}>|\')

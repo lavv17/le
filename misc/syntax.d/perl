@@ -2,7 +2,7 @@
 # Perl mode, by Vladislav Zhuk <admin@dru.dn.ua>
 c3,2=(^|[^$\\])(#.*)$
 c3,1=[^\\$]("(?:[^"\\]|\\\\(?:.|\n))*?"|'(?:[^'\\]|\\\\(?:.|\n))*?')
-si(sql)1=->(?:prepare|do|selectrow_array(?:ref)?|selectcol_arrayref|selectall_(?:hash|array)ref)[ \t]*\(\
+si(sql)1=->(?:prepare(?:_cached)?|do|selectrow_array(?:ref)?|selectcol_arrayref|selectall_(?:hash|array)ref)[ \t]*\(\
 q?q{((?:'[^']*?'|"[^"]*?"|[^'"])+?)}
 c1,2=([^[:alnum:]_\$@%#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |chdir|chmod|chomp|chop|chown|chr|chroot|close|closedir|connect|cos|crypt\

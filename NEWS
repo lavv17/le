@@ -1,3 +1,8 @@
+Version 1.14.3 - 2009-12-21
+
+* added workaround for a ncurses getmouse bug.
+* fixed compilation with gcc-4.4.x.
+
 Version 1.14.2 - 2009-05-27
 
 * added javascript patterns.
