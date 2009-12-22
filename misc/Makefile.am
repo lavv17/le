@@ -12,7 +12,7 @@ syntax = syntax syntax.d/ada syntax.d/as syntax.d/awk syntax.d/c++-comment	\
 
 nobase_pkgdata_DATA = $(colors) $(keymaps) $(mainmenus) $(syntax)
 pkgdata_SCRIPTS = help
-EXTRA_DIST = $(nobase_pkgdata_DATA)
+EXTRA_DIST = $(nobase_pkgdata_DATA) $(pkgdata_SCRIPTS)
 
 colors: ../src/le
 	../src/le --dump-colors > $@
