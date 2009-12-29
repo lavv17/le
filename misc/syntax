@@ -191,7 +191,7 @@ c1,1=^(X[BCS]+-[[:alnum:]-]+)(:)
 // ([^ ]+) .+; +urgency=
 c3=^[ \t]+--.+
 c2,1=urgency=([[:alnum:]]+)
-ci2,1=[ \t]+([[:alnum:]]+);[ \t]+urgency=
+ci2,1=[ \t]+([[:alnum:]-]+);[ \t]+urgency=
 c2,1=^[[:alnum:].-]+ +\((.+)\)
 c1,1=^([[:alnum:].-]+) +\(.+\)
 ci1=closes:[ \t]*(bug)?#?[ \t]?[0-9]+(,[ \t]*\
