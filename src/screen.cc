@@ -296,7 +296,7 @@ void  MessageSync(const char *s)
    refresh();
 }
 
-void  ClearMessage()
+static void ClearMessageOnTextWin()
 {
    if(message_sp>0 && (ShowStatusLine!=SHOW_BOTTOM || message_sp>1))
    {
@@ -308,6 +308,13 @@ void  ClearMessage()
               TextWinHeight);
       ScrollBar(false);
    }
+}
+
+void  ClearMessage()
+{
+   ClearMessageOnTextWin();
+   if(message_sp>0 && ShowStatusLine==SHOW_BOTTOM)
+      StatusLine();
    message_sp=0;
 }
 
@@ -322,7 +329,8 @@ void  StatusLine()
    int   l;
    char  flags[16];
 
-   ClearMessage();
+   ClearMessageOnTextWin();
+   message_sp=0;
 
    if(ShowStatusLine==SHOW_NONE)
       return;
