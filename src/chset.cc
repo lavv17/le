@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2004 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2010 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -430,7 +430,7 @@ wchar_t visualize_wchar(wchar_t wc)
       else
 	 return '.';
    }
-   if(iswprint(wc))
+   if(wc>=256)
       return wc;
    if(wc>=0 && wc<256 && chset_isprint(wc))
       return wc;

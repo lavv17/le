@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2004 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2010 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ void        Edit();
 
 int         LockFile(int fd,bool drop_write_lock);
 int         CheckMode(mode_t);
-int	    file_check(char *);	 /* checks existence or ability to create */
+int	    file_check(const char *);	 /* checks existence or ability to create */
 
 void    DeleteToEOL();
 void    DrawFrames();

@@ -1,3 +1,11 @@
+2010-03-21	lav
+
+	* options.cc: make fx,fy local (fixes a glitch in nested option dialogs).
+	* options.cc: clear message after saving options.
+	* user.cc, loadsave.cc, edit.h: allow ranges with mmap (file:off:len).
+	* chset.cc: don't use iswprint (buggy), assume all high wchars are printable.
+	* about.cc: update copyright.
+
 2009-12-12	lav
 
 	* keymap.cc: limit mouse flush loop (workaround for ncurses bug).

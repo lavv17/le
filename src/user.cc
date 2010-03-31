@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2010 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 #include <grp.h>
 #include <time.h>
 #include <string.h>
+#include <alloca.h>
 #include "edit.h"
 #include "block.h"
 #include "keymap.h"
@@ -895,11 +896,18 @@ int   UserSave()
       return(UserSaveAs());
 }
 
-int   file_check(char *fn)
+int   file_check(const char *fn)
 {
    char	 dir[256];
    char	 *slash;
    char	 msg[1024];
+
+   if(buffer_mmapped) {
+      char *open_name1=(char*)alloca(strlen(fn)+1);
+      long mmap_begin=0,mmap_len=0;
+      if(sscanf(fn,"%[^:]:%li:%li",open_name1,&mmap_begin,&mmap_len)==3)
+	 fn=open_name1;
+   }
 
    if(access(fn,R_OK)==-1)
    {

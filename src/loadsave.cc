@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2003 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2010 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -217,9 +217,19 @@ int   LoadFile(char *name)
 
    newfile=0;
 
-   if(stat(name,&st)==-1 && errno==ENOENT)
+   const char *open_name=name;
+   long mmap_begin=0,mmap_len=0;
+   char open_name1[256];
+   if(buffer_mmapped) {
+      if(sscanf(name,"%[^:]:%li:%li",open_name1,&mmap_begin,&mmap_len)==3)
+	 open_name=open_name1;
+      else
+	 mmap_begin=mmap_len=0;
+   }
+
+   if(stat(open_name,&st)==-1 && errno==ENOENT)
    {
-      int f=creat(name,0644);
+      int f=creat(open_name,0644);
       if(f!=-1)
       {
 	 close(f);
@@ -247,15 +257,15 @@ int   LoadFile(char *name)
       if(S_ISDIR(FileMode))
 	 View|=2;
    }
-   file=open(name,(View?O_RDONLY:O_RDWR|O_CREAT),0644);
-   if(file==-1)
+   file=open(open_name,(View?O_RDONLY:O_RDWR|O_CREAT),0644);
+   if(file==-1 && !View)
    {
       View|=2;
-      file=open(name,O_RDONLY);
+      file=open(open_name,O_RDONLY);
 	 /* try to open the file in read-only mode */
       if(file==-1)
       {
-	 FError(name);
+	 FError(open_name);
 	 EmptyText();
 	 return(ERR);
       }
@@ -329,15 +339,18 @@ int   LoadFile(char *name)
       }
       if(st.st_size>0)
       {
-	 buffer=(char*)mmap(0,st.st_size,PROT_READ|(View?0:PROT_WRITE),
-			    MAP_SHARED,file,0);
+	 if(mmap_len==0)
+	    mmap_len=st.st_size;
+	 buffer=(char*)mmap(0,mmap_len,PROT_READ|(View?0:PROT_WRITE),
+			    MAP_SHARED,file,mmap_begin);
 	 if(buffer==(char*)MAP_FAILED)
 	 {
+	    buffer=0;
 	    FError(name);
 	    EmptyText();
 	    return ERR;
 	 }
-	 BufferSize=st.st_size;
+	 BufferSize=mmap_len;
 	 ptr1=ptr2=BufferSize;
 	 GapSize=0;
 	 TextEnd=TextPoint(BufferSize);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2008 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2010 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -318,6 +318,7 @@ void  SaveConf(const char *f)
    MessageSync("Saving the editor options...");
    SaveConfToFile(f,init);
    strcpy(InitName,f);
+   ClearMessage();
 }
 
 void  SaveTermOpt()
@@ -330,6 +331,7 @@ void  SaveTermOpt()
    sprintf(t,"%s/le-%s",HOME,TERM);
 #endif
    SaveConfToFile(t,term);
+   ClearMessage();
 }
 
 void  fskip(FILE *f)
