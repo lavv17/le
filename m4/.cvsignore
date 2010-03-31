@@ -49,3 +49,7 @@ memchr.m4
 mmap-anon.m4
 stddef_h.m4
 sockets.m4
+fcntl-o.m4
+warn-on-use.m4
+wchar_h.m4
+wctype_h.m4

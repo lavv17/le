@@ -1,3 +1,9 @@
+Version 1.14.4 - 2010-03-31
+
+* allow mmap of file part (--mmap FileName:begin:length).
+* updated named.conf syntax patterns.
+* fixed minor visual glitches.
+
 Version 1.14.3 - 2009-12-22
 
 * added workaround for a ncurses getmouse bug.
