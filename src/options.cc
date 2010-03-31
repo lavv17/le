@@ -58,8 +58,6 @@ extern int grsetno;
 #define BUTTON 3
 #define NUM    4
 
-int fx,fy;
-
 static int OldTabSize;
 
 #define _StrPos 16
@@ -614,7 +612,7 @@ int GetNo(const struct opt *p,const struct opt *p1)
    return(i);
 }
 
-int GetDist(const struct opt *to,int action)
+static int GetDist(int fx,int fy,const struct opt *to,int action)
 {
    int d=30000;
    int tx=to->x,ty=to->y;
@@ -699,8 +697,8 @@ void  W_Dialogue(struct opt *opt,
 
    OldTabSize=TabSize;
 
-   fx=curr->x;
-   fy=curr->y;
+   int fx=curr->x;
+   int fy=curr->y;
 
    for(p=opt; p->name; p++)
    {
@@ -851,7 +849,7 @@ use_key:
          {
             if(p1!=curr)
             {
-               d=GetDist(p1,action);
+               d=GetDist(fx,fy,p1,action);
                if(d<dist)
                  dist=d,n=p1;
             }
