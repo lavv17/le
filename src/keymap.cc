@@ -151,6 +151,7 @@ const ActionNameRec ActionNameTable[]=
    {CALCULATOR,"calculator"},
    {DRAW_FRAMES,"draw-frames"},
    {TABS_EXPAND,"expand-tabs"},
+   {SPAN_TABS_EXPAND,"expand-tab-spans"},
    {TEXT_OPTIMIZE,"optimize-text"},
    {CHOOSE_CHAR,"choose-character"},
    {CHOOSE_WCHAR,"choose-wide-character"},

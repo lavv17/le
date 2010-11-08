@@ -1,3 +1,7 @@
+2010-11-08	lav
+
+	* keymap.h, keymap.cc, keymapfn.cc, edit.h, ext.cc: (expand-tab-spans) add new function.
+
 2010-03-21	lav
 
 	* options.cc: make fx,fy local (fixes a glitch in nested option dialogs).

@@ -221,6 +221,7 @@ int	    file_check(const char *);	 /* checks existence or ability to create */
 void    DeleteToEOL();
 void    DrawFrames();
 void    ExpandAllTabs();
+void	ExpandSpanTabs();
 void    Options();
 void    ReadConf();
 void    editcalc();

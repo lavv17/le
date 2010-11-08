@@ -76,6 +76,33 @@ void  ExpandAllTabs()
    stdcol=GetCol();
 }
 
+void  ExpandSpanTabs()
+{
+   num ol=GetLine(),oc=GetCol();
+   static  struct  menu EATmenu[]={
+   {"   &Ok   ",MIDDLE-6,FDOWN-2},
+   {" &Cancel ",MIDDLE+6,FDOWN-2},
+   {NULL}};
+
+   switch(ReadMenuBox(EATmenu,HORIZ,"Spans of tab characters will be\nexpanded to spaces + one tab",
+      " Verify ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
+   {
+   case(0):
+   case('C'):
+      return;
+   }
+   MessageSync("Expanding...");
+   CurrentPos=TextBegin;
+   while(!Eof())
+   {
+      if(Char()=='\t' && CharRel(1)=='\t')
+         ExpandTab();
+      MoveRight();
+   }
+   MoveLineCol(ol,oc);
+   stdcol=GetCol();
+}
+
 void  DOS_UNIX_switch()
 {
    DosEol=!DosEol;
