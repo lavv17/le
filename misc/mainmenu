@@ -84,6 +84,7 @@ submenu "O&thers"
    function "&Draw tables"	    draw-frames	      hide rw no-mm
 #  function "&Format functions"	    format-functions  hide rw no-mm
    function "&Expand all tabs"	    expand-tabs	      hide rw no-mm
+   function "expand spans of tabs"  expand-tab-spans  hide rw no-mm
    function "&Optimize text"	    optimize-text     hide rw no-mm
    function "character &Set"	    choose-character  hide
 #   function "&Wide character set"   choose-wide-character hide
