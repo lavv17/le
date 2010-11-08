@@ -1,5 +1,7 @@
-Version 1.14.4 - 2010-03-31
+Version 1.14.4 - 2010-11-08
 
+* new function expand-tab-spans to replace multiples of tabs with
+  spaces and one tab.
 * allow mmap of file part (--mmap FileName:begin:length).
 * updated named.conf syntax patterns.
 * fixed minor visual glitches.
