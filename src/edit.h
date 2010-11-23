@@ -106,8 +106,8 @@ extern  char    *HOME,*TERM,*DISPLAY;
 
 extern  char    *buffer;
 extern  int     modified;
-extern  num     BufferSize;
-extern  num     GapSize;
+extern  offs    BufferSize;
+extern  offs    GapSize;
 extern  offs    ptr1,ptr2,oldptr1,oldptr2;
 extern  num     stdcol;
 

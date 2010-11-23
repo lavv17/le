@@ -1,3 +1,8 @@
+2010-11-23	lav
+
+	* loadsave.cc: check for mmap_len overflow.
+	* edit.h: fix BufferSize and GapSize types.
+
 2010-11-08	lav
 
 	* keymap.h, keymap.cc, keymapfn.cc, edit.h, ext.cc: (expand-tab-spans) add new function.

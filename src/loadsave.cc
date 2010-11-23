@@ -145,7 +145,7 @@ struct  menu   ConCan4Menu[]={
 off_t  GetDevSize(int fd)
 {
 #ifdef BLKGETSIZE
-   unsigned long sect=0;
+   unsigned sect=0;
    if(ioctl(fd,BLKGETSIZE,&sect)==0)
       return ((off_t)sect)<<9;
 #endif
@@ -218,10 +218,11 @@ int   LoadFile(char *name)
    newfile=0;
 
    const char *open_name=name;
-   long mmap_begin=0,mmap_len=0;
+   unsigned long long mmap_begin=0;
+   unsigned long mmap_len=0;
    char open_name1[256];
    if(buffer_mmapped) {
-      if(sscanf(name,"%[^:]:%li:%li",open_name1,&mmap_begin,&mmap_len)==3)
+      if(sscanf(name,"%[^:]:%lli:%li",open_name1,&mmap_begin,&mmap_len)==3)
 	 open_name=open_name1;
       else
 	 mmap_begin=mmap_len=0;
@@ -339,8 +340,15 @@ int   LoadFile(char *name)
       }
       if(st.st_size>0)
       {
-	 if(mmap_len==0)
+	 if(mmap_len==0) {
 	    mmap_len=st.st_size;
+	    if((size_t)mmap_len!=st.st_size) {
+	       errno=ENOMEM;
+	       FError(name);
+	       EmptyText();
+	       return ERR;
+	    }
+	 }
 	 buffer=(char*)mmap(0,mmap_len,PROT_READ|(View?0:PROT_WRITE),
 			    MAP_SHARED,file,mmap_begin);
 	 if(buffer==(char*)MAP_FAILED)
