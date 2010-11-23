@@ -783,7 +783,7 @@ int     main(int argc,char **argv)
    }
    if(newname[0] && file_check(newname)==ERR)
    {
-      if(View)
+      if(View || buffer_mmapped)
 	 Terminate();
       newname[0]=0;
    }
