@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.14.4], [le@uniyar.ac.ru])
+AC_INIT([le], [1.14.5], [le@uniyar.ac.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -24,6 +24,8 @@ AC_PROG_CXX
 CXX_DYNAMIC_INITIALIZERS
 AC_PROG_LN_S
 AC_PROG_RANLIB
+
+AC_SYS_LARGEFILE
 
 AC_ARG_WITH(debug,
 [  --with-debug            enable debug info],
@@ -70,9 +72,7 @@ dnl Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
-AC_CHECK_HEADERS(fcntl.h limits.h sys/time.h unistd.h sys/ioctl.h\
- sys/select.h sys/poll.h sys/mman.h sys/times.h sys/mount.h langinfo.h\
- wchar.h wctype.h sys/syslimits.h sys/param.h)
+AC_CHECK_HEADERS(sys/ioctl.h sys/mman.h sys/mount.h sys/syslimits.h sys/param.h)
 
 LE_PATH_CURSES
 if test x$no_curses = xyes
@@ -119,11 +119,9 @@ AC_HEADER_TIME
 AC_STRUCT_TM
 
 dnl Checks for library functions.
-AC_FUNC_ALLOCA
 AC_PROG_GCC_TRADITIONAL
 AC_FUNC_STRCOLL
-AC_CHECK_FUNCS(getcwd mkdir select strdup strerror strftime strtol mmap\
- ftruncate fchmod times btowc)
+AC_CHECK_FUNCS(mmap fchmod)
 
 AC_CONFIG_FILES([Makefile lib/Makefile src/Makefile misc/Makefile doc/Makefile m4/Makefile])
 AC_OUTPUT

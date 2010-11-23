@@ -1,3 +1,8 @@
+Version 1.14.5 - 2010-11-10
+
+* added large-file support for mmap of a file part.
+* changed license to GNU GPL v3 (regex.c already uses it).
+
 Version 1.14.4 - 2010-11-08
 
 * new function expand-tab-spans to replace multiples of tabs with
