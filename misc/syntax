@@ -219,18 +219,18 @@ c1,1=^(Title|Version|Entered-date|Description|Keywords|Author|Maintained-by\
 c2=[@()]
 
 # really basic m4 and ac modes, by Raphael Geissert <atomo64@gmail.com>
-/*.m4
-c3=^[ \t]*#.*$
-c2=:|\$|[+-:]?=|>|<|`|\||\[|\]|\(|\)|{|}|&
-c1,2=(^|[^[:alnum:]_])(m4_[[:alnum:]_]+)
-c3="|'
-
-/*.ac
+/*.ac|/-\*- *autoconf *-\*-
 c3,2=(^|[^[:alnum:]_])dnl([^[:alnum:]_].*)?$
 c1,2=(^|[^[:alnum:]_])(A[CM]_[[:alnum:]_]+)
 c2=:|=|>|<|,|\||\[|\]|\(|\)|{|}|&
 c3="|'
 i=shell
+
+/*.m4
+c3=^[ \t]*#.*$
+c2=:|\$|[+-:]?=|>|<|`|\||\[|\]|\(|\)|{|}|&
+c1,2=(^|[^[:alnum:]_])(m4_[[:alnum:]_]+)
+c3="|'
 
 # watch file mode, by Raphael Geissert <atomo64@gmail.com>
 /watch|/version=[23]
