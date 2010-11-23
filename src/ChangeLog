@@ -1,6 +1,8 @@
 2010-11-23	lav
 
-	* loadsave.cc: check for mmap_len overflow.
+	* loadsave.cc: check for mmap_len overflow;
+	  better check for range syntax; better check for open errors;
+	  don't create file in mmap mode.
 	* edit.h: fix BufferSize and GapSize types.
 
 2010-11-08	lav

@@ -221,14 +221,29 @@ int   LoadFile(char *name)
    unsigned long long mmap_begin=0;
    unsigned long mmap_len=0;
    char open_name1[256];
+   unsigned n;
    if(buffer_mmapped) {
-      if(sscanf(name,"%[^:]:%lli:%li",open_name1,&mmap_begin,&mmap_len)==3)
+      if(sscanf(name,"%[^:]:%lli:%li%n",open_name1,&mmap_begin,&mmap_len,&n)==3
+      && n==strlen(name))
 	 open_name=open_name1;
       else
 	 mmap_begin=mmap_len=0;
    }
 
-   if(stat(open_name,&st)==-1 && errno==ENOENT)
+   if(stat(open_name,&st)!=-1)
+   {
+      FileMode=st.st_mode;
+      if((!buffer_mmapped && (S_ISBLK(FileMode) || S_ISCHR(FileMode)))
+	 || S_ISFIFO(FileMode))
+      {
+	 ErrMsg("This is a special file or a pipe\nthat I cannot edit.");
+	 EmptyText();
+	 return(ERR);
+      }
+      if(S_ISDIR(FileMode))
+	 View|=2;
+   }
+   else if(errno==ENOENT && !View && !buffer_mmapped)
    {
       int f=creat(open_name,0644);
       if(f!=-1)
@@ -245,31 +260,21 @@ int   LoadFile(char *name)
 	 return(ERR);
       }
    }
-   else if(errno==0)
-   {
-      FileMode=st.st_mode;
-      if((!buffer_mmapped && (S_ISBLK(FileMode) || S_ISCHR(FileMode)))
-	 || S_ISFIFO(FileMode))
-      {
-	 ErrMsg("This is a special file or a pipe\nthat I cannot edit.");
-	 EmptyText();
-	 return(ERR);
-      }
-      if(S_ISDIR(FileMode))
-	 View|=2;
-   }
-   file=open(open_name,(View?O_RDONLY:O_RDWR|O_CREAT),0644);
+   int open_flags=View?O_RDONLY:O_RDWR;
+   if(!View && !buffer_mmapped)
+	open_flags|=O_CREAT;
+   file=open(open_name,open_flags,0664);
    if(file==-1 && !View)
    {
       View|=2;
       file=open(open_name,O_RDONLY);
 	 /* try to open the file in read-only mode */
-      if(file==-1)
-      {
-	 FError(open_name);
-	 EmptyText();
-	 return(ERR);
-      }
+   }
+   if(file==-1)
+   {
+      FError(open_name);
+      EmptyText();
+      return(ERR);
    }
 
    // re-stat the file in case it was created
