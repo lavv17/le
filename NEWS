@@ -1,6 +1,7 @@
 Version 1.14.5 - 2010-11-10
 
 * added large-file support for mmap of a file part.
+* don't try to create file in mmap mode.
 * changed license to GNU GPL v3 (regex.c already uses it).
 
 Version 1.14.4 - 2010-11-08
