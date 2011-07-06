@@ -3,6 +3,10 @@
 	* file.cc: display a better status when selecting a file.
 	* user.cc: add .css comments.
 	* rus.cc: include config.h
+	* edit.h, kern.cc, inline.h: (BlockEq*) new functions.
+	* user.cc: support html comments, use BlockEq functions.
+	* about.cc, about.h, edit.cc, edit.h: (PrintVersion) new function;
+	  show the recommended GNU notice.
 
 2010-11-23	lav
 
