@@ -534,8 +534,6 @@ void    Terminate()
    exit(0);
 }
 
-const char version_string[]="Text editor LE version " VERSION;
-
 void  PrintUsage(int arg)
 {
    (void)arg;
@@ -620,7 +618,7 @@ int     main(int argc,char **argv)
    char  newname[256];
    newname[0]=0;
 
-   strcpy(Program,le_basename(argv[0]));
+   strncpy(Program,le_basename(argv[0]),sizeof(Program));
 
 #if defined(CURSES_BOOL) && !defined(bool_redefined)
    if(sizeof(bool) != sizeof(CURSES_BOOL))
@@ -691,8 +689,7 @@ int     main(int argc,char **argv)
 	 PrintUsage(0);
 	 exit(0);
       case(PRINT_VERSION):
-	 printf("%s - %s\n",Program,version_string);
-	 puts(copyright);
+	 PrintVersion();
 	 exit(0);
       case(USE_MMAP):
 	 opt_use_mmap=1;

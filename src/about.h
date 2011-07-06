@@ -19,4 +19,4 @@
 void  ShowAbout();
 void  HideAbout();
 
-extern const char copyright[];
+void  PrintVersion();

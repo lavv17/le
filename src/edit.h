@@ -125,6 +125,8 @@ void SetEolStr(const char *);
 
 extern   int   TabsInMargin;
 
+extern char Program[];
+
 #define MemStep     (0x2000)
 #define Tabulate(c) ((( ((c)<0) ? ((c)-TabSize+1) : (c))/TabSize+1)*TabSize)
 
