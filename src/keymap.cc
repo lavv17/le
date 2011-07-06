@@ -814,7 +814,6 @@ int   GetNextAction()
 {
    unsigned char *store;
    int   key;
-   bool	 seen_func_key=false;
 
    store=StringTyped;
    StringTypedLen=0;
@@ -876,9 +875,7 @@ int   GetNextAction()
 	 }
 #endif
 
-	 if(key>UCHAR_MAX)
-	    seen_func_key=true;
-	 else
+	 if(key<=UCHAR_MAX)
 	 {
 	    *(store++)=key;
 	    *store=0;

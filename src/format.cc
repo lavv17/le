@@ -41,7 +41,7 @@ int   wordwrap=0;
 
 void  FormatPara()
 {
-   num   bcol,bcol1,ncol;
+   num   bcol,ncol;
    int   i;
 
    if(hex || View || buffer_mmapped) /* formatting is not allowed in those modes */
@@ -171,7 +171,7 @@ void  FormatPara()
          }
          else
             DeleteChar();
-         bcol1=bcol=GetCol();
+         bcol=GetCol();
 
 	 assert(GetCol()<=LeftMargin+LineLen);
 
