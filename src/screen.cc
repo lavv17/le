@@ -96,11 +96,9 @@ void  TestPosition()
       return;
    }
    num oldtop=ScreenTop.Line();
-   num newtop;
    if(GetLine()-oldtop>TextWinHeight-m-1)
    {
       ScreenTop=PrevNLines(Offset(),TextWinHeight-m-Scroll);
-      newtop=ScreenTop.Line();
       flag=REDISPLAY_ALL;
    }
    else if(GetLine()-ScreenTop.Line()<0)
