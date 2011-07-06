@@ -569,7 +569,7 @@ void  UserCommentLine()
    || Suffix(FileName,".cxx")
    || Suffix(FileName,".java"))
    {
-      if(Char()=='/' && CharRel(1)=='/')
+      if(BlockEq("//",2))
       {
 	 DeleteBlock(0,2);
 	 if(Char()==' ')
@@ -582,7 +582,7 @@ void  UserCommentLine()
    }
    else if(Suffix(FileName,".sql"))
    {
-      if(Char()=='-' && CharRel(1)=='-')
+      if(BlockEq("--",2))
       {
 	 DeleteBlock(0,2);
 	 if(Char()==' ')
@@ -596,20 +596,20 @@ void  UserCommentLine()
    else if(Suffix(FileName,".c") || Suffix(FileName,".h")
    || Suffix(FileName,".css"))
    {
-      if(Char()=='/' && CharRel(1)=='/')
+      if(BlockEq("//",2))
       {
 	 DeleteBlock(0,2);
 	 if(Char()==' ')
 	    DeleteBlock(0,1);
 	 goto done;
       }
-      if(Char()=='/' && CharRel(1)=='*')
+      if(BlockEq("/*",2))
       {
 	 unc=1;
 	 DeleteBlock(0,2);
       }
       ToLineEnd();
-      if(CharRel(-1)=='/' && CharRel(-2)=='*')
+      if(BlockEqLeft("*/",2))
       {
 	 unc=1;
 	 DeleteBlock(2,0);
@@ -619,6 +619,27 @@ void  UserCommentLine()
 	 InsertBlock("*/",2);
 	 ToLineBegin();
 	 InsertBlock("/*",2);
+      }
+   }
+   else if(Suffix(FileName,".html") || Suffix(FileName,".htm")
+   || Suffix(FileName,".shtml"))
+   {
+      if(BlockEq("<!--",4))
+      {
+	 unc=1;
+	 DeleteBlock(0,4);
+      }
+      ToLineEnd();
+      if(BlockEqLeft("-->",3))
+      {
+	 unc=1;
+	 DeleteBlock(3,0);
+      }
+      if(!unc)
+      {
+	 InsertBlock("-->",3);
+	 ToLineBegin();
+	 InsertBlock("<!--",4);
       }
    }
    else // default
