@@ -298,6 +298,8 @@ void  ConvertFromDosToUnix(offs start,num size);
 
 int   Suffix(const char *,const char *);
 
+bool BlockEqAt(offs,const char *,int);
+
 #define STATUS_LINE_ATTR    find_attr(STATUS_LINE)
 #define NORMAL_TEXT_ATTR    find_attr(NORMAL_TEXT)
 #define BLOCK_TEXT_ATTR     find_attr(BLOCK_TEXT)

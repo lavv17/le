@@ -127,3 +127,7 @@ bool SpaceLeftAt(offs pos)
 {
    return le_isspace(WCharLeftAt(pos));
 }
+
+static inline bool BlockEqLeftAt(offs o,const char *s,int len) { return BlockEqAt(o-len,s,len); }
+static inline bool BlockEq(const char *s,int len) { return BlockEqAt(Offset(),s,len); }
+static inline bool BlockEqLeft(const char *s,int len) { return BlockEqLeftAt(Offset(),s,len); }

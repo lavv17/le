@@ -339,8 +339,8 @@ int   InsertBlock(const char *block_left,num size_left,const char *block_right,n
 
    num   i;
    offs  oldoffset;
-   num   num_of_lines,num_of_columns,oldline,oldcol;
-   num	 num_of_lines_curr,num_of_columns_curr;
+   num   num_of_lines,num_of_columns,oldline;
+   num	 num_of_lines_curr;
    int   break_at;
    int   join_at;
    num	 size;
@@ -389,7 +389,7 @@ int   InsertBlock(const char *block_left,num size_left,const char *block_right,n
       }
    }
    num_of_lines=0;
-   oldcol=num_of_columns=GetCol();
+   num_of_columns=GetCol();
    oldline=GetLine();
    ptr1+=size_left;
    ptr2-=size_right;
@@ -397,7 +397,6 @@ int   InsertBlock(const char *block_left,num size_left,const char *block_right,n
 
    CalculateLineCol(&num_of_lines,&num_of_columns,oldoffset,oldoffset+size_left);
    num_of_lines_curr=num_of_lines;
-   num_of_columns_curr=num_of_columns;
    CalculateLineCol(&num_of_lines,&num_of_columns,oldoffset+size_left,oldoffset+size);
 
    join_at=-1;
@@ -1288,4 +1287,17 @@ void SetEolStr(const char *n)
 {
    EolSize=strlen(n);
    memcpy(EolStr,n,EolSize);
+}
+
+bool BlockEqAt(offs o,const char *s,int len)
+{
+   if(o+len>Size() || o<0)
+      return false;
+   if(o>=ptr1)
+      return !memcmp(buffer+GapSize+o,s,len);
+   if(o+len<=ptr1)
+      return !memcmp(buffer+o,s,len);
+   int len1=ptr1-o;
+   return !memcmp(buffer+o,s,len1)
+       && !memcmp(buffer+GapSize,s+len1,len-len1);
 }
