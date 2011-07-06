@@ -1,3 +1,9 @@
+2011-07-06	lav
+
+	* file.cc: display a better status when selecting a file.
+	* user.cc: add .css comments.
+	* rus.cc: include config.h
+
 2010-11-23	lav
 
 	* loadsave.cc: check for mmap_len overflow;

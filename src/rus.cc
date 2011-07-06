@@ -1,6 +1,6 @@
-/* 
+/*
  * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -16,7 +16,8 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-typedef unsigned char   byte;
+#include <config.h>
+#include "edit.h"
 #include "rus.h"
 
 int   coding=0;
@@ -76,7 +77,7 @@ byte  tolowerrus(byte ch)
 {
    if(!isupperrus(ch))
       return(ch);
-   
+
     switch(coding)
    {
    case(KOI8):
@@ -101,7 +102,7 @@ byte  toupperrus(byte ch)
 {
    if(!islowerrus(ch))
       return(ch);
-   
+
    switch(coding)
    {
    case(KOI8):

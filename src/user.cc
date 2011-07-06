@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2011 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -593,7 +593,8 @@ void  UserCommentLine()
 	 InsertBlock("-- ",3);
       }
    }
-   else if(Suffix(FileName,".c") || Suffix(FileName,".h"))
+   else if(Suffix(FileName,".c") || Suffix(FileName,".h")
+   || Suffix(FileName,".css"))
    {
       if(Char()=='/' && CharRel(1)=='/')
       {

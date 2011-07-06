@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2005 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2011 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -417,12 +417,6 @@ int ChooseFileName(char *fn)
       }
       closedir(dd);
 
-      if(directory[strlen(directory)-1]=='/')
-         sprintf(str,"%s%s",directory,filename);
-      else
-         sprintf(str,"%s/%s",directory,filename);
-      Message(str);
-
       qsort(dir,dirsize,sizeof(*dir),(int (*)(const void*,const void*))entry_compare);
 
       shift=current=0;
@@ -459,6 +453,13 @@ int ChooseFileName(char *fn)
             PutStr(FRIGHT-6,FDOWN," PgUp ");
          else if((shift+(Upper->h-2)*4)<dirsize)
             PutStr(FRIGHT-6,FDOWN," PgDn ");
+
+	 if(directory[strlen(directory)-1]=='/')
+	    sprintf(str,"%s%s - %s",directory,filename,dir[current].name);
+	 else
+	    sprintf(str,"%s/%s - %s",directory,filename,dir[current].name);
+	 Message(str);
+
          action=GetNextAction();
          switch(action)
          {
