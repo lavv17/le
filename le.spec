@@ -35,5 +35,6 @@ rm -rf %{buildroot}
 %defattr(0644 root root 0755)
 %doc FEATURES HISTORY NEWS README doc/README.keymap.ru
 %attr(0755 root root) %{_bindir}/le
+%attr(0755 root root) %{_datadir}/le/help
 %attr(0644 root man) %{_mandir}/man*/*
 %{_datadir}/le

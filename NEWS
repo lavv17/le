@@ -1,4 +1,9 @@
-Version 1.14.5 - 2010-11-10
+Version 1.14.6 - 2011-07-06
+
+* support comment-line operation for html, css.
+* display a better status when selecting a file.
+
+Version 1.14.5 - 2010-11-23
 
 * added large-file support for mmap of a file part.
 * don't try to create file in mmap mode.
