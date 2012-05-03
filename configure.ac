@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.14.6], [le@uniyar.ac.ru])
+AC_INIT([le], [1.14.7], [le@uniyar.ac.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -64,6 +64,11 @@ if test x$GXX = xyes; then
 fi
 
 gl_INIT
+
+if test x$ac_cv_func_wcwidth != xyes || test x$REPLACE_WCWIDTH = x1; then
+   gl_LIBOBJ([wcwidth])
+   AC_DEFINE([REPLACE_WCWIDTH], 1, [Define when using wcwidth replacement])
+fi
 
 dnl Checks for libraries.
 AC_CHECK_LIB(m, exp)

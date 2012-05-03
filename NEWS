@@ -1,3 +1,7 @@
+* added mouse wheel support.
+* fixed a file name glitch.
+* fixed html comment highlighting.
+
 Version 1.14.6 - 2011-07-06
 
 * support comment-line operation for html, css.

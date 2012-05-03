@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2012 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
 WIN   *about_window;
 
 const char version_string[]="Text editor LE version " VERSION;
-const char copyright[]="Copyright (C) 1993-2011 by Alexander V. Lukyanov";
+const char copyright[]="Copyright (C) 1993-2012 by Alexander V. Lukyanov";
 
 void  ShowAbout()
 {
