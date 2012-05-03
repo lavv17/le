@@ -972,8 +972,8 @@ offs   NextLine(offs ptr)
 	 ptr=ptr1;
 	 break;
       }
-      ptr=found-buffer;
-      if(BolAt(++ptr))
+      ptr=found+1-buffer;
+      if(BolAt(ptr))
 	 return ptr;
    }
    offs size=Size();
@@ -982,8 +982,8 @@ offs   NextLine(offs ptr)
       found=(const char*)memchr(buffer+ptr+GapSize,eol,size-ptr);
       if(!found)
 	 return size;
-      ptr=found-buffer-GapSize;
-      if(BolAt(++ptr))
+      ptr=found+1-buffer-GapSize;
+      if(BolAt(ptr))
 	 return ptr;
    }
    /*NOTREACHED*/

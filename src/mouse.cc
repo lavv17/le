@@ -68,6 +68,7 @@ void MoveToScreenLC(int line,int col)
 
 void MouseInTextWin(MEVENT &mev)
 {
+// printf("\rbstate=0%lo          \n\r",mev.bstate);
    switch(mev.bstate)
    {
    case BUTTON1_CLICKED:
@@ -120,6 +121,20 @@ void MouseInTextWin(MEVENT &mev)
 	 ProcessDragMark();
 	 UserStopDragMark();
       }
+      break;
+   case BUTTON4_PRESSED:
+   case BUTTON4_CLICKED:
+      UserScrollUp();
+      break;
+#ifdef BUTTON5_PRESSED
+   case BUTTON5_PRESSED:
+   case BUTTON5_CLICKED:
+#else
+   // hack for old ncurses mouse ABI
+   case 0x80:
+   case 0x8000000:
+#endif
+      UserScrollDown();
       break;
    }
 }

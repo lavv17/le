@@ -430,6 +430,36 @@ void  UserPageTop()
 	 CurrentPos=ScreenTop;
    }
 }
+void UserScrollUp()
+{
+   if(hex) {
+      ScreenTop-=16;
+      if((CurrentPos-ScreenTop)/16>=TextWinHeight)
+	 CurrentPos-=16;
+   } else {
+      ScreenTop=PrevLine(ScreenTop);
+      if(GetLine()>=ScreenTop.Line()+TextWinHeight)
+	 UserLineUp();
+   }
+   flag=REDISPLAY_ALL;
+}
+void UserScrollDown()
+{
+   if(hex) {
+      if((TextEnd-ScreenTop)/16>=TextWinHeight) {
+	 ScreenTop+=16;
+	 if(CurrentPos<ScreenTop)
+	    CurrentPos+=16;
+      }
+   } else {
+      if(TextEnd.Line()-ScreenTop.Line()>=TextWinHeight) {
+	 ScreenTop=NextLine(ScreenTop);
+	 if(CurrentPos<ScreenTop)
+	    UserLineDown();
+      }
+   }
+   flag=REDISPLAY_ALL;
+}
 void  UserPageUp()
 {
    if(PreferPageTop)

@@ -330,7 +330,7 @@ int ChooseFileName(char *fn)
       else
          sprintf(fn,"%s/%s",directory,filename);
       if(!strncmp(fn+strlen(drive),"./",2))
-         strcpy(fn+strlen(drive),fn+strlen(drive)+2);
+         memmove(fn+strlen(drive),fn+strlen(drive)+2,strlen(fn+strlen(drive)+2)+1);
       LoadHistory+=fn;
       return(0);
    }

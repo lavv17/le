@@ -1,3 +1,9 @@
+2012-05-03	lav
+
+	* file.cc: use memmove to copy overlapping buffers.
+	* mouse.cc, user.cc, user.h: add scrolling support.
+	* textpoin.cc: don't scan wide chars left, use LineBegin instead.
+
 2011-07-06	lav
 
 	* file.cc: display a better status when selecting a file.

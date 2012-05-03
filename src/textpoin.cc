@@ -125,14 +125,14 @@ void TextPoint::CacheTextPoint()
 void  TextPoint::FindOffset()
 {
    if(line<0)
+      line=0,col=0;
+   if(col<0)
+      col=0;
+   if(line==0 && col==0)
    {
-      col=line=offset=0;
+      offset=0;
       flags&=~(LINEUNDEFINED|COLUNDEFINED);
       return;
-   }
-   if(col<0)
-   {
-      col=0;
    }
 
    TextPoint   *scan=base;
@@ -201,7 +201,7 @@ void  TextPoint::FindOffset()
             flags&=~LINEUNDEFINED;
             return;
          }
-         o=NextLine(o);
+         o+=EolSize;
          l++;
          if(EofAt(o))
          {
@@ -289,13 +289,10 @@ void  TextPoint::FindLineCol()
 
    while(o>offset)
    {
-      if(BolAt(o) || CharAt(o-1)=='\t')
+      if(BolAt(o) || CharAt(o-1)=='\t' || mb_mode)
          break;
-      MBCheckLeftAt(o);
-      c-=MBCharWidth;
-      if(c<0)  // this would indicate libc bug with mb chars.
-	 break;
-      o-=MBCharSize;
+      c--;
+      o--;
    }
    if(o>offset)
    {
@@ -320,9 +317,9 @@ void  TextPoint::FindLineCol()
    {
       if(BolAt(o+1))
       {
+	 o++;
          l++;
          c=0;
-	 o++;
 	 continue;
       }
       else if(CharAt(o)=='\t')

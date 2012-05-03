@@ -37,6 +37,8 @@ void  UserMarkAll();
 
 void  UserLineUp();
 void  UserLineDown();
+void  UserScrollUp();
+void  UserScrollDown();
 void  UserCharLeft();
 void  UserCharRight();
 void  UserPageTop();
