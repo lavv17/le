@@ -273,3 +273,7 @@ i=pascal
 
 /*.t2t
 i=txt2tags
+
+# OCaml mode, by Raphael Geissert <atomo64@gmail.com>
+/*.mli|*.ml
+i=ocaml
