@@ -1,3 +1,11 @@
+Version 1.14.8 - 2013-01-31
+
+* fixed a long standing bug with split multibyte characters.
+* added more sql keywords in syntax.
+* fixed empty comment in m4 highlighting.
+
+Version 1.14.7 - 2012-05-03
+
 * added mouse wheel support.
 * fixed a file name glitch.
 * fixed html comment highlighting.
