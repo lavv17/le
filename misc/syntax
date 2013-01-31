@@ -220,7 +220,7 @@ c2=[@()]
 
 # really basic m4 and ac modes, by Raphael Geissert <atomo64@gmail.com>
 /*.ac|/-\*- *autoconf *-\*-
-c3,2=(^|[^[:alnum:]_])dnl([^[:alnum:]_].*)?$
+c3,2=(^|[^[:alnum:]_])dnl([^[:alnum:]_\n].*)?$
 c1,2=(^|[^[:alnum:]_])(A[CM]_[[:alnum:]_]+)
 c2=:|=|>|<|,|\||\[|\]|\(|\)|{|}|&
 c3="|'
