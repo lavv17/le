@@ -25,6 +25,6 @@ sysdate|tabauth|table|tables|task|terminate|then|to|trigger|true|type|uid|\
 union|unique|update|use|user|validate|values|varchar|varchar2|variance|view|\
 views|when|whenever|where|while|with|work|write|xor|sequence|cascade|before|each|\
 constraint|foreign|key|references|primary|using|decode|replace|enable|disable|\
-returning\
+returning|join|left|right|outer|inner|full\
 )(?:[^[:alnum:]_]|$)
 c2=\||\)|\(|:=|=|\|\||<|>|!=
