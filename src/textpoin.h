@@ -25,6 +25,7 @@
 
 #define  COLUNDEFINED      1
 #define  LINEUNDEFINED     2
+#define  CHAR_SPLIT	   4
 
 class TextPoint
 {
@@ -104,6 +105,8 @@ public:
    friend   int   InsertBlock(const char *,num,const char *,num);
    friend   int   DeleteBlock(num,num);
    friend   int   ReplaceBlock(const char *,num);
+
+   void Check() const {};
 };
 
 extern TextPoint  CurrentPos;

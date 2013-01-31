@@ -21,6 +21,7 @@
 #include <config.h>
 #include <limits.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "edit.h"
 #include "mb.h"
 
@@ -41,6 +42,7 @@ void  TextPoint::AddTextPoint()
 {
    next=base;
    base=this;
+   Check();
 }
 void  TextPoint::DeleteTextPoint()
 {
@@ -61,7 +63,7 @@ TextPoint::TextPoint(offs o)
    if(offset<=0)
    {
       offset=0;
-      flags&=~(COLUNDEFINED|LINEUNDEFINED);
+      flags&=~(COLUNDEFINED|LINEUNDEFINED|CHAR_SPLIT);
    }
    else
       flags|=COLUNDEFINED|LINEUNDEFINED;
@@ -131,7 +133,7 @@ void  TextPoint::FindOffset()
    if(line==0 && col==0)
    {
       offset=0;
-      flags&=~(LINEUNDEFINED|COLUNDEFINED);
+      flags&=~(LINEUNDEFINED|COLUNDEFINED|CHAR_SPLIT);
       return;
    }
 
@@ -142,7 +144,7 @@ void  TextPoint::FindOffset()
       if(!(scan->flags&LINEUNDEFINED))
       {
          if(!found || abs(this->line-scan->line)<abs(this->line-found->line)
-         || (scan->line==this->line && !(scan->flags&COLUNDEFINED)
+         || (scan->line==this->line && !(scan->flags&(COLUNDEFINED|CHAR_SPLIT))
              && scan->offset<found->offset))
          {
             found=scan;
@@ -155,7 +157,7 @@ void  TextPoint::FindOffset()
 
    if(found)
    {
-      if(found->flags&COLUNDEFINED)
+      if(found->flags&(COLUNDEFINED|CHAR_SPLIT))
       {
          o=LineBegin(found->offset);
          c=0;
@@ -186,19 +188,20 @@ void  TextPoint::FindOffset()
          offset=o;
          line=l;
          col=c;
-         flags&=~(COLUNDEFINED|LINEUNDEFINED);
+         flags&=~(COLUNDEFINED|LINEUNDEFINED|CHAR_SPLIT);
+	 Check();
          return;
       }
       while(l<line)
       {
          o=LineEnd(o);
-         if(EofAt(o))
+         if(EofAt(o) || o+EolSize>Size())
          {
             offset=o;
             line=l;
             col=0;
             flags|=COLUNDEFINED;
-            flags&=~LINEUNDEFINED;
+            flags&=~(LINEUNDEFINED|CHAR_SPLIT);
             return;
          }
          o+=EolSize;
@@ -208,7 +211,8 @@ void  TextPoint::FindOffset()
             offset=o;
             line=l;
             col=0;
-            flags&=~(COLUNDEFINED|LINEUNDEFINED);
+            flags&=~(COLUNDEFINED|LINEUNDEFINED|CHAR_SPLIT);
+	    Check();
             return;
          }
       }
@@ -237,6 +241,7 @@ void  TextPoint::FindOffset()
    }
    col=c;
    offset=o;
+   Check();
 }
 
 void  TextPoint::FindLineCol()
@@ -244,7 +249,7 @@ void  TextPoint::FindLineCol()
    if(offset<=0)
    {
       col=line=offset=0;
-      flags&=~(COLUNDEFINED|LINEUNDEFINED);
+      flags&=~(COLUNDEFINED|LINEUNDEFINED|CHAR_SPLIT);
       return;
    }
 
@@ -272,7 +277,7 @@ void  TextPoint::FindLineCol()
 
    if(found)
    {
-      if(found->flags&COLUNDEFINED)
+      if(found->flags&(COLUNDEFINED|CHAR_SPLIT))
       {
          o=LineBegin(found->offset);
          c=0;
@@ -313,6 +318,7 @@ void  TextPoint::FindLineCol()
       l++;
       c=0;
    }
+   int char_split=0;
    while(o<offset && !EofAt(o))
    {
       if(BolAt(o+1))
@@ -327,7 +333,7 @@ void  TextPoint::FindLineCol()
          c=Tabulate(c);
 	 o++;
       }
-      else if(MBCheckLeftAt(o+1))
+      else if(MBCheckLeftAt(o+1) && !MBCharInvalid)
       {
          c+=MBCharWidth;
 	 o++;
@@ -338,6 +344,7 @@ void  TextPoint::FindLineCol()
          if(o+MBCharSize>offset)
 	 {
 	    o=offset;
+	    char_split=CHAR_SPLIT;
 	    break;
 	 }
 	 c+=MBCharWidth;
@@ -347,7 +354,9 @@ void  TextPoint::FindLineCol()
    col=c;
    line=l;
    offset=o;
-   flags&=~(COLUNDEFINED|LINEUNDEFINED);
+   flags&=~(COLUNDEFINED|LINEUNDEFINED|CHAR_SPLIT);
+   flags|=char_split;
+   Check();
 }
 
 const TextPoint& TextPoint::operator+=(num shift)
@@ -403,3 +412,10 @@ num TextPoint::Col()
       FindLineCol();
    return(col);
 }
+
+#if 0
+void TextPoint::Check() const
+{
+   assert((flags&(COLUNDEFINED|CHAR_SPLIT)) || !((col==0) ^ BolAt(offset)));
+}
+#endif

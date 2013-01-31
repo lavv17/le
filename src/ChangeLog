@@ -1,3 +1,8 @@
+2013-01-31	lav
+
+	* textpoin.cc, textpoin.h: (CHAR_SPLIT) new flag; fixed long standing
+	  bug with split multibyte characters.
+
 2012-05-03	lav
 
 	* file.cc: use memmove to copy overlapping buffers.
