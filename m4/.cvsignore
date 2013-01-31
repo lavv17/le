@@ -134,3 +134,5 @@ signal_h.m4
 ssize_t.m4
 stdalign.m4
 sys_types_h.m4
+extern-inline.m4
+off_t.m4

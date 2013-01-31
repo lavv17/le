@@ -166,3 +166,6 @@ rewinddir.c
 signal.in.h
 stdalign.in.h
 sys_types.in.h
+sys_socket.c
+unistd.c
+wctype-h.c
