@@ -1,0 +1,28 @@
+2005-04-26  lav
+
+	* configure.ac: check for sys/syslimits.h, sys/param.h.
+
+2004-04-12  lav
+
+	* configure.ac: check for nl_langinfo; call LE_FUNC_WCWIDTH_REPLACE.
+
+2001-01-17  Paul Slootman <paul@debian.org>
+
+	* acinclude.m4: add quotes (fixes build on alpha).
+
+2000-01-21  lav
+
+	* acinclude.m4: check if curses.h tries to declare bool in C++.
+	* acconfig.h: rename CURSES_BOOL to LE_CURSES_BOOL_TYPE.
+
+1999-10-06  lav
+
+	* acinclude.m4: LE_CURSES_BOOL test for curses' bool type.
+	* acconfig.h: CURSES_BOOL definition.
+	* configure.in: call LE_CURSES_BOOL.
+
+1999-08-26  lav
+
+	* configure.in, acinclude.m4: test if gcc can be used to link simple
+	  c++ programs to avoid libstdc++ linkage.
+

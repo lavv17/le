@@ -1,0 +1,11 @@
+1. Make more classes (Text, multibuffer support)
+
+3. RCS/CVS interaction
+
+4. macros
+
+5. ispell interaction
+
+6. Get rid of fixed size arrays.
+
+8. mail formatting: http://www.newsreaders.com/gnksa/wrapping.tar.gz

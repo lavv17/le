@@ -1,0 +1,120 @@
+submenu "&Файл"
+   function "&Открыть"	   load-file	     hide
+   function "&Сохранить"	   save-file	     hide rw
+   function "Сохранить &как..."  save-file-as	     hide
+   function "s&Witch"	   switch-file	     hide
+   function "re&Open R/W"  reopen-file-rw    hide ro
+   function "&Информация"	   file-info	     hide
+   hline
+   function "С&борка"	   make		     hide
+   function "&Компиляция"	   compile	     hide
+   function "&Запуск"         make-run	     hide
+   hline
+   function "S&hell"	   shell-escape	     hide
+   function "П&риостановить"	   suspend-editor    hide
+   function "В&ыход"	   quit-editor	     hide
+   end
+
+submenu	"&Блок"
+   function "пометить &начало"   set-block-begin   hide
+   function "пометить &конец"     set-block-end     hide
+   function "К&опировать"	   copy-block	     hide rw block
+   function "&Переместить"	   move-block	     hide rw block
+   function "&Удалить"	   delete-block	     hide rw block no-mm
+   function "&Читать из файла"	   read-block	     hide rw
+   function "&Запись в файл"	   write-block	     hide block
+   function "Pipe"	   pipe-block        hide block no-mm
+   hline
+   function "сдвиг вп&раво"	   indent-block	     hide rw block no-mm
+   function "сдвиг в&лево"	   unindent-block    hide rw block no-mm
+   function "вставить &маркер" insert-prefix    hide rw block no-mm
+   function "вставить из &буфера"	   yank-block	     hide rw clipboard
+   hline
+   function "в &нижний регистр" convert-to-lower hide rw
+   function "в &верхний регистр" convert-to-upper hide rw
+   function "&изменить регистр" exchange-cases  hide rw
+   hline
+   function "&Спрятать/показать"   hide-block	hide
+   function "С&двинуть пометку"	      start-drag-mark	hide
+   function "&Тип блока"     change-block-type	hide no-mm
+   end
+
+submenu "&Поиск"
+   function "Искать &вперёд"	 search-forward	   hide
+   function "Искать &назад"	 search-backward   hide
+   function "Начать &замену"	 start-replace	   hide rw
+   function "&Продолжить поиск/замену" continue-search hide
+   function "&Искать совпадающую скобку"   find-matching-bracket hide
+   end
+
+submenu "&Переход"
+   function "Номер &строки"	    to-line-number	 hide
+   function "Начало &файла"    beginning-of-file	 hide
+   function "&Конец файла"	    end-of-file		 hide
+   function "&Смещение"		    to-offset		 hide
+   function "&Предыдущая правка"	    to-previous-edit	 hide rw
+   function "&Установить метку"	    set-bookmark	 hide
+   function "Перейти на &метку"          go-bookmark          hide
+   function "Н&ачало блока"	    find-block-begin	 hide block
+   function "К&онец блока"		    find-block-end	 hide block
+   end
+
+submenu "&Формат" rw no-mm
+   function "&Войти в режим форматирования"    format-functions  hide rw no-mm
+   function "Форматировать один &параграф" format-paragraph  hide rw no-mm
+   function "&Центрировать строку"	    center-line	      hide rw no-mm
+   function "В&ыровнять строку по правоку краю"	    adjust-right-line hide rw no-mm
+   function "&Форматировать всё"	    format-document   hide rw no-mm
+   end
+
+submenu "&Разное"
+   function "&Калькулятор"	    calculator	      hide
+   function "&Рисовать таблицы"	    draw-frames	      hide rw no-mm
+#  function "&Format functions"	    format-functions  hide rw no-mm
+   function "&Расширить табуляцию"	    expand-tabs	      hide rw no-mm
+   function "&Оптимизировать текст"	    optimize-text     hide rw no-mm
+   function "&Набор символов"	    choose-character  hide
+   function "&Unix<->Dos"	    change-text-type  hide rw no-mm
+   end
+
+submenu "&Настройка"
+   function "&Редактор"	editor-options
+   function "&Форматирование"	format-options
+   submenu  "&Терминал"
+      function "кодировка, &Графика, пр..."   terminal-options
+      function "&Установить отображаемые символы" edit-charset
+      function "&Все 8 бит"		     set-charset-8bit		   hide
+      function "Все 8 бит, без &управл. символов"   set-charset-8bit-no-control   hide
+      function "&Сохранить установки терминала"	     save-terminal-options	   hide
+      end
+   function "&Внешний вид"  appearance-options
+   submenu  "&Цвета"
+      function "&Правка"	edit-colors    hide
+      function "&Сохранить"	save-colors    hide
+      function "Сохранить для текущего &терминала" save-colors-for-terminal hide
+      hline
+      function "По &умолчанию"		  load-color-default   hide
+      function "&Загрузить фон по умолчанию"  load-color-defbg     hide
+      function "Загрузить &чёрную"		  load-color-black     hide
+      function "Загрузить &синюю"		  load-color-blue      hide
+      function "Загрузить &зелёную"		  load-color-green     hide
+      function "Загрузить &белую"		  load-color-white     hide
+      end
+   submenu  "Раскладка &клавиатуры"
+      function "По &умолчанию"		     load-keymap-default  hide
+      function "&Загрузить Emacs раскладку"	     load-keymap-emacs	  hide
+      hline
+      function "&Сохранить"			     save-keymap	  hide
+      function "Сохранить для текущего &терминала"  save-keymap-for-terminal hide
+      end
+   function "&Программы"			     programs-options
+   function "&Сохранить в текущий каталог"     save-options-local   hide
+   function "&Обновить текущую конфигурацию"   save-options	  hide
+   end
+
+submenu "&Помощь"
+   function "&Помощь по клавишам"   help	  hide
+   function "&Помощь по слову"   word-help	  hide
+   function "&О программе..."	      about	  hide
+   end
+end

@@ -1,0 +1,12 @@
+Makefile
+*.tar.gz
+config.*
+bak
+config.h
+stamp-h
+.le.ini
+aclocal.m4
+stamp-h.in
+configure
+Makefile.in
+link-warning.h

@@ -1,0 +1,45 @@
+This is terminal text editor - LE.
+
+
+Read the file FEATURES to learn what LE can do.
+Read the file HISTORY to learn about LE beginning.
+
+
+You can try to find out how to use the editor by reading help,
+browsing the menu and reading the man page. Some hints:
+   F10 or C-n -- menu
+   F1 -- help
+   C-x -- exit (cancel)
+   Arrows -- navigate
+
+In the editor the following key description is used:
+   Key1-Key2 -- simultaneous key1 and key2 press
+   Key1+Key2 -- sequential keys press
+   Key1 | Key2 -- press Key1 OR Key2
+   ^Key -- Ctrl-Key
+   ~Key -- Shift-Key
+   ^~Key -- Ctrl-Shift-Key | Alt-Key
+Some of ^Fx, ~Fx, ^~Fx can be typed as ESC+Fx
+
+
+LE can be downloaded from the following locations:
+   ftp://ftp.yar.ru/pub/source/le/
+   ftp://metalab.unc.edu/pub/Linux/apps/editors/terminal/
+   http://ftp.yar.ru/pub/source/le/
+   http://metalab.unc.edu/pub/Linux/apps/editors/terminal/
+There is anonymous CVS server:
+   cvs -z9 -d :pserver:anonymous@swing.yars.free.net:/home/lav/cvsroot login
+   (empty password)
+   cvs -z9 -d :pserver:anonymous@swing.yars.free.net:/home/lav/cvsroot co le
+
+
+There are two very quiet mailing lists for LE. le@uniyar.ac.ru is for
+general discussions and for announcements of "official" le versions.
+le-devel@uniyar.ac.ru is for development of le, that is patches and
+announcements of development snapshots are posted there. The lists are
+managed by majordomo; to subscribe, send mail with "subscribe" in body to
+le-request@uniyar.ac.ru or le-devel-request@uniyar.ac.ru.
+
+
+Author: Alexander V. Lukyanov <lav@yars.free.net>
+Postal address: Frunze 37/18-278, Yaroslavl 150006, Russia

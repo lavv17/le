@@ -1,0 +1,2 @@
+* double-width characters are handled incorrectly in window.cc
+  (save/restore/shadow), and in chset.cc (maybe ncurses bug).

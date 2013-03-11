@@ -1,0 +1,156 @@
+2013-01-31	lav
+
+	syntax.d/sql: more keywords
+	synax: fixed empty comment in m4
+
+2010-11-23	lav
+
+	* syntax: add -*-autoconf-*- selector.
+
+2010-11-08	lav
+
+	* mainmenu: new function expand-tab-spans.
+
+2009-07-10	Raphael Geissert <atomo64@gmail.com>
+
+	* syntax: improve the syntax colouring regexes of the Debian control file mode.
+
+2009-06-22	Raphael Geissert <atomo64@gmail.com>
+
+	* mainmenu, mainmenu-ru: fixed typos.
+
+2009-05-15	lav
+
+	* syntax.d/html: fixed comment pattern.
+	* syntax: improved makefile mode by including shell patterns.
+
+2009-05-12	Raphael Geissert <atomo64@gmail.com>
+
+	* syntax: Recognise files starting with ^diff; Colourise the whole added/removed lines,
+	  not just the symbols; s/Enhaces/Enhances; Fix an error related to active/passive caused
+	  by accident.
+
+2008-10-07	lav
+
+	* syntax: fixed tags.
+
+2008-09-20	lav
+
+	* syntax: speed optimize some patterns.
+
+2008-09-02	Aldis Berjoza aka killasmurf86 <killasmurf86@inbox.lv>
+
+	* syntax: added fvwm2 mode.
+
+2008-08-18	Raphael Geissert <atomo64@gmail.com>
+
+	* syntax:
+	    + Improved syntax highlighting for php.
+	    + Fixed an incorrect highlighting of $" in perl mode.
+	    + Fixed an incorrect highlighting of \# in perl mode.
+	    + Increased the height up to 20 for some long constructors.
+	    + Added makefile mode.
+	    + Also match *.ini in the generic config file mode.
+	    + Added Debian control (control, dsc, changes) file mode.
+	    + Added Debian changelog mode.
+	    + Also match *.pot in po mode.
+	    + Added basic lsm mode.
+	    + Added watch file, uscan(1), mode.
+	    + Added gdbinit mode.
+	    + Added .desktop (and eventsrc) mode.
+	    + Added basic quilt series mode.
+	    + Added basic .ac and .m4 mode.
+	    + Added generic changelog mode.
+
+2008-04-04	Igor Zhbanov
+
+	* syntax: better sh comment pattern; add *.php4, *.php5 files;
+	  add php constants true, false, null and keywords public, private, protected.
+
+2008-04-08	lav
+
+	* syntax: add sql pattern.
+
+2008-01-21	lav
+
+	* syntax: (perl) add *.pm; fix soket typo; add sysseek.
+
+2007-05-31	lav
+
+	* syntax: add missed keywords (java,perl,c++); fixed -*-\c++-*- pattern.
+
+2006-11-30	lav
+
+	* syntax: add readline keyword for perl and ci for syntax.
+
+2006-11-29	lav
+
+	* syntax: add syntax and named.conf modes; improve perl mode.
+
+2006-08-23	Serge Vakulenko <vak@cronyx.ru>
+
+	* syntax: new Verilog mode.
+
+2006-08-23	lav
+
+	* syntax: add our keyword for perl.
+
+2005-12-23	Abel Morabito <abel.morabito@gmail.com>
+
+	* syntax: update GEMA patterns.
+
+2005-12-21	lav
+
+	* syntax: add patch file name patterns.
+
+2005-12-21	Abel Morabito <abel.morabito@gmail.com>
+
+	* syntax: add Awk and GEMA patterns.
+
+2005-07-08	lav
+
+	* syntax: add c comments for php.
+
+2005-04-26	lav
+
+	* syntax: add more keywords for sql, php, tcl.
+
+2005-03-10	lav
+
+	* syntax: make sql key words case insensitive.
+
+2005-03-03	Serge Vakulenko <vak@cronyx.ru>
+
+        * syntax: 1) Ada 2) GNU Assembler 3) Oracle PL/SQL 4) SNMP MIB 5)
+	  Texinfo 6) TeX 7) PHP 8) Tcl 9) Metafont 10) Patch (diff output) 11)
+	  Generic config files.
+
+2001-09-05	lav
+
+	* syntax: perl patterns improved.
+
+2001-07-05	lav
+
+	* keymap-emacs: add suspend-editor $kspd.
+	* syntax: add defined keyword to perl mode.
+	* mainmenu: add set-bookmark and go-bookmark to menu.
+
+2001-06-25	Abel Morabito <abelmora@crosswinds.net>
+
+	* syntax: more complete lout mode.
+
+2001-05-23	Vladislav V. Zhuk <admin@dru.skif.net>
+
+	* syntax: add perl mode.
+
+2001-04-09	Abel Morabito <abelmora@crosswinds.net>
+
+	* syntax: add lout mode.
+
+2000-02-19	lav
+
+	* syntax: add *.shtml
+
+2000-02-17	lav
+
+	* syntax: add html patterns.

@@ -1,0 +1,812 @@
+2013-01-31	lav
+
+	* textpoin.cc, textpoin.h: (CHAR_SPLIT) new flag; fixed long standing
+	  bug with split multibyte characters.
+
+2012-05-03	lav
+
+	* file.cc: use memmove to copy overlapping buffers.
+	* mouse.cc, user.cc, user.h: add scrolling support.
+	* textpoin.cc: don't scan wide chars left, use LineBegin instead.
+
+2011-07-06	lav
+
+	* file.cc: display a better status when selecting a file.
+	* user.cc: add .css comments.
+	* rus.cc: include config.h
+	* edit.h, kern.cc, inline.h: (BlockEq*) new functions.
+	* user.cc: support html comments, use BlockEq functions.
+	* about.cc, about.h, edit.cc, edit.h: (PrintVersion) new function;
+	  show the recommended GNU notice.
+
+2010-11-23	lav
+
+	* loadsave.cc: check for mmap_len overflow;
+	  better check for range syntax; better check for open errors;
+	  don't create file in mmap mode.
+	* edit.h: fix BufferSize and GapSize types.
+	* user.cc, edit.cc: don't create file in mmap mode.
+
+2010-11-08	lav
+
+	* keymap.h, keymap.cc, keymapfn.cc, edit.h, ext.cc: (expand-tab-spans) add new function.
+
+2010-03-21	lav
+
+	* options.cc: make fx,fy local (fixes a glitch in nested option dialogs).
+	* options.cc: clear message after saving options.
+	* user.cc, loadsave.cc, edit.h: allow ranges with mmap (file:off:len).
+	* chset.cc: don't use iswprint (buggy), assume all high wchars are printable.
+	* about.cc: update copyright.
+
+2009-12-12	lav
+
+	* keymap.cc: limit mouse flush loop (workaround for ncurses bug).
+
+2009-12-12	Raphael Geissert <geissert@debian.org>
+
+	* options.cc: fixed compilation with gcc-4.4.
+	* edit.cc: fixed type for btowc return value.
+
+2009-07-10	Raphael Geissert <atomo64@gmail.com>
+
+	* edit.cc: fix a typo.
+
+2009-05-25  lav
+
+	* inline.h, format.cc: fixed auto word wrap.
+
+2009-05-22  lav
+
+	* color.h, color.cc, options.cc: add SYNTAX5, SYNTAX6.
+
+2009-05-19  lav
+
+	* highli.cc: don't interpret \b
+
+2009-05-18  lav
+
+	* screen.cc, color.h: fixes for syntax4.
+	* color.cc: fixed default syntax4 color.
+
+2009-05-15  lav
+
+	* highli.cc: handle s without a subex number.
+	* color.cc, color.h, options.cc: add syntax4 color.
+
+2008-12-25  lav
+
+	* highli.cc: fixed free_chain; handle \r; ignore s-lines in ignored sections.
+
+2008-12-22  lav
+
+	* highli.cc, highli.h: add support for sub-text highlighting;
+	  ignore spaces after trailing \ so that nice indentation is possible.
+
+2008-10-25  lav
+
+	* window.cc, window.h: add clip_x member; limit PutStr on it.
+
+2008-10-24  lav
+
+	* highli.cc, highli.h, user.cc: save and show syntax selector line.
+
+2008-09-20  lav
+
+	* loadsave.cc: set DosEol properly.
+	* highli.cc: limit max text length to highlight; use the same
+	  re_syntax_options for file type mapping.
+
+2008-09-02  lav
+
+	* calc.cc: add sum function.
+	* inline.h, kern.cc, edit.h, textpoin.cc, textpoin.h: outline some
+	  functions as suggested by gcc.
+	* color.cc, colormnu.cc, edit.cc, file.cc, format.cc, highli.cc,
+	  highli.h, keymap.cc, loadsave.cc, mb.h, options.cc, screen.cc,
+	  search.cc, signals.cc, window.cc: fixed warnings; used gnulib;
+	  dropped rx.h support.
+	* regex.c, regex.h, wcwidth.c, wcwidth1.c: moved here to save
+	  from gnulib-tool.
+
+2008-08-11  lav
+
+	* keymapdf.cc: add kri/kind terminfo keys to keymap.
+
+2008-05-08  Raphael Geissert <atomo64@gmail.com>
+
+	* getch.cc: Fix build problem related to KEY_F macro definition (closes: #223168).
+
+2008-03-08  lav
+
+	* edit.cc: fixed has_widechar for unsigned wchar_t.
+
+2008-01-21  lav
+
+	* block.cc: use MessageSync instead of Message+SyncTextWin (fixes
+	  block prompt)
+
+2008-01-10  lav
+
+	* options.cc: allow tab size up to 99.
+	* kern.cc: nicer PrevLine.
+	* about.cc: update copyright.
+	* menu1.cc: fix off-by-one.
+
+2007-09-06  lav
+
+	* calc.cc: recognize .123 as a number.
+	* about.cc: update copyright year.
+
+2007-08-08  lav
+
+	* search.cc: do not match empty string.
+
+2007-08-02  lav
+
+	* highli.cc: match basename.
+
+2006-11-29  lav
+
+	* user.cc: do autoindent only when there is no input pending (no paste).
+	* screen.cc: better aggregate paste operations; do StatusLine in SyncTextWin;
+	  show rotating stick when pasting.
+	* edit.cc, format.cc, frames.cc, options.cc, search.cc: separate StatusLine
+	  call is not needed anymore.
+	* highli.cc: fixed syntax signature recognition.
+
+2006-06-20  lav
+
+	* textpoin.cc: use NextLine for faster search.
+	* kern.cc: optimize NextLine with memchr.
+
+2006-06-14  lav
+
+	* keymapdf.cc: add putty codes.
+	* user.cc: support comment-line for java and sql.
+
+2006-05-15  lav
+
+	* history.cc, history.h: add clone ctor - this fixes a coredump
+	  in History::Push.
+
+2006-04-24  lav
+
+	* history.cc: null-terminate read history lines.
+
+2006-04-21  lav
+
+	* history.cc: don't print error when history file is empty.
+
+2006-04-20  lav
+
+	* calc.cc, calc.h, editcalc.cc: add support for hex, oct, ins, more functions.
+	* getstr.cc: move ModifyKey to tables.cc.
+	* le.hlp: update calc help.
+	* tables.cc: add wc table, move ModifyKey here.
+	* edit.cc, edit.h: rename InitTables, move init_chset outside; save new format
+	  history to history2 file.
+	* edit.h, options.cc, search.cc, le.hlp: add 'match case' option.
+
+2006-04-19  lav
+
+	* calc.cc, calc.h, file.cc, file.h, getstr.cc, kern.cc, keymap.cc,
+	  keymap.h, keymapdf.cc, keynames.cc, loadsave.cc, menu.cc, menu.h,
+	  options.cc, options.h, textpoin.h, window.cc, window.h:
+	  add proper const's.
+	* edit.cc, user.cc: new history format.
+	* edit.h, tables.cc: move InitTables and ModifyKey into ifdef; consts.
+	* history.cc, history.h: new history file format; dynamic memory allocation.
+
+2006-04-11  lav
+
+	* keynames.cc, keymapdf.cc: add support for ncurses extended names.
+
+2006-03-22  lav
+
+	* block.cc: fixed delete for rectangular blocks with multibyte chars.
+	* clipbrd.cc: fixed copy/paste for rectangular blocks with multibyte chars.
+	* mb.cc, mb.h: mb_to_wc new function; define MB_CUR_MAX when unavailable.
+	* user.cc: fixed text optimization.
+	* edit.cc: fixed history truncation.
+	* screen.cc: fixed display of hex data in mb_mode.
+
+2005-07-18  lav
+
+	* keymapdf.cc: added shift-begin/end key codes (for linux console hack);
+	  added control-pgup/pgdn xterm key codes.
+
+2005-07-08  lav
+
+	* getch.cc: fix code generation for linux console.
+	* keymapdf.cc: add redhat-modified xterm codes.
+
+2005-06-20  lav
+
+	* keymapdf.cc: add rxvt codes; use shifted terminfo codes as block
+	  marking actions (reflecting new trend in terminfo).
+	* edit.cc, user.cc, user.h: add history for shell and pipe commands.
+	* history.cc: fixed reading InodeHistory - removed extra fgetc.
+
+2005-05-31  lav
+
+	* kern.cc: (InsertBlock) fix line numbering of CurrentPos,
+	  (ReplaceBlock) fix column numbering for replaced wide chars.
+	* mb.cc, mb.h: add validity flag WCharValid, fixed compilation
+	  without wide chars.
+	* screen.cc: don't reassign ScreenTop each time.
+	* textpoin.cc: (FindLineCol) fixed a nasty bug; little optimization.
+	* user.cc: (UserReplaceChar) fixed for wide chars.
+
+2005-05-01  lav
+
+	* screen.cc: fix shadowing of last char on lines longer than screen
+	  width for wide chars.
+
+2005-04-26  lav
+
+	* window.h: use ACS instead of WACS when not in mb_mode (for some
+	  reason WACS are output without acs mode - ncurses bug?).
+
+2005-04-19  lav
+
+	* file.cc, menu.cc, menu1.cc, screen.cc, window.cc, window.h:
+	  (PutACS) new macro; use it; use WACS_* when in mb_mode.
+	* format.cc: fixed handling of inter-paragraph blank lines.
+
+2005-04-08  lav
+
+	* block.cc: fix tolower/toupper/exchange for multibyte chars.
+	* screen.cc: skip screen update up to 80 chars, or when line changes.
+	* loadsave.cc: add includes for freebsd.
+	* mb.cc, mb.h: add ReplaceWCharMove function.
+
+2005-03-23  lav
+
+	* block.cc: use Space function.
+
+2005-03-13  lav
+
+	* user.cc: fix CopyFromDown/Up for wide chars.
+	* about.cc: update copyright.
+	* format.cc: fix formatting for wide chars.
+	* inline.cc: (Space, SpaceLeft) new functions.
+	* mb.cc, mb.h: (WCharLeft, WCharLeftAt) new functions; cache wc to
+	  reduce mbtowc calls.
+
+2005-01-28  lav
+
+	* chset.cc: (set_chset_no8bit) new function.
+	* undo.cc, undo.h: don't glue changes together after a pause.
+
+2005-01-04  lav
+
+	* chset.cc, screen.cc: better check for wc printability; don't use
+	  mvaddchnstr in cursesw - it's broken.
+
+2004-12-30  lav
+
+	* getch.cc: workaround KEY_F definition from linux/keyboard.h
+	* window.cc: add code for displaying invalid wchars.
+
+2004-12-22  lav
+
+	* block.cc, chset.cc, edit.cc, edit.h, mb.h, window.h, kern.cc: fix compilation
+	  without wide chars; check for wide chars and if present go to mb_mode.
+
+2004-12-08  lav
+
+	* edit.cc: initialize newname properly.
+
+2004-10-14  lav
+
+	* user.cc: add .cpp and .cxx extensions for line commenting.
+
+2004-09-20  lav
+
+	* getstr.cc: choose wide char in mb_mode.
+
+2004-08-19  lav
+
+	* search.cc: prevent original pattern being corrupted by strtok.
+
+2004-08-11  lav
+
+	* getstr.cc: fixed display of long input lines.
+
+2004-06-08  lav
+
+	* keymap.cc: don't show shortcut if corresponding key in terminfo
+	  is not defined; tune control-shift-Fx scores.
+	* keymapdf.cc: add kspd binding to suspend-editor.
+
+2004-06-04  lav
+
+	* user.cc: initialize newname in load and save-as.
+	* keymapdf.cc: add kUND, krdo, kRDO key bindings.
+	* kern.cc: (ReplaceBlock) mark buffer modified when not mmapped.
+
+2004-05-20  lav
+
+	* undo.cc: fixed malloc(0) and memory allocation error handling;
+	  clear group_head in Clear.
+	* user.cc: call undelete if undo is disabled.
+	* keymapdf.cc: call undo on ^U and kund.
+
+2004-05-19  lav
+
+	* undo.h, undo.cc: (GroupHead) new class; save block positions there.
+	* kern.cc: clear undo when emptying text buffer.
+	* mainmenu.cc: leave bare minimum - the menu is loaded from file.
+	* keymap.cc, keymap.h, keymapfn.cc, keymapdf.cc, user.cc, user.h:
+	  make automatic decision to input a byte or a wchar in
+	  choose-character and insert-char-by-code; add corresponding byte
+	  actions.
+	* edit.cc: remove "no undo" message.
+	* screen.cc: use more compatible getyx instead of getcurx.
+
+2004-05-18  lav
+
+	* chset.cc: display character in mb_mode properly - convert it to mb;
+	  display unprintable 0x80 as '.'.
+	* edit.cc, screen.cc: fix compile without mb chars.
+	* getstr.cc, options.cc: use custom mb_len instead of mblen.
+	* mb.cc, mb.h: add mb_len function; rename static variables.
+	* window.cc: fix compile without mb chars; check mb_mode.
+
+2004-05-12  lav
+
+	* format.cc: add "no undo" phrase only if undo is disabled.
+
+2004-05-06  lav
+
+	* edit.cc: use UserReplaceChar.
+	* kern.cc: use low level ReplaceBlock if undo is enabled; allow replace
+	  if new block extends file; re-do ReplaceCharMove.
+	* keymap.cc: undo-options; initialize shift in PrettyCodeScore properly.
+	* keymap.h: UNDO_OPTIONS.
+	* keymapdf.cc: add redo.
+	* keymapfn.cc: add undo-step and redo-step.
+	* options.cc, options.h: add undo options; fix number label positioning.
+	* undo.cc, undo.h: (UndoOne, RedoOne, Change::Join, Clear) new methods.
+	* user.cc, user.h: (UserUndoStep, UserRedoStep, UserReplaceChar) new functions.
+
+2004-05-05  lav
+
+	* Makefile.am: (undo.cc, undo.h) new files.
+	* edit.cc, kern.cc, user.cc, user.h: add undo support.
+	* keymap.cc, keymap.h, keymapfn.cc, keymapdf.cc: add undo/redo actions.
+
+2004-04-29  lav
+
+	* chset.cc: (choose_wch) new function to choose a wide char.
+	* edit.h: add prototype.
+	* keymap.cc, keymap.h, keymapfn.cc: add choose-wide-character action.
+	* user.cc, user.h: (UserChooseWChar) new function.
+	* window.cc, window.h: (PutWCh) new function to show single wide char.
+
+2004-04-12  lav
+
+	* block.cc: (WCharAtLC) new function.
+	* chset.cc: fix for non-printable wchars in 0-255 range.
+	* edit.cc: include langinfo.h.
+	* edit.h: new prototypes.
+	* ext.cc: (ReplaceWCharExt, ReplaceWCharExtMove) new functions.
+	* frames.cc: drawing with unicode chars.
+	* getstr.cc: check mb_mode var.
+	* mb.cc, mb.h: use visualize_wchar when getting char width;
+	  (InsertWChar) new function.
+	* kern.cc: (InsertAutoindent) new function.
+	* user.cc: use InsertAutoindent to save block marking in UserLineEnd.
+
+2004-04-08  lav
+
+	* edit.cc, edit.h: (getcode) use prompt arg, use history; (getcode_char,
+	  getcode_wchar) new functions.
+	* getstr.cc: better history handling; show old value even if history
+	  is supplied; support insert-wchar-by-code action.
+	* keymap.cc, keymap.h: insert-wchar-by-code action; ENTER_WCHAR_CODE
+	  action number;
+	* keymapdf.cc: binding for insert-wchar-by-code.
+	* keymapfn.cc: functions for ENTER_WCHAR_CODE and ENTER_CHAR_CODE.
+	* mb.cc: L'\0' is width 1 in le, shown as bold @.
+	* screen.cc: don't show combining chars (width==0) in the line
+	  beginning as it confuses ncurses.
+	* user.cc, user.h: implement UserInsertWCharCode function.
+
+2004-04-02  lav
+
+	* mb.cc: use 0xfffd as replacement character for invalid mb sequences.
+
+2004-04-01  lav
+
+	* getstr.cc, mb.cc, mb.h: move mb_* functions to mb.cc;
+	  (mb_get_pos_for_col) new function.
+	* keymap.cc, keymap.h: make StringTyped unsigned.
+	* keymapdf.cc: add some more xterm codes.
+	* options.cc: support mb chars.
+
+2004-03-31  lav
+
+	* chset.cc, kern.cc: include wctype.h
+	* getstr.cc: remove extra ;
+	* screen.cc: allocate enough space for chr; clear line before filling
+          (this fixes wrong display for combining accents).
+	* getstr.cc: use mbtowc consistently to reset internal shift state.
+	* mb.cc: use mbtowc+wcwidth to reduce number of wc calls; handle
+	  wcwidth errors.
+	* textpoin.cc: workaround negative column (due to buggy libc).
+
+2004-03-30  lav
+
+	* chset.cc, chset.h: (visualize_wchar) new function.
+	* getstr.cc: support mb_mode.
+	* screen.cc: support mb chars in file name.
+	* window.cc: support mb chars in PutStr.
+
+2004-03-29  lav
+
+	* chset.cc, chset.h: (chset_isprint) new function.
+	* edit.h: don't redefine _XOPEN_SOURCE_EXTENDED.
+	* mb.cc: make mb_ptr const.
+	* screen.cc: use chset_isprint; fix highlight in mb_mode;
+	  display wchar code.
+	* mb.h: add missing macros.
+
+2004-03-23  lav
+
+	* edit.h: define _XOPEN_SOURCE_EXTENDED; prototype for IsAlNumAt.
+	* inline.h: don't use register; (IsAlNumRel, IsAlNumLeft) new functions.
+	* kern.cc: implement IsAlNumAt; use it in GetWord; mark CurrentPos
+	  COLUNDEFINED if inserted something at the left.
+	* mb.cc, mb.h: protect from including multiple times; define mb_mode
+	  to false if not USE_MULTIBYTE_CHARS.
+	* screen.cc: display control chars properly in mb_mode.
+	* textpoin.cc: fix endless loop; make \t priority over mb chars.
+	* user.cc: fix word ops in mb_mode.
+	* edit.cc: --multibyte, --no-multibyte options.
+
+2004-03-22  lav
+
+	* mb.cc, mb.h: new files.
+	* Makefile.am: (mb.cc, mb.h) new files.
+	* about.cc: update copyright.
+	* kern.cc, textpoin.cc, screen.cc, window.cc, window.h: support wide chars.
+	* keymapdf.cc: support newer xterm keys.
+
+2003-10-21  lav
+
+	* user.cc: (UserLineEnd) position on previous line indent if in text
+	  mode and the line is empty; (UserCommentLine) add default case,
+	  uncomment // in c files.
+	* loadsave.cc: (GetDevSize) use BLKGETSIZE if available; fix
+	  comparisions, so that looping is not possible.
+
+2002-10-03  lav
+
+	* options.cc: save hl_option in le.ini.
+
+2002-10-25  lav
+
+	* keymap.cc: (GetActionCodeText) fix char<0 handling.
+
+2002-02-04  LaMont Jones <lamont@smallone.fc.hp.com>
+
+	* highli.cc: use CLOCKS_PER_SEC instead of CLK_TCK.
+
+2001-10-03  lav
+
+	* help.cc: fix for 8-bit characters.
+	* options.cc: fix for old curses without mouse support.
+
+2001-07-02  lav
+
+	* options.cc: save UseMouse in le.ini.
+
+2001-06-08  lav
+
+	* edit.cc: don't call ChooseFile for file from command line.
+
+2001-05-22  lav
+
+	* user.cc: disable IndentPrefix in r/o mode.
+
+2001-05-16  lav
+
+	* bm.cc, user.cc: remember/restore also screen top and shift; set
+	  stdcol.
+
+2001-05-14  lav
+
+	* bm.cc, bm.h: new files.
+	* keymap.cc, keymap.h, keymapfn.cc, keymapdf.cc, loadsave.cc, user.cc,
+	  user.h: bookmark support.
+
+2001-04-28  lav
+
+	* keymap.cc: (ActionCodePrettyPrint) print 8-bit chars and ^@ correctly.
+	* history.cc: check device number too.
+
+2001-04-13  lav
+
+	* highli.cc: stop highlighting when it takes too long.
+	* edit.h, kern.cc: (ReplaceTextFromFile, ScanForCharForward) new functions.
+	* keymap.cc, keymap.h, keymapfn.cc: support for loading/saving keymaps.
+	* loadsave.cc: use fchmod/ftruncate; speed up file loading.
+	* textpoin.cc: don't set flags for zero TextPoint.
+
+2001-04-11  lav
+
+	* user.cc: stop drag mark on block operations.
+
+2001-04-09  lav
+
+	* keymap.cc: fix several sign-expansion bugs.
+	* block.cc: stop drag mark on block operations.
+
+2001-03-20  lav
+
+	* user.cc: (UserLineDown) don't insert many \n in text mode; don't
+	  mark text modified if last eol is added.
+
+2001-03-16  lav
+
+	* getch.cc: (linux_process_key) new function.
+	* keymap.cc, keymap.h, keymapfn.cc, keymapdf.cc: new action
+	  remember-block to save block to clipboard; bind delete-block
+	  to xterm's shift-del and yank-block to xterm's shift-ins.
+	* user.cc, user.h: (UserRememberBlock) new function.
+
+2001-03-16  lav
+
+	* edit.cc, edit.h, kern.cc: (SeekStdCol) new function, use it.
+	* user.cc: fix UserLineDown in case when EOL is missing on last line;
+	  call SeekStdCol in UserMark* functions.
+	* search.cc, highli.cc: include xalloca.h.
+
+2001-02-01  lav
+
+	* about.cc: correct copyright string.
+
+2001-01-31  lav
+
+	* search.cc: fix replacing when replace string ends with \.
+	  (reported by Andrey E. Lerman <lae@lae.pp.ru>)
+
+2000-12-26  lav
+
+	* block.cc: set modification flag after piping in.
+	* user.cc: paranoia - set flag in UsesPipeBlock.
+
+2000-12-20  lav
+
+	* block.cc: fix block end setting in DoUnindent/DoIndent.
+
+2000-12-18  lav
+
+	* block.cc: (DoUnindent) break loop if no next line found (fixes
+	  spinning in case of missing EOL on last line of block).
+	* keymap.cc: flush input only if no action matched.
+	* keymap.h: add MARK_ALL action.
+	* keymapdf.cc, keymapfn.cc: bind MARK_ALL.
+
+2000-09-15  lav
+
+	* edit.cc: call LoadMainMenu.
+	* keymap.cc, keymap.h, keymapdf.cc, keymapfn.cc: lots of new functions;
+	  pretty keys support.
+	* menu1.cc, menu1.h: loadable menu support.
+	* mainmenu.cc: adapt for new menu1.h
+
+2000-09-04  lav
+
+	* edit.cc, loadsave.cc: support DISABLE_FILE_LOCKS
+	* screen.cc: use TextPoint in display process (minor speed-up).
+	* textpoin.cc, textpoin.h: speed-up TextPoint cache.
+
+2000-03-24  lav
+
+	* block.cc, edit.cc, edit.h, ext.cc, format.cc, frames.cc, kern.cc,
+	  keymapdf.cc, keymapfn.cc, loadsave.cc, mainmenu.cc, options.cc,
+	  screen.cc, screen.h, search.cc, user.cc, user.h: add MessageSync
+	  function; use it; don't call refresh from Message; move Optimize
+	  to user.cc and rename it to UserOptimizeText; Redisplay now checks
+	  if a message is on screen; TestPosition shifts screen left when
+	  cursor is closer to left side than hscroll.
+
+2000-03-21  lav
+
+	* kern.cc: (ToLineEnd) set flag when spaces are truncated in test mode.
+
+2000-03-16  lav
+
+	* search.cc, screen.cc: move screen shifting because of status line
+	  to TestPosition.
+	* edit.cc: don't ask for save if read-only.
+	* keymap.cc: leave more space for func name.
+
+2000-02-28  lav
+
+	* keymap.cc: break loop on EOF.
+
+2000-02-18  lav
+
+	* highli.cc, highli.h, search.cc: fix few memory alloc/free problems
+	  with regex usage; handle errors from re_search_2.
+
+2000-02-17  lav
+
+	* edit.cc, edit.h, highli.cc, highli.h, keymapfn.cc, mainmenu.cc,
+	  search.cc, search.h: don't include search.h in edit.h;
+	  support ignore case option in highlightling patterns.
+
+2000-02-12  lav
+
+	* screen.cc: don't forget to set flag when ScreenTop changes.
+
+2000-02-11  lav
+
+	* user.cc: (UserMarkMove*) handle LineEnd in text mode properly.
+
+2000-02-05  lav
+
+	* loadsave.cc: cast MAP_FAILED (for osf/1)
+
+2000-01-21  lav
+
+	* edit.h: define bool even if LE_CURSES_BOOL is undefined.
+	* getstr.cc, screen.cc: cast off const for addstr.
+	* keymap.cc: include term.h.
+	* keynames.cc: include edit.h to get curses.h
+
+1999-12-25  lav
+
+	* search.cc: set stdcol along with CurrentPos, this fixes random
+	  cursor placement during search/replace when cursor has to be
+	  placed at eol.
+
+1999-12-02  lav
+
+	* user.cc: use a larger buffer for offset.
+
+1999-11-06  lav
+
+	* about.cc, about.h: export copyright string.
+	* edit.cc, edit.h: print copyright on --version.
+	* mainmenu.cc, user.cc: include about.h.
+	* search.cc: specify help for search and replace.
+	* le.hlp: help for search and replace.
+
+1999-11-05  lav
+
+	* search.cc: (ReplaceFound) fixed replace to \\. (reported by
+	  <sen@adm.yar.ru>); insert unknown backslashed characters verbatim.
+	* keymapdf.cc: few more sequences.
+
+1999-10-31  lav
+
+	* user.cc: (UserYankBlock) set REDISPLAY_ALL.
+	* help.cc: read help from file by section tag.
+	* block.cc: use new help; add help for write-block/read-block.
+	* user.cc, options.cc, frames.cc, editcalc.cc: use new help.
+	* le.1: describe block piping.
+	* le.hlp: new file.
+	* Makefile.am: remove ehelp.cc, add le.hlp.
+
+1999-10-30  lav
+
+	* keymap.cc: correct error handling in keymap file reading;
+	  flushinp when we get an unknown sequence.
+	* keymapdf.cc: more binding to terminfo keys; correct kHOM; bind new
+	  actions.
+	* keymap.h: more actions - yank-block and move-mark set.
+	* keymapfn.c: more actions.
+	* search.cc: use a TextPoint for block limit; this fixes replace
+	  in the block.
+	* textpoin.cc, textpoin.h: (ForcedLineCol) new method.
+	* user.cc: move-mark functions.
+
+1999-10-06  lav
+
+	* edit.cc: add help line about --config; runtime bool check.
+	* edit.h: redefine bool for curses.h if possible.
+
+1999-09-08  lav
+
+	* user.cc: do PreUserEdit in UserStartDragMark to deal with text mode.
+	* mainmenu.cc: add drag-mark.
+	* keymap.cc, keymap.h, keymapfn.cc: add start-drag-mark action.
+
+1999-08-26  lav
+
+	* edit.cc, edit.h, kern.cc, options.cc, options.h: add --config
+	  option to specify ini file explicitly.
+
+1999-07-20  lav
+
+	* search.cc: fix backward search.
+
+1999-07-18  lav
+
+	* search.cc: support mmap in replace; speed up replace.
+	* options.cc: fix typo.
+
+1999-07-16  lav
+
+	* search.cc: add $n and $x search modifiers for numeric and hex mode.
+	  E.g. search for `$n 0x32 0x35 0x36' or `$x 32 35 36'.
+
+1999-07-12  lav
+
+	* search.cc: specify correct search limit in block replace (#) mode;
+	  refresh screen before searching for next string.
+
+1999-07-11  lav
+
+	* user.cc: fix UserIndent when !insert.
+	* highli.cc: paranoia memset to zero.
+
+1999-06-11  lav
+
+	* search.cc: fix backward searching for a word (was cycling);
+	  restore text position before saying Not found.
+
+1999-06-11  Adam Rogoyski <rogoyski@cs.utexas.edu>
+
+	* le.1: correction to make whatis work.
+
+1999-02-25  lav
+
+	* options.cc: fix typo in ReadConf
+
+1999-02-15  lav
+
+	* edit.cc, mainmenu.cc, keymap.cc: don't include signal.h
+	* signals.cc: reset alarm handler for safety
+	* colormnu.cc: check for ncurses version before repainting screen
+	* options.cc, options.h: check if .le.ini belongs to current user
+	* signals.cc: make disable_resize bool (removes a warning)
+
+1999-02-05  lav
+
+	* about.cc: update year
+	* clipbrd.cc: (Copy) speed optimized
+	* kern.cc: (GetBlock) new function - copy region to buffer
+	* textpoin.cc: (FindOffset) fix condition in near point search
+	* block.cc: (RCopy) save/restore stdcol
+	* pipe.cc: checkpoint before filtering to undelete only old block.
+	* signals.cc: dump core on SIGSEGV and SIGBUS (to help debugging)
+	* menu.cc, window.cc, user.cc, screen.cc: use n_attr instead of attr
+	  to avoid warning about name collision.
+
+1998-12-16  lav
+
+	* screen.cc: alloc at least 80 columns in hex mode to avoid checking
+	  for end of screen
+	* mainmenu.cc: add FormatFunc
+	* keymapdf.cc: change keol to kel
+
+1998-11-30  lav
+
+	* calc.cc: rename struct func to avoid warning.
+	* options.cc: initialize action to avoid warning.
+
+1998-11-28  lav
+
+	* window.h, chset.cc, color.cc, color.h, frames.cc, getch.cc,
+	  menu.cc, window.cc, user.cc, screen.cc: rename attr to n_attr
+	  to avoid warning.
+
+1998-11-26  lav
+
+	* keymapdf.cc: add key_ll binding
+	* options.cc: proper ifdef USE_MOUSE, shut up warning
+	* search.cc: handle ^L
+	* screen.cc, screen.h: use message_sp, (AddMessage) new function; use leaveok.
+	* edit.h: (message_sp) declare; redefine Text to check buffer_mmapped.
+	* getstr.cc: support new status line
+	* keynames.cc, user.cc, calc.h, help.cc, keymap.cc, signals.cc, edit.cc: shut up warning
+	* block.cc: support UserMarkAll function.
+	* kern.cc: (Optimize) quit if buffer_mmapped
+	* loadsave.cc: (Save) support buffer_mmapped;
+	  (ReopenRW) restore old position.

@@ -1,0 +1,49 @@
+   The text editor LE 1.12.8 has the following functions:
+
+   Rectangular and stream blocks: copy, move, delete, write to file, read
+from file, filtering through external command, shift left, shift right,
+upper-lower conversion, prefix inserting, yanking buffered block.
+
+   Search and replace with full regular expressions.
+
+   Navigation -- by line number, offset, to the place of last edit, to
+block begin/end.
+
+   Text formatting, line centering (Hint: ESC+F4). Optional automatic word
+wrap.
+
+   Pseudo-graphics drawing (including UTF-8 encoding).
+
+   Full undo/redo.
+
+   Hex viewing/editing files.
+   
+   Binary clean -- you can safely load binary files in `Exact' or `Hex'
+mode (Exact is the default).
+
+   Multibyte character encoding support (e.g. UTF-8) with ncurses library
+version 5.4 or newer, built with --enable-widechar option.
+
+   Viewing/editing (replace only) of very large files or even devices using
+mmap system call (--mmap or --mmap-rw option). Use with caution --mmap-rw
+option: changes go directly to file (MAP_SHARED mode), undo is available.
+
+   Various options tuning form (Hint: ^O, also in menu)
+
+   Pull down menu (Hint: ^N or F10)
+
+   Tunable syntax highlighting (rules are stored in $(pkgdatadir)/syntax or
+~/.le/syntax or ./.le.syntax)
+
+   Tunable key sequences: place output of `le --dump-keymap' to
+~/.le/keymap, ~/.le/keymap-$TERM or to $(pkgdatadir)/keymap[-$TERM] and
+edit as you wish.
+
+   Tunable colors: place output of `le --dump-colors' to
+~/.le/colors[-$TERM] or $(pkgdatadir)/colors[-$TERM] and edit as you wish.
+You can also edit and save color palette with color editing form available
+from Options menu. There are several color maps in misc/ subdirectory.
+There are also several predefined palettes which can be chosen from menu.
+
+   On new xterms (v120 and later) and appropriate terminfo some extra keys
+are recognized. E.g. Shift-Arrows do text selection.

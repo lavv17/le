@@ -1,0 +1,135 @@
+submenu "&File"
+   function "&Load"	   load-file	     hide
+   function "&Save"	   save-file	     hide rw
+   function "save &As..."  save-file-as	     hide
+   function "s&Witch"	   switch-file	     hide
+   function "re&Open R/W"  reopen-file-rw    hide ro
+   function "&Info"	   file-info	     hide
+   hline
+   function "&Make"	   make		     hide
+   function "&Compile"	   compile	     hide
+   function "&Run"         make-run	     hide
+   hline
+   function "S&hell"	   shell-escape	     hide
+   function "S&uspend"	   suspend-editor    hide
+   function "&Quit"	   quit-editor	     hide
+   end
+
+submenu "&Edit"
+   function "&Undo"	   undo		     hide rw
+   function "&Redo"	   redo		     hide rw
+   function "Undo step"	   undo-step	     hide rw
+   function "Redo step"	   redo-step	     hide rw
+   hline
+   function "Cu&t"	   delete-block	     hide rw no-mm
+   function "&Copy"	   remember-block    hide
+   function "&Paste"	   yank-block	     hide rw
+   function "&Select all"  mark-all	     hide
+   end
+
+submenu	"&Block"
+   function "set &Begin"   set-block-begin   hide
+   function "set &End"     set-block-end     hide
+   function "&Copy"	   copy-block	     hide rw block
+   function "&Move"	   move-block	     hide rw block
+   function "&Delete"	   delete-block	     hide rw block no-mm
+   function "&Read"	   read-block	     hide rw
+   function "&Write"	   write-block	     hide block
+   function "Pipe"	   pipe-block        hide block no-mm
+   hline
+   function "&Indent"	   indent-block	     hide rw block no-mm
+   function "&Unindent"	   unindent-block    hide rw block no-mm
+   function "Insert prefix" insert-prefix    hide rw block no-mm
+   function "&Yank old"	   yank-block	     hide rw clipboard
+   hline
+   function "to &Lower case" convert-to-lower hide rw
+   function "to u&Pper case" convert-to-upper hide rw
+   function "e&Xchange cases" exchange-cases  hide rw
+   hline
+   function "&Hide/display"   hide-block	hide
+   function "Drag mark"	      start-drag-mark	hide
+   function "block &Type"     change-block-type	hide no-mm
+   end
+
+submenu "&Search"
+   function "&Search forwards"	 search-forward	   hide
+   function "search &Backwards"	 search-backward   hide
+   function "start &Replace"	 start-replace	   hide rw
+   function "&Continue search/replace" continue-search hide
+   function "find &Matching bracket"   find-matching-bracket hide
+   end
+
+submenu "&Move"
+   function "&Line number"	    to-line-number	 hide
+   function "&Begin of the file"    beginning-of-file	 hide
+   function "&End of the file"	    end-of-file		 hide
+   function "&Offset"		    to-offset		 hide
+   function "&Previous edit"	    to-previous-edit	 hide rw
+   function "&Set bookmark"	    set-bookmark	 hide
+   function "&Go bookmark"          go-bookmark          hide
+   function "Block begin"	    find-block-begin	 hide block
+   function "Block end"		    find-block-end	 hide block
+   end
+
+submenu "Fo&rmat" rw no-mm
+   function "enter &Format mode"    format-functions  hide rw no-mm
+   function "format one &Paragraph" format-paragraph  hide rw no-mm
+   function "&Center line"	    center-line	      hide rw no-mm
+   function "&Right adjust line"    adjust-right-line hide rw no-mm
+   function "format &All"	    format-document   hide rw no-mm
+   end
+
+submenu "O&thers"
+   function "&Calculator"	    calculator	      hide
+   function "&Draw tables"	    draw-frames	      hide rw no-mm
+#  function "&Format functions"	    format-functions  hide rw no-mm
+   function "&Expand all tabs"	    expand-tabs	      hide rw no-mm
+   function "expand spans of tabs"  expand-tab-spans  hide rw no-mm
+   function "&Optimize text"	    optimize-text     hide rw no-mm
+   function "character &Set"	    choose-character  hide
+#   function "&Wide character set"   choose-wide-character hide
+   function "&Unix<->Dos"	    change-text-type  hide rw no-mm
+   end
+
+submenu "&Options"
+   function "&Editor"	editor-options
+   function "&Format"	format-options
+   function "&Undo"	undo-options
+   submenu  "&Terminal"
+      function "coding, &Graphics, etc..."   terminal-options
+      function "&Character set visualization" edit-charset
+      function "Full 8-bit"		     set-charset-8bit		   hide
+      function "Full 8-bit, no ctrl chars"   set-charset-8bit-no-control   hide
+      function "&Save terminal options"	     save-terminal-options	   hide
+      end
+   function "&Appearance"  appearance-options
+   submenu  "&Colors"
+      function "&Edit"	edit-colors    hide
+      function "&Save"	save-colors    hide
+      function "Save as &terminal specific" save-colors-for-terminal hide
+      hline
+      function "&Default"		  load-color-default   hide
+      function "Load default-background"  load-color-defbg     hide
+      function "Load black"		  load-color-black     hide
+      function "Load blue"		  load-color-blue      hide
+      function "Load green"		  load-color-green     hide
+      function "Load white"		  load-color-white     hide
+      end
+   submenu  "&Keyboard map"
+      function "&Default"		     load-keymap-default  hide
+      function "Load Emacs-like keymap"	     load-keymap-emacs	  hide
+      hline
+      function "&Save"			     save-keymap	  hide
+      function "Save as &terminal specific"  save-keymap-for-terminal hide
+      end
+   function "&Programs"			     programs-options
+   function "&Save to current directory"     save-options-local   hide
+   function "&Update current options file"   save-options	  hide
+   end
+
+submenu "&Help"
+   function "&Help on keys"   help	  hide
+   function "&Help on word"   word-help	  hide
+   function "&About"	      about	  hide
+   end
+end

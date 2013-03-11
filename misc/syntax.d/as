@@ -1,0 +1,10 @@
+# -*- LE-syntax -*-
+# Assembler mode, by Serge Vakulenko <vak@cronyx.ru>
+c3=@[^\n]*\n
+c3=;[^\n]*\n
+c3="([^"\\]|\\\\(.|\n))*"
+c3,1=^[ \t]*(#[ \t]*(include[ \t]*<[^>\n]*>|[a-z]*))
+c1,2=([^[:alnum:]_]|^)(\.section|\.func|\.globl|\.global|\.code|\.comm|\.weak\
+|\.endfunc\
+)([^[:alnum:]_]|$)
+c2==|,|\(|\)|#|\[|\]|:

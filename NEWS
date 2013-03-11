@@ -1,0 +1,460 @@
+Version 1.14.8 - 2013-01-31
+
+* fixed a long standing bug with split multibyte characters.
+* added more sql keywords in syntax.
+* fixed empty comment in m4 highlighting.
+
+Version 1.14.7 - 2012-05-03
+
+* added mouse wheel support.
+* fixed a file name glitch.
+* fixed html comment highlighting.
+
+Version 1.14.6 - 2011-07-06
+
+* support comment-line operation for html, css.
+* display a better status when selecting a file.
+
+Version 1.14.5 - 2010-11-23
+
+* added large-file support for mmap of a file part.
+* don't try to create file in mmap mode.
+* changed license to GNU GPL v3 (regex.c already uses it).
+
+Version 1.14.4 - 2010-11-08
+
+* new function expand-tab-spans to replace multiples of tabs with
+  spaces and one tab.
+* allow mmap of file part (--mmap FileName:begin:length).
+* updated named.conf syntax patterns.
+* fixed minor visual glitches.
+
+Version 1.14.3 - 2009-12-22
+
+* added workaround for a ncurses getmouse bug.
+* fixed compilation with gcc-4.4.x.
+
+Version 1.14.2 - 2009-05-27
+
+* added javascript patterns.
+* fixed auto word wrap mode (reported by Stefano D'Archino).
+
+Version 1.14.1 - 2009-05-22
+
+* fixed html comment pattern.
+* added more syntax colors (now 6).
+* added txt2tags syntax patterns (Stefano D'Archino).
+
+Version 1.14.0 - 2008-12-25
+
+* allow syntax pattern inclusion from additional files.
+* add support for nested syntax descriptions.
+* use newer regex with non-greedy modifier (useful for C comments highlight).
+* improved syntax descriptions for shell, configure.ac, perl.
+
+Version 1.13.11 - 2008-10-25
+
+* fixed some syntax selector patterns.
+* display syntax selector in File/Info dialog.
+
+Version 1.13.10 - 2008-09-20
+
+* automatically turn off syntax highlighting for screens with too long lines.
+* speed-optimized some syntax patterns.
+* fixed DOS-EOL mode display in status line.
+
+Version 1.13.9 - 2008-09-08
+
+* added sum function in the calculator.
+* migrated to current gnulib.
+* syntax descriptions updated (Raphael Geissert).
+* fvwm2rc syntax added (Aldis Berjoza).
+
+Version 1.13.8 - 2008-08-11
+
+* add kri/kind terminfo codes to keymap.
+* fixed a build problem related to KEY_F on linux.
+* php syntax updated (Igor Zhbanov).
+* minor improvemens in shell and sql syntax patterns.
+
+Version 1.13.7 - 2008-03-08
+
+* fixed display for single-byte encodings on linux.
+
+Version 1.13.6 - 2008-01-21
+
+* allow large tab size (up to 99).
+* fixed calculator to recognize .123 numbers without leading zero.
+* fixed block functions prompt (on F4).
+* perl syntax updated.
+
+Version 1.13.5 - 2007-08-08
+
+* fixed search not to match empty string.
+* match only base name when choosing appropriate syntax section.
+* syntax descriptions updated.
+
+Version 1.13.4 - 2006-11-30
+
+* don't do autoindent when pasting from terminal.
+* improve terminal pasting speed.
+* perl syntax updated.
+* new syntax patterns for named.conf.
+* new syntax description for Verilog (by Serge Vakulenko).
+
+Version 1.13.3 - 2006-06-21
+
+* support comment-line operation for java and sql.
+* added two special putty key codes.
+* sped up line number calculation.
+
+Version 1.13.2 - 2006-05-15
+
+* fixed a coredump in block-write (history-related).
+
+Version 1.13.1 - 2006-05-13
+
+* null terminate history lines when reading. This fixes auto loading of last
+  file by default.
+* fixed erroneous messages when there were no history file at the start.
+
+Version 1.13.0 - 2006-04-20
+
+* added `match case' option.
+* improved built-in calculator (hex, oct, binary operations, insertion to
+  text, more trig functions, factorial).
+* changed history file format.
+* optimized memory usage.
+* implemented generic russian input mode.
+
+Version 1.12.7 - 2006-04-13
+
+* added support for ncurses extended names. Now shift-arrows work on fc5 xterm.
+
+Version 1.12.6 - 2006-03-22
+
+* fixed rectangular block detete, copy, move, paste in utf-8 mode.
+* fixed text optimization.
+* fixed history file truncation when it gets smaller.
+
+Version 1.12.5 - 2005-07-20
+
+* fixed shift(control)-end/begin on linux console.
+
+Version 1.12.4 - 2005-07-12
+
+* added c-style comments to php syntax.
+* added redhat-modified xterm key codes.
+* fixed shift-keys on linux console.
+
+Version 1.12.3 - 2005-06-20
+
+* shell and pipe commands history added.
+* rxvt-unicode key codes added.
+* fixed compilation on some systems.
+
+Version 1.12.2 - 2005-05-31
+
+* fixed replace mode for wide characters.
+* fixed a bug in line/column determination with wide characters.
+* fixed compilation without ncursesw.
+
+Version 1.12.1 - 2005-04-26
+
+* text formatting and some text operations fixed for wide characters.
+* fixed compilation on some systems.
+* syntax rules updated for php, tcl, sql.
+
+Version 1.12.0 - 2005-03-03
+
+* new syntax descriptions (Ada, GNU Assembler, Oracle PL/SQL, SNMP MIB,
+  Texinfo, TeX, PHP, Tcl, Metafont, Patch (diff output), Generic config files
+  (by Serge Vakulenko).
+* don't glue changes together in undo if there was a pause.
+* improved handling of unprintable wide characters.
+* compilation fixes.
+* made wide character selection available in string input dialog.
+* fixed search pattern corruption when searching for $x ...
+* added .cpp and .cxx extension for comment-line function.
+* fixed compilation on systems without wide characters.
+
+Version 1.11.3 - 2004-08-11
+
+* fixed input of long lines when prompted.
+
+Version 1.11.2 - 2004-06-08
+
+* don't show shortcuts with undefined in terminfo keys.
+* fixed: mark text as modified properly in overstrike mode.
+* fixed null termination of file name in load/save-as dialog.
+
+Version 1.11.1 - 2004-05-20
+
+* fixed a memory allocation error.
+* forced usage of old regex included with le to workaround a glibc bug.
+
+Version 1.11.0 - 2004-05-19
+
+* full undo/redo.
+* fixed compilation without ncursesw.
+* small multibyte support improvements.
+
+Version 1.10.1 - 2004-04-29
+
+* new action choose-wide-character, accessible from menu.
+* new action insert-wchar-by-code, default binding is Meta-W.
+* implemented frame drawing in mb mode.
+* preserve block marks on line-end action in text mode.
+* fixes for non-printable and zero-width characters.
+
+Version 1.10.0 - 2004-04-02
+
+* multibyte encoding support (e.g. utf-8). Ncurses compiled with
+  --enable-widec option is required.
+* position to previous line indent on line-end if in text mode.
+* default comment-line prefix is now '# '
+* recognize // as comment beginning in C files.
+* newer xterm key coded added.
+* use BLKGETSIZE ioctl if supported by OS.
+
+Version 1.9.2  2003-03-18
+
+* save syntax highlighting on/off flag in le.ini.
+* fixed char<0 handling in keyboard mapping code.
+* check for broken regex in rh-8.0.
+* increased history size.
+
+Version 1.9.1  2002-08-06
+
+* perl highlighting improved.
+* fixed core dump when reading a block from pipe when current block type is
+  rectangular.
+* added russian translation of main menu (Dmitry S. Luhtionov <mitya@mg.dp.ua>).
+* fixed compilation with curses that don't support mouse.
+* fixed 8-bit character handling in help.
+* fixed CLK_TCK problem on newer glibc.
+
+Version 1.9.0  2001-07-05
+
+* added bookmark support (M-m sets bookmark, M-' goes to it).
+* added $kspd to keymap-emacs, this fixes ^Z for linux terminal.
+* more complete lout highlighting (by Abel Morabito).
+* perl highlighting (by Vladislav V. Zhuk).
+* fixed saving UseMouse parameter in ini file.
+
+Version 1.8.2  2001-05-11
+
+* added a configure test for broken re_search_2 in libc (it helps redhat-7.1).
+
+Version 1.8.1  2001-04-28
+
+* update menu key hints after keymap loading.
+* fix key hints in menu in case of 8-bit characters and ^@.
+
+Version 1.8.0  2001-04-16
+
+* sped up file loading.
+* use ftruncate/fchmod when they are available.
+* stop highlighting if it takes too much time (e.g. for very long lines).
+* added lout syntax patterns (by Abel Morabito <amorabito@funescoop.com.ar>).
+* added emacs-like keymap (by Abel Morabito).
+* stop drag mark on block operations.
+* fixed handling of 8-bit characters and ^@ in keymap.
+
+Version 1.7.1  2001-03-21
+
+* don't insert many newline characters at end of file in text mode on
+  next-line action.
+* html syntax patterns updated (Vladislav V. Zhuk <admin@dru.skif.net>)
+
+Version 1.7.0  2001-03-17
+
+* evil hack for linux console to allow marking text with shift-arrows.
+* bind cut/copy/paste to shift-del/ctrl-ins/shift-ins (works on certain
+  terminals only - xterm and linux console)
+* make it compile with gcc-3.0 prerelease.
+
+Version 1.6.3  2001-01-31
+
+* fix search/replace when replace string ends with a backslash.
+
+Version 1.6.2  2001-01-17
+
+* fix: redisplay correctly after reading block from pipe.
+* fix: configure on alpha.
+
+Version 1.6.1  2000-12-20
+
+* add mark-all action.
+* fix spinning in block [un]indent when last line of block lacks EOL.
+* fix: enable file locks by default.
+
+Version 1.6.0  2000-09-28
+
+* tunable main menu support (.../share/le/mainmenu).
+* optimized long lines displaying.
+
+Version 1.5.8  2000-03-16
+
+* fixed keymap loading (le was spinning if keymap file was present).
+* when a file loaded in read-only mode and buffer was modified (spaces added),
+  don't ask to save the file.
+* in hex mode when search fails and cursor was on last line of screen,
+  scroll the screen up.
+
+Version 1.5.7  2000-02-24
+
+* added html highlight patterns. An option for case-insensitive syntax
+  patterns.
+* fixed screen updating in rare cases when searching.
+* fixed Shift-End in text mode on new xterm's.
+* fixed compilation on OSF/1.
+
+Version 1.5.6  2000-01-21
+
+* fixed cursor positioning in search/replace in text mode.
+* fixed compilation with solaris' native curses.
+
+Version 1.5.5  1999-11-06
+
+* better interaction with new xterms (xterm-120 and later). You need an
+  improved terminfo.
+* ~F11 (or Esc+F11) to yank block, ~F12 (or Esc+F12) to delete (cut) block.
+* it is now possible to do block marking with shift-arrows on new xterm.
+* help text is now in a separate data file.
+* replace inside the block fixed (the `#' replace mode).
+* replace to string containing \\ fixed.
+
+Version 1.5.4  1999-10-06
+
+* add start-drag-mark action to keymap and menu.
+* handle set-block-begin and set-block-end well in case drag-mark is active.
+* option --config to specify alternative config file.
+* fix start-drag-mark in text mode when cursor is past eol.
+* workaround for problem with curses bool != c++ bool.
+
+Version 1.5.3  1999-08-18
+
+* search/replace is now supported in mmap-rw mode.
+* search/replace sped up.
+* added search for binary strings given as codes:
+   for hex: `$x 5A F4 EC'
+   for others: `$n 0x5A 124 0177'
+* fixed Tab key (indent) in overstrike mode.
+
+Version 1.5.2  1999-06-11
+
+* fixed backward word search (e.g. for `$w word').
+* fixed man page to work with whatis.
+
+Version 1.5.1  1999-02-26
+
+* fixed typo in ReadConf, now terminal options are read in properly.
+
+Version 1.5.0
+
+* mouse support inside option forms
+* mouse is now optional
+* allow to choose one of predefined color schemes
+* hold read lock while editing, and set write lock only on load and save
+* added M-f for formatting commands
+* added key_ll for end-of-line
+* 'r' in format mode ajusts to the right only one line instead of paragraph
+* *.po syntax support
+* don't set environment variable NAME, use FNAME (the former conflicts with
+  mail programs)
+* syntax and predefined colors tweaks
+* search options: ``$options string'' where options is string of chars:
+  `i' for case insensitive, `w' for whole words only. Then it searches for
+  string using the options.
+* rectangular block operations sped up
+bugs fixed:
+* extra space was left in right-only formatting - fixed
+* disallow block yank in r/o mode
+* a bug made deleting of rectangular block very slow
+* rectangular block copy in Text mode fixed.
+
+Version 1.4.2
+
+* extended maximum line length for formatting
+* backup number was not saved in options file - fixed
+* backup files were not created with no suffix in specified backup directory
+* F2, ~F2 in options form did not work
+
+Version 1.4.1
+
+* auto word wrap added (turn on in format options)
+* sped up automatic search/replace
+* added java syntax patterns
+* Display problem in hex mode for huge files fixed
+* ^P (quoted-insert) in mmap mode fixed
+* tables drawing fixed
+
+Version 1.4.0
+
+* now it is possible to use default colors of xterm in palette
+* some bugs in palette handling fixed
+* save many versions of old file contents, %d in backup suffix.
+* do not save position when file save is not confirmed
+* save offset in position file -- speeds up startup in hex mode
+* new editing mode selected with --mmap or --mmap-rw. Now it is possible to
+  edit/view directly very large files or even devices. (e.g. /dev/kmem)
+* search file history for first available from cwd file to load automatically
+* added python, eiffel, sather and shell syntax patterns (Serge Vakulenko
+  <vak@cronyx.ru>)
+* make rx the default, as it seems to be faster
+* milti-line constructs can now be highlighted; nested constructs disallowed
+* mark last on-screen char of lines longer than screen width
+* drag mode block marking added (F4+V; mark; F4)
+* mouse support in xterm (via ncurses)
+* added two checks for environment sanity
+* cleaned up keyboard input code/improved typeahead feature
+* improved scroling by pages in hex mode; optional page scrolling mode
+* dump text into ~/.le/tmp - it is safer than cwd
+* dump large files smoothly, 128k at a time
+* save block marks on Reopen
+* save timestamp on backup files
+* fixed backward search (broken since 1.3.0)
+* in history.cc, fixed history wrap in Prev
+* fixed transformation for rectangular, unlimited to the right block
+* removed accidently forgotten idcok(0)
+* added fnmatch.[ch]
+
+Version 1.3.1
+
+* changed regex options for search
+bugs fixed:
+* remove condition for refresh in getch.cc - sometimes cursor was not
+  positioned correctly
+* ^V/^T sometimes did not refresh screen properly after copying a tab
+* rectangular block was copied at wrong place
+
+Version 1.3.0
+
+* full regular expressions search and replace
+* tunable syntax highlighting based on regular expressions
+* added a buffer for old block, so it is possible now to yank
+  a block from one file to another; deleted block can be yanked too.
+* color palette editing form
+* a short man page written
+* M-e for line-end, M-a for line-begin; ESC+[1-0] is now equivalent to F[1-10]
+* automake used
+* eliminated sscanf in key recognition, so it would be faster (esp. on fbsd22)
+bugs fixed:
+* allow creating files when R/O file loaded
+* don't turn R/O on when the load is unsuccessful
+* don't bring up file selection box when reading block from pipe and the
+  command has * or ?
+* rectangular blocks should now work better when there are tabs in text
+
+Version 1.2.0b
+* don't add -I/usr/include -L/usr/lib
+* fix using TIOCGWINSZ on sco
+* block.cc:Transform update
+* increase delay in GetNextAction to 500ms
+
+Version 1.2.0a
+* History::operator- fixed a coredump due to extra ;
+
+Version 1.2.0
+* this is the first public release

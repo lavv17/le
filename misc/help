@@ -1,0 +1,13 @@
+#!/bin/sh
+
+case "$EXT" in
+.pl|.pm|.sub)
+	case "$WORD" in
+	[A-Z]*)	perldoc "$WORD";;
+	*)	perldoc -f "$WORD";;
+	esac
+	;;
+*)
+	man "$WORD"
+	;;
+esac
