@@ -1,5 +1,4 @@
 #!/bin/sh
-# $Id: autogen.sh,v 1.2 1999/12/30 15:43:10 misiek Exp $
 # Run this to generate all the initial makefiles, etc.
 
 srcdir=`dirname $0`
@@ -21,7 +20,7 @@ DIE=0
   echo
   echo "**Error**: You must have \`autoconf' installed to compile $PKG_NAME."
   echo "Download the appropriate package for your distribution,"
-  echo "or get the source tarball at ftp://ftp.gnu.org/pub/gnu/"
+  echo "or get the source at ftp://ftp.gnu.org/pub/gnu/autoconf/autoconf-2.60.tar.gz"
   DIE=1
 }
 
@@ -29,7 +28,7 @@ DIE=0
   (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "**Error**: You must have \`libtool' installed to compile $PKG_NAME."
-    echo "Get ftp://ftp.gnu.org/pub/gnu/libtool-1.2d.tar.gz"
+    echo "Get ftp://ftp.gnu.org/pub/gnu/libtool/libtool-1.6.tar.gz"
     echo "(or a newer version if it is available)"
     DIE=1
   }
@@ -40,27 +39,16 @@ grep "^AM_GNU_GETTEXT" $srcdir/configure.ac >/dev/null && {
   (gettextize --version) < /dev/null > /dev/null 2>&1 || {
     echo
     echo "**Error**: You must have \`gettext' installed to compile $PKG_NAME."
-    echo "Get ftp://alpha.gnu.org/gnu/gettext-0.10.35.tar.gz"
+    echo "Get ftp://ftp.gnu.org/pub/gnu/gettext/gettext-0.11.2.tar.gz"
     echo "(or a newer version if it is available)"
     DIE=1
   }
 }
 
-if [ -r po/jp.po ]; then
-  (cd po && gcc -s ./ujis2sjis.c -o ./ujis2sjis && \
-   ./ujis2sjis < ja.po > ja_JP.SJIS.po) \
-   < /dev/null > /dev/null 2>&1 || {
-  echo
-  echo "**Error**: Problem with preparing Japanse \`sjis' translation"
-  echo "Check if \`po/ujis2sjis.c' is compilling fine."
-  DIE=1
-}
-fi
-
 (automake --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: You must have \`automake' installed to compile $PKG_NAME."
-  echo "Get ftp://ftp.gnu.org/pub/gnu/automake-1.3.tar.gz"
+  echo "Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.9.tar.gz"
   echo "(or a newer version if it is available)"
   DIE=1
   NO_AUTOMAKE=yes
@@ -72,14 +60,38 @@ test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: Missing \`aclocal'.  The version of \`automake'"
   echo "installed doesn't appear recent enough."
-  echo "Get ftp://ftp.gnu.org/pub/gnu/automake-1.3.tar.gz"
+  echo "Get ftp://ftp.gnu.org/pub/gnu/automake/automake-1.9.tar.gz"
   echo "(or a newer version if it is available)"
   DIE=1
 }
 
+(gnulib-tool --version) < /dev/null > /dev/null 2>&1 || {
+  echo
+  echo "**Error**: You must have \`gnulib-tool' in PATH to compile $PKG_NAME."
+  echo "Get it from git://git.savannah.gnu.org/gnulib"
+  DIE=1
+}
+
+ver=`gettextize --version 2>&1 | sed -n 's/^.*GNU gettext.* \([0-9]*\.[0-9.]*\).*$/\1/p'`
+
+case $ver in
+  '') gettext_fail_text="Unknown gettext version.";;
+  0.1[5-9]* | 0.[2-9]* | [1-9].*) ;;
+  *) gettext_fail_text="Old gettext version $ver.";;
+esac
+
+if test "$gettext_fail_text" != ""; then
+  echo "$gettext_fail_text."
+  echo "Get ftp://ftp.gnu.org/pub/gnu/gettext/gettext-0.15.tar.gz"
+  echo "(or a newer version if it is available)"
+  DIE=1
+fi
+
 if test "$DIE" -eq 1; then
   exit 1
 fi
+
+#make -f Makefile.am srcdir=. acinclude.m4
 
 if test -z "$*"; then
   echo "**Warning**: I am going to run \`configure' with no arguments."
@@ -102,7 +114,8 @@ do
     echo processing $dr
     macrodirs=`sed -n -e 's,AM_ACLOCAL_INCLUDE(\(.*\)),\1,gp' < $coin`
     ( cd $dr
-      aclocalinclude="$ACLOCAL_FLAGS -I m4"
+      aclocalinclude="$ACLOCAL_FLAGS"
+      test -d m4 && aclocalinclude="$aclocalinclude -I m4"
       for k in $macrodirs; do
   	if test -d $k; then
           aclocalinclude="$aclocalinclude -I $k"
@@ -116,8 +129,10 @@ do
 	else
 	  echo "Creating $dr/aclocal.m4 ..."
 	  test -r $dr/aclocal.m4 || touch $dr/aclocal.m4
-#	  echo "Running gettextize...  Ignore non-fatal messages."
-#	  echo "no" | gettextize --force --copy
+	  echo "Running gettextize...  Ignore non-fatal messages."
+	  echo "no" | gettextize --force --copy --no-changelog
+	  mv configure.ac~ configure.ac
+	  mv m4/Makefile.am~ m4/Makefile.am 
 	  echo "Making $dr/aclocal.m4 writable ..."
 	  test -r $dr/aclocal.m4 && chmod u+w $dr/aclocal.m4
         fi
@@ -125,26 +140,28 @@ do
       if grep "^AM_PROG_LIBTOOL" configure.ac >/dev/null; then
 	echo "Running libtoolize..."
 	libtoolize --force --copy
+	mv Makefile.am~ Makefile.am
       fi
+      gnulib-tool --update
       echo "Running aclocal $aclocalinclude ..."
       aclocal $aclocalinclude
-      if grep "^AM_CONFIG_HEADER" configure.ac >/dev/null; then
+      if grep "^A[MC]_CONFIG_HEADER" configure.ac >/dev/null; then
 	echo "Running autoheader..."
 	autoheader
       fi
-      echo "Running automake --gnu $am_opt ..."
-      automake --add-missing --gnu $am_opt
+      if [ -r Makefile.am ]; then
+        echo "Running automake --gnu $am_opt ..."
+        automake --add-missing --gnu $am_opt
+      fi
       echo "Running autoconf ..."
       autoconf
     )
   fi
 done
 
-conf_flags="--with-debug"
-
 if test x$NOCONFIGURE = x; then
-  echo Running $srcdir/configure $conf_flags "$@" ...
-  $srcdir/configure $conf_flags "$@" \
+  echo Running $srcdir/configure "$@" ...
+  $srcdir/configure "$@" \
   && echo Now type \`make\' to compile $PKG_NAME
 else
   echo Skipping configure process.
