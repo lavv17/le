@@ -38,3 +38,5 @@ Makefile
 
 # gettext
 /ABOUT-NLS
+
+/build-aux/
