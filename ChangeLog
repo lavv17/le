@@ -6,6 +6,7 @@
 	* src/help.cc: fixed fd leak.
 	* src/screen.cc: fixed condition check order.
 	* src/file.cc: fixed overlapped strcpy.
+	* src/history.cc: fixed NULL dereference when malloc returns NULL.
 
 2005-04-26  lav
 
