@@ -3,6 +3,7 @@
 	* doc/le.1, src/edit.cc: document missing opts.
 	* src/loadsave.cc: fixed fd leak.
 	* src/about.cc: fixed program name.
+	* src/help.cc: fixed fd leak.
 
 2005-04-26  lav
 
