@@ -1,3 +1,7 @@
+2013-03-13	Raphael Geissert <geissert@debian.org>
+
+	* doc/le.1, src/edit.cc: document missing opts.
+
 2005-04-26  lav
 
 	* configure.ac: check for sys/syslimits.h, sys/param.h.
