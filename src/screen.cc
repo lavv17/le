@@ -865,7 +865,7 @@ void  Redisplay(num line,offs ptr,num limit)
 		     if(MBCharWidth==0 && clwp>clw)
 		     {
 			int a=0;
-			while(clwp[-1].chars[a] && a<CCHARW_MAX)
+			while(a<CCHARW_MAX && clwp[-1].chars[a])
 			   a++;
 			if(a<CCHARW_MAX)
 			   clwp[-1].chars[a]=ch;

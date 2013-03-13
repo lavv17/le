@@ -4,6 +4,7 @@
 	* src/loadsave.cc: fixed fd leak.
 	* src/about.cc: fixed program name.
 	* src/help.cc: fixed fd leak.
+	* src/screen.cc: fixed condition check order.
 
 2005-04-26  lav
 
