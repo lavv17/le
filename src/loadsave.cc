@@ -505,11 +505,14 @@ static int CreateBak(char *name)
 
    if(fd==-1)
    {
+      if(bfd!=-1)
+         close(bfd);
       FError(name);
       return ERR;
    }
    else if(bfd==-1)
    {
+      close(fd);
       FError(bakname);
       return ERR;
    }
@@ -534,6 +537,7 @@ static int CreateBak(char *name)
          }
          if(bytesread==0)
             break;
+	 // FIXME: partial writes
          if(write(bfd,buf2,bytesread)==-1)
 	 {
 	    FError(bakname);

@@ -1,6 +1,7 @@
 2013-03-13	Raphael Geissert <geissert@debian.org>
 
 	* doc/le.1, src/edit.cc: document missing opts.
+	* src/loadsave.cc: fixed fd leak.
 
 2005-04-26  lav
 
