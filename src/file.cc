@@ -74,7 +74,7 @@ void  NormalizeFileName(char *s)
          *s=0;
          break;
        }
-       strcpy(s+1,p);
+       memmove(s+1,p, strlen(p)+1);
      }
    }
 }

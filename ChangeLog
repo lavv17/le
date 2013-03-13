@@ -5,6 +5,7 @@
 	* src/about.cc: fixed program name.
 	* src/help.cc: fixed fd leak.
 	* src/screen.cc: fixed condition check order.
+	* src/file.cc: fixed overlapped strcpy.
 
 2005-04-26  lav
 
