@@ -179,9 +179,9 @@ c3=^#.*$
 ci2,1=^[[:alnum:]-]+(:)
 c2=\$|=|<|>|\||,
 c2=^ \.
-c1,1=^(Source|Package|Version|Section|Priority|Maintainer|Homepage|Description\
+c1,1=^(Source|Package(-List)?|Version|Section|Priority|Maintainer|Homepage|Description\
  |Standards-Version|(Build-)?Depends(-Indep)?|Architecture|Provides|Replaces\
- |Recommends|Suggests|(Build-)?Conflicts(-Indep)?|Enhances|Uploaders|Vcs-Browser\
+ |Recommends|Suggests|(Build-)?Conflicts(-Indep)?|Breaks|Enhances|Uploaders|Vcs-Browser\
  |Essential|Installed-Size|Binary|Format|Files|Closes|Changes|Urgency\
  |Distribution|Date|Changed-By|Checksums-Sha(1|256))
 ci1=^Vcs-[[:alnum:]]+
