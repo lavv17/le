@@ -137,7 +137,7 @@ i=tex
 
 /*.php.*|*.php|/<\?php
 s(php)1=<\?(?:php)?((?:.|\n)*?)\?>
-s(html)1=(?:\`|\?>)((?:.|\n)*?)(?:<\?|\')
+s(html)1=(?:\`|\?>)((?:.|\n)*?)(?:<\?|\`)
 i=html
 i=php
 
@@ -179,9 +179,9 @@ c3=^#.*$
 ci2,1=^[[:alnum:]-]+(:)
 c2=\$|=|<|>|\||,
 c2=^ \.
-c1,1=^(Source|Package|Version|Section|Priority|Maintainer|Homepage|Description\
+c1,1=^(Source|Package(-List)?|Version|Section|Priority|Maintainer|Homepage|Description\
  |Standards-Version|(Build-)?Depends(-Indep)?|Architecture|Provides|Replaces\
- |Recommends|Suggests|(Build-)?Conflicts(-Indep)?|Enhances|Uploaders|Vcs-Browser\
+ |Recommends|Suggests|(Build-)?Conflicts(-Indep)?|Breaks|Enhances|Uploaders|Vcs-Browser\
  |Essential|Installed-Size|Binary|Format|Files|Closes|Changes|Urgency\
  |Distribution|Date|Changed-By|Checksums-Sha(1|256))
 ci1=^Vcs-[[:alnum:]]+
@@ -191,7 +191,7 @@ c1,1=^(X[BCS]+-[[:alnum:]-]+)(:)
 // ([^ ]+) .+; +urgency=
 c3=^[ \t]+--.+
 c2,1=urgency=([[:alnum:]]+)
-ci2,1=[ \t]+([[:alnum:]]+);[ \t]+urgency=
+ci2,1=[ \t]+([[:alnum:]-]+);[ \t]+urgency=
 c2,1=^[[:alnum:].-]+ +\((.+)\)
 c1,1=^([[:alnum:].-]+) +\(.+\)
 ci1=closes:[ \t]*(bug)?#?[ \t]?[0-9]+(,[ \t]*\
@@ -273,3 +273,11 @@ i=pascal
 
 /*.t2t
 i=txt2tags
+
+# OCaml mode, by Raphael Geissert <atomo64@gmail.com>
+/*.mli|*.ml
+i=ocaml
+
+# Haskell mode, by Raphael Geissert <atomo64@gmail.com>
+/*.hs
+i=haskell

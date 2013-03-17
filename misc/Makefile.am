@@ -8,7 +8,7 @@ syntax = syntax syntax.d/ada syntax.d/as syntax.d/awk syntax.d/c++-comment	\
  syntax.d/named-conf syntax.d/pascal syntax.d/perl syntax.d/php			\
  syntax.d/python syntax.d/sather syntax.d/shell syntax.d/snmp-mib		\
  syntax.d/sql syntax.d/tcl syntax.d/tex syntax.d/texinfo syntax.d/txt2tags	\
- syntax.d/verilog syntax.d/javascript
+ syntax.d/verilog syntax.d/javascript syntax.d/ocaml syntax.d/haskell
 
 nobase_pkgdata_DATA = $(colors) $(keymaps) $(mainmenus) $(syntax)
 pkgdata_SCRIPTS = help

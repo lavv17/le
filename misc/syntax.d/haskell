@@ -1,0 +1,6 @@
+# -*- LE-syntax -*-
+c3=^[[:space:]]*--.*$
+# from c-literal: foo' is foo prime, not quoted text
+c3="([^"\n\\]|\\\\(.|\n))*"
+ci1,2=([^[:alnum:]_$]|^)(import|instance|where|do|let|return)([^[:alnum:]_]|$)
+c2=\\[|\\]|::|=>|=|->|<-|\+\+|<<|>>|<<=|>>=
