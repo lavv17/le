@@ -1,5 +1,10 @@
 2013-03-13	Raphael Geissert <geissert@debian.org>
 
+	* misc/Makefile.am, misc/syntax, misc/syntax.d/ocaml,
+	  misc/syntax.d/haskell: merge Debian changes.
+
+2013-03-13	Raphael Geissert <geissert@debian.org>
+
 	* doc/le.1, src/edit.cc: document missing opts.
 	* src/loadsave.cc: fixed fd leak.
 	* src/about.cc: fixed program name.
