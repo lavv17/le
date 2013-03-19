@@ -16,7 +16,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id$ */
+/* $Id: bm.h,v 1.1 2001/05/14 13:48:37 lav Exp $ */
 
 void SetBookmark(int n);
 void ClearBookmark(int n);

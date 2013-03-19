@@ -30,8 +30,10 @@ static char *memdup(const char *s,int len)
       return 0;
    char *mem=(char*)malloc(len+1);
    if(mem)
+   {
       memcpy(mem,s,len);
-   mem[len]=0;
+      mem[len]=0;
+   }
    return mem;
 }
 

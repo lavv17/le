@@ -1,0 +1,8 @@
+# -*- LE-syntax -*-
+c3=\(\\*(?:.|\n)*?\\*\)
+i=c-literal
+ci1,2=([^[:alnum:]_$]|^)(if|then|begin|end|else|in|with|let|\
+open|try|raise|true|false)([^[:alnum:]_]|$)
+c2=\\[|\\]|<<|<|>>|>|;|\(|\)|=|!=|&&|\|\||!|\.\.|&|^|->|::
+c2,2=([ \t)]|^)(and|or|xor|eq|ne|cmp|lt|gt|le|ge)([ \t(]|$)
+c2,2=([ \t(]|^)(not)([ \t(]|$)

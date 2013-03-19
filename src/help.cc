@@ -120,10 +120,14 @@ static char *LoadHelp(const char *tag)
       {
 	 // FIXME: dynamically increment size.
 	 if(strlen(help)>0x10000-256)
+	 {
+	    fclose(hf);
 	    return help;
+	 }
 	 strcat(help,buf);
       }
    }
+   fclose(hf);
    if(tag_match)
       return help;
    free(help);

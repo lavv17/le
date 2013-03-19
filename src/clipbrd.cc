@@ -16,7 +16,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id$ */
+/* $Id: clipbrd.cc,v 1.8 2006/04/12 05:46:05 lav Exp $ */
 
 #include <config.h>
 #include <stdlib.h>

@@ -16,8 +16,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id$ */
-
 /* edit.c : main editor loop */
 
 #include <config.h>
@@ -546,6 +544,10 @@ void  PrintUsage(int arg)
 	  "    --config=FILE  use specified file instead of le.ini\n"
 	  "    --dump-keymap  dump default keymap to stdout and exit\n"
 	  "    --dump-colors  dump default color map to stdout and exit\n"
+#if USE_MULTIBYTE_CHARS
+          "    --multibyte    force multibyte mode\n"
+          "    --no-multibyte disable multibyte mode\n"
+#endif
 	  "    --mmap         load file using mmap (read only)\n"
 	  "    --mmap-rw      mmap read-write. Use with extreme caution,\n"
 	  "                   especially on your hard disk!\n"

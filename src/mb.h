@@ -16,8 +16,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id$ */
-
 #ifndef MB_H
 #define MB_H
 

@@ -17,7 +17,6 @@
  */
 
 /* Search & replace for the editor */
-/* $Id$ */
 
 #include <config.h>
 #include <memory.h>

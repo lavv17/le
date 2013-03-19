@@ -16,8 +16,6 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id$ */
-
 #include <config.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -505,11 +503,14 @@ static int CreateBak(char *name)
 
    if(fd==-1)
    {
+      if(bfd!=-1)
+         close(bfd);
       FError(name);
       return ERR;
    }
    else if(bfd==-1)
    {
+      close(fd);
       FError(bakname);
       return ERR;
    }
@@ -534,6 +535,7 @@ static int CreateBak(char *name)
          }
          if(bytesread==0)
             break;
+	 // FIXME: partial writes
          if(write(bfd,buf2,bytesread)==-1)
 	 {
 	    FError(bakname);

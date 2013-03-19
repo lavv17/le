@@ -49,7 +49,7 @@ void  ShowAbout()
    PutStr(MIDDLE,16,"GNU General Public License for more details.");
 
    PutStr(MIDDLE,18,"You should have received a copy of the GNU General Public License");
-   PutStr(MIDDLE,19,"along with LFTP.  If not, see <http://www.gnu.org/licenses/>.");
+   PutStr(MIDDLE,19,"along with LE.  If not, see <http://www.gnu.org/licenses/>.");
 }
 
 void  HideAbout()
@@ -75,5 +75,5 @@ void PrintVersion()
 "GNU General Public License for more details.\n"
 "\n"
 "You should have received a copy of the GNU General Public License\n"
-"along with LFTP.  If not, see <http://www.gnu.org/licenses/>.\n");
+"along with LE.  If not, see <http://www.gnu.org/licenses/>.\n");
 }

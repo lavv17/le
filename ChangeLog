@@ -1,3 +1,18 @@
+2013-03-13	Raphael Geissert <geissert@debian.org>
+
+	* misc/Makefile.am, misc/syntax, misc/syntax.d/ocaml,
+	  misc/syntax.d/haskell: merge Debian changes.
+
+2013-03-13	Raphael Geissert <geissert@debian.org>
+
+	* doc/le.1, src/edit.cc: document missing opts.
+	* src/loadsave.cc: fixed fd leak.
+	* src/about.cc: fixed program name.
+	* src/help.cc: fixed fd leak.
+	* src/screen.cc: fixed condition check order.
+	* src/file.cc: fixed overlapped strcpy.
+	* src/history.cc: fixed NULL dereference when malloc returns NULL.
+
 2005-04-26  lav
 
 	* configure.ac: check for sys/syslimits.h, sys/param.h.

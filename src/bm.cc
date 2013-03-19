@@ -16,7 +16,7 @@
  * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-/* $Id$ */
+/* $Id: bm.cc,v 1.2 2001/05/16 14:42:28 lav Exp $ */
 
 #include <config.h>
 #include <assert.h>
