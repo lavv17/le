@@ -27,11 +27,8 @@ LE can be downloaded from the following locations:
    ftp://metalab.unc.edu/pub/Linux/apps/editors/terminal/
    http://ftp.yar.ru/pub/source/le/
    http://metalab.unc.edu/pub/Linux/apps/editors/terminal/
-There is anonymous CVS server:
-   cvs -z9 -d :pserver:anonymous@swing.yars.free.net:/home/lav/cvsroot login
-   (empty password)
-   cvs -z9 -d :pserver:anonymous@swing.yars.free.net:/home/lav/cvsroot co le
 
+For development version see https://github.com/lavv17/le
 
 There are two very quiet mailing lists for LE. le@uniyar.ac.ru is for
 general discussions and for announcements of "official" le versions.
