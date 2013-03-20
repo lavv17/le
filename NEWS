@@ -1,3 +1,10 @@
+Version 1.14.9 - 2013-03-20
+
+* fixed a number of small bugs.
+* syntax updates.
+* new syntax patterns for ocaml and haskell.
+(Thanks to Raphael Geissert <geissert@debian.org>)
+
 Version 1.14.8 - 2013-01-31
 
 * fixed a long standing bug with split multibyte characters.
