@@ -21,9 +21,6 @@ dist-hook:
 
 REL_DIR=/ftp/pub/source/le
 release:
-	cvs commit -m $(VERSION)
-	make dist
-	cvs commit -m $(VERSION)
 	make distcheck
 	mv $(PACKAGE)-$(VERSION).tar.gz $(REL_DIR)
 	cp -p $(PACKAGE).lsm $(REL_DIR)/$(PACKAGE)-$(VERSION).lsm
@@ -35,4 +32,3 @@ release:
 	    gpg -ba $(PACKAGE)-$(VERSION).tar.xz; \
 	    md5sum $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION).tar.bz2 $(PACKAGE)-$(VERSION).tar.xz > $(PACKAGE)-$(VERSION).md5sum)
 	mutt -s add lsm@execpc.com < $(PACKAGE).lsm
-	cvs tag $(PACKAGE)-`echo $(VERSION) | sed 's/\./-/g'` .
