@@ -90,7 +90,7 @@ i=ada
 /*.S|*.s
 i=as
 
-/*.py
+/*.py|/^#![ \t]*/.*/python.*
 i=python
 
 /*.sa
