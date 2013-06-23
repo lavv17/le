@@ -219,8 +219,10 @@ void  History::ReadFrom(FILE *f)
       char *line=(char*)malloc(len+1);
       if(!line)
 	 return;
-      if(fread(line,1,len,f)!=len)
+      if(fread(line,1,len,f)!=len) {
+	 free(line);
 	 return;
+      }
       line[len]=0;
       lines[i]=new HistoryLine;
       lines[i]->cr_time=cr_time;
