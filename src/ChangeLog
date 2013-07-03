@@ -1,3 +1,7 @@
+2013-07-03	rgeissert
+
+	* history.cc: Fix minor memory leak.
+
 2013-01-31	lav
 
 	* textpoin.cc, textpoin.h: (CHAR_SPLIT) new flag; fixed long standing
