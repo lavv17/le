@@ -1,3 +1,7 @@
+2013-07-09	lav
+
+	* block.cc: fixed spurious error message.
+
 2013-07-03	rgeissert
 
 	* history.cc: Fix minor memory leak.

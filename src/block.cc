@@ -429,8 +429,8 @@ void    Write()
       FError(BlockFile);
       return;
    }
-   errno=0;
    MessageSync("Writing...");
+   int res=OK;
    if(rblock)
    {
       ClipBoard cb;
@@ -439,13 +439,15 @@ void    Write()
          close(fd);
          return;
       }
-      cb.Write(fd);
+      errno=0;
+      res=cb.Write(fd);
    }
    else
    {
-      WriteBlock(fd,BlockBegin,BlockEnd-BlockBegin,&act_written);
+      errno=0;
+      res=WriteBlock(fd,BlockBegin,BlockEnd-BlockBegin,&act_written);
    }
-   if(errno)
+   if(res<0)
       FError(BlockFile);
    close(fd);
 }
