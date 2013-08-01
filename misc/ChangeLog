@@ -1,3 +1,7 @@
+2013-08-01	Raphael Geissert <geissert@debian.org>
+
+	* syntax, syntax.d/golang, Makefile.am: add basic golang patterns.
+
 2013-07-03	Raphael Geissert <geissert@debian.org>
 
 	* syntax: Add missing syntax highlighting for some Debian control file fields.

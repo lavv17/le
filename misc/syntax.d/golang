@@ -1,0 +1,5 @@
+# -*- LE-syntax -*-
+i=c++-comment
+i=c-literal
+c2=\\[|\\]|\\(|\\)|{|}|,
+ci1,2=([^[:alnum:]_$]|^)(if|else|for|switch|case|nil|package|import|type|const|struct|func|var|return|break)([^[:alnum:]_]|$)

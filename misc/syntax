@@ -281,3 +281,6 @@ i=ocaml
 # Haskell mode, by Raphael Geissert <atomo64@gmail.com>
 /*.hs
 i=haskell
+
+/*.go
+i=golang
