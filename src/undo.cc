@@ -395,3 +395,10 @@ void Undo::GroupHead::Undo()
    BlockEnd=block_end;
    hide=block_hide;
 }
+
+void Undo::FileSaved()
+{
+   // set all undo/redo versions as modified.
+   for(Change *scan=chain_head; scan; scan=scan->next)
+	scan->old_modified=true;
+}

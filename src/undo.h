@@ -97,6 +97,7 @@ public:
    void RedoGroup();
    void UndoOne();
    void RedoOne();
+   void FileSaved();
 
    void Clear();
 

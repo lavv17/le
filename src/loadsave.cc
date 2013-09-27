@@ -49,6 +49,7 @@
 #include "clipbrd.h"
 #include "getch.h"
 #include "bm.h"
+#include "undo.h"
 
 #ifndef MAP_FAILED
 # define MAP_FAILED ((void*)-1)
@@ -714,6 +715,7 @@ int   SaveFile(char *name)
 
    modified=0;
    CheckPoint();
+   undo.FileSaved();
 
    stat(name,&st);
    FileInfo=InodeInfo(&st);
