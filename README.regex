@@ -1,0 +1,17 @@
+A note about regex in LE editor
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+I had a bad luck finding an efficient and bug-free regex library
+implementing re_search_2 function. Fortunately, GNU Emacs contained such a
+function, which I borrowed.
+
+I needed re_search_2 function because LE stores the text in the memory as
+two part string with a gap between the parts. The efficiency was needed
+mostly because regex was used for dynamic syntax highlighting.
+
+New version of regex implements non-greedy modifiers which were successfully
+used for C-like comment matching. Without such modifier it was impossible to
+create a perfect pattern for C comments.
+
+-- 
+   Alexander.
