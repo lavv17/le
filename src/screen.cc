@@ -976,16 +976,15 @@ void  ErrMsg(const char *s)
 
 void  FError(const char *s)
 {
+   const char *err=errno?strerror(errno):"The device is full or ulimit is too low,\nI cannot write";
    char  msg[256];
 
    if(strlen(s)>50)
       sprintf(msg,"File: ...%s\n",s+strlen(s)-47);
    else
       sprintf(msg,"File: %s\n",s);
-   if(errno>0)
-      strcat(msg,strerror(errno));
-   else
-      strcat(msg,"The device is full or ulimit is too low,\nI cannot write");
+   strcat(msg,err);
+   
    ErrMsg(msg);
 }
 
