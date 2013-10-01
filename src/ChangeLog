@@ -1,3 +1,15 @@
+2013-10-01	lav
+
+	* edit.h, kern.cc: (write_loop) new function to handle partial writes;
+	  use it in WriteBlock function.
+	* loadsave.cc: use write_loop; increase file copy buffer size;
+	  show warning if file size changes as we copy the file.
+
+2013-09-27	lav
+
+	* screen.cc: save errno message carefully.
+	* undo.cc, undo.h, loadsave.cc: set all undo versions as "modified" on save.
+
 2013-07-09	lav
 
 	* block.cc: fixed spurious error message.
