@@ -1,3 +1,7 @@
+2013-10-01	Raphael Geissert <geissert@debian.org>
+
+	* syntax: improve patch/diff syntax highlighting
+
 2013-08-01	Raphael Geissert <geissert@debian.org>
 
 	* syntax, syntax.d/golang, Makefile.am: add basic golang patterns.

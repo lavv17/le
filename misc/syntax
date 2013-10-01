@@ -152,8 +152,8 @@ i=metafont
 
 # Patch mode, by Serge Vakulenko <vak@cronyx.ru>
 /*.pch|*.diff|*.patch|/^diff
-c2=^\+\+.*$
-c2=^--.*$
+c2=^\+\+\+\s.*$
+c2=^---\s.*$
 c2=^@@.*$
 c3=^\+.*$
 c1=^-.*$
