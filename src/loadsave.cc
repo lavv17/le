@@ -516,8 +516,8 @@ static int CreateBak(char *name)
       return ERR;
    }
    buf2size=st.st_size;
-   if(buf2size>0x1000)
-      buf2size=0x1000;
+   if(buf2size>0x40000)
+      buf2size=0x40000;
    if((buf2=(char*)malloc(buf2size))==NULL)
    {
       NotMemory();
@@ -525,6 +525,7 @@ static int CreateBak(char *name)
    }
    else
    {
+      num written=0;
       for(;;)
       {
          bytesread=read(fd,buf2,buf2size);
@@ -536,15 +537,17 @@ static int CreateBak(char *name)
          }
          if(bytesread==0)
             break;
-	 // FIXME: partial writes
-         if(write(bfd,buf2,bytesread)==-1)
+         if(write_loop(bfd,buf2,bytesread,&written)==ERR)
 	 {
 	    FError(bakname);
       	    res=ERR;
 	    break;
 	 }
       }
+      if(written!=st.st_size)
+	 ErrMsg("File size has changed during the copying");
       free(buf2);
+      buf2=NULL;
    }
    close(fd);
    close(bfd);

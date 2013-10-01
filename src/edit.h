@@ -247,7 +247,7 @@ void  CheckWindowResize();
 
 extern  void    Quit(void),
                 Options(void),
-                Write(void),HideDisplay(void),Indent(void),Unindent(void),
+                HideDisplay(void),Indent(void),Unindent(void),
                 FindBlockBegin(void),FindBlockEnd(void),ConvertToLower(void),
                 ConvertToUpper(void),ExchangeCases(void),BlockType(void),
                 FindMatch(void),DoMake(void),DoRun(void),DoCompile(void),
@@ -331,6 +331,8 @@ bool BlockEqAt(offs,const char *,int);
 #include "chset.h"
 
 int   isslash(char);
+
+int write_loop(int fd,const char *ptr,num size,num *written);
 
 void  ProcessDragMark();
 

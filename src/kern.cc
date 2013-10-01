@@ -627,9 +627,26 @@ int   GetBlock(char *copy,offs from,num size)
    return(size);
 }
 
+// fight partial writes, count written bytes.
+int write_loop(int fd,const char *ptr,num size,num *written)
+{
+   errno=0;
+   while(size>0) {
+      int res=write(fd,ptr,size);
+      if(res==-1)
+	 return ERR;
+      if(res==0)
+	 return ERR;
+      ptr+=res;
+      size-=res;
+      *written+=res;
+   }
+   return OK;
+}
+
 int   WriteBlock(int fd,offs from,num size,num *act_written)
 {
-   num   leftsize;
+   *act_written=0;
 
    if(from<0)
    {
@@ -637,52 +654,22 @@ int   WriteBlock(int fd,offs from,num size,num *act_written)
      from=0;
    }
    if(from+size>Size())
-   {
      size=Size()-from;
-   }
-   if(size<=0)
-   {
-     *act_written=0;
-     return(OK);
-   }
 
-   if(from>=ptr1)
-   {
-      *act_written=write(fd,buffer+from+ptr2-ptr1,size);
-      if(*act_written==-1)
-      {
-         *act_written=0;
-         return(ERR);
-      }
-      return(OK);
-   }
-   if(from+size<=ptr1)
-   {
-      *act_written=write(fd,buffer+from,size);
-      if(*act_written==-1)
-      {
-         *act_written=0;
-         return(ERR);
-      }
-      return(OK);
-   }
-   leftsize=ptr1-from;
-   *act_written=write(fd,buffer+from,leftsize);
-   if(*act_written==-1)
-   {
-      *act_written=0;
-      return(ERR);
-   }
-   if(*act_written<leftsize)
-      return(OK);
-   *act_written=write(fd,buffer+ptr2,size-leftsize);
-   if(*act_written==-1)
-   {
-      *act_written=leftsize;
-      return(ERR);
-   }
-   *act_written+=leftsize;
-   return(OK);
+   if(size<=0)
+     return(OK);
+
+   if(from>=ptr1)    // the region is completely on the right side
+      return write_loop(fd,buffer+from+ptr2-ptr1,size,act_written);
+
+   if(from+size<=ptr1)	// the region is completely on the left side
+      return write_loop(fd,buffer+from,size,act_written);
+
+   // the region is split by the gap
+   num leftsize=ptr1-from;
+   if(write_loop(fd,buffer+from,leftsize,act_written)!=OK)
+      return ERR;
+   return write_loop(fd,buffer+ptr2,size-leftsize,act_written);
 }
 
 int   DeleteBlock(num left,num right)
