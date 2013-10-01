@@ -160,8 +160,10 @@ AC_DEFUN([LE_CURSES_MOUSE],
    [
       old_LIBS="$LIBS"
       old_CFLAGS="$CFLAGS"
+      old_CXXFLAGS="$CXXFLAGS"
       LIBS="$LIBS $CURSES_LIBS"
       CFLAGS="$CFLAGS $CURSES_INCLUDES"
+      CXXFLAGS="$CXXFLAGS $CURSES_INCLUDES"
       AC_TRY_LINK([
 	    #ifdef USE_NCURSES_H
 	    # include <ncurses.h>
@@ -179,6 +181,7 @@ AC_DEFUN([LE_CURSES_MOUSE],
 	 [ac_cv_curses_mouse=no])
       LIBS="$old_LIBS"
       CFLAGS="$old_CFLAGS"
+      CXXFLAGS="$old_CXXFLAGS"
    ])
    AC_MSG_RESULT($ac_cv_curses_mouse)
    if test x$ac_cv_curses_mouse = xyes; then
