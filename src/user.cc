@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ void  UserLineDown()
 	    {
 	       num old_stdcol=stdcol;
 	       int old_modified=modified;
-	       InsertChar('\n');
+	       NewLine();
 	       stdcol=old_stdcol;
 	       modified=old_modified;
 	    }
