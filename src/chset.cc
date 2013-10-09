@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -416,7 +416,7 @@ chtype visualize(const attr *a,chtype ch)
 }
 
 #if USE_MULTIBYTE_CHARS
-wchar_t visualize_wchar(wchar_t wc)
+static wchar_t visualize_wchar_nocache(wchar_t wc)
 {
    unsigned char mbch[MB_CUR_MAX];
    wctomb(0,0);
@@ -444,4 +444,47 @@ wchar_t visualize_wchar(wchar_t wc)
       wc='.';
    return wc;
 }
-#endif
+
+static wchar_t **vis_cache;
+static int vis_cache_len;
+static const int vis_cache_per_row=256;
+static inline bool cache_row(const int row)
+{
+   if(__builtin_expect(row>=vis_cache_len,false)) {
+      int new_vis_cache_len=row+1;
+      wchar_t **new_vis_cache=(wchar_t**)realloc(vis_cache,new_vis_cache_len*sizeof(*vis_cache));
+      if(!new_vis_cache)
+	 return false;
+      // clear new storage
+      while(vis_cache_len<new_vis_cache_len)
+	 new_vis_cache[vis_cache_len++]=NULL;
+      vis_cache=new_vis_cache;
+   }
+
+   if(__builtin_expect(!vis_cache[row],false)) {
+      vis_cache[row]=(wchar_t*)malloc(vis_cache_per_row*sizeof(wchar_t));
+      if(!vis_cache[row])
+	 return false;
+      wchar_t wc=row*vis_cache_per_row;
+      for(int i=0; i<vis_cache_per_row; i++)
+	 vis_cache[row][i]=visualize_wchar_nocache(wc+i);
+   }
+
+   return true;
+}
+
+wchar_t visualize_wchar(wchar_t wc)
+{
+   if(wc<0)
+      return wc;
+
+   int row=wc/vis_cache_per_row;
+   int col=wc%vis_cache_per_row;
+
+   if(__builtin_expect(cache_row(row),true))
+      return vis_cache[row][col];
+
+   return visualize_wchar_nocache(wc);
+}
+
+#endif //USE_MULTIBYTE_CHARS
