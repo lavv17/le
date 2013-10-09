@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 #include "edit.h"
 #include "mb.h"
 
-#ifndef  MSDOS
+#ifdef USE_LEGACY_TERM
 /************************** TABLES FOR D211 *****************************/
 static const char rl_d211[]={
 'Ò','Q','Ú','W','Ê','E','Ó','R','Õ','T','ã','Y','Ø','U','Ð','I',
@@ -67,7 +67,7 @@ static unsigned short wtable[]={
 
 void  InitModifyKeyTables()
 {
-#ifndef MSDOS
+#ifdef USE_LEGACY_TERM
    if(!strcmp(TERM,"vta2000"))
       table=rl_vta2000;
    else if(!strcmp(TERM,"d211"))
