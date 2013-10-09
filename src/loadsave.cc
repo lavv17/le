@@ -312,14 +312,14 @@ int   LoadFile(char *name)
 
       if(UnixLastLine>MacLastLine*2 && UnixLastLine>DosLastLine*2) {
 	 TextEnd=TextPoint(Size(),UnixLastLine,-1);
-      } else if(DosLastLine>UnixLastLine*2 && DosLastLine>MacLastLine*2) {
-	 SetEolStr(EOL_DOS);
-	 TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
-	 TextEnd=TextPoint(Size(),DosLastLine,-1);
       } else if(MacLastLine>UnixLastLine*2 && MacLastLine>DosLastLine*2) {
 	 SetEolStr(EOL_MAC);
 	 TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
 	 TextEnd=TextPoint(Size(),MacLastLine,-1);
+      } else if(DosLastLine>=UnixLastLine && DosLastLine>=MacLastLine && DosLastLine>0) {
+	 SetEolStr(EOL_DOS);
+	 TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
+	 TextEnd=TextPoint(Size(),DosLastLine,-1);
       } else {
 	 // set default EOL
 #if defined(__MSDOS__) || defined(__CYGWIN32__)
