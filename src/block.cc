@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2008 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -460,12 +460,12 @@ int OptionallyConvertBlockNewLines(const char *bname)
    if(buffer_mmapped || rblock || hex || block_size<EolSize)
       return 1;
 
-   num   dos_nl,unix_nl;
-   CountNewLines(BlockBegin,block_size,&unix_nl,&dos_nl);
+   num   dos_nl,unix_nl,mac_nl;
+   CountNewLines(BlockBegin,block_size,&unix_nl,&dos_nl,&mac_nl);
    static struct menu ynMenu[]={{"  &Yes  "},{"   &No   "},{NULL}};
    char msg[512];
 
-   if(DosEol && dos_nl*2<unix_nl)
+   if(EolIs(EOL_DOS) && dos_nl*2<unix_nl)
    {
 //       SyncTextWin();
       sprintf(msg,"The %s block looks like it is in UNIX format,\n"
@@ -483,7 +483,7 @@ int OptionallyConvertBlockNewLines(const char *bname)
 	 break;
       }
    }
-   else if(!DosEol && dos_nl*2>unix_nl)
+   else if(EolIs(EOL_UNIX) && dos_nl*2>unix_nl)
    {
 //       SyncTextWin();
       sprintf(msg,"The %s block looks like it is in DOS format,\n"

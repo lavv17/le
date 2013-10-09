@@ -1,3 +1,19 @@
+2013-10-09	lav
+
+	* chset.cc: memoize visualize_wchar results.
+	* block.cc, edit.h: get rid of DosEol flag; add support for MAC EOL (single CR).
+	* ext.cc: (DOS_UNIX) improve performance.
+	* kern.cc: MAC EOL support; check for split MB chars after insert/delete;
+	  improve performance of EolAt/BolAt;
+	* keymap.cc: buffer incomplete MB chars and feed them at once.
+	* loadsave.cc: guess MAC EOLs.
+	* mb.cc, mb.h: improve performance of MBCheckLeftAt; (MBCharSplit) new flag;
+	* screen.cc: display MAC EOL mode as 'M'.
+	* tables.cc: don't include legacy tables for ancient terminals.
+	* textpoin.cc, textpoin.h: (CheckSplit) new function; more precise
+	  tracking of split MB chars; improved FindLineCol performance.
+	* user.cc: fixed inserting a new line on line-down in text mode.
+
 2013-10-01	lav
 
 	* edit.h, kern.cc: (write_loop) new function to handle partial writes;

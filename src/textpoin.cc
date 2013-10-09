@@ -272,6 +272,7 @@ void  TextPoint::FindLineCol()
 
    offs  o;
    num   l,c;
+   int char_split=0; // CHAR_SPLIT or 0
 
    if(found)
    {
@@ -284,6 +285,7 @@ void  TextPoint::FindLineCol()
       {
          o=found->offset;
          c=found->col;
+	 char_split=(found->flags&CHAR_SPLIT);
       }
       l=found->line;
    }
@@ -301,6 +303,7 @@ void  TextPoint::FindLineCol()
    {
       o=LineBegin(o);
       c=0;
+      char_split=0;
       while(o>offset)
       {
          o=PrevLine(o);
@@ -315,8 +318,8 @@ void  TextPoint::FindLineCol()
       o=next_line;
       l++;
       c=0;
+      char_split=0;
    }
-   int char_split=0;
    while(o<offset && !EofAt(o))
    {
       if(BolAt(o+1))
@@ -324,16 +327,21 @@ void  TextPoint::FindLineCol()
 	 o++;
          l++;
          c=0;
+	 char_split=0;
 	 continue;
+      }
+      else if(char_split)
+      {
+	 o++;
+	 if(MBCheckLeftAt(o) && !MBCharInvalid)
+	 {
+	    c+=MBCharWidth;
+	    char_split=0;
+	 }
       }
       else if(CharAt(o)=='\t')
       {
          c=Tabulate(c);
-	 o++;
-      }
-      else if(MBCheckLeftAt(o+1) && !MBCharInvalid)
-      {
-         c+=MBCharWidth;
 	 o++;
       }
       else
@@ -376,7 +384,7 @@ void  TextPoint::ResetTextPoints()
    for(TextPoint *scan=TextPoint::base; scan; scan=scan->next)
    {
       scan->line=scan->col=scan->offset=0;
-      scan->flags&=~(LINEUNDEFINED|COLUNDEFINED);
+      scan->flags&=~(LINEUNDEFINED|COLUNDEFINED|CHAR_SPLIT);
    }
 }
 void  TextPoint::OrFlags(int mask)
@@ -409,6 +417,24 @@ num TextPoint::Col()
    if(flags&(COLUNDEFINED|LINEUNDEFINED))
       FindLineCol();
    return(col);
+}
+
+// check for split characters in the offset range
+void TextPoint::CheckSplit(offs o1,offs o2)
+{
+   for(TextPoint *scan=base; scan; scan=scan->next)
+   {
+      offs o=scan->offset;
+      if(o<o1 || o>=o2)
+	 continue;
+      if(scan->flags&CHAR_SPLIT) {
+	 if(MBCheckLeftAt(o) && !MBCharInvalid)
+	    scan->flags&=~CHAR_SPLIT;
+      } else {
+	 if(MBCheckLeftAt(o) && MBCharSplit)
+	    scan->flags|=CHAR_SPLIT;
+      }
+   }
 }
 
 #if 0

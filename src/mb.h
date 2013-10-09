@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2003-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,7 @@ extern bool mb_mode;
 extern int  MBCharSize;
 extern int  MBCharWidth;
 extern bool MBCharInvalid;
+extern bool MBCharSplit;
 
 bool MBCheckLeftAt(offs o);
 bool MBCheckAt(offs o);

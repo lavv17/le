@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@
 #include <config.h>
 #include <ctype.h>
 #include "edit.h"
+#include "undo.h"
 
 void  ReplaceCharExtMove(byte ch)
 {
@@ -103,14 +104,30 @@ void  ExpandSpanTabs()
    stdcol=GetCol();
 }
 
-void  DOS_UNIX_switch()
+void ReplaceAll(const char *str1,const char *str2)
 {
-   DosEol=!DosEol;
-   SetEolStr(DosEol?"\r\n":"\n");
+   int len1=strlen(str1);
+   int len2=strlen(str2);
+   offs pos=0;
+   for(;;) {
+      pos=ScanForCharForward(pos,str1[0]);
+      if(pos==-1)
+	 break;
+      if(BlockEqAt(pos,str1,len1)) {
+	 CurrentPos=pos;
+	 DeleteBlock(0,len1);
+	 InsertBlock(str2,len2,NULL,0);
+	 pos+=len2;
+      } else {
+	 ++pos;
+      }
+   }
 }
 
 void  DOS_UNIX(void)
 {
+   const char *TargetEol=(!EolIs(EOL_UNIX)?EOL_UNIX:EOL_DOS);
+
    num ol=GetLine(),oc=GetCol();
    static  struct  menu YesNoCancel[]={
    {"   &Yes   ",MIDDLE-10,FDOWN-2},
@@ -126,32 +143,24 @@ void  DOS_UNIX(void)
       return;
    case('Y'):
       MessageSync("Changing EOLs between DOS and UNIX formats...");
+      undo.BeginUndoGroup();
       CurrentPos=TextBegin;
-      while(!Eof())
-      {
-         if(Eol())
-         {
-	    DOS_UNIX_switch();
-            NewLine();
-	    DOS_UNIX_switch();
-            DeleteEOL();
-         }
-         else
-            MoveRight();
-      }
-      DOS_UNIX_switch();
+      ReplaceAll(EolStr,TargetEol);
+      SetEolStr(TargetEol);
       CurrentPos=TextBegin;
       ScrShift=0;
       ScreenTop=CurrentPos;
+      TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
       MoveLineCol(ol,oc);
+      undo.EndUndoGroup();
       break;
    case('N'):
-      DOS_UNIX_switch();
+      SetEolStr(TargetEol);
       CurrentPos=TextBegin;
       ScrShift=0;
       ScreenTop=CurrentPos;
+      TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
    }
-   TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
    stdcol=GetCol();
 }
 

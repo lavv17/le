@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2011 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,10 +116,15 @@ extern  int     flag;
 
 extern  byte    chset[];
 
-extern int DosEol;
 extern int EolSize;
-extern char EolStr[2];
+extern char EolStr[3];
 void SetEolStr(const char *);
+
+static const char EOL_UNIX[2]="\n";
+static const char EOL_DOS[3]="\r\n";
+static const char EOL_MAC[2]="\r";
+
+static inline bool EolIs(const char *e) { return !strcmp(EolStr,e); }
 
 extern   int   TabsInMargin;
 
@@ -292,7 +297,7 @@ int   ModifyKey(int key);
 void  define_pairs();
 void  InitMenu();
 
-int   CountNewLines(offs start,num size,num *unix_nl=0,num *dos_nl=0);
+int   CountNewLines(offs start,num size,num *unix_nl=0,num *dos_nl=0,num *mac_nl=0);
 void  ConvertFromUnixToDos(offs start,num size);
 void  ConvertFromDosToUnix(offs start,num size);
 
@@ -335,5 +340,9 @@ int   isslash(char);
 int write_loop(int fd,const char *ptr,num size,num *written);
 
 void  ProcessDragMark();
+
+#if ! defined __builtin_expect && __GNUC__ < 3
+# define __builtin_expect(expr, expected) (expr)
+#endif
 
 #endif // EDIT_H

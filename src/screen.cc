@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -346,6 +346,12 @@ void  StatusLine()
       }
    }
 
+   char eol=' ';
+   if(!strcmp(EolStr,EOL_DOS))
+      eol='D';
+   else if(!strcmp(EolStr,EOL_MAC))
+      eol='M';
+
    if(View)
    {
       if(buffer_mmapped)
@@ -353,8 +359,7 @@ void  StatusLine()
 	    rblock   ?'B':' ');
       else
 	 sprintf(flags,"R/O %c %c",
-	    rblock   ?'B':' ',
-	    DosEol   ?'D':' ');
+	    rblock   ?'B':' ',eol);
    }
    else
    {
@@ -371,7 +376,7 @@ void  StatusLine()
 	    rblock	?'B':' ',
 	    (oldptr1>ptr1 || oldptr2<ptr2) ? 'U'
 	       : ( (oldptr1<ptr1 || oldptr2>ptr2) ? 'u':' '),
-	    DosEol	?'D':' ');
+	    eol);
    }
    if(FileName[0])
    {
@@ -984,7 +989,7 @@ void  FError(const char *s)
    else
       sprintf(msg,"File: %s\n",s);
    strcat(msg,err);
-   
+
    ErrMsg(msg);
 }
 

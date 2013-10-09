@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2012 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@
 #include   <time.h>
 #include   <stdlib.h>
 #include   <assert.h>
+#include   <limits.h>
 #include   "keymap.h"
 #include   "edit.h"
 #include   "mb.h"
@@ -53,9 +54,8 @@ num       ScrShift=0;
 int       modified=0;
 bool      newfile=false;
 
-int       DosEol=0;
 int       EolSize=1;
-char	  EolStr[2]="\n";
+char	  EolStr[3]="\n";
 
 InodeInfo   FileInfo;
 InodeHistory PositionHistory;
@@ -432,6 +432,7 @@ int   InsertBlock(const char *block_left,num size_left,const char *block_right,n
          scan->offset+=size_left;
       }
    }
+   TextPoint::CheckSplit(Offset()-size_left-MB_LEN_MAX+1,Offset()+size_right+MB_LEN_MAX-1);
 
    stdcol=GetCol();
    if(oldptr1!=ptr1 || oldptr2!=ptr2)
@@ -760,6 +761,8 @@ int   DeleteBlock(num left,num right)
 	 *scan=base_point;
       }
    }
+   TextPoint::CheckSplit(Offset()-MB_LEN_MAX+1,Offset()+MB_LEN_MAX-1);
+
    modified=1;
 
    return(OK);
@@ -867,6 +870,7 @@ int   ReplaceBlock(const char *block,num size)
       else if(scan->offset+mb_size_max>base)
 	 scan->flags|=COLUNDEFINED;
    }
+   TextPoint::CheckSplit(Offset()-MB_LEN_MAX+1,Offset()+size+MB_LEN_MAX-1);
 
    // when mmapped, changes are committed to disk automatically.
    if(!buffer_mmapped)
@@ -1050,8 +1054,7 @@ void  EmptyText()
    stdcol=0;
    ScrShift=0;
 
-   DosEol=0;
-   SetEolStr("\n");
+   SetEolStr(EOL_UNIX);
 }
 
 bool IsAlNumAt(num o)
@@ -1079,10 +1082,10 @@ char  *GetWord()
    return(word);
 }
 
-int   CountNewLines(offs start,num size,num *unix_nl,num *dos_nl)
+int   CountNewLines(offs start,num size,num *unix_nl,num *dos_nl,num *mac_nl)
 {
    num	 i;
-   num   unix_nl_store,dos_nl_store;
+   num   unix_nl_store,dos_nl_store,mac_nl_store;
 
    if(start<0)
    {
@@ -1098,19 +1101,30 @@ int   CountNewLines(offs start,num size,num *unix_nl,num *dos_nl)
       unix_nl=&unix_nl_store;
    if(!dos_nl)
       dos_nl=&dos_nl_store;
+   if(!mac_nl)
+      mac_nl=&mac_nl_store;
 
-   *unix_nl=*dos_nl=0;
+   *unix_nl=*dos_nl=*mac_nl=0;
    for(i=0; i<size; i++)
    {
-      if(CharAt_NoCheck(start+i)=='\n')
-      {
-	 (*unix_nl)++;
-	 if(i>0 && CharAt_NoCheck(start+i-1)=='\r')
+      byte ch=CharAt_NoCheck(start+i);
+      if(ch=='\r') {
+	 (*mac_nl)++;
+	 if(i+1<size && CharAt_NoCheck(start+i+1)=='\n') {
 	    (*dos_nl)++;
+	    (*unix_nl)++;
+	    i++;
+	 }
+      } else if(ch=='\n') {
+	 (*unix_nl)++;
       }
    }
 
-   return(DosEol?*dos_nl:*unix_nl);
+   if(EolIs(EOL_UNIX))
+      return *unix_nl;
+   if(EolIs(EOL_MAC))
+      return *mac_nl;
+   return *dos_nl;
 }
 
 void  ConvertFromDosToUnix(offs start,num size)
@@ -1233,13 +1247,21 @@ num GetCol()
 }
 bool EolAt(offs o)
 {
-   return((CharAt(o)==EolStr[0] && (EolSize<2 || CharAt(o+1)==EolStr[1]))
-      || EofAt(o));
+   if(o>Size()-EolSize)
+      return EofAt(o);
+   if(EolSize==1)
+      return CharAt_NoCheck(o)==EolStr[0];
+   // assert(EolSize==2)
+   return CharAt_NoCheck(o)==EolStr[0] && CharAt_NoCheck(o+1)==EolStr[1];
 }
 bool BolAt(offs o)
 {
-   return((CharAt(o-EolSize)==EolStr[0] && (EolSize<2 || CharAt(o-1)==EolStr[1]))
-      || BofAt(o));
+   if(o<EolSize)
+      return BofAt(o);
+   if(EolSize==1)
+      return CharAt_NoCheck(o-1)==EolStr[0];
+   // assert(EolSize==2)
+   return CharAt_NoCheck(o-1)==EolStr[1] && CharAt_NoCheck(o-2)==EolStr[0];
 }
 bool Eol()
 {
@@ -1271,7 +1293,7 @@ int ReplaceChar(char ch)
 void SetEolStr(const char *n)
 {
    EolSize=strlen(n);
-   memcpy(EolStr,n,EolSize);
+   memcpy(EolStr,n,EolSize+1);
 }
 
 bool BlockEqAt(offs o,const char *s,int len)

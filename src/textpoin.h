@@ -99,6 +99,7 @@ public:
 
    static   void  ResetTextPoints();
    static   void  OrFlags(int mask);
+   static   void  CheckSplit(offs,offs);
 
    friend   int   InsertBlock(const char *,num,const char *,num);
    friend   int   DeleteBlock(num,num);

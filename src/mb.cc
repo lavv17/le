@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003-2006 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 2003-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ bool  mb_mode=false;
 int   MBCharSize=1;
 int   MBCharWidth=1;
 bool  MBCharInvalid=false;
+bool  MBCharSplit=false;
 
 #define REPLACEMENT_CHARACTER 0xFFFD
 
@@ -66,32 +67,34 @@ bool MBCheckLeftAt(offs o)
    MB_Prepare(o-left_offset);
    if(last_mb_len>MB_LEN_MAX*2-1)
       last_mb_len=MB_LEN_MAX*2-1;
-   for(int i=0; i<left_offset; i++)
+   for(int i=0; i<left_offset; i+=MBCharSize)
    {
       mbtowc(0,0,0);
       last_wc=-1;
       MBCharInvalid=false;
+      MBCharSplit=false;
       MBCharSize=mbtowc(&last_wc,last_mb_ptr+i,last_mb_len-i);
       if(MBCharSize<=0)
       {
 	 MBCharSize=1;
 	 MBCharInvalid=true;
       }
-      if(MBCharSize==left_offset-i)
+      else if(MBCharSize>=left_offset-i)
       {
+	 if(MBCharSize>left_offset-i)
+	 {
+	    MBCharSize=left_offset-i;
+	    MBCharWidth=0;
+	    MBCharInvalid=true;
+	    MBCharSplit=true;
+	    return true;
+	 }
 	 MBCharWidth=wcwidth(visualize_wchar(last_wc));
 	 if(MBCharWidth<0)
 	 {
 	    MBCharWidth=1;
 	    MBCharInvalid=true;
 	 }
-	 return true;
-      }
-      if(MBCharSize>left_offset-i)
-      {
-	 MBCharSize=left_offset-i;
-	 MBCharWidth=0;
-	 MBCharInvalid=true;
 	 return true;
       }
    }

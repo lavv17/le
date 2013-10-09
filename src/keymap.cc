@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -814,6 +814,7 @@ int   GetNextAction()
 {
    unsigned char *store;
    int   key;
+   static KeyTreeNode kt_mb = { HALF_DELAY, NO_ACTION, NULL, -1, NULL };
 
    store=StringTyped;
    StringTypedLen=0;
@@ -887,13 +888,25 @@ int   GetNextAction()
 	       break;
 	 if(!scan)
 	 {
-	    if(StringTypedLen>1 && kt->action==NO_ACTION) {
+	    if(StringTypedLen>1 && kt->action==NO_ACTION && StringTyped[0]<32) {
 	    // We've got an unknown sequence.
 	    // It is likely that it is a bit longer that we've already got,
 	    // so try to flush it.
 	       napms(10);
 	       flushinp();
 	    }
+#if USE_MULTIBYTE_CHARS
+	    // check for partial mb chars
+	    if(mb_mode && StringTypedLen>0 && kt->action==NO_ACTION && StringTyped[0]>=128) {
+	       mbtowc(0,0,0);
+	       wchar_t wc;
+	       int mb_size=mbtowc(&wc,(const char*)StringTyped,StringTypedLen);
+	       if(mb_size<=0) {
+		  kt=&kt_mb;
+		  continue;
+	       }
+	    }
+#endif
 	 return_action:
 	    if(kt->action==REFRESH_SCREEN)
                clearok(stdscr,1); // force repaint for next refresh

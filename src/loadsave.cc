@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -188,7 +188,6 @@ off_t  GetDevSize(int fd)
 int   LoadFile(char *name)
 {
    struct stat    st;
-   offs   i;
    num    act_read;
    char   msg[256];
    const InodeInfo *old;
@@ -308,29 +307,28 @@ int   LoadFile(char *name)
 
       num DosLastLine=0;
       num UnixLastLine=0;
-      for(i=0; ; i++)
-      {
-	 i=ScanForCharForward(i,'\n');
-	 if(i==-1)
-	    break;
-	 UnixLastLine++;
-	 if(i>0 && CharAt_NoCheck(i-1)=='\r')
-	    DosLastLine++;
-      }
-#if !defined(__MSDOS__) && !defined(__CYGWIN32__)
-      if(UnixLastLine/2<DosLastLine) /* check if the file has unix or dos format */
-#else
-      if(UnixLastLine/2<=DosLastLine)
-#endif
-      {
-	 DosEol=1;
-	 SetEolStr("\r\n");
+      num MacLastLine=0;
+      CountNewLines(0,Size(),&UnixLastLine,&DosLastLine,&MacLastLine);
+
+      if(UnixLastLine>MacLastLine*2 && UnixLastLine>DosLastLine*2) {
+	 TextEnd=TextPoint(Size(),UnixLastLine,-1);
+      } else if(DosLastLine>UnixLastLine*2 && DosLastLine>MacLastLine*2) {
+	 SetEolStr(EOL_DOS);
 	 TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
 	 TextEnd=TextPoint(Size(),DosLastLine,-1);
-      }
-      else
-      {
+      } else if(MacLastLine>UnixLastLine*2 && MacLastLine>DosLastLine*2) {
+	 SetEolStr(EOL_MAC);
+	 TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
+	 TextEnd=TextPoint(Size(),MacLastLine,-1);
+      } else {
+	 // set default EOL
+#if defined(__MSDOS__) || defined(__CYGWIN32__)
+	 SetEolStr(EOL_DOS);
+	 TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
+	 TextEnd=TextPoint(Size(),DosLastLine,-1);
+#else
 	 TextEnd=TextPoint(Size(),UnixLastLine,-1);
+#endif
       }
    }
    else /* buffer_mmapped */
@@ -346,7 +344,7 @@ int   LoadFile(char *name)
       {
 	 if(mmap_len==0) {
 	    mmap_len=st.st_size;
-	    if((size_t)mmap_len!=st.st_size) {
+	    if((off_t)mmap_len!=st.st_size) {
 	       errno=ENOMEM;
 	       FError(name);
 	       EmptyText();
