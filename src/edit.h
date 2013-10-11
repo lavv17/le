@@ -21,6 +21,7 @@
 
 #include <sys/types.h>
 #include <time.h>
+#include <errno.h>
 
 #if !defined(bool)
 # define bool LE_CURSES_BOOL_TYPE
@@ -338,6 +339,10 @@ bool BlockEqAt(offs,const char *,int);
 int   isslash(char);
 
 int write_loop(int fd,const char *ptr,num size,num *written);
+
+static inline bool E_AGAIN(const int e) {
+   return (e==EAGAIN || e==EWOULDBLOCK || e==EINTR);
+}
 
 void  ProcessDragMark();
 
