@@ -31,12 +31,11 @@
 #endif
 #include <sys/wait.h>
 #include <sys/fcntl.h>
-#include <errno.h>
 #include "edit.h"
 #include "block.h"
 #include "clipbrd.h"
 
-int   PipeBlock(char *filter,int in,int out)
+int   PipeBlock(const char *filter,bool in,bool out)
 {
 #ifdef __MSDOS__
    ErrMsg("Piping is not supportrd under MS-DOG");
@@ -46,7 +45,7 @@ int   PipeBlock(char *filter,int in,int out)
    char  errtext[1024];
    char  *errptr=errtext;
    struct  pollfd  pfd[3];
-   long  res;
+   int	 res;
    char  input_buffer[BUFSIZ];
    offs  oldpos=Offset();
    int   nfd;
@@ -171,13 +170,14 @@ int   PipeBlock(char *filter,int in,int out)
       {
          close(pipe_out[1]); /* Close input pipe of the subprocess */
                              /* so it would terminate on EOF  */
+	 pipe_out[1]=-1;
          out_done=1;
          nfd--;
       }
 
       if(poll(pfd,nfd,-1)<0)
       {
-	 if(errno==EINTR)
+	 if(E_AGAIN(errno))
    	    continue;
 	 FError("poll()");
 	 free(block_buf);
@@ -200,10 +200,19 @@ int   PipeBlock(char *filter,int in,int out)
       if(pfd[0].revents&POLLIN)
       {
          res=read(pipe_in[0],input_buffer,sizeof(input_buffer));
-         if(res<=0)
-         {
+         if(res==0)
+	 {
             in_done=1;
-         }
+	    pfd[0].events=0;
+	 }
+	 else if(res<0)
+	 {
+	    if(!E_AGAIN(errno))
+	    {
+	       in_done=1;
+	       pfd[0].events=0;
+	    }
+	 }
          else if(in)
          {
             if(InsertBlock(input_buffer,res)!=OK)
@@ -214,19 +223,48 @@ int   PipeBlock(char *filter,int in,int out)
       }
       if(pfd[1].revents&POLLIN)
       {
-         res=read(pipe_err[0],errptr,sizeof(errtext)-1-(errptr-errtext));
-         if(res<=0)
-            err_done=1;
-         else
-            errptr+=res;
+	 int to_read=sizeof(errtext)-1-(errptr-errtext);
+	 if(to_read>0)
+	    res=read(pipe_err[0],errptr,to_read);
+	 else
+	 {
+	    char discard[BUFSIZ];
+	    res=read(pipe_err[0],discard,sizeof(discard));
+	 }
+	 if(res==0)
+	 {
+	    err_done=1;
+	    pfd[1].events=0;
+	 }
+	 else if(res<0)
+	 {
+	    if(!E_AGAIN(errno))
+	    {
+	       err_done=1;
+	       pfd[1].events=0;
+	    }
+	 }
+	 else if(to_read>0)
+	 {
+	    errptr+=res;
+	 }
       }
       if(nfd>2 && pfd[2].revents&POLLOUT)
       {
          if(rblock)
 	 {
 	    res=write(pipe_out[1],block_ptr,block_size);
-	    if(res==-1)
-	       FError("write() to pipe");
+	    if(res<0)
+	    {
+	       if(!E_AGAIN(errno))
+	       {
+		  FError("write() to pipe");
+		  out_done=1;
+        	  close(pipe_out[1]);
+		  pipe_out[1]=-1;
+		  nfd--;
+	       }
+	    }
 	    else
 	    {
 	       block_ptr+=res;
@@ -235,28 +273,41 @@ int   PipeBlock(char *filter,int in,int out)
 	       {
 		  out_done=1;
         	  close(pipe_out[1]);
+		  pipe_out[1]=-1;
 		  nfd--;
 	       }
 	    }
 	 }
 	 else
 	 {
-	    if(WriteBlock(pipe_out[1],CurrentPos,BlockEnd-CurrentPos,&res)!=OK)
-	       FError("write() to pipe");
+	    num bytes_written=0;
+	    res=WriteBlock(pipe_out[1],CurrentPos,BlockEnd-CurrentPos,&bytes_written);
+	    if(res==ERR && bytes_written==0)
+	    {
+	       if(!E_AGAIN(errno))
+	       {
+		  FError("write() to pipe");
+		  out_done=1;
+		  close(pipe_out[1]);
+		  pipe_out[1]=-1;
+		  nfd--;
+	       }
+	    }
 	    else
 	    {
-	       if(res==0)
+	       if(bytes_written==0)
 	       {
 		  out_done=1;
 		  close(pipe_out[1]);
+		  pipe_out[1]=-1;
 		  nfd--;
 	       }
 	       else
 	       {
 		  if(in)
-		     DeleteBlock(0,res);
+		     DeleteBlock(0,bytes_written);
 		  else
-		     CurrentPos+=res;
+		     CurrentPos+=bytes_written;
 	       }
 	    }
 	 }
@@ -267,7 +318,8 @@ int   PipeBlock(char *filter,int in,int out)
 not_memory:
    close(pipe_in[0]);
    close(pipe_err[0]);
-   close(pipe_out[1]);
+   if(pipe_out[1]!=-1)
+      close(pipe_out[1]);
    free(block_buf);
    waitpid(-1,NULL,WUNTRACED);
    if(errptr!=errtext)

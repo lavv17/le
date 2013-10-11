@@ -46,7 +46,7 @@ byte    Tolower();
 byte    Inverse();
 
 void    BlockFunc();
-int     PipeBlock(char *cmd,int in,int out);
+int     PipeBlock(const char *cmd,bool in,bool out);
 extern  char    BlockFile[256];
 
 void    ConvertToUpper();
