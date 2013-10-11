@@ -203,6 +203,17 @@ int   ReadMenuBox(struct menu *m,int dir,const char *msg,const char *title,
 	 h+=2;
       else
 	 h+=1;
+   }
+   else
+      abort();
+
+   WIN *win=CreateWin(MIDDLE,MIDDLE,w+4,h+4,a,title);
+   // get adjusted window size
+   w=win->w-4;
+   h=win->h-4;
+
+   if(dir==HORIZ)
+   {
       pos=(w-len)/2;
       for(i=0; m[i].text; i++)
       {
@@ -213,7 +224,6 @@ int   ReadMenuBox(struct menu *m,int dir,const char *msg,const char *title,
    else
       abort();
 
-   WIN	 *win=CreateWin(MIDDLE,MIDDLE,w+4,h+4,a,title);
    DisplayWin(win);
    PutStr(2,2,msg);
    int res=ReadMenu(m,dir,a,a1);
