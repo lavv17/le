@@ -234,8 +234,8 @@ WIN   *CreateWin(int x,int y,unsigned w,unsigned h,const attr *a,
 
    if(w>(unsigned)COLS)
       w=COLS;
-   if(h>(unsigned)LINES)
-      h=LINES;
+   if(h>(unsigned)LINES-1)
+      h=LINES-1;
    if(x<0)
       x=0;
    if(y<0)
