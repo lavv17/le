@@ -1053,6 +1053,7 @@ void  EmptyText()
    oldmodified=modified=0;
    stdcol=0;
    ScrShift=0;
+   View&=~TMP_RO_MODE;
 
    SetEolStr(EOL_UNIX);
 }

@@ -1,3 +1,8 @@
+2013-11-07	lav
+
+	* loadsave.cc, kern.cc: clear tmp R/O flag in EmptyText.
+	* user.cc, loadsave.cc, kern.cc, edit.h: use symbolic View constants.
+
 2013-10-09	lav
 
 	* chset.cc: memoize visualize_wchar results.

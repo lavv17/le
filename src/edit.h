@@ -98,6 +98,10 @@ extern  int	  file;
 extern  bool	  newfile;
 
 extern  int     View;
+enum {
+   RO_MODE=1,
+   TMP_RO_MODE=2
+};
 
 extern  int     ascii,right;    /* modifiers for HEX mode */
 

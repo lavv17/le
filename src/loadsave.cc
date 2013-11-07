@@ -202,7 +202,6 @@ int   LoadFile(char *name)
    flag=REDISPLAY_ALL;
 
    errno=0;
-   View&=~2;      /* clear the 'temporarily read-only' bit */
 
    if(!name[0])
    {
@@ -239,7 +238,7 @@ int   LoadFile(char *name)
 	 return(ERR);
       }
       if(S_ISDIR(FileMode))
-	 View|=2;
+	 View|=TMP_RO_MODE;
    }
    else if(errno==ENOENT && !View && !buffer_mmapped)
    {
@@ -264,7 +263,7 @@ int   LoadFile(char *name)
    file=open(open_name,open_flags,0664);
    if(file==-1 && !View)
    {
-      View|=2;
+      View|=TMP_RO_MODE;
       file=open(open_name,O_RDONLY);
 	 /* try to open the file in read-only mode */
    }
@@ -284,7 +283,6 @@ int   LoadFile(char *name)
       int lock_res=LockFile(file,true);
       if(lock_res==-1)
       {
-	 View&=~2;
 	 close(file);
 	 file=-1;
 	 EmptyText();

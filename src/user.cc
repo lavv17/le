@@ -967,7 +967,7 @@ int   file_check(const char *fn)
 	 ErrMsg(msg);
 	 return ERR;
       }
-      if((View&1) || buffer_mmapped)  // view mode or mmap mode
+      if((View&RO_MODE) || buffer_mmapped)  // view mode or mmap mode
       {
 	 sprintf(msg,"File: %s\nThe specified file does not exist",fn);
 	 ErrMsg(msg);
