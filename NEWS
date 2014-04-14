@@ -1,3 +1,13 @@
+Version 1.15.0 - 2014-04-14
+
+* improved performance with multibyte characters.
+* added support for MAC-style text (CR EOLs).
+* fixed a spurious error message when writing a block to a file.
+* fixed "modified" flag of undo after saving the text.
+* fixed a hang when loading a file with saved position beyond the EOF.
+* new syntax patterns for golang; syntax updates for patch.
+(Thanks to Raphael Geissert <geissert@debian.org>)
+
 Version 1.14.9 - 2013-03-20
 
 * fixed a number of small bugs.
