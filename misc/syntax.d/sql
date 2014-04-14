@@ -16,7 +16,7 @@ form|from|full|function|generic|goto|grant|group|having|identified|if|\
 immediate|in|increment|index|indexes|indicator|initial|inner|insert|int|\
 integer|interface|intersect|into|is|join|key|left|level|like|limit|\
 limited|lock|long|loop|max|maxextents|min|minus|mlslabel|mod|mode|modify|\
-natural|naturaln|new|nextval|noaudit|nocompress|not|nowait|null|number|\
+natural|naturaln|new|nextval|nvl|noaudit|nocompress|not|nowait|null(if)?|number|\
 number_base|of|offline|on|online|open|option|or|order|others|out|outer|\
 package|partition|pctfree|pls_integer|positive|positiven|pragma|primary|\
 prior|private|privileges|procedure|public|raise|range|raw|real|record|ref|\
