@@ -108,3 +108,6 @@
 /wctype_h.m4
 /wcwidth.m4
 /wint_t.m4
+/absolute-header.m4
+/gettimeofday.m4
+/stdio_h.m4

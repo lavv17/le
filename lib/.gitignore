@@ -157,3 +157,5 @@
 /warn-on-use.h
 /wchar.h
 /wctype.h
+/gettimeofday.c
+/stdio.in.h
