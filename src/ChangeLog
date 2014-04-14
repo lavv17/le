@@ -1,3 +1,7 @@
+2014-04-10	lav
+
+	* textpoin.cc: don't allow text points beyond EOF.
+
 2013-11-07	lav
 
 	* loadsave.cc, kern.cc: clear tmp R/O flag in EmptyText.

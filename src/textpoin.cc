@@ -64,7 +64,11 @@ TextPoint::TextPoint(offs o)
       flags&=~(COLUNDEFINED|LINEUNDEFINED|CHAR_SPLIT);
    }
    else
+   {
+      if(offset>Size())
+	 offset=Size();
       flags|=COLUNDEFINED|LINEUNDEFINED;
+   }
    AddTextPoint();
 }
 TextPoint::TextPoint(offs o,num l,num c)
