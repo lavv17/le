@@ -19,14 +19,13 @@ dist-hook:
 	    $(srcdir)/$(PACKAGE).lsm > $(distdir)/$(PACKAGE).lsm && \
 	    cp $(distdir)/$(PACKAGE).lsm $(srcdir)/$(PACKAGE).lsm
 
-REL_DIR=/ftp/pub/source/le
+REL_DIR=/home/lav/www/download/le
 release:
 	make distcheck
 	mv $(PACKAGE)-$(VERSION).tar.gz $(REL_DIR)
 	cp -p $(PACKAGE).lsm $(REL_DIR)/$(PACKAGE)-$(VERSION).lsm
 	cd $(REL_DIR) && \
 	    (addbz $(PACKAGE)-$(VERSION).tar.gz; \
-	    rm -f $(PACKAGE).tar.gz && ln -s $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE).tar.gz; \
 	    gpg -ba $(PACKAGE)-$(VERSION).tar.gz; \
 	    gpg -ba $(PACKAGE)-$(VERSION).tar.bz2; \
 	    gpg -ba $(PACKAGE)-$(VERSION).tar.xz; \
