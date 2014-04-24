@@ -99,6 +99,7 @@
 /stdbool.in.h
 /stddef.in.h
 /stdint.in.h
+/stdio.h
 /stdlib.in.h
 /strdup.c
 /streq.h
