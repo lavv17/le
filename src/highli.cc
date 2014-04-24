@@ -570,28 +570,11 @@ void syntax_hl::make_els(const char *buf1,int len1,
 	    el->color=scan->color;
 	    el->sub=0;
 
-	    while(*elpp && elpp[0]->begin<=el->begin) {
-	       // check if this element is already overlapped
-	       if(elpp[0]->begin < el->begin && elpp[0]->end > el->begin) {
-		  element::Free(el);
-		  el=0;
-		  break;
-	       }
+	    // insert new element in proper position
+	    while(*elpp && elpp[0]->begin<=el->begin)
 	       elpp=&elpp[0]->next;
-	    }
-	    if(!el)  // another element has overlapped this one
-	       continue;
-
 	    el->next=*elpp;
 	    *elpp=el;
-
-	    // remove some of overlapping elements
-	    while(el->next && el->next->begin<el->end)
-	    {
-	       element *tmp=el->next;
-	       el->next=tmp->next;
-	       element::Free(tmp);
-	    }
 
 	    if(scan->sub) {
 	       // reduce the buffer so that ^ and $ work properly
