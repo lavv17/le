@@ -65,6 +65,7 @@ wchar_t mb_to_wc(const char *buf,int len,int *ch_len,int *ch_width);
 # define MBCharSize	(1)
 # define MBCharWidth	(1)
 # define MBCharInvalid	(false)
+# define MBCharSplit	(false)
 # define MBCheckRight()	(false)
 # define CharWidthAt(o)	(1)
 # define CharSizeAt(o)	(1)
