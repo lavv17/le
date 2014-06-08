@@ -124,12 +124,12 @@ submenu "&Options"
       end
    function "&Programs"			     programs-options
    function "&Save to current directory"     save-options-local   hide
-   function "&Update current options file"   save-options	  hide
+   function "Update cu&rrent options file"   save-options	  hide
    end
 
 submenu "&Help"
    function "&Help on keys"   help	  hide
-   function "&Help on word"   word-help	  hide
+   function "Help on &word"   word-help	  hide
    function "&About"	      about	  hide
    end
 end
