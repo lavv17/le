@@ -284,3 +284,17 @@ i=haskell
 
 /*.go
 i=golang
+
+# git commit message mode
+//# Please enter (the|a) commit message (for your changes|to explain)
+c3=^#
+c1,1=^# On branch ([^[:space:]]+)
+c2,1=^#[[:space:]]+(copied|deleted|modified|new file|renamed\
+ |typechange|unknown|unmerged):
+c2,1=^(Conflicts):
+c3,1=\W('[^']+?')\W
+
+# git rebase (interactive) mode
+//# Rebase .\{1,30\} onto .
+c3=^#
+c2,1=^(p(?:ick)|r(?:eword)|e(?:dit)|s(?:quash)|f(?:ixup)|x|exec)[[:space:]]
