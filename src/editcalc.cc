@@ -63,6 +63,7 @@ void  editcalc()
 	 {
             sprintf(str,"%s%s",stack[i].to_string()," "+(i==0));
 	    InsertBlock(str,strlen(str));
+	    stdcol=GetCol();
 	 }
 	 CalcHistory-=expr;
 	 break;

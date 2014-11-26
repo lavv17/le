@@ -315,6 +315,7 @@ int   PipeBlock(const char *filter,bool in,bool out)
    }
    if(in && out)
       DeleteBlock(0,BlockEnd-CurrentPos);
+   stdcol=GetCol();
 not_memory:
    close(pipe_in[0]);
    close(pipe_err[0]);

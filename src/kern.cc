@@ -280,52 +280,25 @@ int    GetSpace(num s)
 }
 
 /*
-   CalculateLineCol - determines line and column in target point basing
-   on line and col in source point
+   CalculateLine - determines line in the target point based
+   on the line number in the source point
 */
-void  CalculateLineCol(num *line,num *col,offs source,offs target)
+void  CalculateLine(num *line_ptr,offs source,offs target)
 {
-   num	 bol_point;
-
-   if(source>target)
-   {
-      for( ; source>target; source--)
-      {
-	 if(BolAt(source))
-	 {
-	    (*line)--;
-	    *col=-1;
-	 }
-	 else if(*col!=-1)
-	 {
-	    if(CharAt_NoCheck(source-1)=='\t')
-	       *col=-1;
-	    else
-	       (*col)--;
-	 }
-      }
-   }
-   if(*col==-1)
-   {
-      source=LineBegin(source);
-      *col=0;
-   }
-   for(bol_point=source++; source<=target; source++)
+   num line=*line_ptr;
+   while(source>target)
    {
       if(BolAt(source))
-      {
-	 (*line)++;
-	 bol_point=source;
-	 *col=0;
-      }
+	 --line;
+      --source;
    }
-   for(source=bol_point; source<target; source++)
+   while(source<target)
    {
-      if(CharAt_NoCheck(source)=='\t')
-         *col=Tabulate(*col);
-      else
-         (*col)++;
+      ++source;
+      if(BolAt(source))
+	 ++line;
    }
+   *line_ptr=line;
 }
 
 int   InsertBlock(const char *block_left,num size_left,const char *block_right,num size_right)
@@ -337,7 +310,7 @@ int   InsertBlock(const char *block_left,num size_left,const char *block_right,n
 
    num   i;
    offs  oldoffset;
-   num   num_of_lines,num_of_columns,oldline;
+   num   num_of_lines,oldline;
    num	 num_of_lines_curr;
    int   break_at;
    int   join_at;
@@ -387,15 +360,14 @@ int   InsertBlock(const char *block_left,num size_left,const char *block_right,n
       }
    }
    num_of_lines=0;
-   num_of_columns=GetCol();
    oldline=GetLine();
    ptr1+=size_left;
    ptr2-=size_right;
    GapSize-=size;
 
-   CalculateLineCol(&num_of_lines,&num_of_columns,oldoffset,oldoffset+size_left);
+   CalculateLine(&num_of_lines,oldoffset,oldoffset+size_left);
    num_of_lines_curr=num_of_lines;
-   CalculateLineCol(&num_of_lines,&num_of_columns,oldoffset+size_left,oldoffset+size);
+   CalculateLine(&num_of_lines,oldoffset+size_left,oldoffset+size);
 
    join_at=-1;
    for(i=1; i<EolSize; i++)
@@ -434,7 +406,6 @@ int   InsertBlock(const char *block_left,num size_left,const char *block_right,n
    }
    TextPoint::CheckSplit(Offset()-size_left-MB_LEN_MAX+1,Offset()+size_right+MB_LEN_MAX-1);
 
-   stdcol=GetCol();
    if(oldptr1!=ptr1 || oldptr2!=ptr2)
    {
       oldmodified=new_oldmodified;

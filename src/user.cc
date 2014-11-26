@@ -174,6 +174,7 @@ void  UserCopyFromDown()
       {
          PreUserEdit();
          InsertChar('\t');
+	 stdcol=GetCol();
          flag|=REDISPLAY_LINE;
          return;
       }
@@ -185,6 +186,7 @@ void  UserCopyFromDown()
             InsertWChar(ch);
          else
             ReplaceWCharExtMove(ch);
+	 stdcol=GetCol();
          flag|=REDISPLAY_LINE;
          return;
       }
@@ -208,6 +210,7 @@ void  UserCopyFromUp()
       {
          PreUserEdit();
          InsertChar('\t');
+	 stdcol=GetCol();
          flag|=REDISPLAY_LINE;
          return;
       }
@@ -219,6 +222,7 @@ void  UserCopyFromUp()
             InsertWChar(ch);
          else
             ReplaceWCharExtMove(ch);
+	 stdcol=GetCol();
          flag|=REDISPLAY_LINE;
          return;
       }
