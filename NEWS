@@ -1,3 +1,12 @@
+Version 1.15.1 - 2014-11-26
+
+* syntax(perl): add given/when keywords.
+* fixed compilation without multibyte support.
+* fixed synax highlighting for some cases of syntax overlapping.
+* fixed main menu shortcuts (Raphael Geissert).
+* new syntax patterns for git commit/rebase (Thanks to Raphael Geissert).
+* improved performance of EOL type conversion.
+
 Version 1.15.0 - 2014-04-14
 
 * improved performance with multibyte characters.
