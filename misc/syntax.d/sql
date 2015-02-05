@@ -27,6 +27,6 @@ space|sql|sqlcode|sqlerrm|start|statement|stddev|subtype|successful|sum|\
 synonym|sysdate|tabauth|table|tables|task|terminate|then|to|transaction|\
 trigger|true|type|uid|union|unique|unsigned|update|use|user|using|validate|\
 values|varchar|varchar2|variance|view|views|when|whenever|where|while|with|\
-work|write|xor\
+work|write|xor|continue|lower|upper|initcap\
 )(?:[^[:alnum:]_]|$)
 c2=\||\)|\(|:=|=|\|\||<|>|!=
