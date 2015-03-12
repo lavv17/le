@@ -112,6 +112,7 @@ int    LockFile(int fd,bool drop)
                      return(-1);
                   }
                }
+	       errno=0;
             }
             if(errno!=EACCES && errno!=EAGAIN)
                return(-2);
