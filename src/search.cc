@@ -64,7 +64,7 @@ int   LastDir=FORWARD;
 
 TextPoint   back_tp;
 
-char *my_memrchr(const char *mem,char ch,int len)
+char *my_memrchr(const char *mem,char ch,num len)
 {
    const char *ptr=mem+len;
    while(ptr>mem)
@@ -196,10 +196,10 @@ static bool CompilePattern()
    return true;
 }
 
-int   no_re_search_2(const char *str,const int slen,
-		     const char *buf1,const int len1,
-		     const char *buf2,const int len2,
-		     const int start,const int range)
+num   no_re_search_2(const char *str,const num slen,
+		     const char *buf1,const num len1,
+		     const char *buf2,const num len2,
+		     const num start,const num range)
 {
    const char *pos;
    char c0=str[0];
@@ -321,7 +321,7 @@ int    Search(int dir,offs offslim)
       return FALSE;
 
    char *buf1=0,*buf2=0;
-   int len1=0,len2=0;
+   num len1=0,len2=0;
 
    if(ptr1>0)
    {
@@ -339,7 +339,7 @@ int    Search(int dir,offs offslim)
       len1=len2; len2=0;
    }
 search_again:
-   int res;
+   num res;
    if(noreg)
       res=no_re_search_2((char*)pattern,patlen,buf1,len1,
 			 buf2,len2,srchpos,offslim-srchpos);
@@ -390,7 +390,7 @@ void  ReplaceFound()
 	 if(scan_len==0)
 	    break;
 	 char *bslash=(char*)memchr(scan,'\\',scan_len);
-	 int len=(bslash?bslash-scan:scan_len);
+	 num len=(bslash?bslash-scan:scan_len);
 	 if(len==scan_len-1)
 	    len=scan_len;  // backslash at eol
 	 if(len>0)
