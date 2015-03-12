@@ -22,20 +22,15 @@ In the editor the following key description is used:
 Some of ^Fx, ~Fx, ^~Fx can be typed as ESC+Fx
 
 
-LE can be downloaded from the following locations:
-   ftp://ftp.yar.ru/pub/source/le/
-   ftp://metalab.unc.edu/pub/Linux/apps/editors/terminal/
-   http://ftp.yar.ru/pub/source/le/
-   http://metalab.unc.edu/pub/Linux/apps/editors/terminal/
+LE can be downloaded from the following location:
+   http://lav.yar.ru/download/le/
+
+Binaries for Fedora are located here:
+   http://lav.yar.ru/download/le/binaries/
 
 For development version see https://github.com/lavv17/le
 
-There are two very quiet mailing lists for LE. le@uniyar.ac.ru is for
-general discussions and for announcements of "official" le versions.
-le-devel@uniyar.ac.ru is for development of le, that is patches and
-announcements of development snapshots are posted there. The lists are
-managed by majordomo; to subscribe, send mail with "subscribe" in body to
-le-request@uniyar.ac.ru or le-devel-request@uniyar.ac.ru.
+Submit bug reports via github: https://github.com/lavv17/le/issues
 
 
 Author: Alexander V. Lukyanov <lav@yars.free.net>

@@ -1,4 +1,4 @@
-   The text editor LE 1.12.8 has the following functions:
+   The text editor LE 1.15 has the following functions:
 
    Rectangular and stream blocks: copy, move, delete, write to file, read
 from file, filtering through external command, shift left, shift right,
@@ -17,7 +17,7 @@ wrap.
    Full undo/redo.
 
    Hex viewing/editing files.
-   
+
    Binary clean -- you can safely load binary files in `Exact' or `Hex'
 mode (Exact is the default).
 
@@ -27,6 +27,8 @@ version 5.4 or newer, built with --enable-widechar option.
    Viewing/editing (replace only) of very large files or even devices using
 mmap system call (--mmap or --mmap-rw option). Use with caution --mmap-rw
 option: changes go directly to file (MAP_SHARED mode), undo is available.
+It's possible to map a portion of a large file using FILE:BEGIN:LENGTH
+syntax in place of the file name.
 
    Various options tuning form (Hint: ^O, also in menu)
 
@@ -46,4 +48,7 @@ from Options menu. There are several color maps in misc/ subdirectory.
 There are also several predefined palettes which can be chosen from menu.
 
    On new xterms (v120 and later) and appropriate terminfo some extra keys
-are recognized. E.g. Shift-Arrows do text selection.
+are recognized. E.g. Shift-Arrows do text selection; the same for native
+Linux console.
+
+   Mouse support via ncurses.
