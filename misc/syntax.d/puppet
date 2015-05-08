@@ -1,0 +1,34 @@
+# -*- LE-syntax -*-
+i=c-literal
+c3,1=^[ \t]*(#.*$)
+c1,2=([^[:alnum:]_]|^)(\
+and|case|class|default|define|else|elsif|false|if|in|import|inherits\
+|node|or|true|undef\
+\
+|attr|function|type|private\
+\
+)([^[:alnum:]_]|$)
+c2=\\[|\\]|\\(|\\)|{|}|,|:|=>|=|->|~>|<-|<~|!|!=|<<|>>|!~|%|<|>
+c1,2=([^[:alnum:]_]|^)(\
+augeas|computer|cron|exec|file|filebucket|group|host|interface|k5login\
+|macauthorization|mailalias|maillist|mcx|mount|nagios_command\
+|nagios_contact|nagios_contactgroup|nagios_host|nagios_hostdependency\
+|nagios_hostescalation|nagios_hostextinfo|nagios_hostgroup\
+|nagios_service|nagios_servicedependency|nagios_serviceescalation\
+|nagios_serviceextinfo|nagios_servicegroup|nagios_timeperiod|notify\
+|package|resources|router|schedule|scheduled_task|selboolean|selmodule\
+|service|ssh_authorized_key|sshkey|stage|tidy|user|vlan|yumrepo|zfs\
+|zone|zpool\
+)([[:space:]]*{|$)
+c1,2=([^[:alnum:]_]|^)(\
+Class\
+|Augeas|Computer|Cron|Exec|File|Filebucket|Group|Host|Interface|K5login\
+|Macauthorization|Mailalias|Maillist|Mcx|Mount|Nagios_command\
+|Nagios_contact|Nagios_contactgroup|Nagios_host|Nagios_hostdependency\
+|Nagios_hostescalation|Nagios_hostextinfo|Nagios_hostgroup\
+|Nagios_service|Nagios_servicedependency|Nagios_serviceescalation\
+|Nagios_serviceextinfo|Nagios_servicegroup|Nagios_timeperiod|notify\
+|Package|Resources|Router|Schedule|Scheduled_task|Selboolean|Selmodule\
+|Service|Ssh_authorized_key|Sshkey|Stage|Tidy|User|Vlan|Yumrepo|Zfs\
+|Zone|Zpool\
+)[[:space:]]*\\[

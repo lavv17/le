@@ -298,3 +298,7 @@ c3,1=\W('[^']+?')\W
 //# Rebase .\{1,30\} onto .
 c3=^#
 c2,1=^(p(?:ick)|r(?:eword)|e(?:dit)|s(?:quash)|f(?:ixup)|x|exec)[[:space:]]
+
+# Puppet
+/*.pp
+i=puppet
