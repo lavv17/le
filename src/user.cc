@@ -968,8 +968,8 @@ int   file_check(const char *fn)
 
    if (!buffer_mmapped) {
       char *open_name1=(char*)alloca(strlen(fn)+1);
-      long flineno=0;
-      if (sscanf(fn,"%[^:]:%li",open_name1,&flineno)==2)
+      long flineno=0,fcol=0;
+      if (sscanf(fn,"%[^:]:%li:%li",open_name1,&flineno,&fcol)>=2)
       fn=open_name1;
       if (access(fn,R_OK)==0)
 	 return OK;
