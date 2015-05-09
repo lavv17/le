@@ -382,7 +382,7 @@ int   LoadFile(char *name)
 
    fstat(file,&st);
    FileInfo=InodeInfo(&st);
-   strcpy(FileName,name);
+   strcpy(FileName,open_name);
 
    CurrentPos=TextBegin;
    if(flineno >= 0)
