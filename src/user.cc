@@ -958,8 +958,9 @@ int   file_check(const char *fn)
 
    if(buffer_mmapped) {
       char *open_name1=(char*)alloca(strlen(fn)+1);
-      long mmap_begin=0,mmap_len=0;
-      if(sscanf(fn,"%[^:]:%li:%li",open_name1,&mmap_begin,&mmap_len)==3)
+      unsigned long long mmap_begin=0;
+      unsigned long mmap_len=0;
+      if(sscanf(fn,"%[^:]:%lli:%li",open_name1,&mmap_begin,&mmap_len)==3)
 	 fn=open_name1;
    }
 
