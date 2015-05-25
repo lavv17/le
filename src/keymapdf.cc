@@ -168,16 +168,16 @@ const ActionCodeRec DefaultActionCodeTable[]=
 
 // Delete actions
    {BACKSPACE_CHAR,"^H"},
+   {BACKSPACE_CHAR,"\177"},
    {DELETE_CHAR,"^D"},
-   {DELETE_CHAR,"\177"},
    {BACKSPACE_CHAR,"$kbs"},
    {DELETE_CHAR,"$kdch1"},
    {FORWARD_DELETE_WORD,"\033|$kdch1"},
    {FORWARD_DELETE_WORD,"$kDC"},
    {DELETE_WORD,"^W"},
    {BACKWARD_DELETE_WORD,"\033|$kbs"},
-   {FORWARD_DELETE_WORD,"\033|\177"},
    {BACKWARD_DELETE_WORD,"\033|^H"},
+   {BACKWARD_DELETE_WORD,"\033|\177"},
    {DELETE_TO_EOL,"\013"},
    {DELETE_TO_EOL,"$kel"},
    {DELETE_LINE,"$kdl"},
