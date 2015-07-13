@@ -26,7 +26,7 @@
 #include "highli.h"
 #include "screen.h"
 #include "search.h"
-#include <alloca.h>
+#include "efopen.h"
 
 #ifdef HAVE_SYS_TIMES_H
 #include <sys/times.h>
@@ -209,15 +209,24 @@ char *read_regex(FILE*f)
 
 static FILE *open_syntax_d(const char *name)
 {
-   if(name[0]!='/') {
-      const char *base_dir="syntax.d";
-      char *fn=(char*)alloca(strlen(PKGDATADIR)+1+strlen(base_dir)+1+strlen(name)+1);
-      sprintf(fn,"%s/.le/%s/%s",HOME,base_dir,name);
-      if(access(fn,R_OK)==-1)
-	 sprintf(fn,"%s/%s/%s",PKGDATADIR,base_dir,name);
-      name=fn;
-   }
-   return fopen(name,"r");
+   if(name[0]=='/')
+      return fopen(name,"r");
+   
+   const char *base_dir="syntax.d";
+#ifdef EMBED_DATADIR
+   char fn[strlen(HOME)+1+3+1+strlen(base_dir)+1+strlen(name)+1];
+   FILE *f;
+
+   sprintf(fn,"%s/.le/%s/%s",HOME,base_dir,name); f=fopen(fn,"r");
+   if(!f) { sprintf(fn,"%s/%s",base_dir,name); f=efopen(fn,"r"); }
+#else
+   char fn[strlen(PKGDATADIR)+strlen(HOME)+1+3+1+strlen(base_dir)+1+strlen(name)+1];
+   FILE *f;
+
+   sprintf(fn,"%s/.le/%s/%s",HOME,base_dir,name); f=fopen(fn,"r");
+   if(!f) { sprintf(fn,"%s/%s/%s",PKGDATADIR,base_dir,name); f=fopen(fn,"r"); }
+#endif
+   return f;
 }
 
 static bool hl_section_match;
@@ -450,23 +459,22 @@ void InitHighlight()
    if(!hl_option)
       return;
 
-   const char base_fn[]="syntax";
-   char *fn1=(char*)alloca(strlen(PKGDATADIR)+1+strlen(base_fn)+1);
-   char *fn2=(char*)alloca(strlen(HOME)+1+3+1+ strlen(base_fn)+1);
-   char *fn3=(char*)alloca(4+strlen(base_fn)+1);
-   char *fn;
-
-   sprintf(fn1,"%s/%s",PKGDATADIR,base_fn);
-   sprintf(fn2,"%s/.le/%s",HOME,base_fn);
-   sprintf(fn3,".le.%s",base_fn);
-
-   FILE *f=0;
-   if(!f)
-      f=fopen(fn=fn3,"r");
-   if(!f)
-      f=fopen(fn=fn2,"r");
-   if(!f)
-      f=fopen(fn=fn1,"r");
+   const char *base_fn="syntax";
+#ifdef EMBED_DATADIR
+   char fn[strlen(HOME)+1+3+1+strlen(base_fn)+1];
+   FILE *f;
+   
+   sprintf(fn,".le.%s",base_fn); f=fopen(fn,"r");
+   if(!f) { sprintf(fn,"%s/.le/%s",HOME,base_fn); f=fopen(fn,"r"); }
+   if(!f) { f=efopen(base_fn,"r"); }
+#else 
+   char fn[strlen(PKGDATADIR)+strlen(HOME)+1+3+1+strlen(base_fn)+1];
+   FILE *f;
+   
+   sprintf(fn,".le.%s",base_fn); f=fopen(fn,"r");
+   if(!f) { sprintf(fn,"%s/.le/%s",HOME,base_fn); f=fopen(fn,"r"); }
+   if(!f) { sprintf(fn,"%s/%s",PKGDATADIR,base_fn); f=fopen(fn,"r"); }
+#endif
    if(!f)
       return;
    hl_section_match=false;

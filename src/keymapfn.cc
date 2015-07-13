@@ -26,6 +26,7 @@
 #include "format.h"
 #include "search.h"
 #include "colormnu.h"
+#include "efopen.h"
 
 ActionProcRec  EditorActionProcTable[]=
 {
@@ -238,52 +239,58 @@ ActionProcRec  EditorActionProcTable[]=
 
 void  EditorReadKeymap()
 {
-   char  filename[1024];
-   FILE  *f;
-
-   sprintf(filename,"%s/.le/keymap-%s",HOME,TERM);
-   f=fopen(filename,"r");
-   if(f==NULL)
-   {
-      sprintf(filename,"%s/keymap-%s",PKGDATADIR,TERM);
-      f=fopen(filename,"r");
-      if(f==NULL)
-      {
-         sprintf(filename,"%s/.le/keymap",HOME);
-         f=fopen(filename,"r");
-         if(f==NULL)
-         {
-            sprintf(filename,"%s/keymap",PKGDATADIR);
-            f=fopen(filename,"r");
-            if(f==NULL)
-               return;
-         }
-      }
-   }
-
+#ifdef EMBED_DATADIR
+   char fn[strlen(HOME)+1+3+1+7+strlen(TERM)+1];
+   FILE *f;
+   sprintf(fn,"%s/.le/keymap-%s",HOME,TERM); f=fopen(fn,"r");
+   if(!f) { sprintf(fn,"keymap-%s",TERM); f=efopen(fn,"r"); }
+   if(!f) { sprintf(fn,"%s/.le/keymap",HOME); f=fopen(fn,"r"); }
+   if(!f) { strcpy(fn,"keymap"); f=efopen(fn,"r"); }
+#else
+   char fn[strlen(PKGDATADIR)+strlen(HOME)+1+3+1+7+strlen(TERM)+1];
+   FILE *f;
+   sprintf(fn,"%s/.le/keymap-%s",HOME,TERM); f=fopen(fn,"r");
+   if(!f) { sprintf(fn,"%s/keymap-%s",PKGDATADIR,TERM); f=fopen(fn,"r"); }
+   if(!f) { sprintf(fn,"%s/.le/keymap",HOME); f=fopen(fn,"r"); }
+   if(!f) { sprintf(fn,"%s/keymap",PKGDATADIR); f=fopen(fn,"r"); }
+#endif
+   if(!f)
+      return;
+   
    errno=0;
    ReadActionMap(f);
    if(errno)
    {
-      FError(filename);
+      FError(fn);
    }
-
    fclose(f);
 }
 
-void LoadKeymapEmacs()
+void LoadKeymap(const char *name)
 {
-   const char *k=PKGDATADIR"/keymap-emacs";
-   FILE *f=fopen(k,"r");
+#ifdef EMBED_DATADIR
+   char fn[strlen(name)+1];
+   strcpy(fn,name);
+   FILE *f=efopen(fn,"r");
+#else
+   char fn[strlen(PKGDATADIR)+1+strlen(name)+1];
+   sprintf(fn,"%s/%s",PKGDATADIR,name);
+   FILE *f=fopen(fn,"r");
+#endif
    if(!f)
    {
-      FError(k);
+      FError(fn);
       return;
    }
    ReadActionMap(f);
    fclose(f);
    RebuildKeyTree();
    LoadMainMenu();
+}
+
+void LoadKeymapEmacs()
+{
+   LoadKeymap("keymap-emacs");
 }
 void LoadKeymapDefault()
 {
@@ -294,7 +301,7 @@ void LoadKeymapDefault()
 }
 void SaveKeymap()
 {
-   char  filename[1024];
+   char  filename[strlen(HOME)+1+3+1+6+1];
    FILE  *f;
 
    sprintf(filename,"%s/.le/keymap",HOME);
@@ -309,7 +316,7 @@ void SaveKeymap()
 }
 void SaveKeymapForTerminal()
 {
-   char  filename[1024];
+   char  filename[strlen(HOME)+1+3+1+7+strlen(TERM)+1];
    FILE  *f;
 
    sprintf(filename,"%s/.le/keymap-%s",HOME,TERM);

@@ -23,6 +23,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#ifdef EMBED_DATADIR
+extern char _binary_le_hlp_start;
+extern char _binary_le_hlp_size;
+#endif
+
 #if 0
 void  Help(char ***h,char *title)
 {
@@ -96,7 +101,11 @@ static char *LoadHelp(const char *tag)
    if(!help)
       return 0;
    help[0]=0;
+#ifdef EMBED_DATADIR
+   FILE *hf=fmemopen(&_binary_le_hlp_start,(size_t)&_binary_le_hlp_size,"r");
+#else
    FILE *hf=fopen(PKGDATADIR "/le.hlp","r");
+#endif
    if(!hf)
    {
       free(help);

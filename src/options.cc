@@ -34,6 +34,7 @@
 #include "colormnu.h"
 #include "mouse.h"
 #include "undo.h"
+#include "efopen.h"
 
 bool ExplicitInitName=false;
 char InitName[256];
@@ -338,24 +339,12 @@ void  fskip(FILE *f)
    while((i=getc(f))!=EOF && i!='\n');
 }
 
-void  ReadConfFromOpenFile(FILE *f,const struct init *init,bool mine)
+void  ReadConfFromOpenFile(FILE *f,const struct init *init)
 {
    const struct init *ptr;
    int    i;
    char  str[256];
    char  *s;
-
-   if(mine)
-   {
-#ifndef __MSDOS__
-      struct stat st;
-      if(fstat(fileno(f),&st)==0)
-      {
-	 if(st.st_uid!=getuid()) // don't read conf from other's files.
-	    return;
-      }
-#endif
-   }
 
    for(;;)
    {
@@ -411,97 +400,92 @@ void  ReadConfFromOpenFile(FILE *f,const struct init *init,bool mine)
    }
 }
 
-void  ReadConfFromFile(const char *ini,const struct init *init,bool mine)
+static bool IsMine(const char *f)
 {
-   FILE  *f;
-   f=fopen(ini,"r");
-   if(f==NULL)
-      return;
-   ReadConfFromOpenFile(f,init,mine);
-   fclose(f);
-}
-
-static bool ConfOK(const char *f,bool mine)
-{
-   if(mine)
-   {
-#ifndef __MSDOS__
-      struct stat st;
-      if(stat(f,&st)==-1)
-	 return false;
-      if(st.st_uid!=getuid())
-	 return false; // don't use other's config
-#endif
-   }
-   if(access(f,R_OK)==-1)
-      return false;
+#ifdef __MSDOS__
    return true;
+#else
+   struct stat st;
+   if(stat(f,&st)==-1)
+     return false;
+   if(st.st_uid!=getuid())
+     return false; // don't use other's config
+#endif
 }
 
 void  ReadConf()
 {
-   char  t[256];
+   char fn[1024];
+   FILE *f;
 
 #ifndef __MSDOS__
-   bool mine;
-
-   sprintf(t,"%s/.le/term-%s",HOME,TERM);
-   if(!ConfOK(t,false))
-   {
-      sprintf(t,"%s/term-%s",PKGDATADIR,TERM);
-      if(!ConfOK(t,false))
-      {
-	 sprintf(t,"%s/.le/term",HOME);
-	 if(!ConfOK(t,false))
-            sprintf(t,"%s/term",PKGDATADIR);
-      }
-   }
-   ReadConfFromFile(t,term,false);
-
+   
+#if EMBED_DATADIR
+   snprintf(fn,sizeof(fn),"%s/.le/term-%s",HOME,TERM); f=fopen(fn,"r");
+   if(!f) { snprintf(fn,sizeof(fn),"term-%s",TERM); f=efopen(fn,"r"); }
+   if(!f) { snprintf(fn,sizeof(fn),"%s/.le/term",HOME); f=fopen(fn,"r"); }
+   if(!f) { strcpy(fn,"term"); f=efopen(fn,"r"); }
+#else
+   snprintf(fn,sizeof(fn),"%s/.le/term-%s",HOME,TERM); f=fopen(fn,"r");
+   if(!f) { snprintf(fn,sizeof(fn),"%s/term-%s",PKGDATADIR,TERM); f=fopen(fn,"r"); }
+   if(!f) { snprintf(fn,sizeof(fn),"%s/.le/term",HOME); f=fopen(fn,"r"); }
+   if(!f) { snprintf(fn,sizeof(fn),"%s/term",PKGDATADIR); f=fopen(fn,"r"); }
+# endif
+   if(f) { ReadConfFromOpenFile(f,term); fclose(f); }
+   
    if(chset[0]=='7') // workaround for older version
       init_chset();
 
-   sprintf(t,"%s/.le/colors-%s",HOME,TERM);
-   if(!ConfOK(t,false))
-   {
-      sprintf(t,"%s/colors-%s",PKGDATADIR,TERM);
-      if(!ConfOK(t,false))
-      {
-	 sprintf(t,"%s/.le/colors",HOME);
-	 if(!ConfOK(t,false))
-	    sprintf(t,"%s/colors",PKGDATADIR);
-      }
+#ifdef EMBED_DATADIR
+   snprintf(fn,sizeof(fn),"%s/.le/colors-%s",HOME,TERM); f=fopen(fn,"r");
+   if(!f) { snprintf(fn,sizeof(fn),"colors-%s",TERM); f=efopen(fn,"r"); }
+   if(!f) { snprintf(fn,sizeof(fn),"%s/.le/colors",HOME); f=fopen(fn,"r"); }
+   if(!f) { strcpy(fn,"colors"); f=efopen(fn,"r"); }
+#else
+   snprintf(fn,sizeof(fn),"%s/.le/colors-%s",HOME,TERM); f=fopen(fn,"r");
+   if(!f) { snprintf(fn,sizeof(fn),"%s/colors-%s",PKGDATADIR,TERM); f=fopen(fn,"r"); }
+   if(!f) { snprintf(fn,sizeof(fn),"%s/.le/colors",HOME); f=fopen(fn,"r"); }
+   if(!f) { snprintf(fn,sizeof(fn),"%s/colors",PKGDATADIR); f=fopen(fn,"r"); }
+#endif
+   if(f) {
+      ReadConfFromOpenFile(f,colors);
+      fclose(f);
    }
-   ReadConfFromFile(t,colors,false);
    ParseColors();
 
-   mine=false;
-   if(!ExplicitInitName)
-   {
-      strcpy(InitName,".le.ini");
-      if(!ConfOK(InitName,mine=true))
-      {
-	 sprintf(InitName,"%s/.le/le.ini",HOME);
-	 if(!ConfOK(InitName,mine=false))
-	 {
-	    sprintf(t,"%s/le.ini",PKGDATADIR);
-	    ReadConfFromFile(t,init,false);
-	    goto ini_done;
-	 }
-      }
-   }
-   ReadConfFromFile(InitName,init,mine);
-
-ini_done:
-
+   if(ExplicitInitName) {
+      f=fopen(InitName,"r");
+   } else {
+      strcpy(InitName,".le.ini"); if(IsMine(fn)) f=fopen(InitName,"r"); else f=0;
+#ifdef EMBED_DATADIR
+      if(!f) { snprintf(InitName,sizeof(InitName),"%s/.le/le.ini",HOME); f=fopen(InitName,"r"); }
+      if(!f) { strcpy(fn,"le.ini"); f=efopen(fn,"r"); }
 #else
-   sprintf(t,"%s/le-%s",HOME,TERM);
-   ReadConfFromFile(t,term,false);
-   strcpy(InitName,"le.ini");
-   if(access(InitName,R_OK)==-1)
-     sprintf(InitName,"%s/le.ini",HOME);
-   ReadConfFromFile(InitName,init,false);
+      if(!f) { snprintf(InitName,sizeof(InitName),"%s/.le/le.ini",HOME); f=fopen(InitName,"r"); }
+      if(!f) { snprintf(fn,sizeof(fn),"%s/le.ini",PKGDATADIR); f=fopen(fn,"r"); }
 #endif
+   }
+   if(f) { ReadConfFromOpenFile(f,init); fclose(f); }
+   
+#else /* __MSDOS__ */
+# if EMBED_DATADIR
+   snprintf(fn,sizeof(fn),"%s/le-%s",HOME,TERM); f=fopen(fn,"r");
+   if(!f) { snprintf(fn,sizeof(fn),"term-%s",TERM); f=efopen(fn,"r"); }
+   if(!f) { strcpy(fn,"term"); f=efopen(fn,"r"); }
+# else
+   snprintf(fn,sizeof(fn),"%s/le-%s",HOME,TERM); f=fopen(fn,"r");
+# endif
+   if(f) { ReadConfFromOpenFile(f,term); fclose(f); }
+
+   strcpy(InitName,"le.ini"); f=fopen(InitName,"r");
+# ifdef EMBED_DATADIR
+   if(!f) { snprintf(InitName,sizeof(InitName),"%s/le.ini",HOME); f=fopen(InitName,"r"); }
+   if(!f) { strcpy(fn,"le.ini"); f=efopen(fn,"r"); }
+# else
+   if(!f) { snprintf(InitName,sizeof(InitName),"%s/le.ini",HOME); f=fopen(InitName,"r"); }
+# endif
+   if(f) { ReadConfFromOpenFile(f,init); fclose(f); }
+#endif /* __MSDOS__ */
 
    CorrectParameters();
 }
