@@ -22,6 +22,6 @@ c1,2=([^[:alnum:]_\$@%#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |package|sub|BEGIN|END|INIT|CHECK|socket|defined|our|given|when|default\
 )([^[:alnum:]/_]|$)
 c1,1=\\\\(my|our)([^[:alnum:]/_]|$)
-c2={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.|<=>|&|^|->
+c2={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.|<=>|&|^|->|//
 c2,2=([ \t)]|^)(and|or|xor|eq|ne|cmp|lt|gt|le|ge)([ \t(]|$)
 c2,2=([ \t(]|^)(not)([ \t(]|$)
