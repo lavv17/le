@@ -25,7 +25,7 @@ struct init
 
 void SaveConfToOpenFile(FILE *f,const struct init *init);
 void SaveConfToFile(const char *f,const struct init *init);
-void ReadConfFromFile(const char *file,const struct init *init,bool mine);
+void ReadConfFromOpenFile(FILE *f,const struct init *init);
 
 void ColorsOpt();
 void ProgOpt();

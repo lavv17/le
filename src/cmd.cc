@@ -32,7 +32,11 @@ char    Shell  [256]="exec $SHELL";
 char    Make   [256]="exec make";
 char    Run    [256]="exec make run";
 char    Compile[256]="exec make \"$FNAME.o\"";
+# ifdef EMBED_DATADIR
+char    HelpCmd[256]="man \"$WORD\"";
+# else
 char    HelpCmd[256]="exec "PKGDATADIR"/help";
+# endif
 #else
 char    Shell  [256]="command";
 char    Make   [256]="make";

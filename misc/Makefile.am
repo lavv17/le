@@ -11,13 +11,25 @@ syntax = syntax syntax.d/ada syntax.d/as syntax.d/awk syntax.d/c++-comment	\
  syntax.d/verilog syntax.d/javascript syntax.d/ocaml syntax.d/haskell		\
  syntax.d/golang
 
+if !EMBED_DATADIR
 nobase_pkgdata_DATA = $(colors) $(keymaps) $(mainmenus) $(syntax)
 pkgdata_SCRIPTS = help
 EXTRA_DIST = $(nobase_pkgdata_DATA) $(pkgdata_SCRIPTS)
+endif
 
 colors: ../src/le
 	../src/le --dump-colors > $@
 keymap: ../src/le
 	../src/le --dump-keymap > $@
 
-CLEANFILES = colors keymap
+noinst_PROGRAMS = files2embed
+
+files2embed_SOURCES = files2embed.c
+
+datadir: $(colors) $(keymaps) mainmenu $(syntax) | files2embed
+	./files2embed $^ > $@
+
+datadir.o: datadir
+	$(LD) -r -o $@ -z noexecstack -b binary $<
+
+CLEANFILES = colors keymap datadir

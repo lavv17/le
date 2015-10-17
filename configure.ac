@@ -13,6 +13,13 @@ if test "x$enable_file_locks" = xno; then
    AC_DEFINE([DISABLE_FILE_LOCKS], 1, [define if file locking does not work or is not desirable])
 fi
 
+AC_ARG_ENABLE(embed-datadir, [  --enable-embed-datadir   embed contents of PKGDATADIR in binary  ],
+   [enable_embed_datadir=$enableval],[enable_embed_datadir=no])
+if test "x$enable_embed_datadir" = xyes; then
+  AC_DEFINE([EMBED_DATADIR], 1, [define to embed PKGDATADIR in binary])
+fi
+AM_CONDITIONAL(EMBED_DATADIR, test "x$enable_embed_datadir" = xyes)
+
 test -z "$CXX"	     && DEFAULT_CXX=yes
 test -z "$CFLAGS"    && DEFAULT_CFLAGS=yes
 test -z "$CXXFLAGS"  && DEFAULT_CXXFLAGS=yes

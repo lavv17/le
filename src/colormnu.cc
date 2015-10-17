@@ -23,7 +23,7 @@
 #include "edit.h"
 #include "colormnu.h"
 #include "options.h"
-#include <alloca.h>
+#include "efopen.h"
 
 void ColorsSaveToFile(const char *f)
 {
@@ -34,26 +34,36 @@ void ColorsSaveToFile(const char *f)
 static const char *const colors_file="/.le/colors";
 void ColorsSave()
 {
-   char *f=(char*)alloca(strlen(HOME)+strlen(colors_file)+1);
+   char f[strlen(HOME)+strlen(colors_file)+1];
    sprintf(f,"%s%s",HOME,colors_file);
    ColorsSaveToFile(f);
 }
 
 void ColorsSaveForTerminal()
 {
-   char *f=(char*)alloca(strlen(HOME)+strlen(colors_file)+1+strlen(TERM)+1);
+   char f[strlen(HOME)+strlen(colors_file)+1+strlen(TERM)+1];
    sprintf(f,"%s%s-%s",HOME,colors_file,TERM);
    ColorsSaveToFile(f);
 }
 
-void LoadColor(const char *f)
+void LoadColor(const char *name)
 {
-   if(access(f,R_OK)==-1)
+#ifdef EMBED_DATADIR
+   char fn[strlen(name)+1];
+   sprintf(fn,"%s",name);
+   FILE *f=efopen(fn,"r");
+#else
+   char fn[strlen(PKGDATADIR)+1+strlen(name)+1];
+   sprintf(fn,"%s/%s",PKGDATADIR,name);
+   FILE *f=fopen(fn,"r");
+#endif
+   if(!f)
    {
-      FError(f);
+      FError(fn);
       return;
    }
-   ReadConfFromFile(f,colors,false);
+   ReadConfFromOpenFile(f,colors);
+   fclose(f);
    ParseColors();
    init_attrs();
    clearok(stdscr,1);
@@ -73,21 +83,21 @@ void LoadColorDefault()
 
 void LoadColorDefaultBG()
 {
-   LoadColor(PKGDATADIR"/colors-defbg");
+   LoadColor("colors-defbg");
 }
 void LoadColorBlue()
 {
-   LoadColor(PKGDATADIR"/colors-blue");
+   LoadColor("colors-blue");
 }
 void LoadColorBlack()
 {
-   LoadColor(PKGDATADIR"/colors-black");
+   LoadColor("colors-black");
 }
 void LoadColorWhite()
 {
-   LoadColor(PKGDATADIR"/colors-white");
+   LoadColor("colors-white");
 }
 void LoadColorGreen()
 {
-   LoadColor(PKGDATADIR"/colors-green");
+   LoadColor("colors-green");
 }

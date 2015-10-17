@@ -24,6 +24,7 @@
 #include "keymap.h"
 #include "clipbrd.h"
 #include "block.h"
+#include "efopen.h"
 
 extern   Menu1 MainMenu[];
 
@@ -499,24 +500,27 @@ extern void fskip(FILE*);
 
 void LoadMainMenu()
 {
-   FILE *f;
-   char fn[1024];
    char func[256];
    char str[256];
    int mi=0;
    int level=0;
 
-   sprintf(fn,"%s/.le/mainmenu",HOME);
-
-   f=fopen(fn,"r");
-   if(f)
-      goto read_it;
-
-   f=fopen(PKGDATADIR "/mainmenu","r");
-   if(f==0)
+   FILE *f=0;
+   if(!f)
+   {
+      char fn[strlen(HOME)+1+3+1+8+1];
+      sprintf(fn,"%s/.le/mainmenu",HOME);
+      f=fopen(fn,"r");
+   }
+#ifdef EMBED_DATADIR
+   if(!f) 
+      f=efopen("mainmenu", "r");
+#else
+   if(!f)
+      f=fopen(PKGDATADIR"/mainmenu","r");
+#endif
+   if(!f)
       return;
-
-read_it:
 
    if(m && free_m)
    {
