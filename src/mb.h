@@ -88,6 +88,7 @@ wchar_t mb_to_wc(const char *buf,int len,int *ch_len,int *ch_width);
 # define mb_get_pos_for_col(buf,width,len) (width)
 # define mb_len(buf,len) (1)
 # define mb_to_wc(buf,len,ch_len,ch_width) (((ch_len)?*(ch_len)=1:0),((ch_width)?*(ch_width)=1:0),*(buf))
+# include <stdlib.h> // avoid MB_LEN_MAX mismatch error
 # ifndef MB_CUR_MAX
 #  define MB_CUR_MAX 1
 #  define MB_LEN_MAX 1
