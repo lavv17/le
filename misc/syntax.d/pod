@@ -1,0 +1,10 @@
+# perl POD -*- LE-syntax -*-
+c2=^=(pod|head[1234]|over|item|back|begin|end|for|encoding|cut)
+si(html)3=^=begin html\n\n((?:.|\n)*?)\n\n=end html$|^=for html ((?:.|\n)*?)\n\n
+si(nroff)6=^=begin (roff|man)\n\n((?:.|\n)*?)\n\n=end \1$|^=for (?:roff|man) ((?:.|\n)*?)\n\n
+si(tex)6=^=begin (tex|latex)\n\n((?:.|\n)*?)\n\n=end \1$|^=for (?:tex|latex) ((?:.|\n)*?)\n\n
+c1,1=^=head[1234] (.*)
+c1,1=B<([^>]*)>
+c3,1=I<([^>]*)>
+si(perl)7=C<<<((?:.|\n)*?)>>>|C<<((?:.|\n)*?)>>|C<([^>]*)>
+c4,1=L<([^>]*)>

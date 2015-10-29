@@ -65,21 +65,14 @@ c1,2=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
 )([^[:alnum:]_]|$)
 c2=\\[|\\]|\\(|\\)|{|}|,
 
-# named.conf mode (lav)
 /named.conf|/-\*- *(named|bind) *-\*-
 i=named-conf
 
 /logrotate.conf|/-\*- *logrotate *-\*-
 i=logrotate-conf
 
-# nroff mode (lav)
 /*.[1-9]|/-\*- *nroff *-\*-
-c3=^\.\\\\".*$
-c2=^\.[[:alpha:]]*
-c1,1=\\\\fB((\\\\[^f]|[^\\])*[^\\]?)(\\\\f|$)
-c3,1=\\\\fI((\\\\[^f]|[^\\])*[^\\]?)(\\\\f|$)
-c1,1=^\.B[IR]? (.*)$
-c3,1=^\.I (.*)$
+i=nroff
 
 /*.e
 i=eiffel

@@ -1,5 +1,6 @@
 # -*- LE-syntax -*-
 # Perl mode, by Vladislav Zhuk <admin@dru.dn.ua>
+si(pod)=^=[a-z](?:.|\n)*?^=cut[[:space:]]*$
 c3,2=(^|[^$\\])(#.*)$
 c3,1=[^\\$]("(?:[^"\\]|\\\\(?:.|\n))*?"|'(?:[^'\\]|\\\\(?:.|\n))*?')
 si(sql)1=->(?:prepare(?:_cached)?|do|selectrow_array(?:ref)?|selectcol_arrayref|selectall_(?:hash|array)ref)[ \t]*\(\
