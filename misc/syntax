@@ -116,6 +116,9 @@ i=gema
 /*.p[lm]|/^#![ \t]*/.*/\perl|-\*- *perl *-\*-
 i=perl
 
+/*.pod|/^=(pod|head)
+i=pod
+
 /*.sql|*.buf|/-\*- *[sS][qQ][lL] *-\*-
 i=sql
 
