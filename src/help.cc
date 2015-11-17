@@ -92,16 +92,14 @@ void  Help(char ***h,char *title)
 
 static char *LoadHelp(const char *tag)
 {
-   char *help=(char*)malloc(0x10000);
-   if(!help)
-      return 0;
-   help[0]=0;
    FILE *hf=fopen(PKGDATADIR "/le.hlp","r");
    if(!hf)
-   {
-      free(help);
       return 0;
-   }
+
+   int help_size=0;
+   char *help=0;
+   char *help_end=0;
+
    char buf[256];
    char this_tag[256];
    bool tag_match=false;
@@ -110,21 +108,57 @@ static char *LoadHelp(const char *tag)
    {
       if(1==sscanf(buf,"[%[^]]]",this_tag))
       {
-	 if(tag_match)
+	 if(tag_match) {
+	    fclose(hf);
 	    return help;
+	 }
 	 if(!strcasecmp(tag,this_tag))
 	    tag_match=true;
 	 continue;
       }
       if(tag_match)
       {
-	 // FIXME: dynamically increment size.
-	 if(strlen(help)>0x10000-256)
+	 int buf_len=strlen(buf);
+	 if(!help || help_end-help>help_size-buf_len-1)
 	 {
-	    fclose(hf);
-	    return help;
+	    // allocate more memory
+	    int help_len=help_end-help;
+	    help_size=(help_size?help_size*2:0x10000);
+	    char *new_help=(char*)realloc(help,help_size);
+	    if(!new_help)
+	    {
+	       // out of memory
+	       fclose(hf);
+	       return help;
+	    }
+	    help=new_help;
+	    help_end=help+help_len;
 	 }
-	 strcat(help,buf);
+	 char *subst=strchr(buf,'$');
+	 if(subst && subst[1]=='{') {
+	    char *end_brace=strchr(subst+2,'}');
+	    if(end_brace) {
+	       char action[256];
+	       memcpy(action,subst+2,end_brace-subst-2);
+	       action[end_brace-subst-2]=0;
+	       char *fmt_len_ptr=strchr(action,':');
+	       int fmt_len=0;
+	       if(fmt_len_ptr) {
+		  *fmt_len_ptr=0;
+		  fmt_len=atoi(fmt_len_ptr+1);
+	       }
+	       const char *code=ShortcutPrettyPrint(FindActionCode(action));
+	       int code_len=strlen(code);
+	       int final_width=(code_len>fmt_len?code_len:fmt_len);
+	       memmove(subst+final_width,end_brace+1,strlen(end_brace));
+	       memcpy(subst,code,code_len);
+	       if(code_len<fmt_len)
+		  memset(subst+code_len,' ',fmt_len-code_len);
+	       buf_len=strlen(buf);
+	    }
+	 }
+	 memcpy(help_end,buf,buf_len+1);
+	 help_end+=buf_len;
       }
    }
    fclose(hf);
