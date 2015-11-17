@@ -9,14 +9,31 @@ le_SOURCES = about.cc block.cc calc.cc chset.cc cmd.cc color.cc edit.cc\
  menu.h menu1.h options.h rus.h screen.h search.h textpoin.h user.h\
  window.h highli.cc highli.h clipbrd.cc clipbrd.h keynames.h keynames.cc\
  mouse.h mouse.cc getch.h format.h colormnu.cc colormnu.h bm.cc bm.h\
- mb.cc mb.h undo.cc undo.h regex.c regex.h wcwidth.c wcwidth1.c
+ mb.cc mb.h undo.cc undo.h regex.c regex.h wcwidth.c wcwidth1.c\
+ action-name-func
 
 GNULIB = $(top_builddir)/lib/libgnu.a
 
 le_DEPENDENCIES = $(GNULIB)
 le_LDADD = $(GNULIB) $(CURSES_LIBS) $(LIBINTL) $(LIBSOCKET)
 
-INCLUDES = -I$(top_builddir)/lib -I$(top_srcdir)/lib $(CURSES_INCLUDES)
+AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib $(CURSES_INCLUDES)
 
-EXTRA_DIST = le.hlp
+EXTRA_DIST = le.hlp make-action-enum.pl make-action-name-func.pl make-keymap.pl
 pkgdata_DATA = le.hlp
+
+action-enum.h: action-name-func make-action-enum.pl
+	$(PERL) $(srcdir)/make-action-enum.pl $(srcdir)/action-name-func > $@
+action-name-func.h: action-name-func make-action-name-func.pl
+	$(PERL) $(srcdir)/make-action-name-func.pl $(srcdir)/action-name-func > $@
+keymap-default.h: $(top_srcdir)/misc/keymap-default make-keymap.pl
+	$(PERL) $(srcdir)/make-keymap.pl $(top_srcdir)/misc/keymap-default > $@
+mainmenu-default.h: $(top_srcdir)/misc/mainmenu-default make-mainmenu.pl
+	$(PERL) $(srcdir)/make-mainmenu.pl $(top_srcdir)/misc/mainmenu-default > $@
+
+keymap.h: action-enum.h
+keymap.cc: action-name-func.h
+keymapdf.cc: keymap-default.h
+mainmenu.cc: mainmenu-default.h
+
+CLEANFILES = action-enum.h action-name-func.h keymap-default.h mainmenu-default.h

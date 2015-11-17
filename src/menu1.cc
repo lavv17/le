@@ -38,15 +38,15 @@ int   IsValid(int n)
 {
    if(!strcmp(m[n].text,"---"))
       return(2);
-   if((m[n].cond&MENU_COND_RW) && View)
+   if((m[n].fl&MENU_COND_RW) && View)
       return(1);
-   if((m[n].cond&MENU_COND_RO) && !View)
+   if((m[n].fl&MENU_COND_RO) && !View)
       return(1);
-   if((m[n].cond&MENU_COND_NO_MM) && buffer_mmapped)
+   if((m[n].fl&MENU_COND_NO_MM) && buffer_mmapped)
       return 1;
-   if((m[n].cond&MENU_COND_CLIPBOARD) && MainClipBoard.IsEmpty())
+   if((m[n].fl&MENU_COND_CLIPBOARD) && MainClipBoard.IsEmpty())
       return 1;
-   if((m[n].cond&MENU_COND_BLOCK))
+   if((m[n].fl&MENU_COND_BLOCK))
    {
       CheckBlock();
       if(hide)
@@ -62,24 +62,24 @@ int   *CurrItem(int n)
    {
       if(m[n].text==NULL)
          level--;
-      else if(m[n].fl==SUBM)
+      else if(m[n].fl&SUBM)
          level++;
       n++;
    }
    while(level>0 || m[n].text!=NULL);
-   return((int*)&(m[n].func));
+   return(&(m[n].curritem));
 }
 
 int   FirstItem(int n)
 {
    int   level=0;
 
-   while(level>0 || (n>0 && m[n-1].fl!=SUBM))
+   while(level>0 || (n>0 && !(m[n-1].fl&SUBM)))
    {
       n--;
       if(m[n].text==NULL)
          level++;
-      else if(m[n].fl==SUBM)
+      else if(m[n].fl&SUBM)
          level--;
    }
    return(n);
@@ -92,7 +92,7 @@ int   NextItem(int n)
    {
       if(m[n].text==NULL)
          level--;
-      else if(m[n].fl==SUBM)
+      else if(m[n].fl&SUBM)
          level++;
       n++;
    }
@@ -121,7 +121,7 @@ int   PrevItem(int n)
       n--;
       if(m[n].text==NULL)
          level++;
-      else if(m[n].fl==SUBM)
+      else if(m[n].fl&SUBM)
       {
          if(level==0)
             return(LastItem(n+1));
@@ -219,7 +219,7 @@ void  MoveBar(int n)
 void  DisplayMenuWindow(int n)
 {
    int   pos,o;
-   DisplayWin((WIN*)(m[n].func));
+   DisplayWin(m[n].win);
    n++;
    pos=0;
    do
@@ -232,6 +232,26 @@ void  DisplayMenuWindow(int n)
    while(o<n);
 }
 
+void  FormatItemText(int n,int clear_len)
+{
+   const char *old_text=m[n].text;
+   if(!strcmp(old_text,"---"))
+      return;
+   int len=strlen(old_text);
+   const char *right_text="";
+   const char *tab=strchr(old_text,'\t');
+   if(tab)
+   {
+      clear_len++;
+      len=tab-old_text;
+      right_text=tab+1;
+   }
+   int right_len=strlen(right_text);
+   char *new_text=(char*)malloc(len+clear_len+right_len+3);
+   sprintf(new_text," %.*s%*s ",len,old_text,clear_len+right_len,right_text);
+   m[n].SetText(new_text);
+}
+
 void  CreateMenuWindow(int n,int x,int y)
 {
    int   o,nw,
@@ -242,42 +262,38 @@ void  CreateMenuWindow(int n,int x,int y)
    *CurrItem(n)=n;
    do
    {
-      if((nw=ItemLen(m[n].text)+2)>width)
+      if(!strchr(m[n].text,'\t')) {
+	 // add shortcut hint
+	 const char *shcut=ShortcutPrettyPrint(m[n].action);
+	 if(shcut) {
+	    char *new_text=(char*)malloc(strlen(m[n].text)+1+strlen(shcut)+1);
+	    strcpy(new_text,m[n].text);
+	    strcat(new_text,"\t");
+	    strcat(new_text,shcut);
+	    m[n].SetText(new_text);
+	 }
+      }
+
+      if((nw=ItemLen(m[n].text)+5)>width)
          width=nw;
       height++;
-      if(m[n].fl==SUBM)
+      if(m[n].fl&SUBM)
          CreateMenuWindow(n,x+2,y+height+1l);
       o=n;
       n=NextItem(n);
    }
    while(o<n);
-   m[n-1].func=(void(*)())CreateWin(x,y+1,width,height+2,MENU_ATTR,"",0);
+   m[n-1].win=CreateWin(x,y+1,width,height+2,MENU_ATTR,"",0);
 
-   char *tab;
-   char *end;
    int clear_len;
    do
    {
       if(!strcmp(m[n].text,"---"))
 	 goto next;
-      clear_len=width-2-ItemLen(m[n].text);
+      clear_len=width-4-ItemLen(m[n].text);
       if(clear_len<0)
 	 goto next;
-      tab=strchr(m[n].text,'\t');
-      if(tab)
-      {
-	 clear_len++;
-	 memmove(tab+clear_len,tab+1,strlen(tab+1)+1);
-	 memset(tab,' ',clear_len);
-      }
-      else
-      {
-	 if(clear_len==0)
-	    goto next;
-	 end=m[n].text+strlen(m[n].text);
-	 memset(end,' ',clear_len);
-	 end[clear_len]=0;
-      }
+      FormatItemText(n,clear_len);
    next:
       o=n;
       n=NextItem(n);
@@ -297,7 +313,8 @@ void  InitMenu()
    *CurrItem(0)=0;
    do
    {
-      if(m[n].fl==SUBM)
+      FormatItemText(n,0);
+      if(m[n].fl&SUBM)
          CreateMenuWindow(n,pos,0);
       pos+=ItemLen(m[n].text);
       n=NextItem(n);
@@ -408,7 +425,7 @@ void    ActivateMainMenu(void)
             }
             break;
          case(LINE_DOWN):
-            if(level==0 && m[curr].fl==SUBM)
+            if(level==0 && (m[curr].fl&SUBM))
                goto enter;
             n=MoveToValid(NextItem(curr),NextItem);
             if(n==-1)
@@ -418,7 +435,7 @@ void    ActivateMainMenu(void)
          case(NEWLINE):
    enter:      if(IsValid(curr)==0)
             {
-               if(m[curr].fl==SUBM)
+               if(m[curr].fl&SUBM)
                {
                   DisplayMenuWindow(curr);
                   level++;
@@ -439,7 +456,7 @@ void    ActivateMainMenu(void)
                      }
                      CloseWin();
                   }
-                  m[curr].func();
+                  GetActionProc(m[curr].action)();
                   if(m[curr].fl&HIDE)
                   {
                      flag=1;
@@ -479,7 +496,7 @@ void    ActivateMainMenu(void)
       }
       if(curr==-1)
          goto leave_menu;
-      if(level==0 && pd && m[curr].fl==SUBM)
+      if(level==0 && pd && (m[curr].fl&SUBM))
       {
          DisplayMenuWindow(curr);
          level++;
@@ -522,10 +539,10 @@ read_it:
    {
       for(int i=0; ; i++)
       {
-	 if(m[i].fl==SUBM)
+	 if(m[i].fl&SUBM)
 	 {
 	    level++;
-	    DestroyWin((WIN*)m[i].func);
+	    DestroyWin(m[i].win);
 	 }
 	 if(m[i].text==0)
 	 {
@@ -584,12 +601,11 @@ read_it:
 	    fskip(f);
 	    continue;
 	 }
-	 m[mi].text=(char*)malloc(strlen(str)+2+128);
-	 sprintf(m[mi].text," %s ",str);
+	 m[mi].SetText(strdup(str));
 	 if(!strcmp(func,"submenu"))
 	 {
 	    m[mi].fl=SUBM;
-	    m[mi].func=0;
+	    m[mi].action=0;
 	    level++;
 	 }
 	 else
@@ -612,13 +628,8 @@ read_it:
 	    {
 	       int code=FindActionCode(str);
 	       if(code!=-1)
-	       {
-		  m[mi].func=GetActionProc(EditorActionProcTable,code);
-		  const char *shcut=ShortcutPrettyPrint(code);
-		  if(shcut && level>0)
-		     sprintf(m[mi].text+strlen(m[mi].text),"\t%s ",shcut);
-	       }
-	       if(m[mi].func==0)
+		  m[mi].action=code;
+	       else
 		  fprintf(stderr,"invalid function name: %s\n",str);
 	    }
 	 }
@@ -642,13 +653,13 @@ read_it:
 	       if(!strcmp(str,"hide"))
 		  m[mi].fl|=HIDE;
 	       else if(!strcmp(str,"rw"))
-		  m[mi].cond|=MENU_COND_RW;
+		  m[mi].fl|=MENU_COND_RW;
 	       else if(!strcmp(str,"ro"))
-		  m[mi].cond|=MENU_COND_RO;
+		  m[mi].fl|=MENU_COND_RO;
 	       else if(!strcmp(str,"block"))
-		  m[mi].cond|=MENU_COND_BLOCK;
+		  m[mi].fl|=MENU_COND_BLOCK;
 	       else if(!strcmp(str,"no-mm"))
-		  m[mi].cond|=MENU_COND_NO_MM;
+		  m[mi].fl|=MENU_COND_NO_MM;
 	    }
 	 }
 	 mi++;

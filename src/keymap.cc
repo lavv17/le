@@ -32,6 +32,13 @@
 #include "getch.h"
 #include <term.h>
 
+#include "block.h"
+#include "options.h"
+#include "keymap.h"
+#include "format.h"
+#include "search.h"
+#include "colormnu.h"
+
 unsigned char StringTyped[256];
 int   StringTypedLen;
 
@@ -39,211 +46,17 @@ int   FuncKeysNum=12;
 
 int   MouseCounter=0;
 
-const ActionNameRec ActionNameTable[]=
+const ActionNameProcRec ActionNameProcTable[]=
 {
-   {CHAR_LEFT,"backward-char"},
-   {CHAR_RIGHT,"forward-char"},
-   {WORD_LEFT,"backward-word"},
-   {WORD_RIGHT,"forward-word"},
-   {LINE_BEGIN,"beginning-of-line"},
-   {LINE_END,"end-of-line"},
-   {TEXT_BEGIN,"beginning-of-file"},
-   {TEXT_END,"end-of-file"},
-   {NEXT_PAGE,"next-page"},
-   {PREV_PAGE,"previous-page"},
-   {PAGE_TOP,"page-top"},
-   {PAGE_BOTTOM,"page-bottom"},
-   {TO_LINE_NUMBER,"to-line-number"},
-   {TO_OFFSET,"to-offset"},
-   {TO_PREVIOUS_LOC,"to-previous-edit"},
-   {LINE_UP,"previous-line"},
-   {LINE_DOWN,"next-line"},
+#include "action-name-func.h"
+};
 
-// Movement with block marking
-   {MARK_CHAR_LEFT,"mark-backward-char"},
-   {MARK_CHAR_RIGHT,"mark-forward-char"},
-   {MARK_WORD_LEFT,"mark-backward-word"},
-   {MARK_WORD_RIGHT,"mark-forward-word"},
-   {MARK_LINE_BEGIN,"mark-beginning-of-line"},
-   {MARK_LINE_END,"mark-end-of-line"},
-   {MARK_TEXT_BEGIN,"mark-beginning-of-file"},
-   {MARK_TEXT_END,"mark-end-of-file"},
-   {MARK_NEXT_PAGE,"mark-next-page"},
-   {MARK_PREV_PAGE,"mark-previous-page"},
-   {MARK_PAGE_TOP,"mark-page-top"},
-   {MARK_PAGE_BOTTOM,"mark-page-bottom"},
-   {MARK_LINE_UP,"mark-previous-line"},
-   {MARK_LINE_DOWN,"mark-next-line"},
-
-// Delete actions
-   {DELETE_CHAR,"delete-char"},
-   {BACKSPACE_CHAR,"backward-delete-char"},
-   {DELETE_WORD,"delete-word"},
-   {BACKWARD_DELETE_WORD,"backward-delete-word"},
-   {FORWARD_DELETE_WORD,"forward-delete-word"},
-   {DELETE_TO_EOL,"delete-to-eol"},
-   {DELETE_LINE,"delete-line"},
-   {UNDELETE,"undelete"},
-
-// Insert actions
-   {INDENT,"indent"},
-   {UNINDENT,"unindent"},
-   {NEWLINE,"new-line"},
-   {COPY_FROM_UP,"copy-from-up"},
-   {COPY_FROM_DOWN,"copy-from-down"},
-
-// Undo/redo
-   {UNDO,"undo"},
-   {REDO,"redo"},
-   {UNDO_STEP,"undo-step"},
-   {REDO_STEP,"redo-step"},
-
-// File ops
-   {LOAD_FILE,"load-file"},
-   {SWITCH_FILE,"switch-file"},
-   {REOPEN_FILE_RW,"reopen-file-rw"},
-   {SAVE_FILE,"save-file"},
-   {SAVE_FILE_AS,"save-file-as"},
-   {FILE_INFO,"file-info"},
-
-// Block ops
-   {COPY_BLOCK,"copy-block"},
-   {MOVE_BLOCK,"move-block"},
-   {DELETE_BLOCK,"delete-block"},
-   {SET_BLOCK_END,"set-block-end"},
-   {SET_BLOCK_BEGIN,"set-block-begin"},
-   {READ_BLOCK,"read-block"},
-   {WRITE_BLOCK,"write-block"},
-   {PIPE_BLOCK,"pipe-block"},
-   {INDENT_BLOCK,"indent-block"},
-   {UNINDENT_BLOCK,"unindent-block"},
-   {INSERT_PREFIX,"insert-prefix"},
-   {TO_UPPER,"convert-to-upper"},
-   {TO_LOWER,"convert-to-lower"},
-   {EXCHANGE_CASE,"exchange-cases"},
-   {BLOCK_HIDE,"hide-block"},
-   {BLOCK_TYPE,"change-block-type"},
-   {BLOCK_FUNC_BAR,"block-functions"},
-   {MARK_LINE,"mark-line"},
-   {MARK_TO_EOL,"mark-to-eol"},
-   {MARK_ALL,"mark-all"},
-   {START_DRAG_MARK,"start-drag-mark"},
-   {YANK_BLOCK,"yank-block"},
-   {REMEMBER_BLOCK,"remember-block"},
-
-// Search
-   {SEARCH_FORWARD,"search-forward"},
-   {SEARCH_BACKWARD,"search-backward"},
-   {START_REPLACE,"start-replace"},
-   {CONT_SEARCH,"continue-search"},
-   {FIND_MATCH_BRACKET,"find-matching-bracket"},
-   {FIND_BLOCK_BEGIN,"find-block-begin"},
-   {FIND_BLOCK_END,"find-block-end"},
-
-// Format
-   {FORMAT_ONE_PARA,"format-paragraph"},
-   {FORMAT_DOCUMENT,"format-document"},
-   {CENTER_LINE,"center-line"},
-   {ADJUST_RIGHT_LINE,"adjust-right-line"},
-   {FORMAT_FUNC_BAR,"format-functions"},
-
-// Others
-   {CALCULATOR,"calculator"},
-   {DRAW_FRAMES,"draw-frames"},
-   {TABS_EXPAND,"expand-tabs"},
-   {SPAN_TABS_EXPAND,"expand-tab-spans"},
-   {TEXT_OPTIMIZE,"optimize-text"},
-   {CHOOSE_CHAR,"choose-character"},
-   {CHOOSE_WCHAR,"choose-wide-character"},
-   {CHOOSE_BYTE,"choose-byte"},
-   {UNIX_DOS_TRANSFORM,"change-text-type"},
-
-// Options
-   {EDITOR_OPTIONS,"editor-options"},
-   {TERMINAL_OPTIONS,"terminal-options"},
-   {FORMAT_OPTIONS,"format-options"},
-   {APPEARANCE_OPTIONS,"appearance-options"},
-   {SAVE_OPTIONS,"save-options"},
-   {SAVE_OPTIONS_LOCAL,"save-options-local"},
-
-   {ENTER_CONTROL_CHAR,"quoted-insert"},
-   {ENTER_CHAR_CODE,"insert-char-by-code"},
-   {ENTER_WCHAR_CODE,"insert-wchar-by-code"},
-   {ENTER_BYTE_CODE,"insert-byte-by-code"},
-
-//   WINDOW_RESIZE,
-
-   {EDITOR_HELP,"help"},
-   {CONTEXT_HELP,"word-help"},
-
-   {SUSPEND_EDITOR,"suspend-editor"},
-   {QUIT_EDITOR,"escape"},
-   {QUIT_EDITOR,"quit-editor"},
-
-   {COMPILE_CMD,"compile"},
-   {MAKE_CMD,"make"},
-   {RUN_CMD,"make-run"},
-   {SHELL_CMD,"shell-escape"},
-   {ONE_SHELL_CMD,"shell-command"},
-
-   {COMMENT_LINE,"comment-line"},
-
-   {REFRESH_SCREEN,"refresh-screen"},
-
-   {ENTER_MENU,"enter-menu"},
-
-   {SWITCH_INSERT_MODE,"switch-insert-mode"},
-   {SWITCH_HEX_MODE,"switch-hex-mode"},
-   {SWITCH_AUTOINDENT_MODE,"switch-autoindent-mode"},
-   {SWITCH_RUSSIAN_MODE,"switch-russian-mode"},
-   {SWITCH_TEXT_MODE,"switch-text-mode"},
-   {SWITCH_GRAPH_MODE,"switch-graph-mode"},
-
-   {EDIT_CHARSET,"edit-charset"},
-   {SET_CHARSET_8BIT,"set-charset-8bit"},
-   {SET_CHARSET_8BIT_NO_CONTROL,"set-charset-8bit-no-control"},
-   {SAVE_TERMINAL_OPTIONS,"save-terminal-options"},
-   {EDIT_COLORS,"edit-colors"},
-   {SAVE_COLORS,"save-colors"},
-   {SAVE_COLORS_FOR_TERM,"save-colors-for-terminal"},
-   {LOAD_COLOR_DEFAULT,"load-color-default"},
-   {LOAD_COLOR_DEFBG,"load-color-defbg"},
-   {LOAD_COLOR_BLACK,"load-color-black"},
-   {LOAD_COLOR_BLUE,"load-color-blue"},
-   {LOAD_COLOR_GREEN,"load-color-green"},
-   {LOAD_COLOR_WHITE,"load-color-white"},
-   {PROGRAMS_OPTIONS,"programs-options"},
-   {UNDO_OPTIONS,"undo-options"},
-   {ABOUT,"about"},
-   {LOAD_KEYMAP_DEFAULT,"load-keymap-default"},
-   {LOAD_KEYMAP_EMACS,  "load-keymap-emacs"},
-   {SAVE_KEYMAP,"save-keymap"},
-   {SAVE_KEYMAP_FOR_TERM,"save-keymap-for-terminal"},
-
-   {SET_BOOKMARK,"set-bookmark"},
-   {SET_BOOKMARK_0,"set-bookmark-0"},
-   {SET_BOOKMARK_1,"set-bookmark-1"},
-   {SET_BOOKMARK_2,"set-bookmark-2"},
-   {SET_BOOKMARK_3,"set-bookmark-3"},
-   {SET_BOOKMARK_4,"set-bookmark-4"},
-   {SET_BOOKMARK_5,"set-bookmark-5"},
-   {SET_BOOKMARK_6,"set-bookmark-6"},
-   {SET_BOOKMARK_7,"set-bookmark-7"},
-   {SET_BOOKMARK_8,"set-bookmark-8"},
-   {SET_BOOKMARK_9,"set-bookmark-9"},
-   {GO_BOOKMARK,"go-bookmark"},
-   {GO_BOOKMARK_0,"go-bookmark-0"},
-   {GO_BOOKMARK_1,"go-bookmark-1"},
-   {GO_BOOKMARK_2,"go-bookmark-2"},
-   {GO_BOOKMARK_3,"go-bookmark-3"},
-   {GO_BOOKMARK_4,"go-bookmark-4"},
-   {GO_BOOKMARK_5,"go-bookmark-5"},
-   {GO_BOOKMARK_6,"go-bookmark-6"},
-   {GO_BOOKMARK_7,"go-bookmark-7"},
-   {GO_BOOKMARK_8,"go-bookmark-8"},
-   {GO_BOOKMARK_9,"go-bookmark-9"},
-
-   {-1,NULL}
+const struct {
+   const char *alias;
+   int code;
+} ActionNameAliases[]={
+   "quit-editor", A_ESCAPE,
+   0
 };
 
 enum
@@ -269,13 +82,11 @@ struct KeyTreeNode
 
 const ActionCodeRec *ActionCodeTable=DefaultActionCodeTable;
 ActionCodeRec *DynamicActionCodeTable;
-//char  *ti_cache[128]={NULL};
 
 const char *GetActionName(int action)
 {
-   for(int i=0; ActionNameTable[i].action!=-1; i++)
-      if(ActionNameTable[i].action==action)
-         return(ActionNameTable[i].name);
+   if(action>=A__FIRST && action<=A__LAST)
+      return ActionNameProcTable[action-A__FIRST].name;
    return(NULL);
 }
 
@@ -361,8 +172,13 @@ static int PrettyCodeScore(const char *c)
       case('|'):
 	 score+=5;
 	 break;
-      case('^'):;
-      case('\\'):;
+      case('^'):
+      case('\\'):
+	 break;
+      case('\e'):
+	 if(c[1]=='[') // terminal codes are not pretty
+	    score+=6;
+	 break;
       }
       c++;
    }
@@ -497,11 +313,10 @@ void  WriteActionMap(FILE *f)
    }
 }
 
-ActionProc  GetActionProc(ActionProcRec *table,int action)
+ActionProc GetActionProc(int action)
 {
-   for( ; table->action!=-1; table++)
-      if(table->action==action)
-         return(table->proc);
+   if(action>=A__FIRST && action<=A__LAST)
+      return ActionNameProcTable[action-A__FIRST].proc;
    return(NULL);
 }
 
@@ -663,13 +478,26 @@ void RebuildKeyTree()
 
 int FindActionCode(const char *ActionName)
 {
-   int action_no;
+   int lo=A__FIRST;
+   int hi=A__LAST+1;
 
-   /* find the named action in table */
-   for(action_no=0; ActionNameTable[action_no].action!=-1
-      && strcmp(ActionNameTable[action_no].name,ActionName); action_no++);
+   while(lo<hi) {
+      int mid=(lo+hi)/2;
+      int cmp=strcmp(ActionName,GetActionName(mid));
+      if(cmp==0)
+	 return mid;
+      if(cmp>0)
+	 lo=mid+1;
+      else
+	 hi=mid;
+   }
 
-   return ActionNameTable[action_no].action;
+   // try aliases (there are few, no need for bsearch)
+   for(int i=0; ActionNameAliases[i].alias; i++)
+      if(!strcmp(ActionName,ActionNameAliases[i].alias))
+	 return ActionNameAliases[i].code;
+
+   return -1;
 }
 
 
