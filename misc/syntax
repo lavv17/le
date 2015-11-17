@@ -298,3 +298,7 @@ c2,1=^(p(?:ick)|r(?:eword)|e(?:dit)|s(?:quash)|f(?:ixup)|x|exec)[[:space:]]
 # Puppet
 /*.pp
 i=puppet
+
+# Markdown markup language
+/*.md
+i=markdown

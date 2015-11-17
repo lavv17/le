@@ -1,6 +1,6 @@
 colors = colors-black colors-blue colors-defbg colors-green colors-white
-keymaps = keymap-emacs
-mainmenus = mainmenu mainmenu-ru
+keymaps = keymap-emacs keymap-default
+mainmenus = mainmenu-default mainmenu-ru
 syntax = syntax syntax.d/ada syntax.d/as syntax.d/awk syntax.d/c++-comment	\
  syntax.d/c-comment syntax.d/c-literal syntax.d/cpp syntax.d/eiffel		\
  syntax.d/fvwm2 syntax.d/gema syntax.d/html syntax.d/java			\
@@ -9,7 +9,7 @@ syntax = syntax syntax.d/ada syntax.d/as syntax.d/awk syntax.d/c++-comment	\
  syntax.d/python syntax.d/sather syntax.d/shell syntax.d/snmp-mib		\
  syntax.d/sql syntax.d/tcl syntax.d/tex syntax.d/texinfo syntax.d/txt2tags	\
  syntax.d/verilog syntax.d/javascript syntax.d/ocaml syntax.d/haskell		\
- syntax.d/golang syntax.d/nroff syntax.d/pod
+ syntax.d/golang syntax.d/nroff syntax.d/pod syntax.d/markdown
 
 nobase_pkgdata_DATA = $(colors) $(keymaps) $(mainmenus) $(syntax)
 pkgdata_SCRIPTS = help
@@ -17,7 +17,5 @@ EXTRA_DIST = $(nobase_pkgdata_DATA) $(pkgdata_SCRIPTS)
 
 colors: ../src/le
 	../src/le --dump-colors > $@
-keymap: ../src/le
-	../src/le --dump-keymap > $@
 
-CLEANFILES = colors keymap
+CLEANFILES = colors
