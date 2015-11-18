@@ -19,7 +19,7 @@ le_LDADD = $(GNULIB) $(CURSES_LIBS) $(LIBINTL) $(LIBSOCKET)
 
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib $(CURSES_INCLUDES)
 
-EXTRA_DIST = le.hlp make-action-enum.pl make-action-name-func.pl make-keymap.pl
+EXTRA_DIST = le.hlp make-action-enum.pl make-action-name-func.pl make-keymap.pl make-mainmenu.pl
 pkgdata_DATA = le.hlp
 
 action-enum.h: action-name-func make-action-enum.pl
@@ -31,9 +31,11 @@ keymap-default.h: $(top_srcdir)/misc/keymap-default make-keymap.pl
 mainmenu-default.h: $(top_srcdir)/misc/mainmenu-default make-mainmenu.pl
 	$(PERL) $(srcdir)/make-mainmenu.pl $(top_srcdir)/misc/mainmenu-default > $@
 
-keymap.h: action-enum.h
-keymap.cc: action-name-func.h
-keymapdf.cc: keymap-default.h
-mainmenu.cc: mainmenu-default.h
+block.o chset.o edit.o file.o format.o frames.o getstr.o help.o kern.o \
+ keymap.o keymapdf.o keymapfn.o loadsave.o mainmenu.o menu1.o menu.o \
+ options.o search.o user.o: action-enum.h
+keymap.o: action-name-func.h
+keymapdf.o: keymap-default.h
+mainmenu.o: mainmenu-default.h
 
 CLEANFILES = action-enum.h action-name-func.h keymap-default.h mainmenu-default.h
