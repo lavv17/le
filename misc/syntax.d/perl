@@ -20,7 +20,7 @@ c1,2=([^[:alnum:]_\$@%#]|^)(abs|accept|alarm|atan2|bind|binmode|bless|caller\
 |srand|stat|study|substr|symlink|syscall|sysread|sysseek|system|syswrite|tell|telldir\
 |tied?|times?|truncate|uc|ucfirst|umask|undef|unless|unlink|unpack|untie|unshift\
 |use|utime|values|vec|wait|waitpid|wantarray|warn|while|write|else|elsif\
-|package|sub|BEGIN|END|INIT|CHECK|socket|defined|our|given|when|default\
+|package|sub|BEGIN|END|INIT|CHECK|UNITCHECK|socket|defined|our|given|when|default|state\
 )([^[:alnum:]/_]|$)
 c1,1=\\\\(my|our)([^[:alnum:]/_]|$)
 c2={|}|<<|<|>>|>|;;|;|\(|\)|=|=~|!=|&&|\|\||!|\.\.|<=>|&|^|->|//
