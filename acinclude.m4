@@ -118,36 +118,32 @@ else
 fi
 ])
 
-# check if mytinfo is required for ncurses usage
-AC_DEFUN([LE_MYTINFO_CHECK],
+# check if tinfo or mytinfo library is required for ncurses usage
+AC_DEFUN([LE_TINFO_CHECK],
 [
-   AC_CACHE_CHECK(whether mytinfo is required, ac_cv_need_mytinfo,
+   AC_CACHE_CHECK([whether tinfo library is required], [ac_cv_need_tinfo],
    [
       old_LIBS="$LIBS"
       old_CFLAGS="$CFLAGS"
-      LIBS="$LIBS $CURSES_LIBS"
       CFLAGS="$CFLAGS $CURSES_INCLUDES"
-      AC_TRY_LINK([
-	 #ifdef USE_NCURSES_H
-	 #include <ncurses.h>
-	 #else
-	 #include <curses.h>
-	 #endif],[initscr();reset_prog_mode();refresh();endwin();],[ac_cv_need_mytinfo=no],
-      [
-	 LIBS="$LIBS -lmytinfo"
+      curses_ok=no
+      for tinfo in "" -ltinfo -lmytinfo; do
+	 LIBS="$old_LIBS $CURSES_LIBS $tinfo"
 	 AC_TRY_LINK([
 	    #ifdef USE_NCURSES_H
 	    #include <ncurses.h>
 	    #else
 	    #include <curses.h>
-	    #endif],[initscr();reset_prog_mode();refresh();endwin();],[ac_cv_need_mytinfo=yes],
-	    [AC_MSG_ERROR(cannot make curses work)])
-      ])
+	    #endif],
+	    [initscr();reset_prog_mode();refresh();endwin();],
+	    [ac_cv_need_tinfo=${tinfo:-no};curses_ok=yes;break;])
+      done
       LIBS="$old_LIBS"
       CFLAGS="$old_CFLAGS"
+      test x$curses_ok = xno && AC_MSG_ERROR([cannot make curses work])
    ])
-   if test x$ac_cv_need_mytinfo = xyes; then
-      CURSES_LIBS="$CURSES_LIBS -lmytinfo"
+   if test x$ac_cv_need_tinfo != xno; then
+      CURSES_LIBS="$CURSES_LIBS $ac_cv_need_tinfo"
    fi
 ])
 

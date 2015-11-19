@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.15.1], [le@uniyar.ac.ru])
+AC_INIT([le], [1.15.90], [le@uniyar.ac.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -106,7 +106,7 @@ if test x$use_libcursesw = xyes
 then
    CURSES_LIBS="${CURSES_LIBS}w"
 fi
-LE_MYTINFO_CHECK
+LE_TINFO_CHECK
 LE_CURSES_MOUSE
 LE_CURSES_BOOL
 dnl LE_NCURSES_BUGS
