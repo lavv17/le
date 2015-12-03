@@ -542,6 +542,7 @@ void  PrintUsage(int arg)
 	  "-b  --black-white  black and white mode\n"
 	  "-c  --color        color mode\n"
 	  "    --config=FILE  use specified file instead of le.ini\n"
+	  "    --dump-keymap  dump default keymap to stdout and exit\n"
 	  "    --dump-colors  dump default color map to stdout and exit\n"
 #if USE_MULTIBYTE_CHARS
           "    --multibyte    force multibyte mode\n"
@@ -580,7 +581,8 @@ int     main(int argc,char **argv)
    int   opt;
 
    enum {
-      DUMP_COLORS=1024,
+      DUMP_KEYMAP=1024,
+      DUMP_COLORS,
       PRINT_HELP,
       PRINT_VERSION,
       CONFIG_FILE,
@@ -597,6 +599,7 @@ int     main(int argc,char **argv)
    {
       {"help",no_argument,0,PRINT_HELP},
       {"version",no_argument,0,PRINT_VERSION},
+      {"dump-keymap",no_argument,0,DUMP_KEYMAP},
       {"dump-colors",no_argument,0,DUMP_COLORS},
       {"read-only",no_argument,0,'r'},
       {"hex-mode",no_argument,0,'h'},
@@ -678,6 +681,9 @@ int     main(int argc,char **argv)
       case('?'):
 	 fprintf(stderr,"%s: Try `%s --help' for more information\n",Program,argv[0]);
 	 exit(1);
+      case(DUMP_KEYMAP):
+	 WriteActionMap(stdout);
+	 exit(0);
       case(DUMP_COLORS):
 	 DumpDefaultColors(stdout);
 	 exit(0);
