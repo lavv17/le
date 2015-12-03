@@ -429,6 +429,7 @@ void  StatusLine()
       prev_x=x;
       addch((byte)*bn);
       getyx(stdscr,y,x);
+      (void)y;
       if(prev_x>x || (prev_x==x && x==COLS-1))
 	 return;
    }
@@ -993,7 +994,7 @@ void  FError(const char *s)
    ErrMsg(msg);
 }
 
-void  NotMemory()
+void  NoMemory()
 {
    ErrMsg("Not enough memory");
 }

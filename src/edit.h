@@ -207,7 +207,8 @@ void        DeleteLine(void);
 int         getstring(const char *prompt,char *buf,int maxlen,History *history=NULL,
                       int *len=NULL,const char *help=NULL,const char *help_title=NULL);
 void        FError(const char *filename);
-void        NotMemory();
+void        NoMemory();
+#define NotMemory NoMemory
 offs        LineBegin(offs base);
 offs        LineEnd(offs base);
 char        *GetWord();
