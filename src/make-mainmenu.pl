@@ -5,9 +5,15 @@ use strict;
 while(<>) {
    next if /^#/;
    chomp;
-   my ($type,$text,$action,$options)=(m'^\s*(\w+)(?:\s+("[^"]+")(?:\s+([a-z0-9-]+)(.*))?)?');
+   my ($type,$text,$action,$options)=(m'^\s*(\w+)(?:\s+("[^"]+")(?:\s+(\S+)(.*))?)?');
+   ($action,my $arg)=($action=~/^([^(]*)(?:\((.*)\))?$/);
    my $A='A_'.uc($action);
    $A=~s/-/_/g;
+   if(defined $arg && $arg ne '') {
+      $arg=~s{([^\\]|^)_}{$1 }g;
+      $arg=~s{\\_}{_}g;
+      $A.=qq{,{(char*)"$arg"}};
+   }
 
    $options=~s/^\s+|\s+$//g;
    my @options=split ' ',$options;

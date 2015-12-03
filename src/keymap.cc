@@ -41,6 +41,9 @@
 
 unsigned char StringTyped[256];
 int   StringTypedLen;
+int   LastActionCode;
+const char *ActionArgument;
+int   ActionArgumentLen;
 
 int   FuncKeysNum=12;
 
@@ -75,9 +78,10 @@ struct KeyTreeNode
 {
    int maxdelay;
    int action;
-   struct KeyTreeNode *sibling;
    int keycode;
+   struct KeyTreeNode *sibling;
    struct KeyTreeNode *child;
+   const char *arg;
 };
 
 const ActionCodeRec *ActionCodeTable=DefaultActionCodeTable;
@@ -278,7 +282,7 @@ const char *ActionCodePrettyPrint(const char *c)
    return code_text;
 }
 
-const char *ShortcutPrettyPrint(int c)
+const char *ShortcutPrettyPrint(int c,const char *arg)
 {
    static char code_text[1024];
    char  *store=code_text;
@@ -287,7 +291,7 @@ const char *ShortcutPrettyPrint(int c)
    int best_score=1000000;
    for(int i=0; ActionCodeTable[i].action!=-1; i++)
    {
-      if(ActionCodeTable[i].action!=c)
+      if(ActionCodeTable[i].action!=c || xstrcmp(ActionCodeTable[i].arg,arg))
 	 continue;
       const char *code=ActionCodeTable[i].code;
       int score=PrettyCodeScore(code);
@@ -308,8 +312,36 @@ void  WriteActionMap(FILE *f)
 {
    for(int i=0; ActionCodeTable[i].action!=-1; i++)
    {
-      fprintf(f,"%-23s %s\n",GetActionName(ActionCodeTable[i].action),
-                             GetActionCodeText(ActionCodeTable[i].code));
+      int pos=0;
+      const char *a_name=GetActionName(ActionCodeTable[i].action);
+      fputs(a_name,f);
+      pos+=strlen(a_name);
+      const char *arg=ActionCodeTable[i].arg;
+      if(arg) {
+	 fputc('(',f),pos++;
+	 while(*arg) {
+	    char out=*arg;
+	    char bsout=0;
+	    switch(*arg) {
+	    case '\n': bsout='n'; break;
+	    case '\r': bsout='r'; break;
+	    case '\t': bsout='t'; break;
+	    case '_':
+	    case '\\': bsout=*arg; break;
+	    case ' ': out='_'; break;
+	    }
+	    if(bsout)
+	       fputc('\\',f),pos++;
+	    fputc(bsout?bsout:out,f),pos++;
+	    arg++;
+	 }
+	 fputc(')',f),pos++;
+      }
+      fputc(' ',f),pos++;
+      while(pos<23)
+	 fputc(' ',f),pos++;
+      fputs(GetActionCodeText(ActionCodeTable[i].code),f);
+      putc('\n',f);
    }
 }
 
@@ -320,7 +352,7 @@ ActionProc GetActionProc(int action)
    return(NULL);
 }
 
-KeyTreeNode *AddToKeyTree(KeyTreeNode *curr,int key_code,int delay,int action)
+static KeyTreeNode *AddToKeyTree(KeyTreeNode *curr,int key_code,int delay,int action,const char *arg)
 {
    KeyTreeNode *scan;
    for(scan=curr->child; scan; scan=scan->sibling)
@@ -332,14 +364,17 @@ KeyTreeNode *AddToKeyTree(KeyTreeNode *curr,int key_code,int delay,int action)
       scan->maxdelay=delay;
       scan->keycode=key_code;
       scan->action=action;
+      scan->arg=arg;
       scan->child=0;
       scan->sibling=curr->child;
       curr->child=scan;
    }
    else
    {
-      if(scan->action==NO_ACTION)
+      if(scan->action==NO_ACTION) {
 	 scan->action=action;
+	 scan->arg=arg;
+      }
    }
    return(scan);
 }
@@ -358,6 +393,7 @@ KeyTreeNode *BuildKeyTree(const ActionCodeRec *ac_table)
    top=new KeyTreeNode;
    top->keycode=-1;
    top->action=NO_ACTION;
+   top->arg=0;
    top->maxdelay=MAX_DELAY;
    top->child=0;
    top->sibling=0;
@@ -413,7 +449,7 @@ KeyTreeNode *BuildKeyTree(const ActionCodeRec *ac_table)
 	       	     goto fallback;
 	       	  while(term_str[0] && term_str[1])
 		  {
-		     curr=AddToKeyTree(curr,(unsigned char)term_str[0],delay,NO_ACTION);
+		     curr=AddToKeyTree(curr,(unsigned char)term_str[0],delay,NO_ACTION,NULL);
 		     delay=HALF_DELAY;
 		     term_str++;
 		  }
@@ -446,8 +482,8 @@ KeyTreeNode *BuildKeyTree(const ActionCodeRec *ac_table)
 
 	    // now add the key_code to the tree
 	    curr=AddToKeyTree(curr,key_code,delay,
-			      (*code?NO_ACTION:ac_table->action));
-
+			      (*code?NO_ACTION:ac_table->action),
+			      (*code?NULL:ac_table->arg));
 	    delay=HALF_DELAY;
 	 }
 
@@ -500,12 +536,60 @@ int FindActionCode(const char *ActionName)
    return -1;
 }
 
+int ParseActionNameArg(char *action,const char **arg)
+{
+      // extract the action parameter
+      *arg=NULL;
+      char *end=action+strlen(action);
+      char *par1=strchr(action,'(');
+      if(par1 && end[-1]==')') {
+	 *par1=0;
+	 end[-1]=0;
+	 *arg=par1+1;
+      }
+      // convert the action name to code
+      return FindActionCode(action);
+}
+
+char *ParseActionArgumentAlloc(const char *arg)
+{
+   if(!arg || !*arg)
+      return NULL;
+   char *alloc=(char*)malloc(strlen(arg)+1);
+   char *store=alloc;
+   while(*arg) {
+      switch(*arg) {
+      case '_':
+	 *store++=' ';
+	 arg++;
+	 break;
+      case '\\':
+	 arg++;
+	 switch(*arg) {
+	 case '\0':
+	    *store++='\\';
+	    break;
+	 case 'n': *store++='\n'; arg++; break;
+	 case 'r': *store++='\r'; arg++; break;
+	 case 't': *store++='\t'; arg++; break;
+	 default:
+	    *store++=*arg++;
+	 }
+	 break;
+      default:
+	 *store++=*arg++;
+      }
+   }
+   *store=0;
+   return alloc;
+}
 
 void  ReadActionMap(FILE *f)
 {
    FreeActionCodeTable();
 
-   char  ActionName[256];
+   char  ActionName[1024];
+   const char *ActionArg;
    char  ActionCode[256];
    char  *store;
    int   ch;
@@ -526,7 +610,7 @@ void  ReadActionMap(FILE *f)
       }
       *store=0;
 
-      int action_found=FindActionCode(ActionName);
+      int action_found=ParseActionNameArg(ActionName,&ActionArg);
       if(action_found==-1)
       {
          while(ch!='\n' && ch!=EOF)
@@ -586,7 +670,7 @@ void  ReadActionMap(FILE *f)
             *(store++)=ch;
 
          ch=fgetc(f);
-         if(ch=='\n' || ch==EOF)
+         if(ch==EOF || isspace(ch))
             break;
       }
       *store=0;
@@ -605,6 +689,7 @@ void  ReadActionMap(FILE *f)
       }
       NewTable[CurrTableCell].action=action_found;
       NewTable[CurrTableCell].code=strdup(ActionCode);
+      NewTable[CurrTableCell].arg=ParseActionArgumentAlloc(ActionArg);
       if(NewTable[CurrTableCell].code==NULL)
       {
          fprintf(stderr,"le: Not enough memory!\n");
@@ -642,11 +727,12 @@ int   GetNextAction()
 {
    unsigned char *store;
    int   key;
-   static KeyTreeNode kt_mb = { HALF_DELAY, NO_ACTION, NULL, -1, NULL };
+   static KeyTreeNode kt_mb = { HALF_DELAY, NO_ACTION, -1, NULL,  NULL, NULL };
 
    store=StringTyped;
    StringTypedLen=0;
    *store=0;
+   ActionArgument=NULL;
 
    KeyTreeNode *kt=KeyTree;
 
@@ -739,9 +825,33 @@ int   GetNextAction()
 	    if(kt->action==REFRESH_SCREEN)
                clearok(stdscr,1); // force repaint for next refresh
 	    timeout(-1);
-	    return(kt->action);
+	    ActionArgument=kt->arg;
+	    ActionArgumentLen=xstrlen(ActionArgument);
+	    return(LastActionCode=kt->action);
 	 }
 	 kt=scan;
       }
    }
+}
+
+const char *GetActionArgument(const char *prompt,History* history,const char *help,const char *title)
+{
+   static char *buf[A__LAST-A__FIRST+1];
+   if(ActionArgument)
+      return ActionArgument;
+   char **b=buf+LastActionCode-A__FIRST;
+   const int maxlen=256;
+   if(!*b)
+      *b=(char*)malloc(maxlen);
+   if(!*b) {
+      NoMemory();
+      return NULL;
+   }
+   int len=0;
+   int res=getstring(prompt,*b,maxlen-1,history,&len,help,title);
+   if(res==-1)
+      return NULL;
+   ActionArgument=*b;
+   ActionArgumentLen=len;
+   return *b;
 }

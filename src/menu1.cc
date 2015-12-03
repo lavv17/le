@@ -264,7 +264,7 @@ void  CreateMenuWindow(int n,int x,int y)
    {
       if(!strchr(m[n].text,'\t')) {
 	 // add shortcut hint
-	 const char *shcut=ShortcutPrettyPrint(m[n].action);
+	 const char *shcut=ShortcutPrettyPrint(m[n].action,m[n].arg);
 	 if(shcut) {
 	    char *new_text=(char*)malloc(strlen(m[n].text)+1+strlen(shcut)+1);
 	    strcpy(new_text,m[n].text);
@@ -456,6 +456,7 @@ void    ActivateMainMenu(void)
                      }
                      CloseWin();
                   }
+		  ActionArgument=m[curr].arg;
                   GetActionProc(m[curr].action)();
                   if(m[curr].fl&HIDE)
                   {
@@ -539,10 +540,12 @@ read_it:
    {
       for(int i=0; ; i++)
       {
-	 if(m[i].fl&SUBM)
-	 {
+	 if(m[i].fl&SUBM) {
 	    level++;
 	    DestroyWin(m[i].win);
+	 } else {
+	    if(m[i].arg)
+	       free(m[i].arg);
 	 }
 	 if(m[i].text==0)
 	 {
@@ -626,11 +629,14 @@ read_it:
 
 	    if(fscanf(f,"%s",str)==1)
 	    {
-	       int code=FindActionCode(str);
-	       if(code!=-1)
+	       const char *arg=0;
+	       int code=ParseActionNameArg(str,&arg);
+	       if(code!=-1) {
 		  m[mi].action=code;
-	       else
+		  m[mi].arg=ParseActionArgumentAlloc(arg);
+	       } else {
 		  fprintf(stderr,"invalid function name: %s\n",str);
+	       }
 	    }
 	 }
 	 for(;;)

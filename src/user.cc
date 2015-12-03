@@ -1597,13 +1597,12 @@ void  UserPipeBlock()
    if(DragMark)
       UserStopDragMark();
 
-   static char filter[256];
-
    CheckBlock();
    if(hide || rblock || View)
       return;
 
-   if(getstring("Pipe through: ",filter,sizeof(filter)-1,&PipeHistory,NULL,NULL)<1)
+   const char *filter=GetActionArgument("Pipe through: ",&PipeHistory);
+   if(!filter)
       return;
 
    MessageSync("Piping...");

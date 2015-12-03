@@ -147,7 +147,7 @@ static char *LoadHelp(const char *tag)
 		  *fmt_len_ptr=0;
 		  fmt_len=atoi(fmt_len_ptr+1);
 	       }
-	       const char *code=ShortcutPrettyPrint(FindActionCode(action));
+	       const char *code=ShortcutPrettyPrint(FindActionCode(action),NULL);
 	       int code_len=strlen(code);
 	       int final_width=(code_len>fmt_len?code_len:fmt_len);
 	       memmove(subst+final_width,end_brace+1,strlen(end_brace));

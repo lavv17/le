@@ -59,15 +59,20 @@ struct   ActionCodeRec
 {
    int   action;
    char	 *code;
+   char	 *arg;
 };
 
 extern unsigned char StringTyped[];
 extern int   StringTypedLen;
+extern int   LastActionCode;
+extern const char *ActionArgument;
+extern int   ActionArgumentLen;
 extern const ActionCodeRec *ActionCodeTable;
 extern const ActionCodeRec DefaultActionCodeTable[];
 
 int   GetNextAction(void);
 const char *GetActionString(int action);
+const char *GetActionArgument(const char *prompt,class History* history=0,const char *help=0,const char *title=0);
 void  ReadActionMap(FILE*);
 void  WriteActionMap(FILE*);
 ActionProc GetActionProc(int action);
@@ -76,8 +81,10 @@ void  RebuildKeyTree();
 void  FreeActionCodeTable();
 
 int   FindActionCode(const char *);
+int   ParseActionNameArg(char *action,const char **arg);
+char  *ParseActionArgumentAlloc(const char *);
 
-const char *ShortcutPrettyPrint(int c);
+const char *ShortcutPrettyPrint(int c,const char *arg);
 
 void LoadKeymapEmacs();
 void LoadKeymapDefault();

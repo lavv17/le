@@ -43,6 +43,9 @@ typedef struct sr_menu
    union {
       int action;    // for FUNC
       int curritem;  // for END (text==NULL)
+   };
+   union {
+      char *arg;     // for FUNC
       WIN *win;	     // for SUBM
    };
 
