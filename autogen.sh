@@ -65,6 +65,15 @@ test -n "$NO_AUTOMAKE" || (aclocal --version) < /dev/null > /dev/null 2>&1 || {
   DIE=1
 }
 
+# try to find gnulib-tool
+for dir in gnulib ../gnulib "$HOME/gnulib" /usr/share/gnulib; do
+	if [ -x "$dir/gnulib-tool" ]; then
+		PATH=$dir:$PATH
+		break
+	fi
+done
+
+
 (gnulib-tool --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: You must have \`gnulib-tool' in PATH to compile $PKG_NAME."
@@ -132,7 +141,7 @@ do
 	  echo "Running gettextize...  Ignore non-fatal messages."
 	  echo "no" | gettextize --force --copy --no-changelog
 	  mv configure.ac~ configure.ac
-	  mv m4/Makefile.am~ m4/Makefile.am 
+	  mv m4/Makefile.am~ m4/Makefile.am
 	  echo "Making $dr/aclocal.m4 writable ..."
 	  test -r $dr/aclocal.m4 && chmod u+w $dr/aclocal.m4
         fi
