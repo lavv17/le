@@ -29,9 +29,6 @@ Makefile
 /config.cache
 /config.log
 /config.status
-/build-aux/depcomp
-/build-aux/install-sh
-/build-aux/missing
 
 # LE editor
 .le.ini
@@ -40,3 +37,4 @@ Makefile
 /ABOUT-NLS
 
 /build-aux/
+INSTALL
