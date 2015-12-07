@@ -56,7 +56,7 @@ void    ExchangeCases();
 void    BlockType();
 void    CheckBlock();
 
-void  PrefixIndent(char *,num);
+void  PrefixIndent(const char *,num);
 
 int OptionallyConvertBlockNewLines(const char *bname);
 

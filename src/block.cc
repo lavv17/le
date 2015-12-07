@@ -1068,7 +1068,7 @@ void    CheckBlock()
     }
 }
 
-void  PrefixIndent(char *prefix,num len)
+void  PrefixIndent(const char *prefix,num len)
 {
    if(DragMark)
       UserStopDragMark();
