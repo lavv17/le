@@ -837,9 +837,11 @@ int   GetNextAction()
 const char *GetActionArgument(const char *prompt,History* history,const char *help,const char *title)
 {
    static char *buf[A__LAST-A__FIRST+1];
+   static int buf_len[A__LAST-A__FIRST+1];
    if(ActionArgument)
       return ActionArgument;
    char **b=buf+LastActionCode-A__FIRST;
+   int *len=buf_len+LastActionCode-A__FIRST;
    const int maxlen=256;
    if(!*b)
       *b=(char*)malloc(maxlen);
@@ -847,11 +849,10 @@ const char *GetActionArgument(const char *prompt,History* history,const char *he
       NoMemory();
       return NULL;
    }
-   int len=0;
-   int res=getstring(prompt,*b,maxlen-1,history,&len,help,title);
+   int res=getstring(prompt,*b,maxlen-1,history,len,help,title);
    if(res==-1)
       return NULL;
    ActionArgument=*b;
-   ActionArgumentLen=len;
+   ActionArgumentLen=*len;
    return *b;
 }
