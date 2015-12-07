@@ -1570,12 +1570,10 @@ void  UserBlockPrefixIndent()
    if(DragMark)
       UserStopDragMark();
 
-   static char str[256];
-   static int  len=0;
-
-   if(getstring("Prefix: ",str,sizeof(str)-1,NULL,&len)<1)
+   if(!GetActionArgument("Prefix: "))
       return;
-   PrefixIndent(str,len);
+
+   PrefixIndent(ActionArgument,ActionArgumentLen);
    flag=REDISPLAY_ALL;
 }
 
@@ -1584,12 +1582,9 @@ History	 PipeHistory;
 
 void  UserShellCommand()
 {
-   static char str[256];
-
-   if(getstring("Shell-Command: ",str,sizeof(str)-1,&ShellHistory)<1)
+   if(!GetActionArgument("Shell-Command: ",&ShellHistory))
       return;
-
-   cmd(str,0,1);
+   cmd(ActionArgument,/*save*/false,/*pause*/true);
 }
 
 void  UserPipeBlock()
