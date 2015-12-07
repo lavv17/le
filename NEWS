@@ -1,3 +1,11 @@
+Version 1.16.0 - 2015-12-07
+
+* integrate full default menu to the executable.
+* improved keymap implementation.
+* add support for action arguments in keymap and main menu.
+* syntax: add perl POD and markdown patterns.
+* fixed no-regex search and range specification for huge (>2GB) files.
+
 Version 1.15.1 - 2014-11-26
 
 * syntax(perl): add given/when keywords.

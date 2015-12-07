@@ -9,3 +9,5 @@
 6. Get rid of fixed size arrays.
 
 8. mail formatting: http://www.newsreaders.com/gnksa/wrapping.tar.gz
+
+9. periodic syntax check using an external program.

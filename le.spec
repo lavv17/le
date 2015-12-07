@@ -1,4 +1,4 @@
-%define version 1.15.1
+%define version 1.16.0
 %define release 1
 
 Summary: Terminal text editor LE.
@@ -7,12 +7,12 @@ Version: %{version}
 Release: %{release}
 License: GNU GPL
 Group: Applications/Editors
-Source: ftp://ftp.yar.ru/pub/source/le/le-%{version}.tar.gz
+Source: http://lav.yar.ru/download/le/le-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-buildroot
 
 %description
 LE has many block operations with stream and rectangular blocks, can edit
-both unix and dos style files (LF/CRLF), is binary clean, has hex mode,
+unix, dos and mac style files (LF/CRLF/CR), is binary clean, has hex mode,
 tunable syntax highlighting, tunable color scheme, tunable key map and some
 more useful features. It is slightly similar to Norton Editor from DOS.
 

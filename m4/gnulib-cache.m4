@@ -1,4 +1,4 @@
-# Copyright (C) 2002-2014 Free Software Foundation, Inc.
+# Copyright (C) 2002-2015 Free Software Foundation, Inc.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -27,10 +27,10 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --no-conditional-dependencies --no-libtool --macro-prefix=gl alloca btowc fnmatch ftruncate getcwd getopt-gnu mbswidth mkdir poll sockets strdup strerror strtol times
+#   gnulib-tool --import --dir=. --local-dir=gl --lib=libgnu --source-base=lib --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --no-conditional-dependencies --no-libtool --macro-prefix=gl alloca btowc fnmatch ftruncate getcwd getopt-gnu mbswidth mkdir poll sockets strdup strerror strtol times
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
-gl_LOCAL_DIR([])
+gl_LOCAL_DIR([gl])
 gl_MODULES([
   alloca
   btowc
