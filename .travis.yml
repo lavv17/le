@@ -13,4 +13,7 @@ addons:
     - automake
     - autoconf
 
-script: ./autogen.sh && make distcheck
+script:
+    - ./bootstrap
+    - ./configure
+    - make distcheck
