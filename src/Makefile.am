@@ -15,7 +15,7 @@ le_SOURCES = about.cc block.cc calc.cc chset.cc cmd.cc color.cc edit.cc\
 GNULIB = $(top_builddir)/lib/libgnu.a
 
 le_DEPENDENCIES = $(GNULIB)
-le_LDADD = $(GNULIB) $(CURSES_LIBS) $(LIBINTL) $(LIBSOCKET)
+le_LDADD = $(GNULIB) $(CURSES_LIBS) $(LIBINTL) $(LIBSOCKET) $(LIB_POLL) $(LIB_SELECT)
 
 AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib $(CURSES_INCLUDES)
 
