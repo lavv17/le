@@ -36,5 +36,5 @@ Makefile
 # gettext
 /ABOUT-NLS
 
-/build-aux/
+/build-aux
 INSTALL
