@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2015 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@ char    HelpCmd[256]="man \"$WORD\"";
 #endif
 
 /* cmd - execute command c */
-void    cmd(char *c,int autosave,int pauseafter)
+void    cmd(const char *c,bool autosave,bool pauseafter)
 {
     char        cl[256];
     char        file[256],name[256],ext[256];
