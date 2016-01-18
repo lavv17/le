@@ -307,6 +307,11 @@ num   no_re_search_2(const char *str,const num slen,
    return -1;
 }
 
+static bool le_isalnum(wchar_t ch)
+{
+   return ch=='_' || iswalnum(ch);
+}
+
 int    Search(int dir,offs offslim)
 {
    MessageSync(dir==FORWARD?"Searching forwards...":"Searching backwards...");
@@ -366,7 +371,8 @@ search_again:
       fndlen=regs.end[0]-res;
    CurrentPos=fndind;
    if(fndlen==0
-   || (word_bounds && (isalnum(CharRel(-1)) || isalnum(CharRel(fndlen)))))
+   || (word_bounds && (le_isalnum(WCharLeftAt(fndind))
+		    || le_isalnum(WCharAt(fndind+fndlen)))))
    {
       if(dir==FORWARD)
 	 srchpos=CurrentPos+1;
