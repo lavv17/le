@@ -503,7 +503,7 @@ void  UserPageBottom()
       {
 	 num oldstdcol=stdcol;
          ToLineEnd();
-   	 stdcol=oldstdcol;
+	 stdcol=oldstdcol;
       }
 
       if(GetLine()==ScreenTop.Line()+TextWinHeight-1)
@@ -1375,7 +1375,7 @@ void  UserInsertControlChar(char ch)
    if((hex && !insert) || buffer_mmapped)
    {
       if(!hex && (Eol() || Char()=='\n'))
-      	 flag|=REDISPLAY_AFTER;
+	 flag|=REDISPLAY_AFTER;
       ReplaceCharMove(ch);
       if(!hex && Bol())
 	 flag|=REDISPLAY_AFTER;
@@ -1750,7 +1750,6 @@ MarkMove(PageBottom);
 MarkMove(LineUp);
 MarkMove(LineDown);
 
-
 void UserOptimizeText()
 {
    if(View || buffer_mmapped)
@@ -1760,8 +1759,31 @@ void UserOptimizeText()
    TextPoint  tp=CurrentPos;
 
    MessageSync("Optimizing...");
+   bool at_indent=true;
+   num col=0;
    for(ptr=0; !EofAt(ptr); ptr++)
    {
+      byte ch=CharAt_NoCheck(ptr);
+      if(ch!=' ' && ch!='\t')
+	 at_indent=false;
+      if(at_indent && ch=='\t') {
+	 // optimize indentation (space+tab) => (tab)
+	 while(ptr>0 && CharAt_NoCheck(ptr-1)==' ') {
+	    int spaces_in_the_tab=col%TabSize;
+	    int spaces_to_remove=spaces_in_the_tab?spaces_in_the_tab:TabSize;
+	    CurrentPos=ptr;
+	    DeleteBlock(spaces_to_remove,0);
+	    ptr-=spaces_to_remove;
+	    col-=spaces_to_remove;
+	    if(spaces_in_the_tab==0) {
+	       // we need to insert a tab to compensate for the spaces
+	       InsertChar('\t');
+	       MoveLeft();
+	    }
+// 	    assert(col==GetCol());
+// 	    assert(ptr==CurrentPos);
+	 }
+      }
       if(EolAt(ptr))
       {
          CurrentPos=ptr;
@@ -1770,6 +1792,14 @@ void UserOptimizeText()
             BackSpace();
 	    ptr--;
 	 }
+	 ptr+=EolSize-1; // skip EOL at once
+	 at_indent=true;
+	 col=0;
+      } else {
+	 if(ch=='\t')
+	    col=Tabulate(col);
+	 else
+	    col++;
       }
    }
    CurrentPos=TextEnd;
