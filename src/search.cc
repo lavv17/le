@@ -27,6 +27,7 @@
 #include "keymap.h"
 #include "getch.h"
 #include "search.h"
+#include "mb.h"
 #include <alloca.h>
 
 extern "C" {
@@ -307,9 +308,15 @@ num   no_re_search_2(const char *str,const num slen,
    return -1;
 }
 
-static bool le_isalnum(wchar_t ch)
+static bool le_isalnum(int ch)
 {
-   return ch=='_' || iswalnum(ch);
+   if(ch=='_')
+      return true;
+#if USE_MULTIBYTE_CHARS
+   if(mb_mode)
+      return iswalnum(ch);
+#endif
+   return isalnum(ch);
 }
 
 int    Search(int dir,offs offslim)
