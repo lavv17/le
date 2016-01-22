@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], [1.16.0], [le@uniyar.ac.ru])
+AC_INIT([le], m4_esyscmd([build-aux/git-version-gen .tarball-version]), [le@uniyar.ac.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
@@ -130,4 +130,5 @@ AC_FUNC_STRCOLL
 AC_CHECK_FUNCS(mmap fchmod)
 
 AC_CONFIG_FILES([Makefile lib/Makefile src/Makefile misc/Makefile doc/Makefile m4/Makefile])
+AC_CONFIG_FILES([le.spec])
 AC_OUTPUT
