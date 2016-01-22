@@ -129,14 +129,12 @@ AC_DEFUN([LE_TINFO_CHECK],
       curses_ok=no
       for tinfo in "" -ltinfo -lmytinfo; do
 	 LIBS="$old_LIBS $CURSES_LIBS $tinfo"
-	 AC_TRY_LINK([
+	 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 	    #ifdef USE_NCURSES_H
 	    #include <ncurses.h>
 	    #else
 	    #include <curses.h>
-	    #endif],
-	    [initscr();reset_prog_mode();refresh();endwin();],
-	    [ac_cv_need_tinfo=${tinfo:-no};curses_ok=yes;break;])
+	    #endif]], [[initscr();reset_prog_mode();refresh();endwin();]])],[ac_cv_need_tinfo=${tinfo:-no};curses_ok=yes;break;],[])
       done
       LIBS="$old_LIBS"
       CFLAGS="$old_CFLAGS"
@@ -149,8 +147,7 @@ AC_DEFUN([LE_TINFO_CHECK],
 
 AC_DEFUN([LE_CURSES_MOUSE],
 [
-   AC_LANG_SAVE
-   AC_LANG_CPLUSPLUS
+   AC_LANG_PUSH([C++])
    AC_MSG_CHECKING(if curses provides mouse routines)
    AC_CACHE_VAL(ac_cv_curses_mouse,
    [
@@ -160,21 +157,18 @@ AC_DEFUN([LE_CURSES_MOUSE],
       LIBS="$LIBS $CURSES_LIBS"
       CFLAGS="$CFLAGS $CURSES_INCLUDES"
       CXXFLAGS="$CXXFLAGS $CURSES_INCLUDES"
-      AC_TRY_LINK([
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 	    #ifdef USE_NCURSES_H
 	    # include <ncurses.h>
 	    #else
 	    # include <curses.h>
 	    #endif
-	 ],
-	 [
+	 ]], [[
 	    MEVENT mev;
 	    mousemask(ALL_MOUSE_EVENTS,0);
 	    getmouse(&mev);
 	    ungetmouse(&mev);
-	 ],
-	 [ac_cv_curses_mouse=yes],
-	 [ac_cv_curses_mouse=no])
+	 ]])],[ac_cv_curses_mouse=yes],[ac_cv_curses_mouse=no])
       LIBS="$old_LIBS"
       CFLAGS="$old_CFLAGS"
       CXXFLAGS="$old_CXXFLAGS"
@@ -183,14 +177,13 @@ AC_DEFUN([LE_CURSES_MOUSE],
    if test x$ac_cv_curses_mouse = xyes; then
       AC_DEFINE([WITH_MOUSE], 1, [define if curses provides mouse interface])
    fi
-   AC_LANG_RESTORE
+   AC_LANG_POP([C++])
 ])
 
 AC_DEFUN([LE_NCURSES_BUGS],
 [
    if test x$ac_with_ncurses = xyes; then
-      AC_LANG_SAVE
-      AC_LANG_CPLUSPLUS
+      AC_LANG_PUSH([C++])
       AC_MSG_CHECKING(if ncurses has correct CXX_TYPE_OF_BOOL)
       AC_CACHE_VAL(ac_cv_ncurses_correct_bool,
       [
@@ -198,7 +191,7 @@ AC_DEFUN([LE_NCURSES_BUGS],
 	 old_CFLAGS="$CFLAGS"
 	 LIBS="$LIBS $CURSES_LIBS"
 	 CFLAGS="$CFLAGS $CURSES_INCLUDES"
-	 AC_TRY_RUN([
+	 AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	       #ifdef USE_NCURSES_H
 	       # include <ncurses.h>
 	       #else
@@ -212,10 +205,7 @@ AC_DEFUN([LE_NCURSES_BUGS],
 		  return 0;
 	       #endif
 	       }
-	    ],
-	    [ac_cv_ncurses_correct_bool=yes],
-	    [ac_cv_ncurses_correct_bool=no],
-	    [ac_cv_ncurses_correct_bool=yes])
+	    ]])],[ac_cv_ncurses_correct_bool=yes],[ac_cv_ncurses_correct_bool=no],[ac_cv_ncurses_correct_bool=yes])
 	 LIBS="$old_LIBS"
 	 CFLAGS="$old_CFLAGS"
       ])
@@ -223,7 +213,7 @@ AC_DEFUN([LE_NCURSES_BUGS],
       if test x$ac_cv_ncurses_correct_bool = xno; then
 	 AC_MSG_ERROR(ncurses misconfigured - wrong CXX_TYPE_OF_BOOL)
       fi
-      AC_LANG_RESTORE
+      AC_LANG_POP([C++])
    fi
 ])
 
@@ -237,20 +227,16 @@ AC_DEFUN([LE_CURSES_BOOL],
       old_CXXFLAGS="$CXXFLAGS"
       LIBS="$LIBS $CURSES_LIBS"
       CXXFLAGS="$CXXFLAGS $CURSES_INCLUDES"
-      AC_LANG_SAVE
-      AC_LANG_CPLUSPLUS
-      AC_TRY_COMPILE([
+      AC_LANG_PUSH([C++])
+      AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 	    #define bool LE_CURSES_BOOL
 	    #ifdef USE_NCURSES_H
 	    # include <ncurses.h>
 	    #else
 	    # include <curses.h>
 	    #endif
-	    ],
-	    [LE_CURSES_BOOL var=0;],
-	    [ac_cv_curses_bool_defined=yes],
-	    [ac_cv_curses_bool_defined=no])
-      AC_LANG_RESTORE
+	    ]], [[LE_CURSES_BOOL var=0;]])],[ac_cv_curses_bool_defined=yes],[ac_cv_curses_bool_defined=no])
+      AC_LANG_POP([C++])
       LIBS="$old_LIBS"
       CXXFLAGS="$old_CXXFLAGS"
    ])
@@ -263,7 +249,7 @@ AC_DEFUN([LE_CURSES_BOOL],
       old_CFLAGS="$CFLAGS"
       LIBS="$LIBS $CURSES_LIBS"
       CFLAGS="$CFLAGS $CURSES_INCLUDES"
-      AC_TRY_RUN([
+      AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	    #ifdef USE_NCURSES_H
 	    # include <ncurses.h>
 	    #else
@@ -285,14 +271,12 @@ AC_DEFUN([LE_CURSES_BOOL],
 	       }
 	       return(0);
 	    }
-	 ],
-	 [ac_cv_curses_bool="`cat cf_test.out`"
+	 ]])],[ac_cv_curses_bool="`cat cf_test.out`"
 	  case "$ac_cv_curses_bool" in
 	    *unknown*) ac_cv_curses_bool=unknown;;
 	  esac
-	 ],
-	 [ac_cv_curses_bool=unknown]
-	 [ac_cv_curses_bool=unknown])
+	 ],[ac_cv_curses_bool=unknown
+	 ac_cv_curses_bool=unknown],[])
       rm -f cf_test.out
       LIBS="$old_LIBS"
       CFLAGS="$old_CFLAGS"
@@ -313,16 +297,13 @@ AC_DEFUN([LE_CURSES_WIDECHAR],
       old_LIBS="$LIBS"
       CFLAGS="$CFLAGS $CURSES_INCLUDES"
       LIBS="$LIBS $CURSES_LIBS"
-      AC_TRY_LINK([
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 	 #define _XOPEN_SOURCE_EXTENDED
 	 #ifdef USE_NCURSES_H
 	 # include <ncurses.h>
 	 #else
 	 # include <curses.h>
-	 #endif],
-	 [cchar_t c;mvadd_wchnstr(0,0,&c,1);],
-	 [ac_cv_curses_widechar=yes],
-	 [ac_cv_curses_widechar=no])
+	 #endif]], [[cchar_t c;mvadd_wchnstr(0,0,&c,1);]])],[ac_cv_curses_widechar=yes],[ac_cv_curses_widechar=no])
       CFLAGS="$old_CFLAGS"
       LIBS="$old_LIBS"
    ])
@@ -335,32 +316,27 @@ AC_DEFUN([LE_CURSES_WIDECHAR],
 dnl check if c++ compiler can use dynamic initializers for static variables
 AC_DEFUN([CXX_DYNAMIC_INITIALIZERS],
 [
-   AC_LANG_SAVE
-   AC_LANG_CPLUSPLUS
+   AC_LANG_PUSH([C++])
    AC_MSG_CHECKING(if c++ compiler can handle dynamic initializers)
-   AC_TRY_RUN(
-   [
+   AC_RUN_IFELSE([AC_LANG_SOURCE([[
       int f() { return 1; }
       int a=f();
       int main()
       {
 	 return(1-a);
       }
-   ],
-   [cxx_dynamic_init=yes],
-   [cxx_dynamic_init=no],
-   [cxx_dynamic_init=yes])
+   ]])],[cxx_dynamic_init=yes],[cxx_dynamic_init=no],[cxx_dynamic_init=yes])
    AC_MSG_RESULT($cxx_dynamic_init)
    if test x$cxx_dynamic_init = xno; then
       AC_MSG_ERROR(C++ compiler cannot handle dynamic initializers of static objects)
    fi
-   AC_LANG_RESTORE
+   AC_LANG_POP([C++])
 ])
 
 AC_DEFUN([LE_CHECK_REGEX_BUGS],[
    AC_CACHE_CHECK([for good GNU regex in libc], le_cv_good_gnu_regex,
       le_cv_good_gnu_regex=yes
-      AC_TRY_RUN([
+      AC_RUN_IFELSE([AC_LANG_SOURCE([[
 	 #include <stdio.h>
 	 #include <string.h>
 	 #include <regex.h>
@@ -376,7 +352,7 @@ AC_DEFUN([LE_CHECK_REGEX_BUGS],[
 
 	    memset(&rexp_c,0,sizeof(rexp_c));
 	    memset(&regs,0,sizeof(regs));
-    
+
 	    rexp="b";
 	    buf="123abc";
 	    bs=strlen(buf);
@@ -390,7 +366,7 @@ AC_DEFUN([LE_CHECK_REGEX_BUGS],[
 
 	    memset(&rexp_c,0,sizeof(rexp_c));
 	    memset(&regs,0,sizeof(regs));
-    
+
 	    rexp="/\\\\*([[^*]]|\\\\*[[^/]])*\\\\*/";
 	    buf="/*a\\nb\\nc*/\\n";
 	    bs=strlen(buf);
@@ -398,10 +374,10 @@ AC_DEFUN([LE_CHECK_REGEX_BUGS],[
 	    re_syntax_options=RE_NO_BK_VBAR|RE_NO_BK_PARENS;
 	    re_compile_pattern(rexp,strlen(rexp),&rexp_c);
 	    re_search_2(&rexp_c,buf,bs,"",0,0,bs,&regs,bs);
-    
+
 	    return 0;
 	 }
-      ], , le_cv_good_gnu_regex=no)
+      ]])],[],[le_cv_good_gnu_regex=no],[])
    )
    if test x$le_cv_good_gnu_regex = xno; then
       am_cv_gnu_regex=no
@@ -434,10 +410,7 @@ if test -n "$am_with_regex"; then
   AC_MSG_RESULT(regex)
   AC_DEFINE([WITH_REGEX], 1, [Define if using GNU regex])
   AC_CACHE_CHECK([for GNU regex in libc], am_cv_gnu_regex,
-    [AC_TRY_LINK([],
-                 [extern int re_max_failures; re_max_failures = 1],
-		 [am_cv_gnu_regex=yes],
-                 [am_cv_gnu_regex=no])])
+    [AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[extern int re_max_failures; re_max_failures = 1]])],[am_cv_gnu_regex=yes],[am_cv_gnu_regex=no])])
   if test $am_cv_gnu_regex = no; then
     AC_LIBOBJ([regex])
   fi

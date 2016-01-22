@@ -1,11 +1,11 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([le], m4_esyscmd([build-aux/git-version-gen .tarball-version]), [le@uniyar.ac.ru])
+AC_INIT([le],[m4_esyscmd(build-aux/git-version-gen .tarball-version)],[le@uniyar.ac.ru])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_LIBOBJ_DIR([lib])
 AC_CONFIG_SRCDIR([src/edit.cc])
 AM_INIT_AUTOMAKE
-AM_CONFIG_HEADER([lib/config.h])
+AC_CONFIG_HEADERS([lib/config.h])
 
 AC_ARG_ENABLE(file-locks, [  --disable-file-locks    disable file locking],
    [enable_file_locks=$enableval],[enable_file_locks=yes])

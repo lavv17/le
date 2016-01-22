@@ -5,11 +5,10 @@ AC_DEFUN([LFTP_PROG_CXXLINK],
       old_CXX="$CXX"
       CXX="$CC"
       AC_LANG_PUSH(C++)
-      AC_TRY_LINK([],[char *a=new char[10];delete[] a;],
-	 [],[
+      AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[char *a=new char[10];delete[] a;]])],[],[
 	 old_LIBS="$LIBS"
 	 LIBS="-lsupc++ $LIBS"
-	 AC_TRY_LINK([],[char *a=new char[10];delete[] a;],[],[LIBS="$old_LIBS"; CXX="$old_CXX";])
+	 AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[char *a=new char[10];delete[] a;]])],[],[LIBS="$old_LIBS"; CXX="$old_CXX";])
 	 ])
       AC_LANG_POP(C++)
    fi

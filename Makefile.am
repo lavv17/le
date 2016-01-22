@@ -1,6 +1,5 @@
 SUBDIRS = doc lib src misc m4
 EXTRA_DIST = FEATURES HISTORY le.spec
-AUTOMAKE_OPTIONS = foreign
 ACLOCAL_AMFLAGS = -I m4
 
 REL_DIR=/home/lav/www/download/le
