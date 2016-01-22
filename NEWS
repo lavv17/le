@@ -1,3 +1,5 @@
+Version 1.16.1 - 2016-01-22
+
 * improved text optimization to fix tab/space mixed indentation.
 * word search ($w option): handle multibyte characters and assume
   underscore to be part of a word (good for identifiers).
