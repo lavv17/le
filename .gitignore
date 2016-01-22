@@ -29,6 +29,7 @@ Makefile
 /config.cache
 /config.log
 /config.status
+/le.spec
 
 # LE editor
 .le.ini
@@ -37,4 +38,4 @@ Makefile
 /ABOUT-NLS
 
 /build-aux
-INSTALL
+/INSTALL
