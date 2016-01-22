@@ -2,6 +2,13 @@ SUBDIRS = doc lib src misc m4
 EXTRA_DIST = FEATURES HISTORY le.spec
 ACLOCAL_AMFLAGS = -I m4
 
+EXTRA_DIST += $(top_srcdir)/.version
+BUILT_SOURCES = $(top_srcdir)/.version
+$(top_srcdir)/.version:
+	echo $(VERSION) > $@-t && mv $@-t $@
+dist-hook:
+	echo $(VERSION) > $(distdir)/.tarball-version
+
 REL_DIR=/home/lav/www/download/le
 release:
 	make distcheck
