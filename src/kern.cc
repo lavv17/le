@@ -119,7 +119,7 @@ int PreUserEdit()
       num j=stdcol;
       int oldmod=modified;
       if(UseTabs)
-   	 for( ; Tabulate(i)<=j; i=Tabulate(i))
+	 for( ; Tabulate(i)<=j; i=Tabulate(i))
             if(InsertChar('\t')!=OK)
 	       return 0;
       while(i++<j)
@@ -331,7 +331,7 @@ int   InsertBlock(const char *block_left,num size_left,const char *block_right,n
    if(ptr2>oldptr2 && size_right>0)
    {
       if(ptr2-oldptr2>size_right || memcmp(buffer+ptr2-size_right,block_right,size_right))
-   	 oldptr2=ptr2;
+	 oldptr2=ptr2;
    }
 
    if(GetSpace(size_left+size_right)!=OK)
@@ -747,7 +747,7 @@ int   ReplaceBlock(const char *block,num size)
       if(res==OK)
       {
 	 res=DeleteBlock(0,size);
-      	 CurrentPos-=size;
+	 CurrentPos-=size;
       }
       return res;
    }
@@ -1133,10 +1133,15 @@ void  SeekStdCol()
    num std=stdcol;
    if(!hex)
    {
-      while(GetCol()>std)
-	MoveLeft();
+      // MoveLeft can be expensive, prefer ToLineBegin
+      if(GetCol()>stdcol*2)
+	 ToLineBegin();
+      else {
+	 while(GetCol()>std)
+	    MoveLeft();
+      }
       while(GetCol()<std && !Eol())
-	MoveRight();
+	 MoveRight();
    }
 }
 
