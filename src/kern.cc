@@ -1130,19 +1130,9 @@ void  ConvertFromUnixToDos(offs start,num size)
 
 void  SeekStdCol()
 {
-   num std=stdcol;
-   if(!hex)
-   {
-      // MoveLeft can be expensive, prefer ToLineBegin
-      if(GetCol()>stdcol*2)
-	 ToLineBegin();
-      else {
-	 while(GetCol()>std)
-	    MoveLeft();
-      }
-      while(GetCol()<std && !Eol())
-	 MoveRight();
-   }
+   if(hex)
+      return;
+   CurrentPos=TextPoint(GetLine(),stdcol);
 }
 
 offs  ScanForCharForward(offs start,byte ch)
