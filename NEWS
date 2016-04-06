@@ -1,3 +1,8 @@
+Version 1.16.2 - 2016-04-06
+
+* fixed performance on very long lines.
+* syntax: hilight perl "say" and html "<br/>"
+
 Version 1.16.1 - 2016-01-22
 
 * improved text optimization to fix tab/space mixed indentation.
