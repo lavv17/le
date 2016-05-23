@@ -105,7 +105,7 @@ int    LockFile(int fd,bool drop)
             {
 	       if(WaitForKey(1000)!=ERR)
 	       {
-	       	  int action=GetNextAction();
+		  int action=GetNextAction();
 		  if(action==CANCEL)
                   {
                      ErrMsg("Interrupted by user");
@@ -184,6 +184,25 @@ off_t  GetDevSize(int fd)
    }
 
    return upper;
+}
+
+const char *GetDefaultEol()
+{
+   const char *eol=getenv("LE_DEFAULT_EOL");
+   if(!eol) {
+#if defined(__MSDOS__) || defined(__CYGWIN32__)
+      return(EOL_DOS);
+#else
+      return(EOL_UNIX);
+#endif
+   }
+   if(!strcmp(eol,"\\n") || !strcmp(eol,"NL"))
+      return EOL_UNIX;
+   if(!strcmp(eol,"\\r\\n") || !strcmp(eol,"CRNL"))
+      return EOL_DOS;
+   if(!strcmp(eol,"\\r") || !strcmp(eol,"CR"))
+      return EOL_MAC;
+   return eol;
 }
 
 int   LoadFile(char *name)
@@ -321,13 +340,8 @@ int   LoadFile(char *name)
 	 TextEnd=TextPoint(Size(),DosLastLine,-1);
       } else {
 	 // set default EOL
-#if defined(__MSDOS__) || defined(__CYGWIN32__)
-	 SetEolStr(EOL_DOS);
+	 SetEolStr(GetDefaultEol());
 	 TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
-	 TextEnd=TextPoint(Size(),DosLastLine,-1);
-#else
-	 TextEnd=TextPoint(Size(),UnixLastLine,-1);
-#endif
       }
    }
    else /* buffer_mmapped */
@@ -537,7 +551,7 @@ static int CreateBak(char *name)
          if(write_loop(bfd,buf2,bytesread,&written)==ERR)
 	 {
 	    FError(bakname);
-      	    res=ERR;
+	    res=ERR;
 	    break;
 	 }
       }
@@ -635,7 +649,7 @@ int   SaveFile(char *name)
 	    case(0):
 	       return(ERR);
 	    }
-      	 }
+	 }
       }
    }
    else

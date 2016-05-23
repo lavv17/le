@@ -1260,6 +1260,8 @@ int ReplaceChar(char ch)
 void SetEolStr(const char *n)
 {
    EolSize=strlen(n);
+   if(EolSize>int(sizeof(EolStr)-1))
+      EolSize=sizeof(EolStr)-1;
    memcpy(EolStr,n,EolSize+1);
 }
 

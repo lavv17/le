@@ -134,6 +134,16 @@ Print the version of LE and exit
 .B \-\-help
 Print short description of options and exit
 
+.SH ENVIRONMENT VARIABLES
+The following environment variables are processed by \fBle\fR:
+.IP "\fBHOME\fP"
+Used for tilde (`~') expansion.
+.IP "\fBLE_DEFAULT_EOL\fP"
+The default EOL marker. It can be set to NL (\\n), CRNL (\\r\\n) or CR (\\r).
+Also it can be set to any other 1-2 character string interpreted literally.
+.IP "\fBTERM\fP, \fBLINES\fP, \fBCOLUMNS\fP"
+These variables are used by \fIcurses\fR library for full-screen output.
+
 .SH FILES
 .TP
 .BI DATADIR/colors
