@@ -1147,6 +1147,7 @@ void  UserInfo()
 
    flushinp();
 
+   CloseWin();
    DestroyWin(InfoWin);
 }
 
