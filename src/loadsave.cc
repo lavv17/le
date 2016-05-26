@@ -745,7 +745,8 @@ int   SaveFile(char *name)
        remove(FileName);
    }
 
-   strcpy(FileName,name);
+   if(FileName!=name)
+      strcpy(FileName,name);
 
    return(OK);
 }
