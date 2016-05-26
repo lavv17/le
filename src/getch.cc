@@ -38,6 +38,9 @@
 
 #ifdef __linux__
 #  include <linux/keyboard.h>
+#  if HAVE_LINUX_TIOCL_H
+#    include <linux/tiocl.h>
+#  endif
    static int linux_process_key(int);
    static int ungetstr(const char *str);
 #endif
@@ -152,11 +155,16 @@ int   GetKey(int delay)
 #ifdef __linux__
 /* I hate it, it does not work over telnet */
 /* Oh why linux cannot just return different codes for different keys? */
+
+# ifndef TIOCL_GETSHIFTSTATE
+#  define TIOCL_GETSHIFTSTATE 6 // older linux versions did not define this
+# endif
+
 int linux_process_key(int key)
 {
    /* BEWARE OF UNWANTED RECURSION! */
 #ifdef TIOCLINUX
-   char shift_state=6;	// magic number (see kernel source)
+   char shift_state=TIOCL_GETSHIFTSTATE;
    if(ioctl(0,TIOCLINUX,&shift_state)<0)
       return key;
 
