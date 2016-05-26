@@ -253,13 +253,13 @@ void    alarmsave(int a)
       else
       {
 	 dump_pos+=act_written;
-      	 if(dump_pos>=Size())
+	 if(dump_pos>=Size())
 	 {
 	    interrupted=0;
 	    goto done;
 	 }
 	 // after a second write next chunk
-      	 alarm(1);
+	 alarm(1);
 	 return;
       }
    }
@@ -283,6 +283,7 @@ void    InstallSignalHandlers()
 
    ign_action.sa_handler=(SA_HANDLER_TYPE)SIG_IGN;
    ign_action.sa_flags=0;
+   sigemptyset(&ign_action.sa_mask);
 
    suspend_action.sa_handler=(SA_HANDLER_TYPE)SuspendEditor;
    suspend_action.sa_flags=0;
