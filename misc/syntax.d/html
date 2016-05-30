@@ -18,4 +18,5 @@ menuitem|meter|nav|progress|rp|rt|ruby|section|summary|time|datalist|keygen|\
 output|canvas|svg|audio|source|track|video\
 )([\n\r\t ]|/?>)
 ci1,1=<!(DOCTYPE)[\n\r\t ]
-si(javascript)1=<SCRIPT\b[^>]\{0,100\}>((?:.|\n)*?)(?:</SCRIPT\b[^>]\{0,100\}>|\')
+si(javascript)1=<SCRIPT\b[^>]\{0,80\}>((?:.|\n)*?)(?:</SCRIPT\b[^>]\{0,100\}>|\')
+si(css)1=<STYLE\b[^>]\{0,80\}>((?:.|\n)*?)</STYLE>

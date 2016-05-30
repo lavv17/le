@@ -141,6 +141,9 @@ i=php
 /*.html|*.htm|*.shtml|/-\*- *html *-\*-|^<![Dd][Oo][Cc][Tt][Yy][Pp][Ee] [Hh][Tt][Mm][Ll]|^<[Hh][Tt][Mm][Ll]>
 i=html
 
+/*.css
+i=css
+
 /*.tcl|/^#![ \t]*/.*/tcl|-\*- *tcl *-\*-
 i=tcl
 
