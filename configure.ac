@@ -7,11 +7,16 @@ AC_CONFIG_SRCDIR([src/edit.cc])
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([lib/config.h])
 
-AC_ARG_ENABLE(file-locks, [  --disable-file-locks    disable file locking],
+AC_ARG_ENABLE([file-locks],
+   AC_HELP_STRING([--disable-file-locks],[disable file locking]),
    [enable_file_locks=$enableval],[enable_file_locks=yes])
 if test "x$enable_file_locks" = xno; then
    AC_DEFINE([DISABLE_FILE_LOCKS], 1, [define if file locking does not work or is not desirable])
 fi
+
+AC_ARG_WITH([default-eol],
+  AC_HELP_STRING([--with-default-eol=EOL],[set the default EOL string (NL,CRNL,CR)]),
+  [AC_DEFINE_UNQUOTED([DEFAULT_EOL], ["$withval"], [The default EOL string (NL,CRNL,CR)])])
 
 test -z "$CXX"	     && DEFAULT_CXX=yes
 test -z "$CFLAGS"    && DEFAULT_CFLAGS=yes
@@ -28,8 +33,8 @@ AC_PATH_PROG(PERL,perl)
 
 AC_SYS_LARGEFILE
 
-AC_ARG_WITH(debug,
-[  --with-debug            enable debug info],
+AC_ARG_WITH([debug],
+  AC_HELP_STRING([--with-debug],[enable debug info]),
 [   with_debug=$withval;   ],
 [   with_debug=no;	   ])
 

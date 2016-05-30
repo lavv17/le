@@ -190,7 +190,9 @@ const char *GetDefaultEol()
 {
    const char *eol=getenv("LE_DEFAULT_EOL");
    if(!eol) {
-#if defined(__MSDOS__) || defined(__CYGWIN32__)
+#ifdef DEFAULT_EOL
+      eol=DEFAULT_EOL;
+#elif defined(__MSDOS__) || defined(__CYGWIN32__)
       return(EOL_DOS);
 #else
       return(EOL_UNIX);
