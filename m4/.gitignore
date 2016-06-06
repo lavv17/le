@@ -111,3 +111,4 @@
 /absolute-header.m4
 /gettimeofday.m4
 /stdio_h.m4
+/hard-locale.m4

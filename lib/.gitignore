@@ -161,3 +161,5 @@
 /gettimeofday.c
 /stdio.in.h
 /assure.h
+/hard-locale.c
+/hard-locale.h
