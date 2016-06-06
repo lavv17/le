@@ -1,3 +1,11 @@
+Version 1.16.3 - 2016-06-06
+
+* new environment variable LE_DEFAULT_EOL.
+* new configure option --with-default-eol.
+* fixed a coredump after File->Info.
+* syntax(html): add html5 tags.
+* syntax: add css mode, include it in html.
+
 Version 1.16.2 - 2016-04-06
 
 * fixed performance on very long lines.
