@@ -38,6 +38,12 @@ AC_ARG_WITH([debug],
 [   with_debug=$withval;   ],
 [   with_debug=no;	   ])
 
+AC_ARG_WITH(profiling,
+   AS_HELP_STRING([--with-profiling], [enable profiling]),
+[   with_profiling=$withval;   ],
+[   with_profiling=no;	   ])
+
+
 if test x$with_debug = xno; then
    if test x$DEFAULT_CFLAGS = xyes; then
       CFLAGS="`echo $CFLAGS | sed 's/-g//'`"
@@ -51,6 +57,16 @@ if test x$with_debug = xno; then
 	 CXXFLAGS=-O
       fi
    fi
+fi
+
+if test x$with_profiling = xyes; then
+   CFLAGS="$CFLAGS -pg"
+   CXXFLAGS="$CXXFLAGS -pg"
+   # profiling requires debugging, too, but don't nuke -O
+#   if test x$with_debug != xyes; then
+#      CFLAGS="$CFLAGS -g"
+#      CXXFLAGS="$CXXFLAGS -g"
+#   fi
 fi
 
 if test x$GCC = xyes; then
