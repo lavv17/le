@@ -219,7 +219,7 @@ void Undo::UndoOne()
    locked=true;
    chain_ptr->Undo();
    if(!chain_ptr->group_head)
-      stdcol=GetCol();
+      SetStdCol();
    locked=false;
 }
 void Undo::RedoOne()

@@ -315,7 +315,7 @@ int ClipBoard::Paste(bool mark)
       hide=0;
    }
 
-   stdcol=GetCol();
+   SetStdCol();
    return true;
 }
 

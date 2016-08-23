@@ -383,7 +383,8 @@ int   LoadFile(char *name)
 #endif
    }
 
-   stdcol=modified=0;
+   modified=0;
+   SetStdCol();
 
    hide=1;
    flag=REDISPLAY_ALL;
@@ -402,7 +403,7 @@ int   LoadFile(char *name)
 	 {
 	    CurrentPos=old->offset;
 	    if(!hex)
-	       stdcol=GetCol();
+	       SetStdCol();
 	 }
 	 else if(old->line!=-1 && old->col!=-1)
 	    MoveLineCol(old->line,old->col);

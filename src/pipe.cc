@@ -178,7 +178,7 @@ int   PipeBlock(const char *filter,bool in,bool out)
       if(poll(pfd,nfd,-1)<0)
       {
 	 if(E_AGAIN(errno))
-   	    continue;
+	    continue;
 	 FError("poll()");
 	 free(block_buf);
 	 return ERR;
@@ -260,7 +260,7 @@ int   PipeBlock(const char *filter,bool in,bool out)
 	       {
 		  FError("write() to pipe");
 		  out_done=1;
-        	  close(pipe_out[1]);
+		  close(pipe_out[1]);
 		  pipe_out[1]=-1;
 		  nfd--;
 	       }
@@ -272,7 +272,7 @@ int   PipeBlock(const char *filter,bool in,bool out)
 	       if(block_size==0)
 	       {
 		  out_done=1;
-        	  close(pipe_out[1]);
+		  close(pipe_out[1]);
 		  pipe_out[1]=-1;
 		  nfd--;
 	       }
@@ -315,7 +315,7 @@ int   PipeBlock(const char *filter,bool in,bool out)
    }
    if(in && out)
       DeleteBlock(0,BlockEnd-CurrentPos);
-   stdcol=GetCol();
+   SetStdCol();
 not_memory:
    close(pipe_in[0]);
    close(pipe_err[0]);

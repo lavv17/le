@@ -243,6 +243,7 @@ void  TextPoint::FindOffset()
    }
    col=c;
    offset=o;
+   flags&=~(COLUNDEFINED|LINEUNDEFINED|CHAR_SPLIT);
    Check();
 }
 
@@ -401,12 +402,12 @@ void  TextPoint::OrFlags(int mask)
 
 TextPoint TextPoint::ForcedLineCol(num l,num c)
 {
-   num old_stdcol=stdcol;
+   num old_stdcol=SaveStdCol();
    TextPoint old_pos=CurrentPos;
    HardMove(l,c);
    TextPoint res=CurrentPos;
    CurrentPos=old_pos;
-   stdcol=old_stdcol;
+   RestoreStdCol(old_stdcol);
    return res;
 }
 

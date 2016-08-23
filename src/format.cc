@@ -104,7 +104,7 @@ void  FormatPara()
    }
 
    NewLine();
-   stdcol=GetCol();
+   SetStdCol();
    MoveUp();
 
    if(LeftAdj)
@@ -269,7 +269,7 @@ void  FormatPara()
    }
 
    ToLineBegin();
-   stdcol=GetCol();
+   SetStdCol();
    MoveDown();
 }
 
@@ -325,7 +325,7 @@ void  CenterLine()
 	 InsertChar(' ');
    }
    ToLineBegin();
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  ShiftRightLine()
@@ -350,7 +350,7 @@ void  ShiftRightLine()
 	 InsertChar(' ');
    }
    ToLineBegin();
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  FormatFunc()
@@ -360,7 +360,7 @@ void  FormatFunc()
    if(hex || View)
       return;
    ToLineBegin();
-   stdcol=GetCol();
+   SetStdCol();
 again:
    ClearMessage();
    CenterView();
@@ -437,5 +437,5 @@ void WordWrapInsertHook()
    for(int i=LeftMargin; i>0; i--)
       InsertChar(' ');
    CurrentPos=old;
-   stdcol=GetCol();
+   SetStdCol();
 }

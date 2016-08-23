@@ -63,7 +63,7 @@ void GoBookmark(int n)
    if(bm[n])
    {
       CurrentPos=*bm[n];
-      stdcol=GetCol();
+      SetStdCol();
       ScreenTop=*bm_scrtop[n];
       ScrShift=bm_scrshift[n];
       flag=REDISPLAY_ALL;

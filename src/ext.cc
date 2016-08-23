@@ -33,7 +33,7 @@ void  ReplaceCharExt(byte ch)
 {
    ReplaceCharExtMove(ch);
    MoveLeft();
-   stdcol=GetCol();
+   SetStdCol();
 }
 void  ReplaceWCharExtMove(wchar_t ch)
 {
@@ -47,7 +47,7 @@ void  ReplaceWCharExt(wchar_t ch)
 {
    ReplaceWCharExtMove(ch);
    MoveLeftOverEOL();
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  ExpandAllTabs()
@@ -74,7 +74,7 @@ void  ExpandAllTabs()
       MoveRight();
    }
    MoveLineCol(ol,oc);
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  ExpandSpanTabs()
@@ -101,7 +101,7 @@ void  ExpandSpanTabs()
       MoveRight();
    }
    MoveLineCol(ol,oc);
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void ReplaceAll(const char *str1,const char *str2)
@@ -161,7 +161,7 @@ void  DOS_UNIX(void)
       ScreenTop=CurrentPos;
       TextPoint::OrFlags(COLUNDEFINED|LINEUNDEFINED);
    }
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 int   Suffix(const char *str,const char*pr)

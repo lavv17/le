@@ -44,7 +44,7 @@ void  UserDeleteToEol()
       return;
    DeleteToEOL();
    if(!Text)
-      stdcol=GetCol();
+      SetStdCol();
    flag|=REDISPLAY_LINE;
 }
 void  UserDeleteLine()
@@ -82,15 +82,15 @@ void  UserLineDown()
 	 {
 	    if(!Bol())
 	    {
-	       num old_stdcol=stdcol;
+	       num old_stdcol=SaveStdCol();
 	       int old_modified=modified;
 	       NewLine();
-	       stdcol=old_stdcol;
+	       RestoreStdCol(old_stdcol);
 	       modified=old_modified;
 	    }
 	 }
 	 else
-	    stdcol=GetCol();
+	    SetStdCol();
       }
    }
 }
@@ -121,7 +121,7 @@ void  UserCharLeft()
       }
       MoveLeftOverEOL();
    }
-   stdcol=GetCol();
+   SetStdCol();
 }
 void  UserCharRight()
 {
@@ -144,12 +144,12 @@ void  UserCharRight()
    {
       if(Text && Eol())
       {
-         stdcol++;
+         AddStdCol(1);
       }
       else
       {
          MoveRightOverEOL();
-         stdcol=GetCol();
+         SetStdCol();
       }
    }
 }
@@ -174,7 +174,7 @@ void  UserCopyFromDown()
       {
          PreUserEdit();
          InsertChar('\t');
-	 stdcol=GetCol();
+	 SetStdCol();
          flag|=REDISPLAY_LINE;
          return;
       }
@@ -186,7 +186,7 @@ void  UserCopyFromDown()
             InsertWChar(ch);
          else
             ReplaceWCharExtMove(ch);
-	 stdcol=GetCol();
+	 SetStdCol();
          flag|=REDISPLAY_LINE;
          return;
       }
@@ -210,7 +210,7 @@ void  UserCopyFromUp()
       {
          PreUserEdit();
          InsertChar('\t');
-	 stdcol=GetCol();
+	 SetStdCol();
          flag|=REDISPLAY_LINE;
          return;
       }
@@ -222,7 +222,7 @@ void  UserCopyFromUp()
             InsertWChar(ch);
          else
             ReplaceWCharExtMove(ch);
-	 stdcol=GetCol();
+	 SetStdCol();
          flag|=REDISPLAY_LINE;
          return;
       }
@@ -296,7 +296,7 @@ void  UserBackwardDeleteWord()
 	    DeleteBlock(MBCharSize,0);
       }
    }
-   stdcol=GetCol();
+   SetStdCol();
    flag|=REDISPLAY_LINE;
 }
 
@@ -320,7 +320,7 @@ void  UserForwardDeleteWord()
             DeleteBlock(0,MBCharSize);
       }
    }
-   stdcol=GetCol();
+   SetStdCol();
    flag|=REDISPLAY_LINE;
 }
 
@@ -338,7 +338,7 @@ void  UserDeleteWord()
       while(!Bol() && IsAlNumLeft())
 	 DeleteBlock(MBCharSize,0);
    }
-   stdcol=GetCol();
+   SetStdCol();
    flag|=REDISPLAY_LINE;
 }
 
@@ -384,7 +384,7 @@ void  UserMarkToEol()
    if(DragMark)
       UserStopDragMark();
 
-   stdcol=GetCol();
+   SetStdCol();
    BlockBegin=CurrentPos;
    BlockEnd=LineEnd(CurrentPos.Offset());
    hide=(BlockEnd.Col()<=BlockBegin.Col());
@@ -417,14 +417,14 @@ void  UserPageTop()
    {
       if(Text)
       {
-	 num oldstdcol=stdcol;
+	 num oldstdcol=SaveStdCol();
          ToLineEnd();	// clear spaces at the line end
-	 stdcol=oldstdcol;
+	 RestoreStdCol(oldstdcol);
       }
 
       if(GetLine()==ScreenTop.Line())
       {
-	 CurrentPos=TextPoint(ScreenTop.Line()-(TextWinHeight-1),stdcol);
+	 CurrentPos=TextPoint(ScreenTop.Line()-(TextWinHeight-1),GetStdCol());
 	 ScreenTop=LineBegin(CurrentPos);
 	 flag=REDISPLAY_ALL;
       }
@@ -478,12 +478,12 @@ void  UserPageUp()
    }
    else
    {
-      num   oldstdcol=stdcol;
+      num oldstdcol=SaveStdCol();
       if(Text)
 	 ToLineEnd();
       CurrentPos=PrevNLines(CurrentPos,TextWinHeight-1);
       ScreenTop=PrevNLines(ScreenTop,TextWinHeight-1);
-      stdcol=oldstdcol;
+      RestoreStdCol(oldstdcol);
    }
    flag=REDISPLAY_ALL;
 }
@@ -501,19 +501,19 @@ void  UserPageBottom()
    {
       if(Text)
       {
-	 num oldstdcol=stdcol;
+	 num oldstdcol=SaveStdCol();
          ToLineEnd();
-	 stdcol=oldstdcol;
+	 RestoreStdCol(oldstdcol);
       }
 
       if(GetLine()==ScreenTop.Line()+TextWinHeight-1)
       {
-	 CurrentPos=TextPoint(GetLine()+TextWinHeight-1,stdcol);
+	 CurrentPos=TextPoint(GetLine()+TextWinHeight-1,GetStdCol());
 	 ScreenTop=TextPoint(GetLine()-(TextWinHeight-1),0);
 	 flag=REDISPLAY_ALL;
       }
       else
-	 CurrentPos=TextPoint(ScreenTop.Line()+TextWinHeight-1,stdcol);
+	 CurrentPos=TextPoint(ScreenTop.Line()+TextWinHeight-1,GetStdCol());
    }
 }
 void  UserPageDown()
@@ -535,7 +535,7 @@ void  UserPageDown()
    }
    else
    {
-      num   oldstdcol=stdcol;
+      num oldstdcol=SaveStdCol();
 
       if(Text)
 	 ToLineEnd();
@@ -550,7 +550,7 @@ void  UserPageDown()
 	    ScreenTop=NewScreenTop;
       }
 
-      stdcol=oldstdcol;
+      RestoreStdCol(oldstdcol);
    }
    flag=REDISPLAY_ALL;
 }
@@ -566,7 +566,7 @@ void  UserWordLeft()
       while(!Bof() && IsAlNumLeft())
          CurrentPos-=MBCharSize;
    }
-   stdcol=GetCol();
+   SetStdCol();
 }
 void  UserWordRight()
 {
@@ -579,7 +579,7 @@ void  UserWordRight()
       while(!Eof() && IsAlNumRel(0))
          CurrentPos+=MBCharSize;
    }
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  UserMenu()
@@ -689,7 +689,7 @@ void  UserCommentLine()
    }
 done:
    CurrentPos=op;
-   stdcol=GetCol();
+   SetStdCol();
    flag|=REDISPLAY_LINE;
 }
 
@@ -751,14 +751,14 @@ void  UserFindBlockBegin()
    if(hide)
       return;
    CurrentPos=BlockBegin;
-   stdcol=GetCol();
+   SetStdCol();
 }
 void  UserFindBlockEnd()
 {
    if(hide)
       return;
    CurrentPos=BlockEnd;
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  UserLineBegin()
@@ -766,12 +766,12 @@ void  UserLineBegin()
    if(Text && !View)
       ToLineEnd();
    ToLineBegin();
-   stdcol=GetCol();
+   SetStdCol();
 }
 void  UserLineEnd()
 {
    ToLineEnd();
-   stdcol=GetCol();
+   SetStdCol();
    if(autoindent && Text && Bol() && !Bof())
    {
       bool old_modified=modified;
@@ -782,12 +782,12 @@ void  UserLineEnd()
 void  UserFileBegin()
 {
    CurrentPos=TextBegin;
-   stdcol=GetCol();
+   SetStdCol();
 }
 void  UserFileEnd()
 {
    CurrentPos=TextEnd;
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  UserPreviousEdit()
@@ -795,7 +795,7 @@ void  UserPreviousEdit()
    if(!modified)
       return;
    CurrentPos=ptr1;
-   stdcol=CurrentPos.Col();
+   SetStdCol();
 }
 
 void  UserUnindent()
@@ -872,14 +872,14 @@ void  UserUnindent()
       }
    }
    flag|=REDISPLAY_LINE;
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  UserBackSpace()
 {
    if(View)
       return;
-   if(Bof() && (!Text || stdcol==0))
+   if(Bof() && (!Text || GetStdCol()==0))
       return;
    if(hex)
    {
@@ -887,7 +887,7 @@ void  UserBackSpace()
       flag|=REDISPLAY_AFTER;
       return;
    }
-   if(Bol() && (!Text || stdcol==0))
+   if(Bol() && (!Text || GetStdCol()==0))
    {
       DeleteBlock(EolSize,0);
       flag|=REDISPLAY_AFTER;
@@ -899,7 +899,7 @@ void  UserBackSpace()
 	 if(Text && Eol() && stdcol>GetCol())
 	 {
 	    //UserLineEnd();
-	    stdcol--;
+	    AddStdCol(-1);
 	    return;
 	 }
          BackSpace();
@@ -911,7 +911,7 @@ void  UserBackSpace()
          return;
       }
    }
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  UserDeleteChar()
@@ -939,7 +939,7 @@ void  UserDeleteChar()
          flag=REDISPLAY_LINE;
       }
    }
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 int   UserSave()
@@ -1122,7 +1122,7 @@ void  UserInfo()
       PutStr(3,cl=2,s);
 
       sprintf(s,"Line=%-6ld Col=%-6ld\nSize:%-6ld Offset:%-6ld",(long)GetLine(),
-             (long)(Text&&Eol()?stdcol:GetCol()),(long)Size(),(long)Offset());
+             (long)(Text&&Eol()?GetStdCol():GetCol()),(long)Size(),(long)Offset());
       PutStr(3,cl+=2,s);
 
       sprintf(s,"CWD:  %.40s",cwd);
@@ -1157,7 +1157,7 @@ void  UserToLineNumber()
    if(getstring("Move to line: ",nl,sizeof(nl)-1,NULL,NULL,NULL)<1)
       return;
    GoToLineNum(strtol(nl,0,0)-1);
-   stdcol=GetCol();
+   SetStdCol();
 }
 void  UserToOffset()
 {
@@ -1165,7 +1165,7 @@ void  UserToOffset()
    if(getstring("Move to offset: ",no,sizeof(no)-1,NULL,NULL,NULL)<1)
       return;
    CurrentPos=strtol(no,0,0);
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  UserIndent()
@@ -1233,7 +1233,7 @@ void  UserIndent()
    CurrentPos=old;
    if(insert)
       flag|=REDISPLAY_LINE;
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  UserNewLine()
@@ -1246,7 +1246,7 @@ void  UserNewLine()
    else
    {
       NewLine();
-      stdcol=GetCol();
+      SetStdCol();
       flag|=REDISPLAY_AFTER;
    }
 }
@@ -1276,7 +1276,7 @@ void  UserAutoindent()
    }
 
    NewLine();
-   stdcol=GetCol();
+   SetStdCol();
    flag|=REDISPLAY_AFTER;
    if(do_indent)
       InsertAutoindent(oldcol);
@@ -1288,7 +1288,7 @@ void  UserUndelete()
       return;
    Undelete();
    flag=REDISPLAY_ALL;
-   stdcol=GetCol();
+   SetStdCol();
 }
 void  UserUndo()
 {
@@ -1308,7 +1308,7 @@ void  UserRedo()
       return;
    undo.RedoGroup();
    flag=REDISPLAY_ALL;
-   stdcol=GetCol();
+   SetStdCol();
 }
 void  UserUndoStep()
 {
@@ -1323,7 +1323,7 @@ void  UserRedoStep()
       return;
    undo.RedoOne();
    flag=REDISPLAY_ALL;
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  UserInsertChar(char ch)
@@ -1340,7 +1340,7 @@ void  UserInsertChar(char ch)
       flag|=REDISPLAY_AFTER;
    else
       flag|=REDISPLAY_LINE;
-   stdcol=GetCol();
+   SetStdCol();
 }
 void  UserReplaceChar(char ch)
 {
@@ -1365,7 +1365,7 @@ void  UserReplaceChar(char ch)
       flag|=REDISPLAY_AFTER;
    else
       flag|=REDISPLAY_LINE;
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  UserInsertControlChar(char ch)
@@ -1391,7 +1391,7 @@ void  UserInsertControlChar(char ch)
       else
 	 flag|=REDISPLAY_LINE;
    }
-   stdcol=GetCol();
+   SetStdCol();
 }
 void  UserInsertString(const char *s,int len)
 {
@@ -1506,7 +1506,7 @@ void  UserSwitchHexMode()
          editmode=EXACT;
       else
          editmode=base_editmode;
-      stdcol=GetCol();
+      SetStdCol();
    }
    else
    {
@@ -1810,7 +1810,7 @@ void UserOptimizeText()
       NewLine();
 
    CurrentPos=tp;
-   stdcol=GetCol();
+   SetStdCol();
    flag=REDISPLAY_ALL;
 }
 

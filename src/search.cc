@@ -79,7 +79,7 @@ void  NotFound()
    CurrentPos=back_tp;
    SyncTextWin();
    Message("Search string not found.");
-   stdcol=GetCol();
+   SetStdCol();
    SetCursor();
    WaitForKey();
 }
@@ -520,7 +520,7 @@ void  Replace()
                sprintf(str,"%d replacements.",rcnt);
             if(key!='#')
                CurrentPos=back_tp;
-            stdcol=GetCol();
+            SetStdCol();
 	    CenterView();
             SyncTextWin();
 	    Message(str);
@@ -530,7 +530,7 @@ void  Replace()
          }
          else
             CurrentPos=back_tp;
-         stdcol=GetCol();
+         SetStdCol();
          flag=TRUE;
          return;
       }
@@ -546,7 +546,7 @@ void  Replace()
          BlockEnd+=fndlen;
          hide=0;
          rblock=0;
-	 stdcol=GetCol();
+	 SetStdCol();
          CenterView();
          SyncTextWin();
 	 rblock=oldr;
@@ -638,7 +638,7 @@ void  Replace()
 ret:     flag=TRUE;
          if(action!=CANCEL)
             CurrentPos=back_tp;
-         stdcol=GetCol();
+         SetStdCol();
          return;
       }
    }
@@ -697,7 +697,7 @@ void  ContSearch()
       else
          CenterView();
    }
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void  StartSearch()
@@ -804,7 +804,7 @@ void  FindMatch()
          if(level==0)
          {
             CurrentPos=ptr;
-            stdcol=GetCol();
+            SetStdCol();
             return;
          }
          else

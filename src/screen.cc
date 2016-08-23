@@ -105,7 +105,7 @@ void  TestPosition()
       flag=REDISPLAY_ALL;
    }
    num   col=GetCol();
-   if(Text && stdcol>col)
+   if(Text && stdcol!=NO_POS)
       col=stdcol;
    if(ScrShift+hscroll>col && ScrShift>0)
    {
@@ -125,6 +125,21 @@ static int skipped=0;	// number of times Sync skipped its work
 
 void  SyncTextWin()
 {
+   if(CheckPending()>0)
+   {
+      if(++skipped<2000)
+      {
+	 attrset(STATUS_LINE_ATTR->n_attr);
+	 move(StatusLineY,COLS-3);
+	 addch(' ');
+	 addch("-\\|/"[time(0)%4]);
+	 leaveok(stdscr,TRUE);
+	 flag=REDISPLAY_ALL;
+	 return;
+      }
+   }
+   skipped=0;
+
    int m=message_sp;
    if(ShowStatusLine==SHOW_BOTTOM && m>0)
       m--;  // one message is over status.
@@ -181,21 +196,6 @@ void  SyncTextWin()
       if(lim<range_end)
 	 lim=range_end;
    }
-
-   if(CheckPending()>0)
-   {
-      if(++skipped<2000)
-      {
-	 attrset(STATUS_LINE_ATTR->n_attr);
-	 move(StatusLineY,COLS-3);
-	 addch(' ');
-	 addch("-\\|/"[time(0)%4]);
-	 leaveok(stdscr,TRUE);
-	 flag=REDISPLAY_ALL;
-	 return;
-      }
-   }
-   skipped=0;
 
    if(hex)
       ptr=(ScreenTop&~15)+16*line;
@@ -258,7 +258,7 @@ void  SetCursor()
    else
    {
       move(GetLine()-ScrLine+TextWinY,
-          ((Text&&Eol())?stdcol:GetCol())-ScrShift+TextWinX);
+          ((Text&&Eol())?GetStdCol():GetCol())-ScrShift+TextWinX);
    }
    leaveok(stdscr,FALSE);
    if(insert)
@@ -412,7 +412,7 @@ void  StatusLine()
    else
       sprintf(status,"Line=%-5lu Col=%-4lu",
 	 (unsigned long)(GetLine()+1),
-	 (unsigned long)(((Text&&Eol())?stdcol:GetCol())+1));
+	 (unsigned long)(((Text&&Eol())?GetStdCol():GetCol())+1));
 
    sprintf(status+strlen(status)," Sz:%-6lu %-7s %s",
          (unsigned long)(Size()),chr,flags);

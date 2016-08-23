@@ -49,7 +49,7 @@ offs      BufferSize,GapSize;
 offs      ptr1,ptr2;
 offs      oldptr1,oldptr2;
 int       oldmodified;	/* status of text if ptr1 and ptr2 restored */
-num       stdcol;
+num       stdcol;    /* column to put cursor at in "Text" mode */
 num       ScrShift=0;
 int       modified=0;
 bool      newfile=false;
@@ -113,12 +113,12 @@ int PreUserEdit()
 {
    if(buffer_mmapped)
       return 1;
-   if(Text && Eol() && !hex)
+   if(Text && stdcol!=NO_POS && Eol() && !hex)
    {
       num i=GetCol();
       num j=stdcol;
       int oldmod=modified;
-      if(UseTabs)
+      if(UseTabs && i<j)
 	 for( ; Tabulate(i)<=j; i=Tabulate(i))
             if(InsertChar('\t')!=OK)
 	       return 0;
@@ -172,7 +172,7 @@ void   ToLineEnd()
       flag|=REDISPLAY_LINE;
    }
    modified=om;
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void   MoveLeftOverEOL()
@@ -209,12 +209,12 @@ void   MoveUp()
    if(CurrentPos.Line()==0)
       CurrentPos=TextBegin;
    else
-      CurrentPos=TextPoint(CurrentPos.Line()-1,stdcol);
+      CurrentPos=TextPoint(CurrentPos.Line()-1,GetStdCol());
 }
 
 void   MoveDown()
 {
-   CurrentPos=TextPoint(CurrentPos.Line()+1,stdcol);
+   CurrentPos=TextPoint(CurrentPos.Line()+1,GetStdCol());
 }
 
 
@@ -911,8 +911,8 @@ void   DeleteEOL()
 
 void   DeleteLine()
 {
-   stdcol=0;
    DeleteBlock(Offset()-LineBegin(Offset()),NextLine(Offset())-Offset());
+   SetStdCol();
 }
 
 void   DeleteToEOL()
@@ -1022,7 +1022,7 @@ void  EmptyText()
    GapSize=0;
    oldptr1=ptr1=oldptr2=ptr2=0;
    oldmodified=modified=0;
-   stdcol=0;
+   SetStdCol();
    ScrShift=0;
    View&=~TMP_RO_MODE;
 
@@ -1130,7 +1130,7 @@ void  ConvertFromUnixToDos(offs start,num size)
 
 void  SeekStdCol()
 {
-   if(hex)
+   if(hex || stdcol==NO_POS)
       return;
    CurrentPos=TextPoint(GetLine(),stdcol);
 }
@@ -1203,7 +1203,7 @@ void  InsertAutoindent(num oldcol)
        cnt--;
        InsertChar(' ');
    }
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 num GetCol()

@@ -50,6 +50,8 @@ typedef unsigned char   byte;
 typedef long            offs;
 typedef long            num;
 
+enum { NO_POS=-1L };
+
 #include <configmake.h>
 #include "textpoin.h"
 #include "color.h"
@@ -253,6 +255,11 @@ void    GoToLineNumber(void);
 void    GoToLineNum(num);
 
 void  SeekStdCol();
+static inline void SetStdCol() { stdcol=NO_POS; }
+static inline num GetStdCol() { return stdcol==NO_POS?GetCol():stdcol; }
+static inline void AddStdCol(num i) { stdcol=GetStdCol()+i; }
+static inline num SaveStdCol() { return Text?GetStdCol():NO_POS; }
+static inline void RestoreStdCol(num s) { stdcol=s; }
 
 void  CheckWindowResize();
 

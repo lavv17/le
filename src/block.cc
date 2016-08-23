@@ -112,7 +112,7 @@ void   HardMove(num l,num c)
       while(GetCol()<c)
          MoveRight();
    }
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void   ExpandTab()
@@ -133,16 +133,16 @@ void    RCopy()
 
    ClipBoard cb;
    TextPoint tp=CurrentPos;
-   num old_stdcol=stdcol;
+   num old_stdcol=SaveStdCol();
 
    if(!cb.Copy())
       return;
 
    CurrentPos=tp;
-   stdcol=old_stdcol;
+   RestoreStdCol(old_stdcol);
    cb.PasteAndMark();
    CurrentPos=BlockBegin;
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void    Copy()
@@ -206,7 +206,7 @@ int   RDelete()
       HardMove(i,j);
       if(BlockBegin.Col()==oldcol2)
       {
-      	 DeleteToEOL();
+	 DeleteToEOL();
       }
       else
       {
@@ -246,7 +246,7 @@ int   RDelete()
       }
    }
    HardMove(oldline,oldcol);
-   stdcol=oldcol;
+   SetStdCol();
 
    hide=TRUE;
    return 1;
@@ -269,7 +269,7 @@ int   Delete()
    if(!InBlock(Offset(),GetLine(),GetCol()))
       CurrentPos=BlockBegin;
    DeleteBlock(CurrentPos-BlockBegin,BlockEnd-CurrentPos);
-   stdcol=GetCol();
+   SetStdCol();
    hide=TRUE;
    return 1;
 }
@@ -303,7 +303,7 @@ void    RMove()
    MainClipBoard.PasteAndMark();
 
    CurrentPos=BlockBegin;
-   stdcol=GetCol();
+   SetStdCol();
    hide=0;
 }
 void    Move()
@@ -340,7 +340,7 @@ void    Move()
    Delete();
 
    CurrentPos=BlockBegin=BlockEnd=tp;
-   stdcol=GetCol();
+   SetStdCol();
    BlockEnd+=size;
    hide=0;
 }
@@ -502,7 +502,7 @@ int OptionallyConvertBlockNewLines(const char *bname)
       }
    }
    CurrentPos=old;
-   stdcol=GetCol();
+   SetStdCol();
    return 1;
 }
 
@@ -576,7 +576,7 @@ after_read:
    flag=REDISPLAY_ALL;
    OptionallyConvertBlockNewLines("read");
    CurrentPos=BlockEnd;
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 void    DoIndent(int i)
@@ -630,7 +630,7 @@ void    DoIndent(int i)
    }
    while(CurrentPos<BlockEnd);
    BlockEnd=CurrentPos;
-   stdcol=GetCol();
+   SetStdCol();
    CheckPoint();
 }
 void    DoUnindent(int i)
@@ -683,7 +683,7 @@ void    DoUnindent(int i)
    }
    while(CurrentPos<BlockEnd);
    BlockEnd=CurrentPos;
-   stdcol=GetCol();
+   SetStdCol();
    CheckPoint();
 }
 
@@ -933,7 +933,7 @@ void  Transform(byte (*func)(byte))
       flag=REDISPLAY_ALL;
    }
    CurrentPos=oldpos;
-   stdcol=GetCol();
+   SetStdCol();
 }
 #if USE_MULTIBYTE_CHARS
 wctrans_t trans_toupper;
@@ -997,7 +997,7 @@ void  TransformW(wchar_t (*func)(wchar_t))
       flag=REDISPLAY_ALL;
    }
    CurrentPos=oldpos;
-   stdcol=GetCol();
+   SetStdCol();
 }
 #endif
 

@@ -1050,7 +1050,7 @@ leave_cycle:
    else
    {
       flag=REDISPLAY_ALL;
-      stdcol=GetCol();
+      SetStdCol();
       if(curr->type==BUTTON)
       {
          action=HandleButton(curr->name,curr-opt);

@@ -81,7 +81,7 @@ int   PreferPageTop=1;
 void  GoToLineNum(num line_num)
 {
    CurrentPos=TextPoint(line_num,0);
-   stdcol=GetCol();
+   SetStdCol();
 }
 
 History CodeHistory;
@@ -174,7 +174,7 @@ void    Edit()
       {
 	 CorrectParameters();
 	 flag|=REDISPLAY_ALL;
-      	 continue;
+	 continue;
       }
 
       if(hex)
@@ -276,7 +276,7 @@ void    Edit()
 	    else
 	       flag|=REDISPLAY_LINE;
 	    ReplaceCharMove(key);
-	    stdcol=GetCol();
+	    SetStdCol();
 	    continue;
 	 }
 	 if(hex)
@@ -289,7 +289,7 @@ void    Edit()
 	    else
 	    {
 	       ReplaceCharMove(key);
-	       stdcol=GetCol();
+	       SetStdCol();
 	       flag|=REDISPLAY_LINE;
 	    }
 	    continue;
@@ -706,7 +706,7 @@ int     main(int argc,char **argv)
 	 if(optView!=-1)
 	    optView&=~2;
 	 opteditmode=HEXM;
-      	 break;
+	 break;
       case(CONFIG_FILE):
 	 ExplicitInitName=true;
 	 strncpy(InitName,optarg,sizeof(InitName)-1);
@@ -760,7 +760,7 @@ int     main(int argc,char **argv)
 	 && access(f,R_OK)!=-1)
 	 {
 	    strcpy(newname,f);
-      	    break;
+	    break;
 	 }
 	 first=false;
       }
