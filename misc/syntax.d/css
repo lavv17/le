@@ -90,4 +90,4 @@ text-underline-position|top|transform|transform-origin|transition|\
 transition-delay|transition-duration|transition-property|\
 transition-timing-function|unicode-bidi|vertical-align|visibility|\
 voice-family|volume|white-space|widows|width|word-break|word-spacing|\
-word-wrap|writing-mode|z-index|zoom)(?:[ \t]*:)
+(word|overflow)-wrap|writing-mode|z-index|zoom)(?:[ \t]*:)

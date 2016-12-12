@@ -14,5 +14,5 @@ c1,2=([^[:alnum:]_-]|^)(acl|address|algorithm|allow-query|allow-recursion|allow-
 |transfers|transfers-in|transfers-out|transfers-per-ns|treat-cr-as-space|trusted-keys|type\
 |use-id-pool|versions?|view|yes|zone|notify-source(|-v6)|recursive-clients|dnssec-enable\
 |dnssec-validation|dnssec-lookaside|bindkeys-file|managed-keys-directory|session-keyfile\
-|inet|allow)([^[:alnum:]_-]|$)
+|inet|allow|no-case-compress)([^[:alnum:]_-]|$)
 c2={|}|,|;
