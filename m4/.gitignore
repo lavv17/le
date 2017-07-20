@@ -109,6 +109,11 @@
 /wcwidth.m4
 /wint_t.m4
 /absolute-header.m4
-/gettimeofday.m4
 /stdio_h.m4
 /hard-locale.m4
+/getprogname.m4
+/builtin-expect.m4
+/eealloc.m4
+/flexmember.m4
+/limits-h.m4
+/malloca.m4
