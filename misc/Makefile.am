@@ -13,7 +13,14 @@ syntax = syntax syntax.d/ada syntax.d/as syntax.d/awk syntax.d/c++-comment	\
 
 nobase_pkgdata_DATA = $(colors) $(keymaps) $(mainmenus) $(syntax)
 pkgdata_SCRIPTS = help
-EXTRA_DIST = $(nobase_pkgdata_DATA) $(pkgdata_SCRIPTS)
+
+appdir = $(datadir)/applications
+icondir = $(datadir)/icons/hicolor/48x48/apps
+
+app_DATA = le.desktop
+icon_DATA = le-icon.png
+
+EXTRA_DIST = $(nobase_pkgdata_DATA) $(pkgdata_SCRIPTS) $(app_DATA) $(icon_DATA)
 
 colors: ../src/le
 	../src/le --dump-colors > $@
