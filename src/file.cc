@@ -324,7 +324,7 @@ int ChooseFileName(char *fn)
       condense(directory);
       for(a=filename; *a; a++)
          if(*a=='\\' && a[1])
-            strcpy(a,a+1);  /* delete backslashes */
+            memmove(a,a+1,strlen(a));  /* delete backslashes */
       if(directory[strlen(directory)-1]=='/')
          sprintf(fn,"%s%s",directory,filename);
       else
@@ -525,8 +525,9 @@ int ChooseFileName(char *fn)
       sprintf(fn,"%s%s",directory,dir[current].name);
    else
       sprintf(fn,"%s/%s",directory,dir[current].name);
-   if(!strncmp(fn+strlen(drive),"./",2))
-      strcpy(fn+strlen(drive),fn+strlen(drive)+2);
+   char *fn_d=fn+strlen(drive);
+   if(!strncmp(fn_d,"./",2))
+      memmove(fn_d,fn_d+2,strlen(fn_d+1));
    CloseWin();
    DestroyWin(w);
    for(i=dirsize; i>0; )
