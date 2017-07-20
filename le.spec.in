@@ -38,3 +38,5 @@ rm -rf %{buildroot}
 %attr(0755 root root) %{_datadir}/le/help
 %attr(0644 root man) %{_mandir}/man*/*
 %{_datadir}/le
+%{_datadir}/applications/le.desktop
+%{_datadir}/icons/hicolor/48x48/apps/le-icon.png
