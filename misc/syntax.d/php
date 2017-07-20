@@ -2,7 +2,7 @@
 c3=#.*$|//.*$|/\\*(?:.|\n)*?\\*/
 i=c-literal
 ci1,2=([^[:alnum:]_$]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
-|function|class|return|global|in|or|and|not|echo|print|exit|die|as|do|unset\
+|function|use|class|return|global|in|or|and|not|echo|print|exit|die|as|do|unset\
 |str_i?replace|substr|strlen|empty|str?ri?pos|trim|each|stri?str\
 |preg_(quote|match(|_all)|replace(|_callback)|last_error|grep|split)\
 |strcmp|str(nat)?(case)?cmp|(md5|sha1)(_file)?|strtr\
@@ -21,12 +21,12 @@ ci1,2=([^[:alnum:]_$]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
 |array(|_(change_key_case|chunk|combine|count_values|diff_(u?assoc|u?key)\
 |fill(_keys)?|flip|u?intersect(|_(u?assoc|u?key))|key_exists|map\
 |merge(_recursive)?|multisort|pas|pop|product|push|rand|reduce|reverse|search\
-|shift|sp?lice|sum|udiff(|_u?assoc)|unique|values|walk(_recursive)?))|\
+|shift|sp?lice|sum|udiff(|_u?assoc)|unique|keys|values|walk(_recursive)?))|\
 |microtime|timestamp|pow|rand|round|pi|min|max|ceil|floor\
 |a?(cos|sin|tan)h?|atan2?\
 |is_(in)?finite|is_nan|\
 |function_exists\
-|public|private|protected|final|clone\
+|public|private|protected|final|clone|try|catch|finally|throw\
 )([^[:alnum:]_]|$)
 ci1=(true|false|null|\$this)
 #c2=:|\$|->
