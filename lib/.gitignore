@@ -178,3 +178,5 @@
 /stat-w32.c
 /stat-w32.h
 /xalloc-oversized.h
+/stdint.h
+/limits.h
