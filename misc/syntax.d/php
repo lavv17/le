@@ -27,6 +27,7 @@ ci1,2=([^[:alnum:]_$]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
 |is_(in)?finite|is_nan|\
 |function_exists\
 |public|private|protected|final|clone|try|catch|finally|throw\
+|end(if|switch|for|while)\
 )([^[:alnum:]_]|$)
 ci1=(true|false|null|\$this)
 #c2=:|\$|->
