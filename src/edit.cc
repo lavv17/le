@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2011 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -389,11 +389,7 @@ void  InitCurses()
    }
 #endif
 
-   start_color();
-#ifdef NCURSES_VERSION_MAJOR
-   extern int can_use_default_colors;
-   can_use_default_colors = (use_default_colors()==OK);
-#endif
+   le_start_color();
 
    cbreak();
    noecho();

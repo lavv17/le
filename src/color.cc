@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-1997 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,11 +28,14 @@
 #include "options.h"
 
 struct attr attr_table[MAX_COLOR_NO];
-int   attr_num;
 
-int   can_use_default_colors;
+bool can_use_default_colors;
 
-int   next_pair;
+// avoid identifier conflicts with ncurses
+#define find_pair le_find_pair
+#define next_pair le_next_pair
+
+static int next_pair;
 static int find_pair(int fg,int bg)
 {
    if(!can_use_default_colors)
@@ -332,4 +335,12 @@ void  DumpDefaultColors(FILE *f)
    DescribeColors(default_bw_pal,default_color_pal);
 
    SaveConfToOpenFile(f,colors);
+}
+
+void le_start_color()
+{
+   start_color();
+#ifdef NCURSES_VERSION_MAJOR
+   can_use_default_colors = (use_default_colors()==OK);
+#endif
 }

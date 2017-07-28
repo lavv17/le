@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2015 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2017 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ char    Shell  [256]="exec $SHELL";
 char    Make   [256]="exec make";
 char    Run    [256]="exec make run";
 char    Compile[256]="exec make \"$FNAME.o\"";
-char    HelpCmd[256]="exec "PKGDATADIR"/help";
+char    HelpCmd[256]="exec " PKGDATADIR "/help";
 #else
 char    Shell  [256]="command";
 char    Make   [256]="make";
