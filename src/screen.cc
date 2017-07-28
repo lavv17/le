@@ -504,6 +504,38 @@ static const attr *FindPosAttr(offs ptr,num line,num col,byte *hlp)
       return norm_attr;
 }
 
+#ifdef USE_MULTIBYTE_CHARS
+static inline void le_add_cchar(cchar_t *&c,attr_t a,wchar_t wc)
+{
+# ifdef CURSES_CCHAR_MAX // NetBSD
+   c->attributes=a;
+   c->elements=1;
+   c->vals[0]=wc;
+# else // ncurses
+   c->attr=a;
+   c->chars[0]=wc;
+//    for(int i=1; i<CCHARW_MAX; i++)
+//       c->chars[i]=0;
+# endif
+   c++;
+}
+static inline void le_combine_cchar(cchar_t *c,wchar_t wc)
+{
+# ifdef CURSES_CCHAR_MAX // NetBSD
+   if(c->elements>=CURSES_CCHAR_MAX)
+      return;
+   c->vals[c->elements++]=wc;
+# else // ncurses
+   int i=1;
+   while(i<CCHARW_MAX && c->chars[i])
+      i++;
+   if(i>=CCHARW_MAX)
+      return;
+   c->chars[i]=wc;
+# endif
+}
+#endif // USE_MULTIBYTE_CHARS
+
 void  Redisplay(num line,offs ptr,num limit)
 {
    num    col;
@@ -623,11 +655,7 @@ void  Redisplay(num line,offs ptr,num limit)
 	    {
 	       sprintf(s,"%08lX   ",(unsigned long)ptr);
 	       for(sp=s; *sp; sp++)
-	       {
-		  clwp->attr=norm_attr->n_attr;
-		  clwp->chars[0]=*sp;
-		  clwp++;
-	       }
+		  le_add_cchar(clwp,norm_attr->n_attr,*sp);
 	    }
 	    for(i=0; i<16 && !EofAt(ptr); i++)
 	    {
@@ -637,25 +665,15 @@ void  Redisplay(num line,offs ptr,num limit)
 	       ca=(InBlock(ptr)?blk_attr:norm_attr);
 	       if(ascii && ptr==Offset() && ShowMatchPos)
 		  ca=SHADOW_ATTR;
-	       clwp->attr=ca->n_attr;
-	       clwp->chars[0]=s[0];
-	       clwp++;
-	       clwp->attr=ca->n_attr;
-	       clwp->chars[0]=s[1];
-	       clwp++;
+	       le_add_cchar(clwp,ca->n_attr,s[0]);
+	       le_add_cchar(clwp,ca->n_attr,s[1]);
 	       ptr++;
 	       char b=' '; // ((ptr&15)!=8 ? ' ' : '-');
 	       ca=((InBlock(ptr-1) && InBlock(ptr) && (ptr&15))?blk_attr:norm_attr);
-	       clwp->attr=ca->n_attr;
-	       clwp->chars[0]=b;
-	       clwp++;
+	       le_add_cchar(clwp,ca->n_attr,b);
 	    }
 	    while(clwp-clw<AsciiPos)
-	    {
-	       clwp->attr=norm_attr->n_attr;
-	       clwp->chars[0]=' ';
-	       clwp++;
-	    }
+	       le_add_cchar(clwp,norm_attr->n_attr,' ');
 	    ptr=lptr;
 	    for(i=0; i<16 && !EofAt(ptr); i++,ptr++)
 	    {
@@ -663,19 +681,12 @@ void  Redisplay(num line,offs ptr,num limit)
 	       if(!ascii && ptr==Offset() && ShowMatchPos)
 		  ca=SHADOW_ATTR;
 	       wchar_t ch=CharAt_NoCheck(ptr);
-	       clwp->attr=ca->n_attr;
-	       clwp->chars[0]=visualize_wchar(ch);
-	       if(clwp->chars[0]!=ch)
-		  clwp->attr=ca->so_attr;
-	       clwp++;
+	       wchar_t vch=visualize_wchar(ch);
+	       le_add_cchar(clwp,vch==ch?ca->n_attr:ca->so_attr,vch);
 	    }
 	    // clear the rest of line
 	    for(i=TextWinWidth-(clwp-clw); i>0; i--)
-	    {
-	       clwp->attr=norm_attr->n_attr;
-	       clwp->chars[0]=' ';
-	       clwp++;
-	    }
+	       le_add_cchar(clwp,norm_attr->n_attr,' ');
 	    attrset(0);
 	    mvadd_wchnstr(TextWinY+line,TextWinX,clw,TextWinWidth);
 	 }
@@ -846,16 +857,12 @@ void  Redisplay(num line,offs ptr,num limit)
 		  {
 		     if(col<0)
 			col=0;
-		     clwp->attr=ca->n_attr;
-		     clwp->chars[0]=' ';
-		     clwp++;
+		     le_add_cchar(clwp,ca->n_attr,' ');
 		     col++;
 		     while(col<i && col<TextWinWidth)
 		     {
 			ca=FindPosAttr(ptr,line,col,hlp);
-			clwp->attr=ca->n_attr;
-			clwp->chars[0]=' ';
-			clwp++;
+			le_add_cchar(clwp,ca->n_attr,' ');
 			col++;
 		     }
 		  }
@@ -867,26 +874,11 @@ void  Redisplay(num line,offs ptr,num limit)
 		  if(col>=0)
 		  {
 		     if(MBCharWidth==0 && clwp>clw)
-		     {
-			int a=0;
-			while(a<CCHARW_MAX && clwp[-1].chars[a])
-			   a++;
-			if(a<CCHARW_MAX)
-			   clwp[-1].chars[a]=ch;
-		     }
+			le_combine_cchar(clwp-1,ch);
 		     else if(MBCharWidth>0)
 		     {
-			clwp->attr=ca->n_attr;
-			clwp->chars[0]=visualize_wchar(ch);
-			if(clwp->chars[0]!=ch)
-			   clwp->attr=ca->so_attr;
-			else if(MBCharSize==1 && !chset_isprint(ch))
-			{
-			   chtype v=visualize(ca,CharAt(ptr)|ca->n_attr);
-			   clwp->chars[0]=v&A_CHARTEXT;
-			   clwp->attr=v&~A_CHARTEXT;
-			}
-			clwp++;
+			wchar_t vch=visualize_wchar(ch);
+			le_add_cchar(clwp,vch==ch?ca->n_attr:ca->so_attr,vch);
 		     }
 		  }
 		  col+=MBCharWidth;
@@ -903,9 +895,7 @@ void  Redisplay(num line,offs ptr,num limit)
 	    for( ; col<TextWinWidth; col++)
 	    {
 	       ca=FindPosAttr(ptr,line,col,hlp);
-	       clwp->attr=ca->n_attr;
-	       clwp->chars[0]=' ';
-	       clwp++;
+	       le_add_cchar(clwp,ca->n_attr,' ');
 	    }
 
 	    attrset(0);
