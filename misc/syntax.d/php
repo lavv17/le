@@ -17,7 +17,7 @@ ci1,2=([^[:alnum:]_$]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
 |f(open|eof|close|flush|lock|read|put(csv|s)|scanf|stat|seek|truncate|write\
 |get(c|csv|s|ss)|ile(|_(exists|(get|put)_contents)|[acm]time|group|inode|owner\
 |perms|size|type))\
-|count|defined?|new\
+|count|defined?|new|reset|key|current|next|prev|end\
 |array(|_(change_key_case|chunk|combine|count_values|diff_(u?assoc|u?key)\
 |fill(_keys)?|flip|u?intersect(|_(u?assoc|u?key))|key_exists|map\
 |merge(_recursive)?|multisort|pas|pop|product|push|rand|reduce|reverse|search\
