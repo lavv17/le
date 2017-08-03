@@ -21,7 +21,11 @@
 
 #ifdef USE_MULTIBYTE_CHARS
 #define win_cell cchar_t
+# ifdef CURSES_CCHAR_MAX // NetBSD
+#define win_cell_set_attrs(ch,a) (ch)->attributes=((ch)->attributes&A_ALTCHARSET)|((a)&~(A_CHARTEXT|A_ALTCHARSET))
+# else // ncurses
 #define win_cell_set_attrs(ch,a) (ch)->attr=((ch)->attr&A_ALTCHARSET)|((a)&~(A_CHARTEXT|A_ALTCHARSET))
+# endif
 #define scr_get_cell(y,x,out) mvin_wch(y,x,out)
 #define scr_put_cell(y,x,ch)  mvadd_wchnstr(y,x,ch,1)
 #else
