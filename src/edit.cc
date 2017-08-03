@@ -53,6 +53,15 @@
 # define fcntl(x,y,z)	(0)
 #endif
 
+#ifdef HAVE__NC_FREE_AND_EXIT
+extern "C" {
+extern void _nc_free_and_exit(int);
+#define ExitProgram(code) _nc_free_and_exit(code)
+};
+#else
+#define ExitProgram(code) exit(code)
+#endif
+
 #include <alloca.h>
 #include "localcharset.h"
 
@@ -385,7 +394,7 @@ void  InitCurses()
    if(le_scr==NULL)
    {
       fprintf(stderr,"le: newterm() failed. Check your $TERM variable.\n");
-      exit(1);
+      ExitProgram(1);
    }
 #endif
 
@@ -525,7 +534,7 @@ void    Terminate()
 
    TermCurses();
 
-   exit(0);
+   ExitProgram(0);
 }
 
 void  PrintUsage(int arg)
@@ -553,7 +562,7 @@ void  PrintUsage(int arg)
 	  "\n"
 	  "The last file will be loaded. If no files specified, last readable file\n"
 	  "from history will be loaded if the path is relative or it is the last.\n");
-   exit(1);
+   ExitProgram(1);
 }
 
 #if USE_MULTIBYTE_CHARS
@@ -676,19 +685,19 @@ int     main(int argc,char **argv)
 	 break;
       case('?'):
 	 fprintf(stderr,"%s: Try `%s --help' for more information\n",Program,argv[0]);
-	 exit(1);
+	 ExitProgram(1);
       case(DUMP_KEYMAP):
 	 WriteActionMap(stdout);
-	 exit(0);
+	 ExitProgram(0);
       case(DUMP_COLORS):
 	 DumpDefaultColors(stdout);
-	 exit(0);
+	 ExitProgram(0);
       case(PRINT_HELP):
 	 PrintUsage(0);
-	 exit(0);
+	 ExitProgram(0);
       case(PRINT_VERSION):
 	 PrintVersion();
-	 exit(0);
+	 ExitProgram(0);
       case(USE_MMAP):
 	 opt_use_mmap=1;
 	 if(optView==-1)
@@ -789,5 +798,6 @@ int     main(int argc,char **argv)
    }
    Edit();
    Terminate();
+   ExitProgram(0);
    return 0;
 }
