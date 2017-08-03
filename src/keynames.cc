@@ -353,7 +353,7 @@ static void MakeCodeNameTableExt()
 
    if(!cur_term)
       return;
-   TERMTYPE *tp = &cur_term->type;
+   TERMTYPE *tp = (TERMTYPE *)(cur_term);
    if(!tp)
       return;
    if(NUM_STRINGS(tp)<=STRCOUNT)
