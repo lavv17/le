@@ -58,8 +58,8 @@ const struct {
    const char *alias;
    int code;
 } ActionNameAliases[]={
-   "quit-editor", A_ESCAPE,
-   0
+   { "quit-editor", A_ESCAPE },
+   { 0 }
 };
 
 enum

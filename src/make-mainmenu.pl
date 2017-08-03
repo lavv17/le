@@ -32,7 +32,7 @@ while(<>) {
    } elsif($type eq 'function') {
       die if !$action;
       $type='FUNC'.$hide;
-      print "{$text, FUNC$hide$options, $A},\n";
+      print "{$text, FUNC$hide$options, { $A } },\n";
    } elsif($type eq 'end') {
       print "{NULL},\n";
    } elsif($type eq 'hline') {
