@@ -26,7 +26,7 @@ ci1,2=([^[:alnum:]_$]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
 |a?(cos|sin|tan)h?|atan2?\
 |is_(in)?finite|is_nan|true|false|in_array|(int|float|str|bool)val\
 |function_exists|namespace|extends|implements|is_numeric|settype\
-|public|private|protected|final|clone|try|catch|finally|throw|const\
+|public|private|protected|static|final|clone|try|catch|finally|throw|const\
 |end(if|switch|for|while)\
 )([^[:alnum:]_]|$)
 ci1=(\$this)([^[:alnum:]_]|$)
