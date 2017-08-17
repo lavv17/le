@@ -6,7 +6,7 @@ ci1,2=([^[:alnum:]_$]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
 |str_i?replace|substr|strlen|empty|str?ri?pos|trim|each|stri?str\
 |preg_(quote|match(|_all)|replace(|_callback)|last_error|grep|split)\
 |strcmp|str(nat)?(case)?cmp|(md5|sha1)(_file)?|strtr\
-|(str|chunk)_split\
+|(str|chunk)_split|parse_(str|url)|pathinfo|http_build_query\
 |strto(lower|upper)|gettype\
 |(user|trigger)_error|(set|restore)_(exception|error)_handler\
 |(add|strip)c?slashes|(raw)?url(en|de)code|base64_(de|en)code\
