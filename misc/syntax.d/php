@@ -24,8 +24,8 @@ ci1,2=([^[:alnum:]_$]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
 |shift|sp?lice|sum|udiff(|_u?assoc)|unique|keys|values|walk(_recursive)?))|\
 |microtime|timestamp|pow|rand|round|pi|min|max|ceil|floor\
 |a?(cos|sin|tan)h?|atan2?\
-|is_(in)?finite|is_nan|true|false\
-|function_exists\
+|is_(in)?finite|is_nan|true|false|in_array|(int|float|str|bool)val\
+|function_exists|namespace|extends|implements|is_numeric|settype\
 |public|private|protected|final|clone|try|catch|finally|throw|const\
 |end(if|switch|for|while)\
 )([^[:alnum:]_]|$)
