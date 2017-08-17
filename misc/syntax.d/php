@@ -19,7 +19,7 @@ ci1,2=([^[:alnum:]_$]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
 |perms|size|type))\
 |count|defined?|new|reset|key|current|next|prev|end\
 |array(|_(change_key_case|chunk|combine|count_values|diff_(u?assoc|u?key)\
-|fill(_keys)?|flip|u?intersect(|_(u?assoc|u?key))|key_exists|map\
+|fill(_keys)?|filter|flip|u?intersect(|_(u?assoc|u?key))|key_exists|map\
 |merge(_recursive)?|multisort|pas|pop|product|push|rand|reduce|reverse|search\
 |shift|sp?lice|sum|udiff(|_u?assoc)|unique|keys|values|walk(_recursive)?))|\
 |microtime|timestamp|pow|rand|round|pi|min|max|ceil|floor\
