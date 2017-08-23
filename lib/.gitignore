@@ -180,3 +180,5 @@
 /xalloc-oversized.h
 /stdint.h
 /limits.h
+/dup-safer-flag.c
+/fd-safer-flag.c
