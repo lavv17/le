@@ -7,7 +7,7 @@ ci1,2=([^[:alnum:]_$]|^)(if|elseif|else|for|foreach|in|break|continue|while|var\
 |preg_(quote|match(|_all)|replace(|_callback)|last_error|grep|split)\
 |strcmp|str(nat)?(case)?cmp|(md5|sha1)(_file)?|strtr\
 |(str|chunk)_split|parse_(str|url)|pathinfo|http_build_query\
-|strto(lower|upper)|gettype\
+|strto(lower|upper)|gettype|get_class|instanceof\
 |(user|trigger)_error|(set|restore)_(exception|error)_handler\
 |(add|strip)c?slashes|(raw)?url(en|de)code|base64_(de|en)code\
 |is(set|_(bool|int(eger)?|a([^[:alnum:]]|rray)|string|binary|buffer|callable\
