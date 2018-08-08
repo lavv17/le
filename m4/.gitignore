@@ -118,3 +118,6 @@
 /limits-h.m4
 /malloca.m4
 /open-cloexec.m4
+/fnmatch_h.m4
+/getpagesize.m4
+/stat-time.m4

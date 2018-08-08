@@ -182,3 +182,5 @@
 /limits.h
 /dup-safer-flag.c
 /fd-safer-flag.c
+/stat-time.c
+/stat-time.h
