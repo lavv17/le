@@ -5,4 +5,4 @@ Icon=le-icon
 Type=Application
 Terminal=true
 Exec=le
-Categories=TextEditor;
+Categories=Utility;TextEditor;
