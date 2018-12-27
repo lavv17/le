@@ -10,7 +10,6 @@
 /cloexec.h
 /close.c
 /closedir.c
-/config.charset
 /dirent-private.h
 /dirent.in.h
 /dirfd.c
@@ -85,8 +84,6 @@
 /poll.in.h
 /readdir.c
 /realloc.c
-/ref-add.sin
-/ref-del.sin
 /rewinddir.c
 /save-cwd.c
 /save-cwd.h
@@ -110,7 +107,6 @@
 /stripslash.c
 /strnlen1.c
 /strnlen1.h
-/strtol.c
 /sys_select.in.h
 /sys_socket.c
 /sys_socket.in.h
@@ -174,7 +170,6 @@
 /limits.in.h
 /malloca.c
 /malloca.h
-/malloca.valgrind
 /stat-w32.c
 /stat-w32.h
 /xalloc-oversized.h

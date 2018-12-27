@@ -32,7 +32,6 @@
 /getcwd.m4
 /getdtablesize.m4
 /getopt.m4
-/glibc21.m4
 /gnulib-common.m4
 /gnulib-comp.m4
 /gnulib-tool.m4
@@ -63,7 +62,6 @@
 /multiarch.m4
 /nocrash.m4
 /off_t.m4
-/onceonly.m4
 /open.m4
 /openat.m4
 /opendir.m4
@@ -90,7 +88,6 @@
 /strdup.m4
 /strerror.m4
 /string_h.m4
-/strtol.m4
 /sys_select_h.m4
 /sys_socket_h.m4
 /sys_stat_h.m4
@@ -110,7 +107,6 @@
 /wint_t.m4
 /absolute-header.m4
 /stdio_h.m4
-/hard-locale.m4
 /getprogname.m4
 /builtin-expect.m4
 /eealloc.m4

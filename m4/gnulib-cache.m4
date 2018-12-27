@@ -49,9 +49,8 @@
 #  mkdir \
 #  poll \
 #  sockets \
-#  strdup \
+#  strdup-posix \
 #  strerror \
-#  strtol \
 #  times
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
@@ -69,9 +68,8 @@ gl_MODULES([
   mkdir
   poll
   sockets
-  strdup
+  strdup-posix
   strerror
-  strtol
   times
 ])
 gl_AVOID([])
