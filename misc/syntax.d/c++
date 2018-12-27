@@ -1,0 +1,17 @@
+# -*- LE-syntax -*-
+# C++ mode (lav)
+i=c++-comment
+i=cpp
+i=c-literal
+c1,2=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
+ |continue|char|short|int|long|unsigned|signed|auto\
+ |const|default|do|double|enum|extern|float|register\
+ |return|sizeof|static|struct|typedef|union|void|volatile\
+ |try|catch|throw|class|new|delete|private|public|protected|this|virtual\
+ |inline|bool|true|false|operator|overload|template|friend|namespace|using\
+ |typeid|dynamic_cast|const_cast|static_cast|reinterpret_cast|typename|explicit\
+ |nullptr|constexpr|decltype|static_assert|noexcept|alignas|alignof|override|final\
+ |mutable|thread_local|char(16|32)_t|wchar_t|export\
+ |bitand|bitor|compl|(and|not|or|xor)(_eq)?\
+)([^[:alnum:]_]|$)
+c2=\\[|\\]|\\(|\\)|{|}|,|<%|%>|<:|:>|\?\?[<>()=/'!-]

@@ -1,0 +1,11 @@
+# -*- LE-syntax -*-
+# C language mode (lav)
+i=c-comment
+i=cpp
+i=c-literal
+c1,2=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
+ |continue|char|short|int|long|unsigned|signed|auto\
+ |const|default|do|double|enum|extern|float|register\
+ |return|sizeof|static|struct|typedef|union|void|volatile\
+)([^[:alnum:]_]|$)
+c2=\\[|\\]|\\(|\\)|{|}|,
