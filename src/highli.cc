@@ -211,7 +211,7 @@ static FILE *open_syntax_d(const char *name)
 {
    if(name[0]!='/') {
       const char *base_dir="syntax.d";
-      char *fn=(char*)alloca(strlen(PKGDATADIR)+1+strlen(base_dir)+1+strlen(name)+1);
+      char *fn=(char*)alloca(strlen(PKGDATADIR)+strlen(HOME)+1+strlen(base_dir)+1+strlen(name)+1);
       sprintf(fn,"%s/.le/%s/%s",HOME,base_dir,name);
       if(access(fn,R_OK)==-1)
 	 sprintf(fn,"%s/%s/%s",PKGDATADIR,base_dir,name);
