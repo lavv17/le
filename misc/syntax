@@ -132,7 +132,7 @@ i=tcl
 i=metafont
 
 # Patch mode, by Serge Vakulenko <vak@cronyx.ru>
-/*.pch|*.diff|*.patch|/^diff
+/*.pch|*.diff|*.patch|*.rej|/^diff
 c2=^\+\+\+\s.*$
 c2=^---\s.*$
 c2=^@@.*$
