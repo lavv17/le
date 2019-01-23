@@ -140,7 +140,7 @@ c3=^\+.*$
 c1=^-.*$
 
 # Generic configuration files, by Serge Vakulenko <vak@cronyx.ru>
-/*.conf|*.cf|*.cfg|*.ini
+/*.conf|*.cf|*.cfg|*.ini|.gitconfig|.gitmodules
 c3=[#;].*$
 c2=:|\$|->|=
 c2,1=^(\[)[^]]+\]
