@@ -1,5 +1,6 @@
 # -*- LE-syntax -*-
 # C language mode (lav)
+i=c++-comment
 i=c-comment
 i=cpp
 i=c-literal
