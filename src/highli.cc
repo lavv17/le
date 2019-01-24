@@ -33,6 +33,9 @@
 #endif
 #include <limits.h>
 
+#include <set>
+#include <string>
+
 int hl_option=1;
 int hl_active=0;
 
@@ -220,9 +223,13 @@ static FILE *open_syntax_d(const char *name)
    return fopen(name,"r");
 }
 
+static std::set< std::string > files_loaded;
 static bool hl_section_match;
-static void ReadSyntaxFile(FILE *f,syntax_hl **chain)
+static void ReadSyntaxFile(const char *fn,FILE *f,syntax_hl **chain)
 {
+   if(!files_loaded.insert(fn).second)
+      return;
+
    int ch;
    char str[1024];
    char *s;
@@ -368,7 +375,7 @@ static void ReadSyntaxFile(FILE *f,syntax_hl **chain)
 	 if(fscanf(f,"=%255s",str)==1) {
 	    FILE *i_f=open_syntax_d(str);
 	    if(i_f) {
-	       ReadSyntaxFile(i_f,chain);
+	       ReadSyntaxFile(str,i_f,chain);
 	       while(*chain) // skip the newly added nodes
 		  chain=&chain[0]->next;
 	    }
@@ -422,7 +429,7 @@ static void ReadSyntaxFile(FILE *f,syntax_hl **chain)
 
 	    FILE *i_f=open_syntax_d(str);
 	    if(i_f) {
-	       ReadSyntaxFile(i_f,&hl->sub);
+	       ReadSyntaxFile(str,i_f,&hl->sub);
 	    }
 	 } else {
 	    fskip(f);
@@ -470,7 +477,7 @@ void InitHighlight()
    if(!f)
       return;
    hl_section_match=false;
-   ReadSyntaxFile(f,&syntax_hl::chain);
+   ReadSyntaxFile(fn,f,&syntax_hl::chain);
 }
 
 class element
