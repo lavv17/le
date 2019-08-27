@@ -5,6 +5,6 @@ c3='''(?:.|\n)*?'''|"""(?:.|\n)*?"""
 c3="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
 c1,2=([^[:alnum:]_]|^)(if|elif|else|for|in|break|continue|while|pass\
  |try|except|raise|finally|import|from|class|def|return|global\
- |print|del|exec|access|in|or|and|not|is|lambda\
+ |print|del|exec|access|in|or|and|not|is|lambda|with|as\
 )([^[:alnum:]_]|$)
 c2=:
