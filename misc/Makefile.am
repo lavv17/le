@@ -21,7 +21,8 @@ icondir = $(datadir)/icons/hicolor/48x48/apps
 app_DATA = le.desktop
 icon_DATA = le-icon.png
 
-EXTRA_DIST = $(nobase_pkgdata_DATA) $(pkgdata_SCRIPTS) $(app_DATA) $(icon_DATA)
+EXTRA_DIST = $(nobase_pkgdata_DATA) $(pkgdata_SCRIPTS) $(app_DATA) $(icon_DATA) \
+    gnulib.patch
 
 colors: ../src/le
 	../src/le --dump-colors > $@

@@ -1,0 +1,95 @@
+diff --git a/lib/uniwidth.in.h b/lib/uniwidth.in.h
+index e67f2a1..ba4e630 100644
+--- a/lib/uniwidth.in.h
++++ b/lib/uniwidth.in.h
+@@ -41,6 +41,13 @@ extern int
+        uc_width (ucs4_t uc, const char *encoding)
+        _UC_ATTRIBUTE_PURE;
+ 
++extern int
++       uc_width1 (ucs4_t uc)
++#if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96)
++       __attribute__ ((__pure__))
++#endif
++       ;
++
+ /* Determine number of column positions required for first N units
+    (or fewer if S ends before this) in S.  */
+ extern int
+diff --git a/lib/uniwidth/width.c b/lib/uniwidth/width.c
+index 9e6758a..b4305b5 100644
+--- a/lib/uniwidth/width.c
++++ b/lib/uniwidth/width.c
+@@ -412,7 +412,7 @@ static const signed char nonspacing_table_ind[248] = {
+ 
+ /* Determine number of column positions required for UC.  */
+ int
+-uc_width (ucs4_t uc, const char *encoding)
++uc_width1 (ucs4_t uc)
+ {
+   /* Test for non-spacing or control character.  */
+   if ((uc >> 9) < 248)
+@@ -459,10 +459,17 @@ uc_width (ucs4_t uc, const char *encoding)
+           || (uc >= 0x30000 && uc <= 0x3ffff) /* Tertiary Ideographic Plane */
+      )   )
+     return 2;
++  return 1;
++}
++
++int
++uc_width (ucs4_t uc, const char *encoding)
++{
++  int w = uc_width1 (uc);
+   /* In ancient CJK encodings, Cyrillic and most other characters are
+      double-width as well.  */
+   if (uc >= 0x00A1 && uc < 0xFF61 && uc != 0x20A9
+-      && is_cjk_encoding (encoding))
++      && w == 1 && is_cjk_encoding (encoding))
+     return 2;
+-  return 1;
++  return w;
+ }
+diff --git a/lib/wcwidth.c b/lib/wcwidth.c
+index 1f081cc..54994c1 100644
+--- a/lib/wcwidth.c
++++ b/lib/wcwidth.c
+@@ -59,7 +59,7 @@ wcwidth (wchar_t wc)
+     {
+       /* We assume that in a UTF-8 locale, a wide character is the same as a
+          Unicode character.  */
+-      return uc_width (wc, "UTF-8");
++      return uc_width1 (wc);
+     }
+   else
+     {
+diff --git a/m4/wcwidth.m4 b/m4/wcwidth.m4
+index baa2002..9145440 100644
+--- a/m4/wcwidth.m4
++++ b/m4/wcwidth.m4
+@@ -53,6 +53,7 @@ AC_DEFUN([gl_FUNC_WCWIDTH],
+     dnl On OpenBSD 5.0, wcwidth(0x05B0) (HEBREW POINT SHEVA) returns 1.
+     dnl On OSF/1 5.1, wcwidth(0x200B) (ZERO WIDTH SPACE) returns 1.
+     dnl On OpenBSD 5.8, wcwidth(0xFF1A) (FULLWIDTH COLON) returns 0.
++    dnl On Solaris 8, wcwidth(0x2022) (BULLET) returns 2.
+     dnl This leads to bugs in 'ls' (coreutils).
+     AC_CACHE_CHECK([whether wcwidth works reasonably in UTF-8 locales],
+       [gl_cv_func_wcwidth_works],
+@@ -80,7 +81,8 @@ int wcwidth (int);
+ int main ()
+ {
+   int result = 0;
+-  if (setlocale (LC_ALL, "fr_FR.UTF-8") != NULL)
++  if (setlocale (LC_ALL, "fr_FR.UTF-8") != NULL
++   || setlocale (LC_ALL, "en_US.UTF-8") != NULL)
+     {
+       if (wcwidth (0x0301) > 0)
+         result |= 1;
+@@ -90,6 +92,8 @@ int main ()
+         result |= 4;
+       if (wcwidth (0xFF1A) == 0)
+         result |= 8;
++      if (wcwidth (0x2022) != 1)
++	result |= 16;
+     }
+   return result;
+ }]])],
