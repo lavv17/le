@@ -63,7 +63,7 @@ index 1f081cc..54994c1 100644
    else
      {
 diff --git a/m4/wcwidth.m4 b/m4/wcwidth.m4
-index baa2002..9145440 100644
+index cb5935a..a38bd8f 100644
 --- a/m4/wcwidth.m4
 +++ b/m4/wcwidth.m4
 @@ -53,6 +53,7 @@ AC_DEFUN([gl_FUNC_WCWIDTH],
@@ -72,24 +72,24 @@ index baa2002..9145440 100644
      dnl On OpenBSD 5.8, wcwidth(0xFF1A) (FULLWIDTH COLON) returns 0.
 +    dnl On Solaris 8, wcwidth(0x2022) (BULLET) returns 2.
      dnl This leads to bugs in 'ls' (coreutils).
-     AC_CACHE_CHECK([whether wcwidth works reasonably in UTF-8 locales],
-       [gl_cv_func_wcwidth_works],
-@@ -80,7 +81,8 @@ int wcwidth (int);
+     dnl On Solaris 11.4, wcwidth(0x2202) (PARTIAL DIFFERENTIAL) returns 2,
+     dnl even in Western locales.
+@@ -82,7 +83,8 @@ int wcwidth (int);
  int main ()
  {
    int result = 0;
--  if (setlocale (LC_ALL, "fr_FR.UTF-8") != NULL)
+-  if (setlocale (LC_ALL, "en_US.UTF-8") != NULL)
 +  if (setlocale (LC_ALL, "fr_FR.UTF-8") != NULL
 +   || setlocale (LC_ALL, "en_US.UTF-8") != NULL)
      {
        if (wcwidth (0x0301) > 0)
          result |= 1;
-@@ -90,6 +92,8 @@ int main ()
+@@ -92,6 +94,8 @@ int main ()
          result |= 4;
        if (wcwidth (0xFF1A) == 0)
          result |= 8;
 +      if (wcwidth (0x2022) != 1)
-+	result |= 16;
++        result |= 16;
+       if (wcwidth (0x2202) > 1)
+         result |= 16;
      }
-   return result;
- }]])],

@@ -117,3 +117,13 @@
 /fnmatch_h.m4
 /getpagesize.m4
 /stat-time.m4
+/host-cpu-c-abi.m4
+/lib-ld.m4
+/lib-link.m4
+/lib-prefix.m4
+/locale_h.m4
+/lock.m4
+/open-slash.m4
+/pthread_rwlock_rdlock.m4
+/setlocale_null.m4
+/threadlib.m4
