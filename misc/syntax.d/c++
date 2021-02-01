@@ -2,7 +2,7 @@
 # C++ mode (lav)
 i=c++-comment
 i=cpp
-c3=R"([^[:space:]()\\]\{0,16\})\((.|\n)*\)\1"
+c3=R"([^[:space:]()\\]\{0,16\})\((.|\n)*?\)\1"
 i=c-literal
 c1,2=([^[:alnum:]_]|^)(asm|else|if|switch|case|while|for|goto|break\
  |continue|char|short|int|long|unsigned|signed|auto\
