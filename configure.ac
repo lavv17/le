@@ -74,9 +74,6 @@ if test x$GCC = xyes; then
 fi
 if test x$GXX = xyes; then
    CXXFLAGS="$CXXFLAGS -Wall -Wwrite-strings -Woverloaded-virtual"
-   if test x$DEFAULT_CXX = xyes; then
-      LFTP_PROG_CXXLINK
-   fi
    # save some bytes
    LFTP_CHECK_CXX_FLAGS([-fno-exceptions -fno-rtti])
    # check for -fno-implement-inline (doesn't work without -O in gcc 2.95.4; functions are never inlined)
