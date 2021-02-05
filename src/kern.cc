@@ -920,6 +920,11 @@ void   DeleteToEOL()
    DeleteBlock(0,LineEnd(Offset())-Offset());
 }
 
+void   DeleteToBOL()
+{
+   DeleteBlock(Offset()-LineBegin(Offset()),0);
+}
+
 offs   NextLine(offs ptr)
 {
    char eol=EolStr[EolSize-1];
@@ -1276,4 +1281,64 @@ bool BlockEqAt(offs o,const char *s,int len)
    int len1=ptr1-o;
    return !memcmp(buffer+o,s,len1)
        && !memcmp(buffer+GapSize,s+len1,len-len1);
+}
+
+offs FindMatch(const char op)
+{
+   byte cl;
+   int dir;
+   offs ptr=CurrentPos;
+   int level = 0;
+
+   switch(op)
+   {
+   case '[':
+      cl = ']';
+      dir = 1;
+      break;
+   case ']':
+      cl = '[';
+      dir = -1;
+      break;
+   case '{':
+      cl = '}';
+      dir = 1;
+      break;
+   case '}':
+      cl = '{';
+      dir = -1;
+      break;
+   case '(':
+      cl = ')';
+      dir = 1;
+      break;
+   case ')':
+      cl = '(';
+      dir = -1;
+      break;
+   case '<':
+      cl = '>';
+      dir = 1;
+      break;
+   case '>':
+      cl = '<';
+      dir = -1;
+      break;
+   default:
+      return -2;
+   }
+   while(!((dir>0)?EofAt(ptr):BofAt(ptr)))
+   {
+      ptr+=dir;
+      if(CharAt(ptr)==op)
+         level++;
+      else if(CharAt(ptr)==cl)
+      {
+         if(level==0)
+            return ptr;
+         else
+            level--;
+      }
+   }
+   return -1;
 }

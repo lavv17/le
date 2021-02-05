@@ -749,69 +749,16 @@ void  StartReplace()
 
 void  FindMatch()
 {
-   byte  op,cl;
-   int    dir;
-   offs  ptr=CurrentPos;
-   int    level = 0;
-
-   if(Eof())
+   const offs ptr=FindMatch(Char());
+   if(ptr==-2)
       return;
-   op=Char();
-   switch(op)
+   if(ptr==-1)
    {
-   case '[':
-      cl = ']';
-      dir = 1;
-      break;
-   case ']':
-      cl = '[';
-      dir = -1;
-      break;
-   case '{':
-      cl = '}';
-      dir = 1;
-      break;
-   case '}':
-      cl = '{';
-      dir = -1;
-      break;
-   case '(':
-      cl = ')';
-      dir = 1;
-      break;
-   case ')':
-      cl = '(';
-      dir = -1;
-      break;
-   case '<':
-      cl = '>';
-      dir = 1;
-      break;
-   case '>':
-      cl = '<';
-      dir = -1;
-      break;
-   default:
+      Message("Matching bracket not found.");
+      SetCursor();
+      WaitForKey();
       return;
    }
-   while(!((dir>0)?EofAt(ptr):BofAt(ptr)))
-   {
-      ptr+=dir;
-      if(CharAt(ptr)==op)
-         level++;
-      else if(CharAt(ptr)==cl)
-      {
-         if(level==0)
-         {
-            CurrentPos=ptr;
-            SetStdCol();
-            return;
-         }
-         else
-            level--;
-      }
-   }
-   Message("Matching bracket not found.");
-   SetCursor();
-   WaitForKey();
+   CurrentPos=ptr;
+   SetStdCol();
 }
