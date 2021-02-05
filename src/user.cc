@@ -844,7 +844,7 @@ void  UserUnindent()
       }
       if(Text && Eol())
       {
-         DeleteBlock(CurrentPos-LineBegin(CurrentPos),0);
+         DeleteToBOL();
          if(newmargin<curpos)
 	    stdcol=newmargin;
 	 else
@@ -1263,7 +1263,7 @@ void  UserAutoindent()
    bool do_indent=true;
 
    if(MarginSizeAt(Offset())==-1)
-      DeleteBlock(Offset()-LineBegin(Offset()),0);
+      DeleteToBOL();
    else
    {
       offs ptr;
@@ -1330,6 +1330,13 @@ void  UserInsertChar(char ch)
 {
    if(View)
       return;
+   if(Text && autoindent && ch=='}' && MarginSizeAt(Offset())==-1 && MarginSizeAt(PrevLine(Offset()))==stdcol)
+   {
+      const offs match = FindMatch(ch);
+      const num indent = match>=0 ? MarginSizeAt(match) : stdcol-IndentSize;
+      DeleteToBOL();
+      stdcol=indent;
+   }
    PreUserEdit();
    InsertChar(ch);
 
