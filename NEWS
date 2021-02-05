@@ -1,3 +1,9 @@
+Version 1.16.8 - 2021-02-05
+
+* minor syntax updates.
+* auto unindent on closing curly brace.
+* fixed compilation.
+
 Version 1.16.7 - 2019-12-19
 
 * fixed syntax highlighting initialization on loading of another file.
