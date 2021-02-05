@@ -127,3 +127,15 @@
 /pthread_rwlock_rdlock.m4
 /setlocale_null.m4
 /threadlib.m4
+/__inline.m4
+/ctype.m4
+/inttypes.m4
+/isblank.m4
+/pid_t.m4
+/pipe.m4
+/std-gnu11.m4
+/strnlen.m4
+/visibility.m4
+/wmemchr.m4
+/wmempcpy.m4
+/zzgnulib.m4
