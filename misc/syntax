@@ -287,3 +287,6 @@ i=puppet
 # Markdown markup language
 /*.md
 i=markdown
+
+/*.j2
+i=jinja2
