@@ -23,7 +23,7 @@
 WIN   *about_window;
 
 const char version_string[]="Text editor LE version " VERSION;
-const char copyright[]="Copyright (C) 1993-2019 by Alexander V. Lukyanov";
+const char copyright[]="Copyright (C) 1993-2021 by Alexander V. Lukyanov";
 
 void  ShowAbout()
 {
