@@ -120,7 +120,7 @@ TextPoint::~TextPoint()
    CacheTextPoint();
 }
 
-void TextPoint::CacheTextPoint()
+void TextPoint::CacheTextPoint() const
 {
    cached_array[cached_array_ptr++]=*this;
    cached_array_ptr&=(cached_array_size-1);
