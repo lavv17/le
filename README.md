@@ -8,3 +8,11 @@ files and mmap'able devices in mmap shared mode (only replace), has tunable
 syntax highlighting, tunable color scheme (can use default colors), tunable
 key map, tunable menu. It is slightly similar to Norton Editor for DOS, but
 has more features.
+
+Build with cmake:
+
+    mkdir build
+    cd build
+    cmake ..
+    make
+    make install

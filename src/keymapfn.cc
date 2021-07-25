@@ -29,11 +29,6 @@
 #include "search.h"
 #include "colormnu.h"
 
-const ActionNameProcRec ActionNameProcTable[]=
-{
-#include "action-name-func.h"
-};
-
 void  EditorReadKeymap()
 {
    char  filename[1024];

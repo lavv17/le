@@ -17,7 +17,7 @@ GNULIB = $(top_builddir)/lib/libgnu.a
 le_DEPENDENCIES = $(GNULIB)
 le_LDADD = $(GNULIB) $(CURSES_LIBS) $(LIBINTL) $(LIBSOCKET) $(LIB_POLL) $(LIB_SELECT)
 
-AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib $(CURSES_INCLUDES)
+AM_CPPFLAGS = -I$(top_builddir)/lib -I$(top_srcdir)/lib $(CURSES_INCLUDES) -DPKGDATADIR=\"$(DESTDIR)$(pkgdatadir)\"
 
 EXTRA_DIST = le.hlp make-action-enum.pl make-action-name-func.pl make-keymap.pl make-mainmenu.pl
 pkgdata_DATA = le.hlp
