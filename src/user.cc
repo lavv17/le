@@ -26,7 +26,9 @@
 #include <grp.h>
 #include <time.h>
 #include <string.h>
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 #include "edit.h"
 #include "block.h"
 #include "keymap.h"

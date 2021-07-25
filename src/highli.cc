@@ -26,7 +26,9 @@
 #include "highli.h"
 #include "screen.h"
 #include "search.h"
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 
 #ifdef HAVE_SYS_TIMES_H
 #include <sys/times.h>

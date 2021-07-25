@@ -28,7 +28,9 @@
 #include "getch.h"
 #include "search.h"
 #include "mb.h"
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 
 extern "C" {
 #include <regex.h>

@@ -19,7 +19,9 @@
 #include <config.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 #include "edit.h"
 
 const attr *curr_attr;

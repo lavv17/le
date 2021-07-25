@@ -62,7 +62,9 @@ extern void _nc_free_and_exit(int);
 #define ExitProgram(code) exit(code)
 #endif
 
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 #include "localcharset.h"
 
 char  Program[256];
