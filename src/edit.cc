@@ -526,7 +526,8 @@ void    Terminate()
 
 #ifdef HAVE_FTRUNCATE
 	    fflush(f);
-	    ftruncate(fd,ftell(f));
+	    if (ftruncate(fd,ftell(f)) < 0)
+	        /*ignore*/;
 #endif
             fclose(f);
          }
@@ -584,8 +585,10 @@ int     main(int argc,char **argv)
 {
    int   optView=-1,opteditmode=-1,optWarpLine=0;
    int	 opt_use_mmap=-1;
-   int	 opt_mb_mode=-1;
    int   opt;
+#if USE_MULTIBYTE_CHARS
+   int	 opt_mb_mode=-1;
+#endif
 
    enum {
       DUMP_KEYMAP=1024,

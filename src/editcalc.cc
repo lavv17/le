@@ -61,7 +61,7 @@ void  editcalc()
       {
 	 for(i=sp-1; i>=0; i--)
 	 {
-            sprintf(str,"%s%s",stack[i].to_string()," "+(i==0));
+            sprintf(str, "%s%s", stack[i].to_string(), &" "[i==0]);
 	    InsertBlock(str,strlen(str));
 	    SetStdCol();
 	 }

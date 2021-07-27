@@ -353,7 +353,7 @@ void  UserMarkWord()
    offs word_end=CurrentPos;
    while(!BofAt(word_begin))
    {
-      MBCheckLeftAt(word_begin);
+      (void)MBCheckLeftAt(word_begin);
       if(IsAlNumAt(word_begin-MBCharSize))
 	 word_begin--;
       else
@@ -1116,7 +1116,8 @@ void  UserInfo()
    gr=getgrgid(gid);
 
    strcpy(cwd,"Unknown");
-   getcwd(cwd,sizeof(cwd));
+   if (!getcwd(cwd,sizeof(cwd)))
+      /*ignore*/;
 
    do
    {
@@ -1365,7 +1366,7 @@ void  UserReplaceChar(char ch)
    else
    {
       InsertChar(ch);
-      MBCheckLeft();
+      (void)MBCheckLeft();
       if(!MBCharInvalid)
 	 DeleteChar();
    }

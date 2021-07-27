@@ -89,7 +89,7 @@ bool  IsAlNumRel(offs sh)
 static inline
 bool  IsAlNumLeft()
 {
-   MBCheckLeft();
+   (void)MBCheckLeft();
    return IsAlNumAt(Offset()-MBCharSize);
 }
 static inline

@@ -351,7 +351,7 @@ void  TextPoint::FindLineCol()
       }
       else
       {
-	 MBCheckAt(o);
+	 (void)MBCheckAt(o);
          if(o+MBCharSize>offset)
 	 {
 	    o=offset;

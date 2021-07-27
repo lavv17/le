@@ -694,7 +694,8 @@ int   SaveFile(char *name)
 
    // now after locking truncate the file
 #ifdef HAVE_FTRUNCATE
-   ftruncate(nfile,0);
+   if (ftruncate(nfile,0) < 0)
+      /*ignore*/;
 #else
    close(open(name,O_TRUNC|O_RDONLY));
 #endif
