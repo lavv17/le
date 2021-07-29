@@ -179,6 +179,7 @@
 /stat-time.c
 /stat-time.h
 /locale.in.h
+/locale.h
 /setlocale-lock.c
 /setlocale_null.c
 /windows-initguard.h
@@ -186,8 +187,10 @@
 /basename-lgpl.h
 /cdefs.h
 /ctype.in.h
+/ctype.h
 /idx.h
 /inttypes.in.h
+/inttypes.h
 /isblank.c
 /lc-charset-dispatch.c
 /lc-charset-dispatch.h
@@ -202,3 +205,4 @@
 /wmemchr-impl.h
 /wmemchr.c
 /wmempcpy.c
+/free.c
