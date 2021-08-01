@@ -9,10 +9,22 @@ syntax highlighting, tunable color scheme (can use default colors), tunable
 key map, tunable menu. It is slightly similar to Norton Editor for DOS, but
 has more features.
 
-Build with cmake:
+You can use either auto-tools or cmake to build from sources.
 
+* Build with cmake:
+```shell
     mkdir build
     cd build
-    cmake ..
+    cmake -DCMAKE_BUILD_TYPE=Release ..
     make
     make install
+```
+* Build with auto-tools:
+```shell
+    ./autogen.sh
+    mkdir build
+    cd build
+    ../configure
+    make
+    make install
+```
