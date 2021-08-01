@@ -2,7 +2,11 @@ install(FILES le.desktop DESTINATION ${CMAKE_INSTALL_PREFIX}/share/applications)
 
 install(FILES le-icon.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/48x48/apps)
 
-install(FILES help syntax DESTINATION ${CMAKE_INSTALL_PREFIX}/share/le)
+set(colors colors-black colors-blue colors-defbg colors-green colors-white)
+set(keymaps keymap-emacs keymap-default)
+set(mainmenus mainmenu-default mainmenu-ru)
+
+install(FILES help syntax ${colors} ${keymaps} ${mainmenus} DESTINATION ${CMAKE_INSTALL_PREFIX}/share/le)
 
 install(FILES
     syntax.d/ada
