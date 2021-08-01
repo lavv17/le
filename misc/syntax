@@ -287,3 +287,6 @@ i=puppet
 # Markdown markup language
 /*.md
 i=markdown
+
+/*.yaml|*.yml
+i=yaml
