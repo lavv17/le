@@ -1,0 +1,11 @@
+# -*- LE-syntax -*-
+# Jinja2 mode
+#c3=#.*$
+#c3="([^"\\]|\\\\(.|\n))*"|'([^'\\]|\\\\(.|\n))*'
+c1,2=({%-?[ ]+)(for|endfor|if not|if|elif|else|endif|raw|block|endblock|extends\
+|macro|endmacro|call|endcall|filter|endfilter|set|endset\
+|include|from|trans|endtrans|pluralize|do|with|endwith\
+|autoescape|endautoescape|not\
+)([ ]+)
+c1,2=({[{%]-?[ ]+).+(\||join).+(-?[%+]})
+c2={{|}}|{%-?|-?%}|{#|#}
