@@ -3,3 +3,4 @@ action-enum.h
 action-name-func.h
 keymap-default.h
 mainmenu-default.h
+config.h

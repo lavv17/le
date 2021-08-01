@@ -24,17 +24,29 @@
 #include <errno.h>
 
 #if !defined(bool)
-# define bool LE_CURSES_BOOL_TYPE
+# define bool char
 # define bool_redefined 1
 #endif
 #ifndef _XOPEN_SOURCE_EXTENDED
 # define _XOPEN_SOURCE_EXTENDED 1
 #endif
+
 #ifdef USE_NCURSES_H
 # include <ncurses.h>
+#elif HAVE_NCURSESW_NCURSES_H
+# include <ncursesw/ncurses.h>
+#elif HAVE_NCURSESW_CURSES_H
+# include <ncursesw/curses.h>
+#elif HAVE_NCURSES_H
+# include <ncurses.h>
+#elif HAVE_NCURSES_NCURSES_H
+# include <ncurses/ncurses.h>
+#elif HAVE_NCURSES_CURSES_H
+# include <ncurses/curses.h>
 #else
 # include <curses.h>
 #endif
+
 #ifdef bool_redefined
 # undef bool
 #endif
@@ -52,7 +64,6 @@ typedef long            num;
 
 enum { NO_POS=-1L };
 
-#include <configmake.h>
 #include "textpoin.h"
 #include "color.h"
 #include "window.h"

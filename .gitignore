@@ -40,6 +40,7 @@ Makefile
 /build-aux
 /INSTALL
 /.version
+/build
 
 # generated distributions
 /le-*.tar.gz
