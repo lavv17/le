@@ -230,7 +230,8 @@ void  History::ReadFrom(FILE *f)
       lines[i]->len=len;
       fgetc(f);	  // skip \n
    }
-   fscanf(f,"%*u:%*u:");
+   if (fscanf(f,"%*u:%*u:") < 0)
+      /*ignore*/
    fgetc(f);	  // skip \n
 }
 

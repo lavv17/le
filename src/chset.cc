@@ -419,7 +419,8 @@ chtype visualize(const attr *a,chtype ch)
 static wchar_t visualize_wchar_nocache(wchar_t wc)
 {
    unsigned char mbch[MB_CUR_MAX];
-   wctomb(0,0);
+   if (wctomb(0, 0) < 0)
+      /*ignore*/;
    int mbch_len=wctomb((char*)mbch,wc);
    if(mbch_len==1 && !chset_isprint(mbch[0]))
    {

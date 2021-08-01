@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2021 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,9 @@
 #include "getch.h"
 #include "search.h"
 #include "mb.h"
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 
 extern "C" {
 #include <regex.h>
@@ -749,69 +751,16 @@ void  StartReplace()
 
 void  FindMatch()
 {
-   byte  op,cl;
-   int    dir;
-   offs  ptr=CurrentPos;
-   int    level = 0;
-
-   if(Eof())
+   const offs ptr=FindMatch(Char());
+   if(ptr==-2)
       return;
-   op=Char();
-   switch(op)
+   if(ptr==-1)
    {
-   case '[':
-      cl = ']';
-      dir = 1;
-      break;
-   case ']':
-      cl = '[';
-      dir = -1;
-      break;
-   case '{':
-      cl = '}';
-      dir = 1;
-      break;
-   case '}':
-      cl = '{';
-      dir = -1;
-      break;
-   case '(':
-      cl = ')';
-      dir = 1;
-      break;
-   case ')':
-      cl = '(';
-      dir = -1;
-      break;
-   case '<':
-      cl = '>';
-      dir = 1;
-      break;
-   case '>':
-      cl = '<';
-      dir = -1;
-      break;
-   default:
+      Message("Matching bracket not found.");
+      SetCursor();
+      WaitForKey();
       return;
    }
-   while(!((dir>0)?EofAt(ptr):BofAt(ptr)))
-   {
-      ptr+=dir;
-      if(CharAt(ptr)==op)
-         level++;
-      else if(CharAt(ptr)==cl)
-      {
-         if(level==0)
-         {
-            CurrentPos=ptr;
-            SetStdCol();
-            return;
-         }
-         else
-            level--;
-      }
-   }
-   Message("Matching bracket not found.");
-   SetCursor();
-   WaitForKey();
+   CurrentPos=ptr;
+   SetStdCol();
 }

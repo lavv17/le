@@ -461,7 +461,9 @@ ptrdiff_t emacs_re_safe_alloca = MAX_ALLOCA;
 #  define REGEX_SAFE_FREE() SAFE_FREE ()
 #  define REGEX_ALLOCATE SAFE_ALLOCA
 # else
-#  include <alloca.h>
+#  ifdef HAVE_ALLOCA_H
+#   include <alloca.h>
+#  endif
 #  define REGEX_ALLOCATE alloca
 # endif
 

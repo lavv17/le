@@ -290,3 +290,6 @@ i=markdown
 
 /*.j2
 i=jinja2
+
+/*.yaml|*.yml
+i=yaml

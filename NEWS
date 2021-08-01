@@ -1,3 +1,20 @@
+Version 1.16.8 - 2021-02-05
+
+* minor syntax updates.
+* auto unindent on closing curly brace.
+* fixed compilation.
+
+Version 1.16.7 - 2019-12-19
+
+* fixed syntax highlighting initialization on loading of another file.
+* minor python syntax additions.
+
+Version 1.16.6 - 2019-02-08
+
+* fixed stack overflow when HOME path is too long.
+* syntax highlighting improvements and additions.
+* fixed syntax file recursive loading.
+
 Version 1.16.5 - 2017-08-23
 
 * updated regex library.

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2014 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2021 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -186,7 +186,7 @@ void   MoveLeftOverEOL()
       CurrentPos-=EolSize;
    else
    {
-      MBCheckLeft();
+      (void)MBCheckLeft();
       CurrentPos-=MBCharSize;
    }
 }
@@ -784,7 +784,7 @@ int   ReplaceBlock(const char *block,num size)
       }
    }
 
-   MBCheckLeftAt(base);
+   (void)MBCheckLeftAt(base);
    int mb_size0=MBCharSize;
 
    num num_of_lines=0;
@@ -814,7 +814,7 @@ int   ReplaceBlock(const char *block,num size)
      }
    }
 
-   MBCheckLeftAt(base);
+   (void)MBCheckLeftAt(base);
    int mb_size1=MBCharSize;
    int mb_size_max=(mb_size0>mb_size1?mb_size0:mb_size1);
 
@@ -918,6 +918,11 @@ void   DeleteLine()
 void   DeleteToEOL()
 {
    DeleteBlock(0,LineEnd(Offset())-Offset());
+}
+
+void   DeleteToBOL()
+{
+   DeleteBlock(Offset()-LineBegin(Offset()),0);
 }
 
 offs   NextLine(offs ptr)
@@ -1240,12 +1245,12 @@ bool Bol()
 }
 void DeleteChar()
 {
-   MBCheckRight();
+   (void)MBCheckRight();
    DeleteBlock(0,MBCharSize);
 }
 void BackSpace()
 {
-   MBCheckLeft();
+   (void)MBCheckLeft();
    DeleteBlock(MBCharSize,0);
 }
 int InsertChar(char ch)
@@ -1276,4 +1281,64 @@ bool BlockEqAt(offs o,const char *s,int len)
    int len1=ptr1-o;
    return !memcmp(buffer+o,s,len1)
        && !memcmp(buffer+GapSize,s+len1,len-len1);
+}
+
+offs FindMatch(const char op)
+{
+   byte cl;
+   int dir;
+   offs ptr=CurrentPos;
+   int level = 0;
+
+   switch(op)
+   {
+   case '[':
+      cl = ']';
+      dir = 1;
+      break;
+   case ']':
+      cl = '[';
+      dir = -1;
+      break;
+   case '{':
+      cl = '}';
+      dir = 1;
+      break;
+   case '}':
+      cl = '{';
+      dir = -1;
+      break;
+   case '(':
+      cl = ')';
+      dir = 1;
+      break;
+   case ')':
+      cl = '(';
+      dir = -1;
+      break;
+   case '<':
+      cl = '>';
+      dir = 1;
+      break;
+   case '>':
+      cl = '<';
+      dir = -1;
+      break;
+   default:
+      return -2;
+   }
+   while(!((dir>0)?EofAt(ptr):BofAt(ptr)))
+   {
+      ptr+=dir;
+      if(CharAt(ptr)==op)
+         level++;
+      else if(CharAt(ptr)==cl)
+      {
+         if(level==0)
+            return ptr;
+         else
+            level--;
+      }
+   }
+   return -1;
 }

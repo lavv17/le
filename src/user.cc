@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2016 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2021 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,9 @@
 #include <grp.h>
 #include <time.h>
 #include <string.h>
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 #include "edit.h"
 #include "block.h"
 #include "keymap.h"
@@ -351,7 +353,7 @@ void  UserMarkWord()
    offs word_end=CurrentPos;
    while(!BofAt(word_begin))
    {
-      MBCheckLeftAt(word_begin);
+      (void)MBCheckLeftAt(word_begin);
       if(IsAlNumAt(word_begin-MBCharSize))
 	 word_begin--;
       else
@@ -844,7 +846,7 @@ void  UserUnindent()
       }
       if(Text && Eol())
       {
-         DeleteBlock(CurrentPos-LineBegin(CurrentPos),0);
+         DeleteToBOL();
          if(newmargin<curpos)
 	    stdcol=newmargin;
 	 else
@@ -1114,7 +1116,8 @@ void  UserInfo()
    gr=getgrgid(gid);
 
    strcpy(cwd,"Unknown");
-   getcwd(cwd,sizeof(cwd));
+   if (!getcwd(cwd,sizeof(cwd)))
+      /*ignore*/;
 
    do
    {
@@ -1263,7 +1266,7 @@ void  UserAutoindent()
    bool do_indent=true;
 
    if(MarginSizeAt(Offset())==-1)
-      DeleteBlock(Offset()-LineBegin(Offset()),0);
+      DeleteToBOL();
    else
    {
       offs ptr;
@@ -1330,6 +1333,13 @@ void  UserInsertChar(char ch)
 {
    if(View)
       return;
+   if(Text && autoindent && ch=='}' && MarginSizeAt(Offset())==-1 && MarginSizeAt(PrevLine(Offset()))==stdcol)
+   {
+      const offs match = FindMatch(ch);
+      const num indent = match>=0 ? MarginSizeAt(match) : stdcol-IndentSize;
+      DeleteToBOL();
+      stdcol=indent;
+   }
    PreUserEdit();
    InsertChar(ch);
 
@@ -1356,7 +1366,7 @@ void  UserReplaceChar(char ch)
    else
    {
       InsertChar(ch);
-      MBCheckLeft();
+      (void)MBCheckLeft();
       if(!MBCharInvalid)
 	 DeleteChar();
    }

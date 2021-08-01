@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2014 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2021 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@ TextPoint::~TextPoint()
    CacheTextPoint();
 }
 
-void TextPoint::CacheTextPoint()
+void TextPoint::CacheTextPoint() const
 {
    cached_array[cached_array_ptr++]=*this;
    cached_array_ptr&=(cached_array_size-1);
@@ -351,7 +351,7 @@ void  TextPoint::FindLineCol()
       }
       else
       {
-	 MBCheckAt(o);
+	 (void)MBCheckAt(o);
          if(o+MBCharSize>offset)
 	 {
 	    o=offset;

@@ -654,7 +654,8 @@ void  ReadActionMap(FILE *f)
                if(isdigit(ch))
                {
                   ungetc(ch,f);
-                  fscanf(f,"%3o",&ch);
+                  if (fscanf(f,"%3o",&ch) < 0)
+                     /*ignore*/;
                }
                else
                {
@@ -727,7 +728,9 @@ int   GetNextAction()
 {
    unsigned char *store;
    int   key;
+#if USE_MULTIBYTE_CHARS
    static KeyTreeNode kt_mb = { HALF_DELAY, NO_ACTION, -1, NULL,  NULL, NULL };
+#endif
 
    store=StringTyped;
    StringTypedLen=0;

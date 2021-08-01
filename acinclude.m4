@@ -1,8 +1,15 @@
+AC_ARG_WITH([curses-include],
+  AC_HELP_STRING([--with-curses-include=DIR],[search for curses headers in DIR]),
+  [with_curses_include="$withval"])
+AC_ARG_WITH([curses-lib],
+  AC_HELP_STRING([--with-curses-lib=DIR],[search for curses libraries in DIR]),
+  [with_curses_lib="$withval"])
+
 dnl Locate ncurses or curses library
 AC_DEFUN([LE_PATH_CURSES_DIRECT],
 [
   ncurses_h=no
-  for ac_dir in               \
+  for ac_dir in $with_curses_include \
     /usr/local/include/ncursesw\
     /usr/local/include/ncurses\
     /usr/local/include	      \
@@ -44,14 +51,15 @@ AC_DEFUN([LE_PATH_CURSES_DIRECT],
     done
   fi
 
-# First see if replacing the include by lib works.
-for ac_dir0 in `echo "$ac_curses_includes" | sed -e 's:include:lib:' -e 's:/ncurses$::'` \
+# First see if explicit directory or replacing the include by lib works.
+for ac_dir0 in $with_curses_lib \
+    `echo "$ac_curses_includes" | sed -e 's:include:lib:' -e 's:/ncurses$::'` \
     /usr/lib              \
     /usr/local/lib        \
     ; \
 do
  for ac_dir in ${ac_dir0}64 ${ac_dir0}; do
-  for ac_extension in so a sl; do
+  for ac_extension in so a sl dylib; do
     if test -r $ac_dir/lib${curses_direct_test_library}w.$ac_extension; then
       use_libcursesw=yes
       no_curses= ac_curses_libraries=$ac_dir

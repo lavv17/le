@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2021 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -232,6 +232,7 @@ int         CheckMode(mode_t);
 int	    file_check(const char *);	 /* checks existence or ability to create */
 
 void    DeleteToEOL();
+void    DeleteToBOL();
 void    DrawFrames();
 void    ExpandAllTabs();
 void	ExpandSpanTabs();
@@ -294,6 +295,7 @@ int   Undelete();
 void  CheckPoint();
 offs  ScanForCharForward(offs start,byte ch);
 void  InsertAutoindent(num oldcol);
+offs  FindMatch(char op);
 
 void  Help(const char *help,const char *title);
 /*void  Help(char ***help,char *title);*/

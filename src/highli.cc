@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2014 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2019 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,7 +26,9 @@
 #include "highli.h"
 #include "screen.h"
 #include "search.h"
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 
 #ifdef HAVE_SYS_TIMES_H
 #include <sys/times.h>
@@ -359,7 +361,8 @@ static void ReadSyntaxFile(const char *fn,FILE *f,syntax_hl **chain)
 	 break;
       }
       case('h'):
-	 fscanf(f,"%d",&hl_lines);
+	 if (fscanf(f,"%d",&hl_lines) < 0)
+	    /*ignore*/;
 	 if(hl_lines<1)
 	    hl_lines=1;
 	 fskip(f);
@@ -448,6 +451,7 @@ end:
 
 void InitHighlight()
 {
+   files_loaded.clear();
    free(syntax_hl::selector);
    syntax_hl::selector=0;
    syntax_hl::free_chain(syntax_hl::chain);
@@ -457,7 +461,7 @@ void InitHighlight()
    if(!hl_option)
       return;
 
-   const char base_fn[]="syntax";
+   static const char base_fn[]="syntax";
    char *fn1=(char*)alloca(strlen(PKGDATADIR)+1+strlen(base_fn)+1);
    char *fn2=(char*)alloca(strlen(HOME)+1+3+1+ strlen(base_fn)+1);
    char *fn3=(char*)alloca(4+strlen(base_fn)+1);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2013 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2021 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,20 +47,20 @@ class TextPoint
    }
 
 public:
-   offs  Offset()
+   offs  Offset() const
    {
       return(offset);
    }
    num   Line();
    num   Col();
 
-   num	 LineSimple()
+   num	 LineSimple() const
    {
       if(flags&LINEUNDEFINED)
          return -1;
       return(line);
    }
-   num	 ColSimple()
+   num	 ColSimple() const
    {
       if(flags&(COLUNDEFINED|LINEUNDEFINED))
          return -1;
@@ -73,7 +73,7 @@ public:
    TextPoint(const TextPoint&);
    TextPoint(offs,num,num);
 
-   void CacheTextPoint();
+   void CacheTextPoint() const;
 
    ~TextPoint();
 

@@ -23,7 +23,9 @@
 #include "edit.h"
 #include "colormnu.h"
 #include "options.h"
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 
 void ColorsSaveToFile(const char *f)
 {

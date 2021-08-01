@@ -9,7 +9,6 @@
 /d-ino.m4
 /dirent_h.m4
 /dirfd.m4
-/dirname.m4
 /double-slash-root.m4
 /dup.m4
 /dup2.m4
@@ -42,7 +41,6 @@
 /locale-fr.m4
 /locale-ja.m4
 /locale-zh.m4
-/longlong.m4
 /lstat.m4
 /malloc.m4
 /mbrtowc.m4
@@ -117,3 +115,21 @@
 /fnmatch_h.m4
 /getpagesize.m4
 /stat-time.m4
+/locale_h.m4
+/open-slash.m4
+/setlocale_null.m4
+/threadlib.m4
+/__inline.m4
+/inttypes.m4
+/isblank.m4
+/pid_t.m4
+/pipe.m4
+/std-gnu11.m4
+/strnlen.m4
+/visibility.m4
+/wmemchr.m4
+/wmempcpy.m4
+/zzgnulib.m4
+/ctype_h.m4
+/free.m4
+/year2038.m4

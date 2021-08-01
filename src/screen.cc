@@ -21,7 +21,9 @@
 #include <ctype.h>
 #include <errno.h>
 #include <stdlib.h>
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 
 #include "edit.h"
 #include "block.h"
