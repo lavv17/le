@@ -23,8 +23,12 @@
 #include <time.h>
 #include <errno.h>
 
+#ifndef LE_CURSES_BOOL_TYPE
+# define LE_CURSES_BOOL_TYPE char
+#endif
+
 #if !defined(bool)
-# define bool char
+# define bool LE_CURSES_BOOL_TYPE
 # define bool_redefined 1
 #endif
 #ifndef _XOPEN_SOURCE_EXTENDED
@@ -64,6 +68,9 @@ typedef long            num;
 
 enum { NO_POS=-1L };
 
+#ifdef HAVE_CONFIGMAKE_H
+# include <configmake.h>
+#endif
 #include "textpoin.h"
 #include "color.h"
 #include "window.h"

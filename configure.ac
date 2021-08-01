@@ -89,6 +89,10 @@ if test x$ac_cv_func_wcwidth != xyes || test x$REPLACE_WCWIDTH = x1; then
    AC_DEFINE([REPLACE_WCWIDTH], 1, [Define when using wcwidth replacement])
 fi
 
+# These are provided by gnulib (not if building with cmake)
+AC_DEFINE([HAVE_MBSWIDTH_H], 1, [Define if there is mbswidth.h])
+AC_DEFINE([HAVE_CONFIGMAKE_H], 1, [Define if there is configmake.h])
+
 dnl Checks for libraries.
 AC_CHECK_LIB(m, exp)
 

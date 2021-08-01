@@ -82,7 +82,7 @@ add_executable(le
     regex.c
     wcwidth.c
     wcwidth1.c
-    localcharset.c
+    ../gnulib/localcharset.c
     action-enum.h
     action-name-func.h
     keymap-default.h
@@ -91,6 +91,7 @@ add_executable(le
 target_include_directories(le PUBLIC
     .
     ../lib
+    ../gnulib
     ${CMAKE_CURRENT_BINARY_DIR}
     ${CURSES_INCLUDE_DIRS}
 )

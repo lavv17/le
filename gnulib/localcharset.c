@@ -1,19 +1,19 @@
 /* Determine a canonical name for the current locale's character encoding.
 
-   Copyright (C) 2000-2006, 2008-2019 Free Software Foundation, Inc.
+   Copyright (C) 2000-2006, 2008-2021 Free Software Foundation, Inc.
 
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 3, or (at your option)
-   any later version.
+   This file is free software: you can redistribute it and/or modify
+   it under the terms of the GNU Lesser General Public License as
+   published by the Free Software Foundation; either version 2.1 of the
+   License, or (at your option) any later version.
 
-   This program is distributed in the hope that it will be useful,
+   This file is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
+   GNU Lesser General Public License for more details.
 
-   You should have received a copy of the GNU General Public License along
-   with this program; if not, see <https://www.gnu.org/licenses/>.  */
+   You should have received a copy of the GNU Lesser General Public License
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* Written by Bruno Haible <bruno@clisp.org>.  */
 
@@ -58,6 +58,9 @@
 #elif defined WINDOWS_NATIVE
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
+  /* For the use of setlocale() below, the Gnulib override in setlocale.c is
+     not needed; see the platform lists in setlocale_null.m4.  */
+# undef setlocale
 #endif
 #if defined OS2
 # define INCL_DOS
@@ -150,7 +153,8 @@ static const struct table_entry alias_table[] =
     { "ISO8859-2",  "ISO-8859-2" },
     { "ISO8859-4",  "ISO-8859-4" },
     { "ISO8859-5",  "ISO-8859-5" },
-    { "ISO8859-7",  "ISO-8859-7" }
+    { "ISO8859-7",  "ISO-8859-7" },
+    { "US-ASCII",   "ASCII" }
 #   define alias_table_defined
 #  endif
 #  if defined __APPLE__ && defined __MACH__                 /* Mac OS X */

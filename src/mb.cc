@@ -20,6 +20,9 @@
 #include <limits.h>
 #include <stdlib.h>
 #include "edit.h"
+#ifdef HAVE_MBSWIDTH_H
+# include <mbswidth.h>
+#endif
 #include "mb.h"
 
 #ifdef USE_MULTIBYTE_CHARS
