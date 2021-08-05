@@ -15,7 +15,7 @@ You can use either auto-tools or cmake to build from sources.
 ```shell
     mkdir build
     cd build
-    cmake -DCMAKE_BUILD_TYPE=Release ..
+    cmake ..
     make
     make install
 ```
