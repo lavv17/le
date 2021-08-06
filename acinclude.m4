@@ -51,6 +51,10 @@ AC_DEFUN([LE_PATH_CURSES_DIRECT],
     done
   fi
 
+  if echo $ac_curses_includes | grep ncursesw > /dev/null; then
+    use_libcursesw=yes
+  fi
+
 # First see if explicit directory or replacing the include by lib works.
 for ac_dir0 in $with_curses_lib \
     `echo "$ac_curses_includes" | sed -e 's:include:lib:' -e 's:/ncurses$::'` \
