@@ -19,6 +19,7 @@
 #ifndef EDIT_H
 #define EDIT_H
 
+#include <wchar.h>
 #include <sys/types.h>
 #include <time.h>
 #include <errno.h>
