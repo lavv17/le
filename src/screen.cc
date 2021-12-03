@@ -323,7 +323,7 @@ void  StatusLine()
    char  *bn;
    char  name[20];
    wchar_t *wname=0;
-   char  chr[8];
+   char  chr[12];
    int   l;
    char  flags[16];
 
