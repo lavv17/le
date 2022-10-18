@@ -241,6 +241,7 @@ int   LoadFile(char *name)
    const char *open_name=name;
    unsigned long long mmap_begin=0;
    unsigned long mmap_len=0;
+   long flineno=-1,fcol=-1;
    char open_name1[256];
    unsigned n;
    if(buffer_mmapped) {
@@ -249,6 +250,14 @@ int   LoadFile(char *name)
 	 open_name=open_name1;
       else
 	 mmap_begin=mmap_len=0;
+   }
+   if (!buffer_mmapped) {
+      if (sscanf(name,"%[^:]:%lu:%lu",open_name1,&flineno,&fcol)>=2) {
+         open_name=open_name1;
+         // internally the lineno and col are 0-based:
+         flineno--;
+         fcol--;
+      }
    }
 
    if(stat(open_name,&st)!=-1)
@@ -393,11 +402,14 @@ int   LoadFile(char *name)
 
    fstat(file,&st);
    FileInfo=InodeInfo(&st);
-   strcpy(FileName,name);
+   strcpy(FileName,open_name);
 
    CurrentPos=TextBegin;
-   if(SavePos)
+   if(flineno >= 0)
    {
+      fcol = (fcol >= 0)? fcol : 0;
+      MoveLineCol(flineno,fcol);
+   } else if(SavePos) {
       old=PositionHistory.FindInode(FileInfo);
       if(old)
       {

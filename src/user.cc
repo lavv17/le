@@ -966,58 +966,66 @@ int   file_check(const char *fn)
 	 fn=open_name1;
    }
 
-   if(access(fn,R_OK)==-1)
-   {
-      if(access(fn,F_OK)==0)
-      {
-	 sprintf(msg,"File: %s\nThe specified file is not readable",fn);
-	 ErrMsg(msg);
-	 return ERR;
-      }
-      if((View&RO_MODE) || buffer_mmapped)  // view mode or mmap mode
-      {
-	 sprintf(msg,"File: %s\nThe specified file does not exist",fn);
-	 ErrMsg(msg);
-	 return ERR;
-      }
-      strcpy(dir,fn);
-      slash=dir+strlen(dir);
-      while(slash>dir && !isslash(*--slash));
-      if(slash>dir)
-	 *slash=0;
-      else
-	 strcpy(dir,".");
-      if(access(dir,F_OK)==-1)
-      {
-	 sprintf(msg,"File: %s\nThe specified directory does not exist",fn);
-	 ErrMsg(msg);
-	 return ERR;
-      }
-      if(access(dir,W_OK|X_OK)==-1)
-      {
-	 sprintf(msg,"File: %s\nThe specified file does not exist\n"
-		"and the directory does not permit creating",fn);
-	 ErrMsg(msg);
-	 return ERR;
-      }
+   if(access(fn,R_OK)==0)
+    return OK;
 
-      struct menu CreateOrNot[]=
-      {
-	 {" C&reate ",MIDDLE-6,4},
-	 {" &Cancel ",MIDDLE+6,4},
-	 {NULL}
-      };
-      sprintf(msg,"The file `%s' does not exist. Create?",fn);
-      switch(ReadMenuBox(CreateOrNot,HORIZ,msg,
-	 " Verify ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
-      {
-      case('R'):
+   if (!buffer_mmapped) {
+      char *open_name1=(char*)alloca(strlen(fn)+1);
+      long flineno=0,fcol=0;
+      if (sscanf(fn,"%[^:]:%li:%li",open_name1,&flineno,&fcol)>=2)
+      fn=open_name1;
+      if (access(fn,R_OK)==0)
 	 return OK;
-      default:
-	 return ERR;
-      }
    }
-   return OK;
+
+   if(access(fn,F_OK)==0)
+   {
+      sprintf(msg,"File: %s\nThe specified file is not readable",fn);
+      ErrMsg(msg);
+      return ERR;
+   }
+   if((View&RO_MODE) || buffer_mmapped)  // view mode or mmap mode
+   {
+      sprintf(msg,"File: %s\nThe specified file does not exist",fn);
+      ErrMsg(msg);
+      return ERR;
+   }
+   strcpy(dir,fn);
+   slash=dir+strlen(dir);
+   while(slash>dir && !isslash(*--slash));
+   if(slash>dir)
+      *slash=0;
+   else
+      strcpy(dir,".");
+   if(access(dir,F_OK)==-1)
+   {
+      sprintf(msg,"File: %s\nThe specified directory does not exist",fn);
+      ErrMsg(msg);
+      return ERR;
+   }
+   if(access(dir,W_OK|X_OK)==-1)
+   {
+      sprintf(msg,"File: %s\nThe specified file does not exist\n"
+	     "and the directory does not permit creating",fn);
+      ErrMsg(msg);
+      return ERR;
+   }
+
+   struct menu CreateOrNot[]=
+   {
+      {" C&reate ",MIDDLE-6,4},
+      {" &Cancel ",MIDDLE+6,4},
+      {NULL}
+   };
+   sprintf(msg,"The file `%s' does not exist. Create?",fn);
+   switch(ReadMenuBox(CreateOrNot,HORIZ,msg,
+      " Verify ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
+   {
+   case('R'):
+      return OK;
+   default:
+      return ERR;
+   }
 }
 
 void    UserLoad()
