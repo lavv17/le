@@ -144,7 +144,7 @@ void  condense(char *filename)
 
 #ifdef MSDOS
    if(isalpha(filename[0]) && filename[1]==':')
-      sprintf(drive,"%.2s",filename);
+      snprintf(drive,sizeof(drive),"%.2s",filename);
 #endif
 
    filenamelen=strlen(filename);
@@ -175,7 +175,7 @@ void  condense(char *filename)
       return;
    }
 
-   sprintf(tmp,"%s/",drive);
+   snprintf(tmp,sizeof(tmp),"%s/",drive);
    if(stat(tmp,&st)!=-1)
    {
       root_dev=st.st_dev;
@@ -186,7 +186,7 @@ void  condense(char *filename)
       root_dev=
       root_ino=0;
    }
-   sprintf(tmp,"%s.",drive);
+   snprintf(tmp,sizeof(tmp),"%s.",drive);
    if(stat(tmp,&st)!=-1)
    {
       curr_dev=st.st_dev;
@@ -217,7 +217,7 @@ void  condense(char *filename)
          while(*scan && !isslash(*scan))
             *(store++)=*(scan++);
          *store=0;
-         sprintf(tmp,"%s%s",drive,newfilename);
+         snprintf(tmp,sizeof(tmp),"%s%s",drive,newfilename);
          if(stat(tmp,&st)!=-1)
          {
             for(i=0; i<currpointno; i++)
@@ -250,14 +250,14 @@ void  condense(char *filename)
       }
    }
    *store=0;
-   sprintf(filename,"%s%s",drive,newfilename);
+   snprintf(filename,sizeof(directory),"%s%s",drive,newfilename);
    free(newfilename);
    free(ino_scanned);
    free(dev_scanned);
    free(point);
 }
 
-int ChooseFileName(char *fn)
+int ChooseFileName(char *fn, unsigned fn_size)
 {
    char	    *a;
    static WIN *w=NULL;
@@ -275,7 +275,7 @@ int ChooseFileName(char *fn)
 
 #ifdef MSDOS
    if(isalpha(fn[0]) && fn[1]==':')
-      sprintf(drive,"%.2s",fn);
+      snprintf(drive,sizeof(drive),"%.2s",fn);
 #endif
 
    /* strip trailing slashes - they are not needed */
@@ -285,17 +285,17 @@ int ChooseFileName(char *fn)
    a=strrchr(fn,'/');
    if(a==NULL)
    {
-      sprintf(directory,"%s.",drive);
+      snprintf(directory,sizeof(directory),"%s.",drive);
       strcpy(filename,fn+strlen(drive));
    }
    else
    {
       if(a!=fn+strlen(drive))
       {
-         sprintf(directory,"%.*s",(int)(a-fn),fn);
+         snprintf(directory,sizeof(directory),"%.*s",(int)(a-fn),fn);
       }
       else
-         sprintf(directory,"%s/",drive);
+         snprintf(directory,sizeof(directory),"%s/",drive);
       strcpy(filename,a+1);
    }
 
@@ -306,7 +306,7 @@ int ChooseFileName(char *fn)
          ErrMsg("Path name is too long");
          return(-1);
       }
-      sprintf(str,"%s%s",HOME,directory+1);
+      snprintf(str,sizeof(str),"%s%s",HOME,directory+1);
       strcpy(directory,str);
    }
 
@@ -326,9 +326,9 @@ int ChooseFileName(char *fn)
          if(*a=='\\' && a[1])
             memmove(a,a+1,strlen(a));  /* delete backslashes */
       if(directory[strlen(directory)-1]=='/')
-         sprintf(fn,"%s%s",directory,filename);
+         snprintf(fn,fn_size,"%s%s",directory,filename);
       else
-         sprintf(fn,"%s/%s",directory,filename);
+         snprintf(fn,fn_size,"%s/%s",directory,filename);
       if(!strncmp(fn+strlen(drive),"./",2))
          memmove(fn+strlen(drive),fn+strlen(drive)+2,strlen(fn+strlen(drive)+2)+1);
       LoadHistory+=fn;
@@ -351,7 +351,7 @@ int ChooseFileName(char *fn)
       if((st.st_mode&S_IFMT)!=S_IFDIR)
       {
          char  msg[128];
-         sprintf(msg,"%.60s: not a directory",directory);
+         snprintf(msg,sizeof(msg),"%.60s: not a directory",directory);
          ErrMsg(msg);
          CloseWin();
          DestroyWin(w);
@@ -393,7 +393,7 @@ int ChooseFileName(char *fn)
             dirsize=i;
             break;
          }
-         sprintf(str,"%s/%s",directory,entry->d_name);
+         snprintf(str,sizeof(str),"%s/%s",directory,entry->d_name);
          if(stat(str,&(dir[i].st))==-1
          || ((dir[i].st.st_mode&S_IFMT)==S_IFREG && fnmatch(filename,entry->d_name,0)!=0)
          || ((dir[i].st.st_mode&S_IFMT)!=S_IFREG && (dir[i].st.st_mode&S_IFMT)!=S_IFDIR)
@@ -433,13 +433,13 @@ int ChooseFileName(char *fn)
             {
                l=strlen(dir[i].name);
                if(l>DIRSIZ)
-                  sprintf(str," %.*s..%-.*s",DIRSIZ/2-1,dir[i].name,
+                  snprintf(str,sizeof(str)," %.*s..%-.*s",DIRSIZ/2-1,dir[i].name,
                    DIRSIZ-(DIRSIZ/2)-1,dir[i].name+l-(DIRSIZ-(DIRSIZ/2)-1));
                else
-                  sprintf(str," %.*s",DIRSIZ,dir[i].name);
+                  snprintf(str,sizeof(str)," %.*s",DIRSIZ,dir[i].name);
                if((dir[i].st.st_mode&S_IFMT)==S_IFDIR)
                   strcat(str,"/");
-               sprintf(str1,"%-*.*s",DIRSIZ+2,DIRSIZ+2,str);
+               snprintf(str1,sizeof(str1),"%-*.*s",DIRSIZ+2,DIRSIZ+2,str);
                SetAttr(i==current?CURR_BUTTON_ATTR:DIALOGUE_WIN_ATTR);
                PutStr(x+1,y,str1);
             }
@@ -455,9 +455,9 @@ int ChooseFileName(char *fn)
             PutStr(FRIGHT-6,FDOWN," PgDn ");
 
 	 if(directory[strlen(directory)-1]=='/')
-	    sprintf(str,"%s%s - %s",directory,filename,dir[current].name);
+	    snprintf(str,sizeof(str),"%s%s - %s",directory,filename,dir[current].name);
 	 else
-	    sprintf(str,"%s/%s - %s",directory,filename,dir[current].name);
+	    snprintf(str,sizeof(str),"%s/%s - %s",directory,filename,dir[current].name);
 	 Message(str);
 
          action=GetNextAction();
@@ -522,9 +522,9 @@ int ChooseFileName(char *fn)
 
    LoadHistory-=HistoryLine(fn); /* delete the pattern from the history */
    if(directory[strlen(directory)-1]=='/')
-      sprintf(fn,"%s%s",directory,dir[current].name);
+      snprintf(fn,fn_size,"%s%s",directory,dir[current].name);
    else
-      sprintf(fn,"%s/%s",directory,dir[current].name);
+      snprintf(fn,fn_size,"%s/%s",directory,dir[current].name);
    char *fn_d=fn+strlen(drive);
    if(!strncmp(fn_d,"./",2))
       memmove(fn_d,fn_d+2,strlen(fn_d+1));

@@ -90,7 +90,7 @@ int    LockFile(int fd,bool drop)
          }
          fstat(fd,&st);
 
-         sprintf(msg,"This file is already locked by process %ld",(long)Lock1.l_pid);
+         snprintf(msg,sizeof(msg),"This file is already locked by process %ld",(long)Lock1.l_pid);
          switch(ReadMenuBox(LockEnforce(st.st_mode)?
             LockMenu1:LockMenu,HORIZ,msg," Lock Error ",
 	    VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
@@ -233,7 +233,7 @@ int   LoadFile(char *name)
       return(OK);
    }
 
-   sprintf(msg,"Loading the file \"%.60s\"...",name);
+   snprintf(msg,sizeof(msg),"Loading the file \"%.60s\"...",name);
    MessageSync(msg);
 
    newfile=0;
@@ -425,27 +425,30 @@ int   LoadFile(char *name)
 
 int   MaxBackup=9;
 
-static char *BackupName(char *buf,char *bp,char *filename,char *bak,int n)
+static char *BackupName(char *buf,unsigned buf_size,char *bp,char *filename,char *bak,int n)
 {
-   char *suffix=(char*)alloca(strlen(bak)+40+1);
-   sprintf(suffix,bak,n);
-   sprintf(buf,"%s/%s%s",bp,filename,suffix);
+   unsigned nbytes=strlen(bak)+40+1;
+   char *suffix=(char*)alloca(nbytes);
+   snprintf(suffix,nbytes,bak,n);
+   snprintf(buf,buf_size,"%s/%s%s",bp,filename,suffix);
    return buf;
 }
 
 static void MoveBackup(char *bp,char *filename,char *bak,int n)
 {
-   char *bakname=(char*)alloca(strlen(bp)+1+strlen(filename)+strlen(bak)+40+1);
+   unsigned nbytes=strlen(bp)+1+strlen(filename)+strlen(bak)+40+1;
+   char *bakname=(char*)alloca(nbytes);
 
-   BackupName(bakname,bp,filename,bak,n);
+   BackupName(bakname,nbytes,bp,filename,bak,n);
    if(access(bakname,F_OK)!=-1)
    {
       if(n>=MaxBackup)
 	 remove(bakname);
       else
       {
-	 char *bakname1=(char*)alloca(strlen(bp)+1+strlen(filename)+strlen(bak)+40+1);
-	 BackupName(bakname1,bp,filename,bak,n+1);
+         unsigned nbytes1=strlen(bp)+1+strlen(filename)+strlen(bak)+40+1;
+	 char *bakname1=(char*)alloca(nbytes1);
+	 BackupName(bakname1,nbytes1,bp,filename,bak,n+1);
 	 if(!strcmp(bakname,bakname1))
 	    remove(bakname);
 	 else
@@ -496,18 +499,24 @@ static int CreateBak(char *name)
 
 
    char *bp=BakPath;
+   unsigned bp_size=sizeof(BakPath);
    if(*bp==0)
+   {
       bp=directory;
+      bp_size=sizeof(directory);
+   }
    else if(bp[0]=='~' && (bp[1]==0 || isslash(bp[1])))
    {
-      bp=(char*)alloca(strlen(bp)+strlen(HOME));
-      sprintf(bp,"%s%s",HOME,BakPath+1);
+      bp_size=strlen(bp)+strlen(HOME);
+      bp=(char*)alloca(bp_size);
+      snprintf(bp,bp_size,"%s%s",HOME,BakPath+1);
    }
 
    MoveBackup(bp,filename,bak,1);
 
-   char *bakname=(char*)alloca(strlen(bp)+1+strlen(filename)+strlen(bak)+40+1);
-   BackupName(bakname,bp,filename,bak,1);
+   unsigned nbytes=strlen(bp)+1+strlen(filename)+strlen(bak)+40+1;
+   char *bakname=(char*)alloca(nbytes);
+   BackupName(bakname,nbytes,bp,filename,bak,1);
 
    if(stat(name,&st)==-1)
    {
@@ -605,7 +614,7 @@ int   SaveFile(char *name)
    if(Text && !View)
       UserOptimizeText();
 
-   sprintf(msg,"Saving the file \"%.60s\"...",name);
+   snprintf(msg,sizeof(msg),"Saving the file \"%.60s\"...",name);
    MessageSync(msg);
 
    if(stat(name,&st)!=-1)

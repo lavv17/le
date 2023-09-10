@@ -247,8 +247,9 @@ void  FormatItemText(int n,int clear_len)
       right_text=tab+1;
    }
    int right_len=strlen(right_text);
-   char *new_text=(char*)malloc(len+clear_len+right_len+3);
-   sprintf(new_text," %.*s%*s ",len,old_text,clear_len+right_len,right_text);
+   unsigned nbytes=len+clear_len+right_len+3;
+   char *new_text=(char*)malloc(nbytes);
+   snprintf(new_text,nbytes," %.*s%*s ",len,old_text,clear_len+right_len,right_text);
    m[n].SetText(new_text);
 }
 
@@ -524,7 +525,7 @@ void LoadMainMenu()
    int mi=0;
    int level=0;
 
-   sprintf(fn,"%s/.le/mainmenu",HOME);
+   snprintf(fn,sizeof(fn),"%s/.le/mainmenu",HOME);
 
    f=fopen(fn,"r");
    if(f)

@@ -306,7 +306,7 @@ InodeInfo::InodeInfo(const HistoryLine *f_line)
 const char *InodeInfo::to_string() const
 {
    static char s[80];
-   sprintf(s,"%ld,%ld,%ld,%ld,%ld,%ld,%ld",
+   snprintf(s,sizeof(s),"%ld,%ld,%ld,%ld,%ld,%ld,%ld",
          (long)inode,(long)device,(long)time,
          (long)size,(long)line,(long)col,
 	 (long)offset);

@@ -216,10 +216,11 @@ static FILE *open_syntax_d(const char *name)
 {
    if(name[0]!='/') {
       const char *base_dir="syntax.d";
-      char *fn=(char*)alloca(strlen(PKGDATADIR)+strlen(HOME)+1+strlen(base_dir)+1+strlen(name)+1);
-      sprintf(fn,"%s/.le/%s/%s",HOME,base_dir,name);
+      unsigned nbytes=strlen(PKGDATADIR)+strlen(HOME)+1+strlen(base_dir)+1+strlen(name)+1;
+      char *fn=(char*)alloca(nbytes);
+      snprintf(fn,nbytes,"%s/.le/%s/%s",HOME,base_dir,name);
       if(access(fn,R_OK)==-1)
-	 sprintf(fn,"%s/%s/%s",PKGDATADIR,base_dir,name);
+	 snprintf(fn,nbytes,"%s/%s/%s",PKGDATADIR,base_dir,name);
       name=fn;
    }
    return fopen(name,"r");
@@ -462,14 +463,17 @@ void InitHighlight()
       return;
 
    static const char base_fn[]="syntax";
-   char *fn1=(char*)alloca(strlen(PKGDATADIR)+1+strlen(base_fn)+1);
-   char *fn2=(char*)alloca(strlen(HOME)+1+3+1+ strlen(base_fn)+1);
-   char *fn3=(char*)alloca(4+strlen(base_fn)+1);
+   unsigned nbytes1=strlen(PKGDATADIR)+1+strlen(base_fn)+1;
+   unsigned nbytes2=strlen(HOME)+1+3+1+ strlen(base_fn)+1;
+   unsigned nbytes3=4+strlen(base_fn)+1;
+   char *fn1=(char*)alloca(nbytes1);
+   char *fn2=(char*)alloca(nbytes2);
+   char *fn3=(char*)alloca(nbytes3);
    char *fn;
 
-   sprintf(fn1,"%s/%s",PKGDATADIR,base_fn);
-   sprintf(fn2,"%s/.le/%s",HOME,base_fn);
-   sprintf(fn3,".le.%s",base_fn);
+   snprintf(fn1,nbytes1,"%s/%s",PKGDATADIR,base_fn);
+   snprintf(fn2,nbytes2,"%s/.le/%s",HOME,base_fn);
+   snprintf(fn3,nbytes3,".le.%s",base_fn);
 
    FILE *f=0;
    if(!f)

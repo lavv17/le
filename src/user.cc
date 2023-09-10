@@ -970,13 +970,13 @@ int   file_check(const char *fn)
    {
       if(access(fn,F_OK)==0)
       {
-	 sprintf(msg,"File: %s\nThe specified file is not readable",fn);
+	 snprintf(msg,sizeof(msg),"File: %s\nThe specified file is not readable",fn);
 	 ErrMsg(msg);
 	 return ERR;
       }
       if((View&RO_MODE) || buffer_mmapped)  // view mode or mmap mode
       {
-	 sprintf(msg,"File: %s\nThe specified file does not exist",fn);
+	 snprintf(msg,sizeof(msg),"File: %s\nThe specified file does not exist",fn);
 	 ErrMsg(msg);
 	 return ERR;
       }
@@ -989,13 +989,13 @@ int   file_check(const char *fn)
 	 strcpy(dir,".");
       if(access(dir,F_OK)==-1)
       {
-	 sprintf(msg,"File: %s\nThe specified directory does not exist",fn);
+	 snprintf(msg,sizeof(msg),"File: %s\nThe specified directory does not exist",fn);
 	 ErrMsg(msg);
 	 return ERR;
       }
       if(access(dir,W_OK|X_OK)==-1)
       {
-	 sprintf(msg,"File: %s\nThe specified file does not exist\n"
+	 snprintf(msg,sizeof(msg),"File: %s\nThe specified file does not exist\n"
 		"and the directory does not permit creating",fn);
 	 ErrMsg(msg);
 	 return ERR;
@@ -1007,7 +1007,7 @@ int   file_check(const char *fn)
 	 {" &Cancel ",MIDDLE+6,4},
 	 {NULL}
       };
-      sprintf(msg,"The file `%s' does not exist. Create?",fn);
+      snprintf(msg,sizeof(msg),"The file `%s' does not exist. Create?",fn);
       switch(ReadMenuBox(CreateOrNot,HORIZ,msg,
 	 " Verify ",VERIFY_WIN_ATTR,CURR_BUTTON_ATTR))
       {
@@ -1027,7 +1027,7 @@ void    UserLoad()
 
    if(getstring("Load: ",newname,sizeof(newname)-1,&LoadHistory)>0)
    {
-      if(ChooseFileName(newname)<0)
+      if(ChooseFileName(newname,sizeof(newname))<0)
          return;
       if(file_check(newname)==ERR)
       {
@@ -1054,7 +1054,7 @@ int   UserSaveAs()
 
    if(getstring("Save as: ",newname,sizeof(newname)-1,&LoadHistory,NULL,NULL)>0)
    {
-      if(ChooseFileName(newname)<0)
+      if(ChooseFileName(newname,sizeof(newname))<0)
          return(ERR);
       if(SaveFile(newname)!=OK)
       {
@@ -1080,7 +1080,7 @@ void  UserSwitch()
    strncpy(newname,prev->get_line(),255);
    newname[255]=0;
 
-   if(ChooseFileName(newname)<0)
+   if(ChooseFileName(newname,sizeof(newname))<0)
       return;
 
    if(access(newname,R_OK)==-1)
@@ -1121,21 +1121,21 @@ void  UserInfo()
 
    do
    {
-      sprintf(s,"File: %.40s",FileName);
+      snprintf(s,sizeof(s),"File: %.40s",FileName);
       PutStr(3,cl=2,s);
 
-      sprintf(s,"Line=%-6ld Col=%-6ld\nSize:%-6ld Offset:%-6ld",(long)GetLine(),
+      snprintf(s,sizeof(s),"Line=%-6ld Col=%-6ld\nSize:%-6ld Offset:%-6ld",(long)GetLine(),
              (long)(Text&&Eol()?GetStdCol():GetCol()),(long)Size(),(long)Offset());
       PutStr(3,cl+=2,s);
 
-      sprintf(s,"CWD:  %.40s",cwd);
+      snprintf(s,sizeof(s),"CWD:  %.40s",cwd);
       PutStr(3,cl+=3,s);
 
       time(&t);
-      sprintf(s,"Date: %s",ctime(&t));
+      snprintf(s,sizeof(s),"Date: %s",ctime(&t));
       PutStr(3,cl+=1,s);
 
-      sprintf(s,"User: %s(%ld), Group: %s(%ld)",pw?pw->pw_name:"",(long)uid,
+      snprintf(s,sizeof(s),"User: %s(%ld), Group: %s(%ld)",pw?pw->pw_name:"",(long)uid,
                                               gr?gr->gr_name:"",(long)gid);
       PutStr(3,cl+=2,s);
 

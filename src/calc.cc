@@ -349,11 +349,11 @@ const char *calc_value::to_string()
 {
    static char s[256];
    if(base==10)
-      sprintf(s,"%.28Lg",value);
+      snprintf(s,sizeof(s),"%.28Lg",value);
    else if(base==8)
-      sprintf(s,"%#llo",(long long)value);
+      snprintf(s,sizeof(s),"%#llo",(long long)value);
    else if(base==16)
-      sprintf(s,"0x%llX",(long long)value);
+      snprintf(s,sizeof(s),"0x%llX",(long long)value);
    else
       strcpy(s,"unsupported base");
    return s;

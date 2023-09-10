@@ -519,7 +519,7 @@ void  Replace()
             else if(rcnt==1)
                strcpy(str,"1 replacement.");
             else
-               sprintf(str,"%d replacements.",rcnt);
+               snprintf(str,sizeof(str),"%d replacements.",rcnt);
             if(key!='#')
                CurrentPos=back_tp;
             SetStdCol();

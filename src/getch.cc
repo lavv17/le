@@ -217,7 +217,7 @@ int linux_process_key(int key)
    }
    if(code)
    {
-      sprintf(str,"\033[1;%d%c",xterm_shift,code);
+      snprintf(str,sizeof(str),"\033[1;%d%c",xterm_shift,code);
       return ungetstr(str);
    }
    code=0;
@@ -238,7 +238,7 @@ int linux_process_key(int key)
    }
    if(code)
    {
-      sprintf(str,"\033[%d;%d~",code,xterm_shift);
+      snprintf(str,sizeof(str),"\033[%d;%d~",code,xterm_shift);
       return ungetstr(str);
    }
 

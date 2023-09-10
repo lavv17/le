@@ -292,19 +292,19 @@ void  DescribeOneColor(char *const desc,const color *cp)
    {
       if(c.fg!=NO_COLOR && a->value.fg==c.fg)
       {
-	 sprintf(d,",%s",a->name);
+	 snprintf(d,sizeof(color_descriptions[0]),",%s",a->name);
 	 d+=strlen(d);
 	 c.fg=NO_COLOR;
       }
       if(c.bg!=NO_COLOR && a->value.bg==c.bg)
       {
-	 sprintf(d,",%s",a->name);
+	 snprintf(d,sizeof(color_descriptions[0]),",%s",a->name);
 	 d+=strlen(d);
 	 c.bg=NO_COLOR;
       }
       if(c.attr & a->value.attr)
       {
-	 sprintf(d,",%s",a->name);
+	 snprintf(d,sizeof(color_descriptions[0]),",%s",a->name);
 	 d+=strlen(d);
 	 c.attr&=~a->value.attr;
       }

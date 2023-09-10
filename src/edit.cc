@@ -432,14 +432,15 @@ void    Initialize()
    initcalc();
 
 #ifndef MSDOS
-   char  *filename=(char*)alloca((strlen(HOME)|15)+17);
-   sprintf(filename,"%s/.le",HOME);
+   unsigned nbytes=(strlen(HOME)|15)+17;
+   char  *filename=(char*)alloca(nbytes);
+   snprintf(filename,nbytes,"%s/.le",HOME);
    mkdir(filename,0700);
    strcat(filename,"/tmp");
    mkdir(filename,0700);
-   sprintf(HstName,"%s/.le/history2",HOME);
+   snprintf(HstName,sizeof(HstName),"%s/.le/history2",HOME);
 #else
-   sprintf(HstName,"%s/le.hst",HOME);
+   snprintf(HstName,sizeof(HstName),"%s/le.hst",HOME);
 #endif
 
    InstallSignalHandlers();
@@ -779,7 +780,7 @@ int     main(int argc,char **argv)
       {
          ShowAbout();
          if(getstring("Load: ",newname,255,&LoadHistory,NULL,NULL)<1
-                                             || ChooseFileName(newname)<0)
+                                             || ChooseFileName(newname,sizeof(newname))<0)
             Terminate();
          HideAbout();
       }
@@ -788,7 +789,7 @@ int     main(int argc,char **argv)
    {
       for(; optind<argc; optind++)
          LoadHistory+=argv[optind];
-      sprintf(newname,"%.255s",argv[argc-1]);
+      snprintf(newname,sizeof(newname),"%.255s",argv[argc-1]);
    }
    if(newname[0] && file_check(newname)==ERR)
    {

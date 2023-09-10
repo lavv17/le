@@ -369,7 +369,7 @@ void    Write()
       PipeBlock(BlockFile+1,/*IN*/FALSE,/*OUT*/TRUE);
       return;
    }
-   if(ChooseFileName(BlockFile)<0)
+   if(ChooseFileName(BlockFile,sizeof(BlockFile))<0)
       return;
    LoadHistory.Push();
 
@@ -468,7 +468,7 @@ int OptionallyConvertBlockNewLines(const char *bname)
    if(EolIs(EOL_DOS) && dos_nl*2<unix_nl)
    {
 //       SyncTextWin();
-      sprintf(msg,"The %s block looks like it is in UNIX format,\n"
+      snprintf(msg,sizeof(msg),"The %s block looks like it is in UNIX format,\n"
 		  "whereas the current text is in DOS format\n"
 		  "Do you wish to convert the block?",bname);
       switch(ReadMenuBox(ynMenu,HORIZ,msg,
@@ -486,7 +486,7 @@ int OptionallyConvertBlockNewLines(const char *bname)
    else if(EolIs(EOL_UNIX) && dos_nl*2>unix_nl)
    {
 //       SyncTextWin();
-      sprintf(msg,"The %s block looks like it is in DOS format,\n"
+      snprintf(msg,sizeof(msg),"The %s block looks like it is in DOS format,\n"
 		  "whereas the current text is in UNIX format\n"
 		  "Do you wish to convert the block?",bname);
       switch(ReadMenuBox(ynMenu,HORIZ,msg,
@@ -530,7 +530,7 @@ void    Read()
 	 goto after_read;
       return;
    }
-   if(ChooseFileName(BlockFile)<0)
+   if(ChooseFileName(BlockFile,sizeof(BlockFile))<0)
       return;
    LoadHistory.Push();
 
@@ -698,7 +698,7 @@ void   Indent()
    if(View || hide)
       return;
    if(is[0]==0)
-      sprintf(is,"%d",IndentSize);
+      snprintf(is,sizeof(is),"%d",IndentSize);
    if(getstring("Indent size: ",is,sizeof(is)-1,NULL,NULL,NULL)<1)
       return;
    if(sscanf(is,"%d",&i)==0 || i==0 || abs(i)>1024)
@@ -721,7 +721,7 @@ void   Unindent()
    if(View || hide)
       return;
    if(is[0]==0)
-      sprintf(is,"%d",IndentSize);
+      snprintf(is,sizeof(is),"%d",IndentSize);
    if(getstring("Unindent size: ",is,sizeof(is)-1,NULL,NULL,NULL)<1)
       return;
    if(sscanf(is,"%d",&i)==0 || i==0 || abs(i)>1024)

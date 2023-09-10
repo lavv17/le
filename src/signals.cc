@@ -139,7 +139,7 @@ static char mem[4000];
 char *TmpFileName()
 {
 #ifndef __MSDOS__
-   sprintf(mem,"%s/.le/tmp/",HOME);
+   snprintf(mem,sizeof(mem),"%s/.le/tmp/",HOME);
    char *add=mem+strlen(mem);
    strcpy(add,FileName);
    while(*add)
@@ -148,16 +148,16 @@ char *TmpFileName()
 	 *add='_';
       add++;
    }
-   sprintf(add,".%d",(int)getpid());
+   snprintf(add,mem+sizeof(mem)-add,".%d",(int)getpid());
 #else
-   sprintf(mem,"le%d.res",(int)getpid());
+   snprintf(mem,sizeof(mem),"le%d.res",(int)getpid());
 #endif
    return mem;
 }
 char *HupFileName(int sig)
 {
 #ifndef __MSDOS__
-   sprintf(mem,"%s/.le/tmp/DUMP-%d-",HOME,sig);
+   snprintf(mem,sizeof(mem),"%s/.le/tmp/DUMP-%d-",HOME,sig);
    char *add=mem+strlen(mem);
    strcpy(add,FileName);
    while(*add)
@@ -166,9 +166,9 @@ char *HupFileName(int sig)
 	 *add='_';
       add++;
    }
-   sprintf(add,".%d",(int)getpid());
+   snprintf(add,mem+sizeof(mem)-add,".%d",(int)getpid());
 #else
-   sprintf(mem,"le%d.hup",(int)getpid());
+   snprintf(mem,sizeof(mem),"le%d.hup",(int)getpid());
 #endif
    return mem;
 }
