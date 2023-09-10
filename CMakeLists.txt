@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.7)
 
 execute_process(
     COMMAND gnulib/git-version-gen .tarball-version
