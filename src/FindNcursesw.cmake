@@ -99,7 +99,11 @@
 
 include(CheckLibraryExists)
 
+# On MacOS, also search for packages installed by Homebrew.
 find_library(CURSES_NCURSESW_LIBRARY NAMES ncursesw
+  PATHS
+    /usr/local/opt/ncurses/lib
+    /opt/homebrew/opt/ncurses/lib
   DOC "Path to libncursesw.so or .lib or .a")
 
 set(CURSES_USE_NCURSES FALSE)
@@ -159,8 +163,11 @@ if(CURSES_USE_NCURSESW)
   set(CURSES_FOUND ${NCURSESW_FOUND})
 
 else()
-  find_package(Curses)
+  find_package(Curses REQUIRED)
   set(NCURSESW_FOUND FALSE)
+  if(NCURSES_VERSION VERSION_LESS "6.0")
+    message(WARNING "This Curses version ${NCURSES_VERSION} may be broken. Please use NCurses 6.0 or later.")
+  endif()
 endif()
 
 # Report whether each possible header name exists in the include directory.

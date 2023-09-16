@@ -98,6 +98,7 @@ const char *GetActionCodeText(const char *code)
 {
    static char code_text[1024];
    char  *store=code_text;
+   unsigned store_size=sizeof(code_text);
 
    while(*code)
    {
@@ -105,15 +106,21 @@ const char *GetActionCodeText(const char *code)
       if(iscntrl(the_code))
       {
          if(the_code=='\033')
-            sprintf(store,"\\e");
+            snprintf(store,store_size,"\\e");
          else if(the_code<32)
-            sprintf(store,"^%c",the_code+'@');
+            snprintf(store,store_size,"^%c",the_code+'@');
          else
-            sprintf(store,"\\%03o",the_code);
-         store+=strlen(store);
+            snprintf(store,store_size,"\\%03o",the_code);
+
+         unsigned nbytes=strlen(store);
+         store+=nbytes;
+         store_size-=nbytes;
       }
       else
+      {
          *(store++)=the_code;
+         store_size-=1;
+      }
    }
    *store=0;
    return(code_text);
@@ -165,7 +172,7 @@ static int PrettyCodeScore(const char *c)
 	    else
 	       score+=2;
 	    if(shift)
-	       sprintf(term_name,"kf%d",shift*FuncKeysNum+fk);
+	       snprintf(term_name,sizeof(term_name),"kf%d",shift*FuncKeysNum+fk);
 	 }
 	 else
 	    score+=8;
@@ -193,6 +200,7 @@ const char *ActionCodePrettyPrint(const char *c)
 {
    static char code_text[1024];
    char  *store=code_text;
+   unsigned store_size=sizeof(code_text);
    *store=0;
 
    while(*c)
@@ -226,12 +234,16 @@ const char *ActionCodePrettyPrint(const char *c)
 	  || sscanf(term_name,"kf%d",&fk)==1) && shift<4)
 	 {
 	    static char shift_str_map[][3]={"","~","^","~^"};
-	    store+=sprintf(store,"%sF%d",shift_str_map[shift],fk);
+	    unsigned nbytes=snprintf(store,store_size,"%sF%d",shift_str_map[shift],fk);
+	    store+=nbytes;
+	    store_size-=nbytes;
 	 }
 	 else
 	 {
 	    // FIXME.
-	    store+=sprintf(store,"%s",term_name);
+	    unsigned nbytes=snprintf(store,store_size,"%s",term_name);
+	    store+=nbytes;
+	    store_size-=nbytes;
 	 }
 	 if(c[1] && c[1]!='|')
 	 {
@@ -435,7 +447,7 @@ KeyTreeNode *BuildKeyTree(const ActionCodeRec *ac_table)
 		  code++;
 
 	       if(sscanf(term_name,"%1dkf%d",&shift,&fk)==2)
-		  sprintf(term_name,"kf%d",shift*FuncKeysNum+fk);
+		  snprintf(term_name,sizeof(term_name),"kf%d",shift*FuncKeysNum+fk);
 
 	       if((fk_mask&(1<<fk_num))==0)
 	       {
@@ -446,8 +458,8 @@ KeyTreeNode *BuildKeyTree(const ActionCodeRec *ac_table)
 	       {
 		  term_str=tigetstr(term_name);
 		  if(term_str==NULL || term_str==(char*)-1)
-	       	     goto fallback;
-	       	  while(term_str[0] && term_str[1])
+		     goto fallback;
+		  while(term_str[0] && term_str[1])
 		  {
 		     curr=AddToKeyTree(curr,(unsigned char)term_str[0],delay,NO_ACTION,NULL);
 		     delay=HALF_DELAY;
@@ -487,7 +499,7 @@ KeyTreeNode *BuildKeyTree(const ActionCodeRec *ac_table)
 	    delay=HALF_DELAY;
 	 }
 
-      	 fk_mask++;
+	 fk_mask++;
       }
       ac_table++;
    }

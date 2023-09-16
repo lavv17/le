@@ -342,9 +342,9 @@ void  StatusLine()
       else
       {
 	 if(MBCheckRight() && MBCharSize>1)
-	    sprintf(chr,"UC:%04X",WChar());
+	    snprintf(chr,sizeof(chr),"UC:%04X",WChar());
 	 else
-	    sprintf(chr,"Ch:%-3d",Char());
+	    snprintf(chr,sizeof(chr),"Ch:%-3d",Char());
       }
    }
 
@@ -357,20 +357,20 @@ void  StatusLine()
    if(View)
    {
       if(buffer_mmapped)
-	 sprintf(flags,"MM R/O %c",
+	 snprintf(flags,sizeof(flags),"MM R/O %c",
 	    rblock   ?'B':' ');
       else
-	 sprintf(flags,"R/O %c %c",
+	 snprintf(flags,sizeof(flags),"R/O %c %c",
 	    rblock   ?'B':' ',eol);
    }
    else
    {
       if(buffer_mmapped)
-	 sprintf(flags,"MM %c%c   ",
+	 snprintf(flags,sizeof(flags),"MM %c%c   ",
 	    inputmode   ?(inputmode==2?'G':'R'):' ',
 	    rblock	?'B':' ');
       else
-	 sprintf(flags,"%c%c%c%c%c%c%c",
+	 snprintf(flags,sizeof(flags),"%c%c%c%c%c%c%c",
 	    modified	?'*':' ',
 	    inputmode   ?(inputmode==2?'G':'R'):' ',
 	    insert	?'I':'O',
@@ -400,26 +400,27 @@ void  StatusLine()
       if(wname==0)
       {
 	 if(l>14)
-	    sprintf(name,"%.*s..%.*s",6,bn,6,bn+l-6);
+	    snprintf(name,sizeof(name),"%.*s..%.*s",6,bn,6,bn+l-6);
 	 else
 	    strcpy(name,bn);
       }
    }
    else
-      sprintf(name,"NewFile");
+      snprintf(name,sizeof(name),"NewFile");
 
 
    if(hex)
-      sprintf(status,"OctOffs:0%-11lo",(unsigned long)(Offset()));
+      snprintf(status,sizeof(status),"OctOffs:0%-11lo",(unsigned long)(Offset()));
    else
-      sprintf(status,"Line=%-5lu Col=%-4lu",
+      snprintf(status,sizeof(status),"Line=%-5lu Col=%-4lu",
 	 (unsigned long)(GetLine()+1),
 	 (unsigned long)(((Text&&Eol())?GetStdCol():GetCol())+1));
 
-   sprintf(status+strlen(status)," Sz:%-6lu %-7s %s",
+   unsigned status_len=strlen(status);
+   snprintf(status+status_len,sizeof(status)-status_len," Sz:%-6lu %-7s %s",
          (unsigned long)(Size()),chr,flags);
 
-   sprintf(status_right," Offs:%lu (%d%%)",(unsigned long)(Offset()),
+   snprintf(status_right,sizeof(status_right)," Offs:%lu (%d%%)",(unsigned long)(Offset()),
          (int)(Size()?(Offset()*100.+Size()/2)/Size():100));
 
    move(StatusLineY,0);
@@ -610,7 +611,7 @@ void  Redisplay(num line,offs ptr,num limit)
 
 	    if(!EofAt(ptr) || line==(Size()-ScreenTop.Offset()+15)/16)
 	    {
-	       sprintf(s,"%08lX   ",(unsigned long)ptr);
+	       snprintf(s,sizeof(s),"%08lX   ",(unsigned long)ptr);
 	       for(sp=s; *sp; sp++)
 		  *clp++=norm_attr->n_attr|*sp;
 	    }
@@ -618,7 +619,7 @@ void  Redisplay(num line,offs ptr,num limit)
 	    {
 	       if(EofAt(ptr))
 		  break;
-	       sprintf(s,"%02X",CharAt(ptr));
+	       snprintf(s,sizeof(s),"%02X",CharAt(ptr));
 	       ca=(InBlock(ptr)?blk_attr:norm_attr);
 	       if(ascii && ptr==Offset() && ShowMatchPos)
 		  ca=SHADOW_ATTR;
@@ -655,7 +656,7 @@ void  Redisplay(num line,offs ptr,num limit)
 	    clwp=clw;
 	    if(!EofAt(ptr) || line==(Size()-ScreenTop.Offset()+15)/16)
 	    {
-	       sprintf(s,"%08lX   ",(unsigned long)ptr);
+	       snprintf(s,sizeof(s),"%08lX   ",(unsigned long)ptr);
 	       for(sp=s; *sp; sp++)
 		  le_add_cchar(clwp,norm_attr->n_attr,*sp);
 	    }
@@ -663,7 +664,7 @@ void  Redisplay(num line,offs ptr,num limit)
 	    {
 	       if(EofAt(ptr))
 		  break;
-	       sprintf(s,"%02X",CharAt(ptr));
+	       snprintf(s,sizeof(s),"%02X",CharAt(ptr));
 	       ca=(InBlock(ptr)?blk_attr:norm_attr);
 	       if(ascii && ptr==Offset() && ShowMatchPos)
 		  ca=SHADOW_ATTR;
@@ -978,9 +979,9 @@ void  FError(const char *s)
    char  msg[256];
 
    if(strlen(s)>50)
-      sprintf(msg,"File: ...%s\n",s+strlen(s)-47);
+      snprintf(msg,sizeof(msg),"File: ...%s\n",s+strlen(s)-47);
    else
-      sprintf(msg,"File: %s\n",s);
+      snprintf(msg,sizeof(msg),"File: %s\n",s);
    strcat(msg,err);
 
    ErrMsg(msg);

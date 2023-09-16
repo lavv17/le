@@ -34,19 +34,19 @@ void  EditorReadKeymap()
    char  filename[1024];
    FILE  *f;
 
-   sprintf(filename,"%s/.le/keymap-%s",HOME,TERM);
+   snprintf(filename,sizeof(filename),"%s/.le/keymap-%s",HOME,TERM);
    f=fopen(filename,"r");
    if(f==NULL)
    {
-      sprintf(filename,"%s/keymap-%s",PKGDATADIR,TERM);
+      snprintf(filename,sizeof(filename),"%s/keymap-%s",PKGDATADIR,TERM);
       f=fopen(filename,"r");
       if(f==NULL)
       {
-         sprintf(filename,"%s/.le/keymap",HOME);
+         snprintf(filename,sizeof(filename),"%s/.le/keymap",HOME);
          f=fopen(filename,"r");
          if(f==NULL)
          {
-            sprintf(filename,"%s/keymap",PKGDATADIR);
+            snprintf(filename,sizeof(filename),"%s/keymap",PKGDATADIR);
             f=fopen(filename,"r");
             if(f==NULL)
                return;
@@ -90,7 +90,7 @@ void SaveKeymap()
    char  filename[1024];
    FILE  *f;
 
-   sprintf(filename,"%s/.le/keymap",HOME);
+   snprintf(filename,sizeof(filename),"%s/.le/keymap",HOME);
    f=fopen(filename,"w");
    if(!f)
    {
@@ -105,7 +105,7 @@ void SaveKeymapForTerminal()
    char  filename[1024];
    FILE  *f;
 
-   sprintf(filename,"%s/.le/keymap-%s",HOME,TERM);
+   snprintf(filename,sizeof(filename),"%s/.le/keymap-%s",HOME,TERM);
    f=fopen(filename,"w");
    if(!f)
    {

@@ -36,15 +36,17 @@ void ColorsSaveToFile(const char *f)
 static const char *const colors_file="/.le/colors";
 void ColorsSave()
 {
-   char *f=(char*)alloca(strlen(HOME)+strlen(colors_file)+1);
-   sprintf(f,"%s%s",HOME,colors_file);
+   unsigned nbytes=strlen(HOME)+strlen(colors_file)+1;
+   char *f=(char*)alloca(nbytes);
+   snprintf(f,nbytes,"%s%s",HOME,colors_file);
    ColorsSaveToFile(f);
 }
 
 void ColorsSaveForTerminal()
 {
-   char *f=(char*)alloca(strlen(HOME)+strlen(colors_file)+1+strlen(TERM)+1);
-   sprintf(f,"%s%s-%s",HOME,colors_file,TERM);
+   unsigned nbytes=strlen(HOME)+strlen(colors_file)+1+strlen(TERM)+1;
+   char *f=(char*)alloca(nbytes);
+   snprintf(f,nbytes,"%s%s-%s",HOME,colors_file,TERM);
    ColorsSaveToFile(f);
 }
 

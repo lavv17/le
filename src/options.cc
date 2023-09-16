@@ -324,9 +324,9 @@ void  SaveTermOpt()
    char  t[256];
    MessageSync("Saving the terminal options...");
 #ifndef MSDOS
-   sprintf(t,"%s/.le/term-%s",HOME,TERM);
+   snprintf(t,sizeof(t),"%s/.le/term-%s",HOME,TERM);
 #else
-   sprintf(t,"%s/le-%s",HOME,TERM);
+   snprintf(t,sizeof(t),"%s/le-%s",HOME,TERM);
 #endif
    SaveConfToFile(t,term);
    ClearMessage();
@@ -445,15 +445,15 @@ void  ReadConf()
 #ifndef __MSDOS__
    bool mine;
 
-   sprintf(t,"%s/.le/term-%s",HOME,TERM);
+   snprintf(t,sizeof(t),"%s/.le/term-%s",HOME,TERM);
    if(!ConfOK(t,false))
    {
-      sprintf(t,"%s/term-%s",PKGDATADIR,TERM);
+      snprintf(t,sizeof(t),"%s/term-%s",PKGDATADIR,TERM);
       if(!ConfOK(t,false))
       {
-	 sprintf(t,"%s/.le/term",HOME);
+	 snprintf(t,sizeof(t),"%s/.le/term",HOME);
 	 if(!ConfOK(t,false))
-            sprintf(t,"%s/term",PKGDATADIR);
+            snprintf(t,sizeof(t),"%s/term",PKGDATADIR);
       }
    }
    ReadConfFromFile(t,term,false);
@@ -461,15 +461,15 @@ void  ReadConf()
    if(chset[0]=='7') // workaround for older version
       init_chset();
 
-   sprintf(t,"%s/.le/colors-%s",HOME,TERM);
+   snprintf(t,sizeof(t),"%s/.le/colors-%s",HOME,TERM);
    if(!ConfOK(t,false))
    {
-      sprintf(t,"%s/colors-%s",PKGDATADIR,TERM);
+      snprintf(t,sizeof(t),"%s/colors-%s",PKGDATADIR,TERM);
       if(!ConfOK(t,false))
       {
-	 sprintf(t,"%s/.le/colors",HOME);
+	 snprintf(t,sizeof(t),"%s/.le/colors",HOME);
 	 if(!ConfOK(t,false))
-	    sprintf(t,"%s/colors",PKGDATADIR);
+	    snprintf(t,sizeof(t),"%s/colors",PKGDATADIR);
       }
    }
    ReadConfFromFile(t,colors,false);
@@ -481,10 +481,10 @@ void  ReadConf()
       strcpy(InitName,".le.ini");
       if(!ConfOK(InitName,mine=true))
       {
-	 sprintf(InitName,"%s/.le/le.ini",HOME);
+	 snprintf(InitName,sizeof(InitName),"%s/.le/le.ini",HOME);
 	 if(!ConfOK(InitName,mine=false))
 	 {
-	    sprintf(t,"%s/le.ini",PKGDATADIR);
+	    snprintf(t,sizeof(t),"%s/le.ini",PKGDATADIR);
 	    ReadConfFromFile(t,init,false);
 	    goto ini_done;
 	 }
@@ -495,11 +495,11 @@ void  ReadConf()
 ini_done:
 
 #else
-   sprintf(t,"%s/le-%s",HOME,TERM);
+   snprintf(t,sizeof(t),"%s/le-%s",HOME,TERM);
    ReadConfFromFile(t,term,false);
    strcpy(InitName,"le.ini");
    if(access(InitName,R_OK)==-1)
-     sprintf(InitName,"%s/le.ini",HOME);
+     snprintf(InitName,sizeof(InitName),"%s/le.ini",HOME);
    ReadConfFromFile(InitName,init,false);
 #endif
 
@@ -757,9 +757,9 @@ void  W_Dialogue(struct opt *opt,
             break;
          case(STR):
             if(p==curr)
-               sprintf(s,"%-*.*s",p->len,p->len,(char*)(p->var)+mb_get_pos_for_col((char*)(p->var),shift,strlen((char*)(p->var))));
+               snprintf(s,sizeof(s),"%-*.*s",p->len,p->len,(char*)(p->var)+mb_get_pos_for_col((char*)(p->var),shift,strlen((char*)(p->var))));
             else
-               sprintf(s,"%-*.*s",p->len,p->len,(char*)(p->var));
+               snprintf(s,sizeof(s),"%-*.*s",p->len,p->len,(char*)(p->var));
             if(curr==p)
                SetAttr(CURR_BUTTON_ATTR);
             PutStr(p->x,p->y,s);
@@ -768,7 +768,7 @@ void  W_Dialogue(struct opt *opt,
             DisplayItem(p->x,p->y,p->name,curr==p?CURR_BUTTON_ATTR:DIALOGUE_WIN_ATTR);
             break;
          case(NUM):
-            sprintf(s,"%-*d",(p->len?p->len:2),*(int*)(p->var));
+            snprintf(s,sizeof(s),"%-*d",(p->len?p->len:2),*(int*)(p->var));
             if(curr==p)
                SetAttr(CURR_BUTTON_ATTR);
             PutStr(p->x,p->y,s);

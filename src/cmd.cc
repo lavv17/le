@@ -107,7 +107,7 @@ void    cmd(const char *c,bool autosave,bool pauseafter)
     else
         *n='\0',*ext='\0';  /* there was no extension */
 #ifndef __MSDOS__
-    sprintf(cl,"FILE=\"%s\";FNAME=\"%s\";EXT=\"%s\";WORD=\"%s\";export WORD FILE EXT FNAME; %s",
+    snprintf(cl,sizeof(cl),"FILE=\"%s\";FNAME=\"%s\";EXT=\"%s\";WORD=\"%s\";export WORD FILE EXT FNAME; %s",
                 file,name,ext,GetWord(),c);
 #else
     {

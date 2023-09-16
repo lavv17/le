@@ -95,7 +95,7 @@ void  edit_chset()
       SetAttr(NORMAL_TEXT_ATTR);
       Clear();
       if(curr<32)
-         sprintf(chstr,"^%c",curr+'@');
+         snprintf(chstr,sizeof(chstr),"^%c",curr+'@');
       else
       {
 #if USE_MULTIBYTE_CHARS
@@ -111,9 +111,9 @@ void  edit_chset()
 	 }
 	 else // note the following line
 #endif
-	    sprintf(chstr,"%c",curr);
+	    snprintf(chstr,sizeof(chstr),"%c",curr);
       }
-      sprintf(s,"The current character is '%s', %3d, 0%03o, 0x%02X",chstr,curr,curr,curr);
+      snprintf(s,sizeof(s),"The current character is '%s', %3d, 0%03o, 0x%02X",chstr,curr,curr,curr);
 
       PutStr(2,2,s);
       for(i=0; i<16; i++)
@@ -195,7 +195,7 @@ int  choose_ch()
       Clear();
 
       if(curr<32)
-         sprintf(chstr,"^%c",curr+'@');
+         snprintf(chstr,sizeof(chstr),"^%c",curr+'@');
       else
       {
 #if USE_MULTIBYTE_CHARS
@@ -211,9 +211,9 @@ int  choose_ch()
 	 }
 	 else // note the following line
 #endif
-	    sprintf(chstr,"%c",curr);
+	    snprintf(chstr,sizeof(chstr),"%c",curr);
       }
-      sprintf(s,"The current character is '%s', %3d, 0%03o, 0x%02X",chstr,curr,curr,curr);
+      snprintf(s,sizeof(s),"The current character is '%s', %3d, 0%03o, 0x%02X",chstr,curr,curr,curr);
 
       PutStr(2,2,s);
       for(i=0; i<16; i++)
@@ -294,7 +294,7 @@ wchar_t choose_wch()
 	 PutStr(FRIGHT-6,FDOWN," PgDn ");
 
       if(curr<32)
-         sprintf(chstr,"^%c",curr+'@');
+         snprintf(chstr,sizeof(chstr),"^%c",curr+'@');
       else
       {
 	 int w=wcwidth(curr);
@@ -305,7 +305,7 @@ wchar_t choose_wch()
 	    ch_len=0;
 	 chstr[ch_len+(w==0)]=0;
       }
-      sprintf(s,"The current character is '%s', 0x%04X",chstr,curr);
+      snprintf(s,sizeof(s),"The current character is '%s', 0x%04X",chstr,curr);
 
       PutStr(2,2,s);
       for(i=0; i<16; i++)
