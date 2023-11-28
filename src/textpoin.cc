@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2021 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2023 by Alexander V. Lukyanov (lavv17f@gmail.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
 #include <limits.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <unordered_set>
 #include "edit.h"
 #include "mb.h"
 
@@ -35,6 +36,8 @@ TextPoint   TextPoint::cached_array[cached_array_size];
 int	    TextPoint::cached_array_ptr;
 
 TextPoint   *TextPoint::base=NULL;
+
+static std::unordered_set<offs> cached_offsets;
 
 void  TextPoint::AddTextPoint()
 {
@@ -122,6 +125,14 @@ TextPoint::~TextPoint()
 
 void TextPoint::CacheTextPoint() const
 {
+   if(!offset || (flags&(COLUNDEFINED|LINEUNDEFINED)))
+      return;
+   if(cached_array[cached_array_ptr].offset != offset)
+   {
+      if(!cached_offsets.emplace(offset).second)
+         return;
+      cached_offsets.erase(cached_array[cached_array_ptr].offset);
+   }
    cached_array[cached_array_ptr++]=*this;
    cached_array_ptr&=(cached_array_size-1);
 }
@@ -265,9 +276,10 @@ void  TextPoint::FindLineCol()
    {
       if(!(scan->flags&LINEUNDEFINED))
       {
-	 if(!found || abs(this->offset-scan->offset)<dist)
+         // look for textpoints on the left, as scanning to the right is usually more effective
+	 if(!found || (this->offset >= scan->offset && this->offset-scan->offset < dist))
 	 {
-	    dist=abs(this->offset-scan->offset);
+	    dist=this->offset-scan->offset;
 	    found=scan;
 	    if(dist==0)
 	       break;
