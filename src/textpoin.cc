@@ -274,10 +274,10 @@ void  TextPoint::FindLineCol()
    num	 dist=INT_MAX;
    for(TextPoint *scan=base; scan; scan=scan->next)
    {
-      if(!(scan->flags&LINEUNDEFINED))
+      if(!(scan->flags&LINEUNDEFINED) && this->offset >= scan->offset)
       {
          // look for textpoints on the left, as scanning to the right is usually more effective
-	 if(!found || (this->offset >= scan->offset && this->offset-scan->offset < dist))
+	 if(!found || this->offset-scan->offset < dist)
 	 {
 	    dist=this->offset-scan->offset;
 	    found=scan;
@@ -363,15 +363,23 @@ void  TextPoint::FindLineCol()
       }
       else
       {
-	 (void)MBCheckAt(o);
-         if(o+MBCharSize>offset)
-	 {
-	    o=offset;
-	    char_split=CHAR_SPLIT;
-	    break;
-	 }
-	 c+=MBCharWidth;
-	 o+=MBCharSize;
+	 if(MBCheckAt(o))
+         {
+            if(o+MBCharSize>offset)
+            {
+               o=offset;
+               char_split=CHAR_SPLIT;
+               break;
+            }
+            c+=MBCharWidth;
+            o+=MBCharSize;
+         }
+         else
+         {
+            ++c;
+            ++o;
+            char_split=0;
+         }
       }
    }
    col=c;

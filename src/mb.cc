@@ -39,6 +39,10 @@ static const char *last_mb_ptr;
 static int last_mb_len;
 static wchar_t last_wc;
 
+static bool IsAscii(byte c) {
+   return !(c&0x80);
+}
+
 static void MB_Prepare(offs o)
 {
    if(o>=ptr1)
@@ -61,8 +65,17 @@ static void MB_Prepare(offs o)
 
 bool MBCheckLeftAt(offs o)
 {
+   MBCharInvalid=false;
    if(!mb_mode)
       return false;
+   if(IsAscii(CharAt(o-1)))
+   {
+      MBCharSize=1;
+      MBCharWidth=1;
+      MBCharInvalid=false;
+      MBCharSplit=false;
+      return false;
+   }
    int left_offset=MB_LEN_MAX;
    if(left_offset>o)
       left_offset=o;
@@ -108,9 +121,17 @@ bool MBCheckLeftAt(offs o)
 
 bool MBCheckAt(offs o)
 {
+   MBCharInvalid=false;
    if(!mb_mode)
       return false;
-   MBCharInvalid=false;
+   if(IsAscii(CharAt(o)))
+   {
+      MBCharSize=1;
+      MBCharWidth=1;
+      MBCharInvalid=false;
+      MBCharSplit=false;
+      return false;
+   }
    MB_Prepare(o);
    mbtowc(0,0,0);
    last_wc=-1;
@@ -259,8 +280,7 @@ void ReplaceWCharMove(wchar_t ch)
    int len=wctomb(buf,ch);
    if(len<=0)
       return;
-   MBCheckRight();
-   if(MBCharSize!=len)
+   if(MBCheckRight() && MBCharSize!=len)
    {
       DeleteBlock(0,MBCharSize);
       InsertBlock(buf,len);

@@ -186,8 +186,7 @@ void   MoveLeftOverEOL()
       CurrentPos-=EolSize;
    else
    {
-      (void)MBCheckLeft();
-      CurrentPos-=MBCharSize;
+      CurrentPos-=CharSizeLeft();
    }
 }
 
@@ -784,8 +783,7 @@ int   ReplaceBlock(const char *block,num size)
       }
    }
 
-   (void)MBCheckLeftAt(base);
-   int mb_size0=MBCharSize;
+   int mb_size0=CharSizeLeftAt(base);
 
    num num_of_lines=0;
    offs o;
@@ -814,8 +812,7 @@ int   ReplaceBlock(const char *block,num size)
      }
    }
 
-   (void)MBCheckLeftAt(base);
-   int mb_size1=MBCharSize;
+   int mb_size1=CharSizeLeftAt(base);
    int mb_size_max=(mb_size0>mb_size1?mb_size0:mb_size1);
 
    for(TextPoint *scan=TextPoint::base; scan; scan=scan->next)
@@ -1245,13 +1242,11 @@ bool Bol()
 }
 void DeleteChar()
 {
-   (void)MBCheckRight();
-   DeleteBlock(0,MBCharSize);
+   DeleteBlock(0,CharSize());
 }
 void BackSpace()
 {
-   (void)MBCheckLeft();
-   DeleteBlock(MBCharSize,0);
+   DeleteBlock(CharSizeLeft(),0);
 }
 int InsertChar(char ch)
 {

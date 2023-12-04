@@ -353,8 +353,7 @@ void  UserMarkWord()
    offs word_end=CurrentPos;
    while(!BofAt(word_begin))
    {
-      (void)MBCheckLeftAt(word_begin);
-      if(IsAlNumAt(word_begin-MBCharSize))
+      if(IsAlNumAt(word_begin-CharSizeLeftAt(word_begin)))
 	 word_begin--;
       else
 	 break;

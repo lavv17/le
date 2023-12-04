@@ -29,8 +29,8 @@ extern int  MBCharWidth;
 extern bool MBCharInvalid;
 extern bool MBCharSplit;
 
-bool MBCheckLeftAt(offs o);
-bool MBCheckAt(offs o);
+[[nodiscard]] bool MBCheckLeftAt(offs o);
+[[nodiscard]] bool MBCheckAt(offs o);
 wchar_t WCharAt(offs o);
 wchar_t WCharLeftAt(offs o);
 void InsertWChar(wchar_t ch);
@@ -41,12 +41,14 @@ void ReplaceWCharExt(wchar_t);
 void ReplaceWCharExtMove(wchar_t);
 void ReplaceWCharMove(wchar_t);
 
-static inline bool MBCheckRight() { return MBCheckAt(Offset()); }
-static inline bool MBCheckLeft()  { return MBCheckLeftAt(Offset()); }
-static inline int CharWidthAt(offs o) { MBCheckAt(o); return MBCharWidth; }
-static inline int CharSizeAt(offs o)  { MBCheckAt(o); return MBCharSize;  }
+[[nodiscard]] static inline bool MBCheckRight() { return MBCheckAt(Offset()); }
+[[nodiscard]] static inline bool MBCheckLeft()  { return MBCheckLeftAt(Offset()); }
+static inline int CharWidthAt(offs o) { return MBCheckAt(o) ? MBCharWidth : 1; }
+static inline int CharSizeAt(offs o)  { return MBCheckAt(o) ? MBCharSize : 1;  }
+static inline int CharSizeLeftAt(offs o)  { return MBCheckLeftAt(o) ? MBCharSize : 1; }
 static inline int CharSize()  { return CharSizeAt(Offset()); }
 static inline int CharWidth() { return CharWidthAt(Offset()); }
+static inline int CharSizeLeft()  { return CharSizeLeftAt(Offset()); }
 static inline int WChar() { return WCharAt(Offset()); }
 static inline int WCharLeft() { return WCharLeftAt(Offset()); }
 
