@@ -131,6 +131,11 @@ void  SyncTextWin()
    {
       if(++skipped<2000)
       {
+         if(ShowStatusLine==SHOW_NONE)
+         {
+            flag=REDISPLAY_ALL;
+            return;
+         }
 	 attrset(STATUS_LINE_ATTR->n_attr);
 	 move(StatusLineY,COLS-3);
 	 addch(' ');
