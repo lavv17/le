@@ -51,8 +51,11 @@ AC_DEFUN([LE_PATH_CURSES_DIRECT],
     done
   fi
 
-  if echo $ac_curses_includes | grep ncursesw > /dev/null; then
+  if echo $ac_curses_includes | grep ncursesw > /dev/null \
+        || grep NCURSES_WIDECHAR $ac_curses_includes/ncurses.h >/dev/null
+  then
     use_libcursesw=yes
+    AC_DEFINE(NCURSES_WIDECHAR, 1, [Use wide char ncurses API])
   fi
 
 # First see if explicit directory or replacing the include by lib works.
