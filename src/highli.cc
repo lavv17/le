@@ -18,11 +18,11 @@
 
 #include <config.h>
 
-#include "edit.h"
 #include <fnmatch.h>
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include "edit.h"
 #include "highli.h"
 #include "screen.h"
 #include "search.h"
