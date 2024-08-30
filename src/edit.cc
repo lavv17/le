@@ -163,10 +163,10 @@ void    Edit()
    while(1)
    {
       SeekStdCol();
-      if(hex)
+      if(in_hex_mode)
          flag|=REDISPLAY_LINE;
 
-      if(!hex && !View && old_num_of_lines!=TextEnd.Line())
+      if(!in_hex_mode && !View && old_num_of_lines!=TextEnd.Line())
       {
          flag|=REDISPLAY_AFTER;
          old_num_of_lines=TextEnd.Line();
@@ -188,7 +188,7 @@ void    Edit()
 	 continue;
       }
 
-      if(hex)
+      if(in_hex_mode)
       {
          ShowMatchPos=0;
          RedisplayLine();
@@ -227,14 +227,14 @@ void    Edit()
       if(StringTypedLen>1)
 	 continue;
       key=(byte)(StringTyped[0]);
-      if(hex && key=='\t')
+      if(in_hex_mode && key=='\t')
       {
 	 ascii=!ascii;
 	 continue;
       }
       if(View)
 	 continue;
-      if(!ascii && hex)
+      if(!ascii && in_hex_mode)
       {
 	 if(key<0 || key>255)
 	    continue;
@@ -290,7 +290,7 @@ void    Edit()
 	    SetStdCol();
 	    continue;
 	 }
-	 if(hex)
+	 if(in_hex_mode)
 	 {
 	    if(insert)
 	    {

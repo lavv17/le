@@ -588,7 +588,7 @@ void  CorrectParameters()
 
    if(buffer)
    {
-     if(hex)
+     if(in_hex_mode)
        ScreenTop=ScreenTop&~15;
      if(TabSize!=OldTabSize)
        TextPoint::OrFlags(COLUNDEFINED);

@@ -404,7 +404,7 @@ int   LoadFile(char *name)
 	 if(old->offset!=-1)
 	 {
 	    CurrentPos=old->offset;
-	    if(!hex)
+	    if(!in_hex_mode)
 	       SetStdCol();
 	 }
 	 else if(old->line!=-1 && old->col!=-1)

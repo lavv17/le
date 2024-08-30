@@ -42,7 +42,7 @@
 
 void  UserDeleteToEol()
 {
-   if(View || hex)
+   if(View || in_hex_mode)
       return;
    DeleteToEOL();
    if(!Text)
@@ -51,7 +51,7 @@ void  UserDeleteToEol()
 }
 void  UserDeleteLine()
 {
-   if(View || hex)
+   if(View || in_hex_mode)
       return;
    DeleteLine();
    flag|=REDISPLAY_AFTER;
@@ -59,7 +59,7 @@ void  UserDeleteLine()
 
 void  UserLineUp()
 {
-   if(hex)
+   if(in_hex_mode)
    {
       CurrentPos-=16;
    }
@@ -70,7 +70,7 @@ void  UserLineUp()
 }
 void  UserLineDown()
 {
-   if(hex)
+   if(in_hex_mode)
    {
       CurrentPos+=16;
    }
@@ -99,7 +99,7 @@ void  UserLineDown()
 
 void  UserCharLeft()
 {
-   if(hex)
+   if(in_hex_mode)
    {
       if(ascii)
          MoveLeft();
@@ -127,7 +127,7 @@ void  UserCharLeft()
 }
 void  UserCharRight()
 {
-   if(hex)
+   if(in_hex_mode)
    {
       if(ascii)
 	 MoveRight();
@@ -158,7 +158,7 @@ void  UserCharRight()
 
 void  UserCopyFromDown()
 {
-   if(View || hex)
+   if(View || in_hex_mode)
       return;
 
    num   oc=GetCol();
@@ -196,7 +196,7 @@ void  UserCopyFromDown()
 }
 void  UserCopyFromUp()
 {
-   if(View || hex)
+   if(View || in_hex_mode)
       return;
 
    num   oc=GetCol();
@@ -278,7 +278,7 @@ void  UserMoveBlock()
 
 void  UserBackwardDeleteWord()
 {
-   if(View || hex)
+   if(View || in_hex_mode)
       return;
    if(!IsAlNumLeft() && CharRel(-1)!=' ' && CharRel(-1)!='\t')
    {
@@ -304,7 +304,7 @@ void  UserBackwardDeleteWord()
 
 void  UserForwardDeleteWord()
 {
-   if(View || hex)
+   if(View || in_hex_mode)
       return;
    if(!IsAlNumRel(0) && Char()!=' ' && Char()!='\t')
       UserDeleteChar();
@@ -328,7 +328,7 @@ void  UserForwardDeleteWord()
 
 void  UserDeleteWord()
 {
-   if(View || hex)
+   if(View || in_hex_mode)
       return;
    if(!IsAlNumRel(0))
       UserForwardDeleteWord();
@@ -407,7 +407,7 @@ void  UserMarkAll()
 
 void  UserPageTop()
 {
-   if(hex)
+   if(in_hex_mode)
    {
       if((CurrentPos&~15)==ScreenTop)
          CurrentPos-=(TextWinHeight-1)*16;
@@ -435,7 +435,7 @@ void  UserPageTop()
 }
 void UserScrollUp()
 {
-   if(hex) {
+   if(in_hex_mode) {
       ScreenTop-=16;
       if((CurrentPos-ScreenTop)/16>=TextWinHeight)
 	 CurrentPos-=16;
@@ -448,7 +448,7 @@ void UserScrollUp()
 }
 void UserScrollDown()
 {
-   if(hex) {
+   if(in_hex_mode) {
       if((TextEnd-ScreenTop)/16>=TextWinHeight) {
 	 ScreenTop+=16;
 	 if(CurrentPos<ScreenTop)
@@ -471,7 +471,7 @@ void  UserPageUp()
       return;
    }
 
-   if(hex)
+   if(in_hex_mode)
    {
       int page_size=(TextWinHeight-1)*16;
       CurrentPos-=page_size;
@@ -490,7 +490,7 @@ void  UserPageUp()
 }
 void  UserPageBottom()
 {
-   if(hex)
+   if(in_hex_mode)
    {
       int pgsize=(TextWinHeight-1)*16;
       if(CurrentPos>=ScreenTop+pgsize)
@@ -525,7 +525,7 @@ void  UserPageDown()
       return;
    }
 
-   if(hex)
+   if(in_hex_mode)
    {
       int page_size=(TextWinHeight*16-16);
       CurrentPos+=page_size;
@@ -558,7 +558,7 @@ void  UserPageDown()
 
 void  UserWordLeft()
 {
-   if(hex && !ascii)
+   if(in_hex_mode && !ascii)
       MoveLeft();
    else
    {
@@ -571,7 +571,7 @@ void  UserWordLeft()
 }
 void  UserWordRight()
 {
-   if(hex && !ascii)
+   if(in_hex_mode && !ascii)
       MoveRight();
    else
    {
@@ -593,7 +593,7 @@ void  UserCommentLine()
    int unc=0;
    TextPoint   op=CurrentPos;
 
-   if(View || hex)
+   if(View || in_hex_mode)
       return;
 
    ToLineBegin();
@@ -882,7 +882,7 @@ void  UserBackSpace()
       return;
    if(Bof() && (!Text || GetStdCol()==0))
       return;
-   if(hex)
+   if(in_hex_mode)
    {
       BackSpace();
       flag|=REDISPLAY_AFTER;
@@ -921,7 +921,7 @@ void  UserDeleteChar()
       return;
    if(Eof())
       return;
-   if(hex)
+   if(in_hex_mode)
    {
       DeleteChar();
       flag=REDISPLAY_AFTER;
@@ -1345,7 +1345,7 @@ void  UserInsertChar(char ch)
    if(wordwrap)
       WordWrapInsertHook();
 
-   if(hex || Bol())
+   if(in_hex_mode || Bol())
       flag|=REDISPLAY_AFTER;
    else
       flag|=REDISPLAY_LINE;
@@ -1357,10 +1357,10 @@ void  UserReplaceChar(char ch)
       return;
    PreUserEdit();
 
-   if(!hex && Eol())
+   if(!in_hex_mode && Eol())
       flag|=REDISPLAY_AFTER;
 
-   if(buffer_mmapped || hex || !mb_mode)
+   if(buffer_mmapped || in_hex_mode || !mb_mode)
       ReplaceCharMove(ch);
    else
    {
@@ -1370,7 +1370,7 @@ void  UserReplaceChar(char ch)
 	 DeleteChar();
    }
 
-   if(!hex && Bol())
+   if(!in_hex_mode && Bol())
       flag|=REDISPLAY_AFTER;
    else
       flag|=REDISPLAY_LINE;
@@ -1382,12 +1382,12 @@ void  UserInsertControlChar(char ch)
    if(View)
       return;
    PreUserEdit();
-   if((hex && !insert) || buffer_mmapped)
+   if((in_hex_mode && !insert) || buffer_mmapped)
    {
-      if(!hex && (Eol() || Char()=='\n'))
+      if(!in_hex_mode && (Eol() || Char()=='\n'))
 	 flag|=REDISPLAY_AFTER;
       ReplaceCharMove(ch);
-      if(!hex && Bol())
+      if(!in_hex_mode && Bol())
 	 flag|=REDISPLAY_AFTER;
       else
 	 flag|=REDISPLAY_LINE;
@@ -1395,7 +1395,7 @@ void  UserInsertControlChar(char ch)
    else
    {
       InsertChar(ch);
-      if(hex || Bol())
+      if(in_hex_mode || Bol())
 	 flag|=REDISPLAY_AFTER;
       else
 	 flag|=REDISPLAY_LINE;
@@ -1461,7 +1461,7 @@ void  UserRefreshScreen()
 
 void  UserChooseChar()
 {
-   if(mb_mode && !hex)
+   if(mb_mode && !in_hex_mode)
       UserChooseWChar();
    else
       UserChooseByte();
@@ -1481,7 +1481,7 @@ void  UserChooseWChar()
 
 void  UserInsertCharCode()
 {
-   if(mb_mode && !hex)
+   if(mb_mode && !in_hex_mode)
       UserInsertWCharCode();
    else
       UserInsertByteCode();

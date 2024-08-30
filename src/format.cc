@@ -46,7 +46,7 @@ void  FormatPara()
    num   bcol,ncol;
    int   i;
 
-   if(hex || View || buffer_mmapped) /* formatting is not allowed in those modes */
+   if(in_hex_mode || View || buffer_mmapped) /* formatting is not allowed in those modes */
       return;
 
    flag=1;
@@ -282,7 +282,7 @@ void  FormatAll()
    {" &Cancel ",MIDDLE+6,FDOWN-2},
    {NULL}};
 
-   if(hex || View)
+   if(in_hex_mode || View)
       return;
 
    char *message=(char*)alloca(80);
@@ -308,7 +308,7 @@ void  FormatAll()
 void  CenterLine()
 {
    num shift;
-   if(hex || View)
+   if(in_hex_mode || View)
       return;
    flag=REDISPLAY_LINE;
    ToLineBegin();
@@ -333,7 +333,7 @@ void  CenterLine()
 void  ShiftRightLine()
 {
    num shift;
-   if(hex || View)
+   if(in_hex_mode || View)
       return;
    flag=REDISPLAY_LINE;
    ToLineBegin();
@@ -359,7 +359,7 @@ void  FormatFunc()
 {
    int   action;
 
-   if(hex || View)
+   if(in_hex_mode || View)
       return;
    ToLineBegin();
    SetStdCol();
