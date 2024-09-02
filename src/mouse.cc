@@ -41,7 +41,7 @@ bool InScrollBar(int line,int col)
 
 void MoveToScreenLC(int line,int col)
 {
-   if(hex)
+   if(in_hex_mode)
    {
       ascii=0;
       if(col<HexPos)

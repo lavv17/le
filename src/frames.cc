@@ -242,7 +242,7 @@ void    DrawFrames(void)
    int   action;
    char  sign[4];
 
-   if(hex || View)
+   if(in_hex_mode || View)
       return;
 
    CurrGraphSet=GraphSets[grsetno];

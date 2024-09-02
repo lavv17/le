@@ -25,7 +25,7 @@ int   rInBlock(num line,num col);
 
 static inline int InBlock(offs ptr,num line,num col)
 {
-   return((rblock && !hex) ? rInBlock(line,col) : InBlock(ptr));
+   return((rblock && !in_hex_mode) ? rInBlock(line,col) : InBlock(ptr));
 }
 
 void    Copy();

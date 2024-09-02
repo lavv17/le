@@ -113,7 +113,7 @@ int PreUserEdit()
 {
    if(buffer_mmapped)
       return 1;
-   if(Text && stdcol!=NO_POS && Eol() && !hex)
+   if(Text && stdcol!=NO_POS && Eol() && !in_hex_mode)
    {
       num i=GetCol();
       num j=stdcol;
@@ -177,7 +177,7 @@ void   ToLineEnd()
 
 void   MoveLeftOverEOL()
 {
-   if(hex)
+   if(in_hex_mode)
    {
       CurrentPos-=1;
       return;
@@ -192,7 +192,7 @@ void   MoveLeftOverEOL()
 
 void   MoveRightOverEOL()
 {
-   if(hex)
+   if(in_hex_mode)
    {
       CurrentPos+=1;
       return;
@@ -900,7 +900,7 @@ int   Undelete()
 
 void   DeleteEOL()
 {
-   if(Eol() && !hex)
+   if(Eol() && !in_hex_mode)
      DeleteBlock(0,EolSize);
    else
      DeleteBlock(0,1);
@@ -1132,7 +1132,7 @@ void  ConvertFromUnixToDos(offs start,num size)
 
 void  SeekStdCol()
 {
-   if(hex || stdcol==NO_POS)
+   if(in_hex_mode || stdcol==NO_POS)
       return;
    CurrentPos=TextPoint(GetLine(),stdcol);
 }
@@ -1210,7 +1210,7 @@ void  InsertAutoindent(num oldcol)
 
 num GetCol()
 {
-   if(hex)
+   if(in_hex_mode)
       return 0;
    return(CurrentPos.Col());
 }

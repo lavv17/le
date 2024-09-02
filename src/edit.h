@@ -174,8 +174,8 @@ extern char Program[];
 #define RUSS    1
 #define GRAPH   2
 
-#define hex     (editmode==HEXM)
-#define Text    (editmode==TEXT && !buffer_mmapped)
+#define in_hex_mode  (editmode==HEXM)
+#define Text         (editmode==TEXT && !buffer_mmapped)
 
 num   GetCol();
 bool  EolAt(offs o);
