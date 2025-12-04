@@ -211,6 +211,7 @@ void  BlockSignals();
 void  UnblockSignals();
 char *TmpFileName();
 char *HupFileName(int sig);
+char *InodeTmpFileName();
 
 extern bool buffer_mmapped;
 
@@ -246,7 +247,7 @@ void        Terminate();
 
 void        Edit();
 
-int         LockFile(int fd,bool drop_write_lock);
+int         LockFile(int fd,bool drop_write_lock,bool* try_load_dumped);
 int         CheckMode(mode_t);
 int	    file_check(const char *);	 /* checks existence or ability to create */
 

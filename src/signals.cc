@@ -173,6 +173,14 @@ char *HupFileName(int sig)
    return mem;
 }
 
+#ifndef __MSDOS__
+char *InodeTmpFileName()
+{
+   snprintf(mem,sizeof(mem),"%s/.le/tmp/i-%s",HOME,FileInfo.key());
+   return mem;
+}
+#endif
+
 void    hup(int sig)
 {
    endwin();
@@ -185,6 +193,19 @@ void    hup(int sig)
       num act_written;
       WriteBlock(fd,0,Size(),&act_written);
       close(fd);
+#ifndef __MSDOS__
+      char *base = strdup(le_basename(s));
+      char *inode_tmp = InodeTmpFileName();
+      unlink(inode_tmp);
+      if(symlink(base, inode_tmp)!=-1) {
+         fprintf(stderr,"le: linked to %s\n",inode_tmp);
+         basename(inode_tmp)[0]='p';
+         char pos_str[20];
+         snprintf(pos_str,sizeof(pos_str),"%ld",(long)Offset());
+         unlink(inode_tmp);
+         symlink(pos_str, inode_tmp);
+      }
+#endif
    }
    else
    {

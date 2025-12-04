@@ -85,6 +85,7 @@ public:
    int   SameAndOlder(const InodeInfo&) const;
 
    const char *to_string() const;
+   const char *key() const;
 };
 
 class InodeHistory : public History

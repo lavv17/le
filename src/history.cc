@@ -301,7 +301,6 @@ InodeInfo::InodeInfo(const HistoryLine *f_line)
 		  &inode,&device,&time,&size,&line,&col,&offset);
    this->inode=inode,this->device=device,this->time=time,this->size=size;
    this->line=line,this->col=col,this->offset=offset;
-
 }
 const char *InodeInfo::to_string() const
 {
@@ -310,5 +309,10 @@ const char *InodeInfo::to_string() const
          (long)inode,(long)device,(long)time,
          (long)size,(long)line,(long)col,
 	 (long)offset);
+   return s;
+}
+const char *InodeInfo::key() const {
+   static char s[80];
+   snprintf(s,sizeof(s),"%ld,%ld,%ld,%ld",(long)inode,(long)device,(long)time,(long)size);
    return s;
 }

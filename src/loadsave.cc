@@ -58,7 +58,7 @@
 #endif
 
 #ifndef DISABLE_FILE_LOCKS
-int    LockFile(int fd,bool drop)
+int    LockFile(int fd,bool drop,bool* try_load_dumped)
 {
    struct  flock   Lock;
    Lock.l_start=0;
@@ -66,20 +66,23 @@ int    LockFile(int fd,bool drop)
    Lock.l_type=F_WRLCK;
    Lock.l_whence=SEEK_SET;
 
-   if(fcntl(fd,F_SETLK,&Lock)==-1)
+   int kill_sig=SIGTERM;
+   while(fcntl(fd,F_SETLK,&Lock)==-1)
    {
       if(errno==EACCES || errno==EAGAIN)
       {
          struct flock   Lock1;
          char   msg[100];
          static  struct menu LockMenu[]={
-         {" &Cancel ",MIDDLE-10,FDOWN-2},
-         {"  &Wait  ",MIDDLE,FDOWN-2},
-         {" &Ignore ",MIDDLE+10,FDOWN-2},
+         {" &Cancel ",MIDDLE-15,FDOWN-2},
+         {"  &Wait  ",MIDDLE-5,FDOWN-2},
+         {" &Ignore ",MIDDLE+5,FDOWN-2},
+         {"  &Kill  ",MIDDLE+15,FDOWN-2},
          {NULL}};
          static  struct menu LockMenu1[]={
-         {" &Cancel ",MIDDLE-5,FDOWN-2},
-         {"  &Wait  ",MIDDLE+5,FDOWN-2},
+         {" &Cancel ",MIDDLE-10,FDOWN-2},
+         {"  &Wait  ",MIDDLE,FDOWN-2},
+         {"  &Kill  ",MIDDLE+10,FDOWN-2},
          {NULL}};
          struct  stat   st;
          Lock1=Lock;
@@ -118,6 +121,14 @@ int    LockFile(int fd,bool drop)
             }
             if(errno!=EACCES && errno!=EAGAIN)
                return(-2);
+            break;
+         case('K'):
+            kill(Lock1.l_pid,kill_sig);
+            sleep(1);
+            if (try_load_dumped)
+               *try_load_dumped=(kill_sig!=SIGKILL);
+            kill_sig=SIGKILL;
+            break;
          }
       }
       else
@@ -133,7 +144,7 @@ int    LockFile(int fd,bool drop)
    return(0);
 }
 #else /* DISABLE_FILE_LOCKS */
-int   LockFile(int,bool)
+int   LockFile(int,bool,bool*)
 {
    return 0;
 }
@@ -301,10 +312,12 @@ int   LoadFile(char *name)
    // re-stat the file in case it was created
    fstat(file,&st);
    FileMode=st.st_mode;
+   FileInfo=InodeInfo(&st);
 
+   bool try_load_dumped = false;
    if(!View)
    {
-      int lock_res=LockFile(file,true);
+      int lock_res=LockFile(file,true,&try_load_dumped);
       if(lock_res==-1)
       {
 	 close(file);
@@ -316,9 +329,34 @@ int   LoadFile(char *name)
 	 ErrMsg("Warning: file locking failed");
    }
 
+   modified=0;
+   bool loaded_dumped=false;
+   num dumped_offset=-1;
    if(!buffer_mmapped)
    {
-      if(ReplaceTextFromFile(file,st.st_size,&act_read)!=OK)
+#ifndef __MSDOS__
+      if(try_load_dumped)
+      {
+         char *dumped_file=InodeTmpFileName();
+         int dumped_file_fd=open(dumped_file, O_RDONLY);
+         struct stat dumped_st;
+         if(dumped_file_fd!=-1 && fstat(dumped_file_fd,&dumped_st)!=-1) {
+            if(ReplaceTextFromFile(dumped_file_fd,dumped_st.st_size,&act_read)==OK) {
+               loaded_dumped=true;
+               modified=true;
+
+               basename(dumped_file)[0]='p';
+               char pos_str[20];
+               int pos_str_len=readlink(dumped_file,pos_str,sizeof(pos_str)-1);
+               if(pos_str_len>0) {
+                  pos_str[pos_str_len]=0;
+                  dumped_offset=strtol(pos_str,0,0);
+               }
+            }
+         }
+      }
+#endif
+      if(!loaded_dumped && ReplaceTextFromFile(file,st.st_size,&act_read)!=OK)
       {
 	 if(errno)
 	    FError(name);
@@ -385,18 +423,21 @@ int   LoadFile(char *name)
 #endif
    }
 
-   modified=0;
    SetStdCol();
 
    hide=1;
    flag=REDISPLAY_ALL;
 
-   fstat(file,&st);
-   FileInfo=InodeInfo(&st);
    strcpy(FileName,name);
 
    CurrentPos=TextBegin;
-   if(SavePos)
+   if(dumped_offset>0)
+   {
+      CurrentPos=dumped_offset;
+      if(!in_hex_mode)
+         SetStdCol();
+   }
+   else if(SavePos)
    {
       old=PositionHistory.FindInode(FileInfo);
       if(old)
@@ -692,7 +733,7 @@ int   SaveFile(char *name)
      return(ERR);
    }
 
-   int lock_res=LockFile(nfile,false);
+   int lock_res=LockFile(nfile,false,NULL);
    if(lock_res==-1)
    {
      close(nfile);
@@ -752,7 +793,7 @@ int   SaveFile(char *name)
 
    close(file);
    file=nfile;
-   LockFile(file,true);
+   LockFile(file,true,NULL);
 
    if(delete_old_file)
    {
