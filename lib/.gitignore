@@ -15,7 +15,6 @@
 /dirfd.c
 /dirname-lgpl.c
 /dirname.h
-/dup-safer.c
 /dup.c
 /dup2.c
 /errno.in.h
@@ -27,7 +26,6 @@
 /fcntl.in.h
 /fd-hook.c
 /fd-hook.h
-/fd-safer.c
 /fdopendir.c
 /filename.h
 /filenamecat-lgpl.c
@@ -77,7 +75,6 @@
 /openat.h
 /opendir.c
 /pathmax.h
-/pipe-safer.c
 /poll.c
 /poll.in.h
 /readdir.c
@@ -113,8 +110,6 @@
 /sys_uio.in.h
 /time.in.h
 /times.c
-/unistd--.h
-/unistd-safer.h
 /unistd.c
 /unistd.in.h
 /unitypes.in.h
@@ -171,8 +166,6 @@
 /xalloc-oversized.h
 /stdint.h
 /limits.h
-/dup-safer-flag.c
-/fd-safer-flag.c
 /stat-time.c
 /stat-time.h
 /locale.in.h
@@ -196,7 +189,6 @@
 /mbrtowc-impl.h
 /mbtowc-lock.c
 /mbtowc-lock.h
-/pipe.c
 /setlocale_null.h
 /strnlen.c
 /wmemchr-impl.h
@@ -245,3 +237,5 @@
 /unistr.in.h
 /wctype-impl.h
 /wctype.c
+/setlocale_null-unlocked.c
+/stdlib.c

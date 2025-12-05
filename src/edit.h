@@ -52,6 +52,10 @@
 # include <curses.h>
 #endif
 
+#ifdef HAVE_LIBGEN_H
+# include <libgen.h>
+#endif
+
 #ifdef bool_redefined
 # undef bool
 #endif

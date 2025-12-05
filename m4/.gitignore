@@ -94,11 +94,9 @@
 /sys_uio_h.m4
 /time_h.m4
 /times.m4
-/unistd-safer.m4
 /unistd_h.m4
 /warn-on-use.m4
 /wchar_h.m4
-/wchar_t.m4
 /wctype_h.m4
 /wcwidth.m4
 /wint_t.m4
@@ -106,13 +104,11 @@
 /stdio_h.m4
 /getprogname.m4
 /builtin-expect.m4
-/eealloc.m4
 /flexmember.m4
 /limits-h.m4
 /malloca.m4
 /open-cloexec.m4
 /fnmatch_h.m4
-/getpagesize.m4
 /stat-time.m4
 /locale_h.m4
 /open-slash.m4
@@ -122,7 +118,6 @@
 /inttypes.m4
 /isblank.m4
 /pid_t.m4
-/pipe.m4
 /std-gnu11.m4
 /strnlen.m4
 /visibility.m4
@@ -149,3 +144,8 @@
 /unictype_h.m4
 /uninorm_h.m4
 /wctype.m4
+/c32rtomb.m4
+/extensions-aix.m4
+/locale-en.m4
+/off64_t.m4
+/sys_cdefs_h.m4
