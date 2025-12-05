@@ -807,3 +807,11 @@ int     main(int argc,char **argv)
    ExitProgram(0);
    return 0;
 }
+
+char *basename_ptr(char *path)
+{
+   char *slash=strrchr(path,'/');
+   if(slash)
+      return slash+1;
+   return path;
+}

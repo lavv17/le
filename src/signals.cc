@@ -199,7 +199,7 @@ void    hup(int sig)
       unlink(inode_tmp);
       if(symlink(base, inode_tmp)!=-1) {
          fprintf(stderr,"le: linked to %s\n",inode_tmp);
-         basename(inode_tmp)[0]='p';
+         basename_ptr(inode_tmp)[0]='p';
          char pos_str[20];
          snprintf(pos_str,sizeof(pos_str),"%ld",(long)Offset());
          unlink(inode_tmp);
@@ -211,16 +211,16 @@ void    hup(int sig)
    {
       fprintf(stderr,"le: Caught signal %d\n",sig);
    }
-   if(sig==SIGSEGV || sig==SIGBUS)
-   {
-      ReleaseSignalHandlers();
-      sigset_t mask;
-      sigemptyset(&mask);
-      sigaddset(&mask,sig);
-      sigprocmask(SIG_UNBLOCK,&mask,0);
-      kill(getpid(),sig);
-   }
-   exit(1);
+   fflush(stderr);
+
+   ReleaseSignalHandlers();
+   sigset_t mask;
+   sigemptyset(&mask);
+   sigaddset(&mask,sig);
+   sigprocmask(SIG_UNBLOCK,&mask,0);
+   kill(getpid(),sig);
+
+   _exit(1);
 }
 
 void    alarmsave(int a)

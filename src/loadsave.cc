@@ -345,7 +345,7 @@ int   LoadFile(char *name)
                loaded_dumped=true;
                modified=true;
 
-               basename(dumped_file)[0]='p';
+               basename_ptr(dumped_file)[0]='p';
                char pos_str[20];
                int pos_str_len=readlink(dumped_file,pos_str,sizeof(pos_str)-1);
                if(pos_str_len>0) {

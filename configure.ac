@@ -101,7 +101,7 @@ AC_HEADER_DIRENT
 AC_HEADER_STDC
 AC_HEADER_SYS_WAIT
 AC_CHECK_HEADERS([sys/ioctl.h sys/mman.h sys/mount.h sys/syslimits.h sys/param.h])
-AC_CHECK_HEADERS([linux/tiocl.h libgen.h])
+AC_CHECK_HEADERS([linux/tiocl.h])
 
 LE_PATH_CURSES
 if test x$no_curses = xyes

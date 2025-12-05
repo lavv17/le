@@ -52,10 +52,6 @@
 # include <curses.h>
 #endif
 
-#ifdef HAVE_LIBGEN_H
-# include <libgen.h>
-#endif
-
 #ifdef bool_redefined
 # undef bool
 #endif
@@ -387,5 +383,7 @@ void  ProcessDragMark();
 #if ! defined __builtin_expect && __GNUC__ < 3
 # define __builtin_expect(expr, expected) (expr)
 #endif
+
+char *basename_ptr(char *path);
 
 #endif // EDIT_H
