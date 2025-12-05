@@ -16,6 +16,7 @@ AC_DEFUN([LE_PATH_CURSES_DIRECT],
     /usr/include/ncursesw     \
     /usr/include/ncurses      \
     /usr/include	      \
+    /opt/homebrew/opt/ncurses/include \
     ; \
   do
     if test -r "$ac_dir/curses.h"; then
