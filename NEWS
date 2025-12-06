@@ -1,3 +1,10 @@
+* add "Kill" option when there is a lock conflict with ability to load the dumped text.
+* syntax: improvements for markdown, python, yaml, jinja2.
+* minor changes for macos build.
+* performance optimizations.
+* fixed buffer overrun on high unicode chars.
+* added cmake build rules.
+
 Version 1.16.8 - 2021-02-05
 
 * minor syntax updates.
