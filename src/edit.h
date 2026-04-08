@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2021 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2026 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +56,7 @@
 # undef bool
 #endif
 
-#define  EMAIL    "lav@yars.free.net"
+#define  EMAIL    "lavv17f@gmail.com"
 
 #undef	lines
 #undef	cols
@@ -237,8 +237,8 @@ char        *GetWord();
 int         GetSpace(num amount);
 
 void        EmptyText();
-int         LoadFile(char *name);
-int         SaveFile(char *name);
+int         LoadFile(const char *name);
+int         SaveFile(const char *name);
 int	    ReopenRW();
 void	    SavePosition();   // put current pos to history
 
@@ -385,5 +385,8 @@ void  ProcessDragMark();
 #endif
 
 char *basename_ptr(char *path);
+static inline const char *basename_ptr(const char *path) {
+    return basename_ptr(const_cast<char*>(path));
+}
 
 #endif // EDIT_H

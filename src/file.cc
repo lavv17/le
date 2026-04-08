@@ -97,8 +97,11 @@ const char *le_dirname(const char *f)
 }
 const char *le_basename(const char *f)
 {
-   static
-   char  bn[256];
+   static char bn[256];
+
+   if (strlen(f) >= sizeof(bn))
+      return basename_ptr(f);
+
    char  *s;
 
    strcpy(bn,f);

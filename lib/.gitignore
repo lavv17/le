@@ -239,3 +239,12 @@
 /wctype.c
 /setlocale_null-unlocked.c
 /stdlib.c
+/fseterr.c
+/fseterr.h
+/memeq.c
+/stdcountof.in.h
+/stdio-consolesafe.c
+/stdio-impl.h
+/streq-opt.h
+/streq.c
+/strnul.c

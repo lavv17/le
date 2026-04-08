@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1993-2010 by Alexander V. Lukyanov (lav@yars.free.net)
+ * Copyright (c) 1993-2026 by Alexander V. Lukyanov (lav@yars.free.net)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -411,16 +411,6 @@ void  ReadConfFromOpenFile(FILE *f,const struct init *init,bool mine)
    }
 }
 
-void  ReadConfFromFile(const char *ini,const struct init *init,bool mine)
-{
-   FILE  *f;
-   f=fopen(ini,"r");
-   if(f==NULL)
-      return;
-   ReadConfFromOpenFile(f,init,mine);
-   fclose(f);
-}
-
 static bool ConfOK(const char *f,bool mine)
 {
    if(mine)
@@ -436,6 +426,28 @@ static bool ConfOK(const char *f,bool mine)
    if(access(f,R_OK)==-1)
       return false;
    return true;
+}
+
+bool ReadConfFromFile(const char *ini,const struct init *init,bool mine)
+{
+   if(!ConfOK(ini,mine))
+      return false;
+   FILE  *f;
+   f=fopen(ini,"r");
+   if(f==NULL)
+      return false;
+   ReadConfFromOpenFile(f,init,mine);
+   fclose(f);
+   return true;
+}
+
+static const char *file_ext_ptr(const char *name)
+{
+    const char *bn=basename_ptr(name);
+    const char *dot=strrchr(bn,'.');
+    if(dot && dot!=bn && dot[1])
+        return dot+1;
+    return nullptr;
 }
 
 void  ReadConf()
@@ -478,6 +490,19 @@ void  ReadConf()
    mine=false;
    if(!ExplicitInitName)
    {
+      const char *ext = file_ext_ptr(FileName);
+      if(ext)
+      {
+         snprintf(InitName,sizeof(InitName),".le.%s.ini",ext);
+         if(ReadConfFromFile(InitName,init,mine=true))
+            goto ini_done;
+	 snprintf(InitName,sizeof(InitName),"%s/.le/le.%s.ini",HOME,ext);
+         if(ReadConfFromFile(InitName,init,mine=false))
+            goto ini_done;
+         snprintf(t,sizeof(t),"%s/le.%s.ini",PKGDATADIR,ext);
+         if(ReadConfFromFile(t,init,false))
+            goto ini_done;
+      }
       strcpy(InitName,".le.ini");
       if(!ConfOK(InitName,mine=true))
       {

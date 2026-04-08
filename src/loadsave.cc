@@ -220,7 +220,7 @@ const char *GetDefaultEol()
    return eol;
 }
 
-int   LoadFile(char *name)
+int   LoadFile(const char *name)
 {
    struct stat    st;
    num    act_read;
@@ -429,6 +429,7 @@ int   LoadFile(char *name)
    flag=REDISPLAY_ALL;
 
    strcpy(FileName,name);
+   ReadConf();  // depends on FileName
 
    CurrentPos=TextBegin;
    if(dumped_offset>0)
@@ -466,7 +467,7 @@ int   LoadFile(char *name)
 
 int   MaxBackup=9;
 
-static char *BackupName(char *buf,unsigned buf_size,char *bp,char *filename,char *bak,int n)
+static char *BackupName(char *buf,unsigned buf_size,const char *bp,const char *filename,const char *bak,int n)
 {
    unsigned nbytes=strlen(bak)+40+1;
    char *suffix=(char*)alloca(nbytes);
@@ -475,7 +476,7 @@ static char *BackupName(char *buf,unsigned buf_size,char *bp,char *filename,char
    return buf;
 }
 
-static void MoveBackup(char *bp,char *filename,char *bak,int n)
+static void MoveBackup(const char *bp,const char *filename,const char *bak,int n)
 {
    unsigned nbytes=strlen(bp)+1+strlen(filename)+strlen(bak)+40+1;
    char *bakname=(char*)alloca(nbytes);
@@ -502,7 +503,7 @@ static void MoveBackup(char *bp,char *filename,char *bak,int n)
    }
 }
 
-static int CreateBak(char *name)
+static int CreateBak(const char *name)
 {
    char  *buf2;
    num   buf2size;
@@ -510,7 +511,7 @@ static int CreateBak(char *name)
    struct stat st;
    int   fd,bfd;
    char  directory[256];
-   char  *filename;
+   const char *filename;
    int   namemax;
    int	 res=OK;
 
@@ -638,7 +639,7 @@ int CheckMode(mode_t mode)
    return(1);
 }
 
-int   SaveFile(char *name)
+int   SaveFile(const char *name)
 {
    struct stat st;
    char  msg[256];
