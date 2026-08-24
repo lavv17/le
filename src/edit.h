@@ -271,8 +271,6 @@ offs    PrevLine(offs);
 offs    NextNLines(offs,num);
 offs    PrevNLines(offs,num);
 
-void    GoToOffset(void);
-void    GoToLineNumber(void);
 void    GoToLineNum(num);
 
 void  SeekStdCol();

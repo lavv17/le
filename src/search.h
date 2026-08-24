@@ -24,6 +24,7 @@ void     ReplaceFound();
 void     FindMatch();
 
 void     StartSearch(void);
+void     StartSearch(const char *p);
 void     ContSearch(void);
 void     StartReplace(void);
 void     ContReplace(void);

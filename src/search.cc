@@ -702,6 +702,20 @@ void  ContSearch()
    SetStdCol();
 }
 
+void  StartSearch(const char *p)
+{
+   patlen=strlen(p);
+   if(patlen>sizeof(pattern))
+      patlen=sizeof(pattern);
+   memcpy(pattern,p,patlen);
+
+   LastDir=FORWARD;
+   LastOp=SEARCH;
+   if(!CompilePattern())
+      return;
+   ContSearch();
+}
+
 void  StartSearch()
 {
    if(getstring("Search forwards: ",(char*)pattern,sizeof(pattern)-1,

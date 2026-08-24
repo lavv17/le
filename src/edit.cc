@@ -597,8 +597,11 @@ int     main(int argc,char **argv)
       PRINT_HELP,
       PRINT_VERSION,
       CONFIG_FILE,
+      SEARCH,
+#ifdef HAVE_MMAP
       USE_MMAP,
       USE_MMAP_RW,
+#endif
 #if USE_MULTIBYTE_CHARS
       MULTIBYTE,
       NO_MULTIBYTE,
@@ -617,6 +620,7 @@ int     main(int argc,char **argv)
       {"black-white",no_argument,0,'b'},
       {"color",no_argument,0,'c'},
       {"config",required_argument,0,CONFIG_FILE},
+      {"search",optional_argument,0,SEARCH},
 #if USE_MULTIBYTE_CHARS
       {"multibyte",no_argument,0,MULTIBYTE},
       {"no-multibyte",no_argument,0,NO_MULTIBYTE},
@@ -630,6 +634,8 @@ int     main(int argc,char **argv)
 
    char  newname[256];
    newname[0]=0;
+
+   const char *search_after_load=nullptr;
 
    strncpy(Program,le_basename(argv[0]),sizeof(Program));
 
@@ -704,6 +710,14 @@ int     main(int argc,char **argv)
       case(PRINT_VERSION):
 	 PrintVersion();
 	 ExitProgram(0);
+      case(CONFIG_FILE):
+	 ExplicitInitName=true;
+	 strncpy(InitName,optarg,sizeof(InitName)-1);
+	 break;
+      case(SEARCH):
+         search_after_load=optarg;
+         break;
+#ifdef HAVE_MMAP
       case(USE_MMAP):
 	 opt_use_mmap=1;
 	 if(optView==-1)
@@ -718,10 +732,7 @@ int     main(int argc,char **argv)
 	    optView&=~2;
 	 opteditmode=HEXM;
 	 break;
-      case(CONFIG_FILE):
-	 ExplicitInitName=true;
-	 strncpy(InitName,optarg,sizeof(InitName)-1);
-	 break;
+#endif
 #if USE_MULTIBYTE_CHARS
       case MULTIBYTE:
 	 opt_mb_mode=true;
@@ -801,6 +812,11 @@ int     main(int argc,char **argv)
    {
       if(optWarpLine>0)
 	 GoToLineNum(optWarpLine-1);
+      if(search_after_load) {
+         if(!optWarpLine)
+            GoToLineNum(0);
+         StartSearch(search_after_load);
+      }
    }
    Edit();
    Terminate();

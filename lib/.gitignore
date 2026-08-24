@@ -92,7 +92,6 @@
 /stdio.h
 /stdlib.in.h
 /strdup.c
-/streq.h
 /strerror-override.c
 /strerror-override.h
 /strerror.c
